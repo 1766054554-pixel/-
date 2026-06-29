@@ -6,7 +6,7 @@ This page records the exact final steps for publishing Starlight Study Island to
 
 - GitHub repository: `https://github.com/1766054554-pixel/-.git`
 - Local project path: the project root on your machine
-- Current local commit: `384d890 Publish Starlight Study Island platform`
+- Current local commit: run `git log --oneline --max-count=1` in the project root
 - Recommended GitHub Pages URL after deployment: `https://1766054554-pixel.github.io/-/`
 - Product intro page after deployment: `https://1766054554-pixel.github.io/-/product_intro.html`
 - Learning homepage after deployment: `https://1766054554-pixel.github.io/-/index.html`
@@ -100,6 +100,12 @@ Before pushing or after future edits, run:
 
 ```bash
 npm run validate
+```
+
+To inspect the exact commit that will be pushed, run:
+
+```bash
+git log --oneline --max-count=1
 ```
 
 Expected result:

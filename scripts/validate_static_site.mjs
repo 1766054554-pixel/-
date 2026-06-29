@@ -169,7 +169,7 @@ const requiredProductIntroPageTerms = [
 const requiredPublishNowTerms = [
   "Publish Now",
   "https://github.com/1766054554-pixel/-.git",
-  "384d890 Publish Starlight Study Island platform",
+  "git log --oneline --max-count=1",
   "https://1766054554-pixel.github.io/-/",
   "Option A: Publish With SSH",
   "Option B: Publish With GitHub CLI",

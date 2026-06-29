@@ -6,7 +6,7 @@ All notable changes to Starlight Study Island are recorded here.
 
 - Added `docs/publish_now.md` with the current repository, expected Pages URLs, authentication options, push commands, and post-push Pages setup.
 - Updated the GitHub launch checklist and README so the final publish path starts from the product intro page and points to the active repository.
-- Extended static validation to keep the final publish guide present, repository-specific, and free from private local paths.
+- Extended static validation to keep the final publish guide present, repository-specific, free from private local paths, and resilient to future commit changes.
 
 ## 1.3.9 - 2026-06-29
 
