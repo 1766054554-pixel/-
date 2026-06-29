@@ -1,6 +1,6 @@
 {
   "name": "starlight-study-island",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "description": "A static finals-sprint study platform with course portals, interactive papers, flashcards, and local review loops.",
   "type": "module",
   "private": false,

@@ -2,6 +2,13 @@
 
 All notable changes to Starlight Study Island are recorded here.
 
+## 1.3.11 - 2026-06-29
+
+- Updated the GitHub Actions workflows to use Node.js 24 for cleaner current runner output.
+- Corrected the publish guide to reflect the actual pushed repository state and the remaining GitHub Pages enablement step.
+- Tightened the public homepage course-card grid and title sizing so the learning entry reads more like a formal product homepage.
+- Fixed the product intro page timeline CSS and changed internal-facing wording into public product language.
+
 ## 1.3.10 - 2026-06-29
 
 - Added `docs/publish_now.md` with the current repository, expected Pages URLs, authentication options, push commands, and post-push Pages setup.

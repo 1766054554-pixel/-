@@ -161,7 +161,7 @@ const requiredProductIntroPageTerms = [
   "不是资料合集，是学习路径",
   "四种角色",
   "七门课，七种考试形态",
-  "从个人救火工具，到可维护项目",
+  "从学习工具，到可维护项目",
   "进入学习站",
   "demoBoard",
   "renderDemo"
@@ -171,10 +171,11 @@ const requiredPublishNowTerms = [
   "https://github.com/1766054554-pixel/-.git",
   "git log --oneline --max-count=1",
   "https://1766054554-pixel.github.io/-/",
-  "Option A: Publish With SSH",
-  "Option B: Publish With GitHub CLI",
-  "git push origin main",
-  "Static site validation passed: 92 HTML, 15 Markdown, 5 JS files"
+  "What Is Already Ready",
+  "Current Pages Status",
+  "Get Pages site failed",
+  "Set Source to `GitHub Actions`",
+  "Static site validation passed: ... HTML, ... Markdown, ... JS files"
 ];
 const requiredManifestTerms = [
   "数据库",

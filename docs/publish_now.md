@@ -1,102 +1,52 @@
 # Publish Now
 
-This page records the exact final steps for publishing Starlight Study Island to the current GitHub repository.
+This page records the current open-source and GitHub Pages status for Starlight Study Island.
 
 ## Current Repository
 
 - GitHub repository: `https://github.com/1766054554-pixel/-.git`
-- Local project path: the project root on your machine
-- Current local commit: run `git log --oneline --max-count=1` in the project root
-- Recommended GitHub Pages URL after deployment: `https://1766054554-pixel.github.io/-/`
+- Main branch: `main`
+- Recommended GitHub Pages URL after Pages is enabled: `https://1766054554-pixel.github.io/-/`
 - Product intro page after deployment: `https://1766054554-pixel.github.io/-/product_intro.html`
 - Learning homepage after deployment: `https://1766054554-pixel.github.io/-/index.html`
 
 ## What Is Already Ready
 
-- The project is a Git repository.
-- The remote is configured.
-- The full site has been committed locally.
-- Static validation passes with `92 HTML, 14 Markdown, 5 JS files`.
+- The project has been committed and pushed to the GitHub repository.
+- The repository contains the complete static site, docs, assets, workflows, and open-source collaboration templates.
+- Static validation passes locally with `npm run validate`.
 - GitHub Actions workflows are included:
   - `.github/workflows/static-check.yml`
   - `.github/workflows/pages.yml`
 - The public-facing product page is ready at `product_intro.html`.
-- The learning homepage is ready at `index.html`.
+- The student learning homepage is ready at `index.html`.
 
-## Why Push Is Not Finished Yet
+## Current Pages Status
 
-The local project is ready, but GitHub rejected push authentication.
+If `https://1766054554-pixel.github.io/-/` shows GitHub Pages `Site not found`, the code is already on GitHub but GitHub Pages is not enabled for the repository yet.
 
-Observed HTTPS error:
+The Pages workflow can fail with:
 
-```bash
-fatal: could not read Username for 'https://github.com': Device not configured
+```text
+Get Pages site failed. Please verify that the repository has Pages enabled and configured to build using GitHub Actions.
 ```
 
-Observed SSH error:
-
-```bash
-git@github.com: Permission denied (publickey).
-```
-
-This means the local SSH key exists but has not been added to the GitHub account, and GitHub CLI is not installed or logged in yet.
-
-## Option A: Publish With SSH
-
-1. Print the public key:
-
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-2. Copy the output.
-3. Open GitHub: Settings -> SSH and GPG keys -> New SSH key.
-4. Paste the public key and save.
-5. Push:
-
-```bash
-cd starlight-study-island
-git remote set-url origin git@github.com:1766054554-pixel/-.git
-git push origin main
-```
-
-## Option B: Publish With GitHub CLI
-
-1. Install GitHub CLI:
-
-```bash
-brew install gh
-```
-
-2. Log in:
-
-```bash
-gh auth login
-```
-
-Choose GitHub.com, HTTPS, and browser login when prompted.
-
-3. Push:
-
-```bash
-cd starlight-study-island
-git remote set-url origin https://github.com/1766054554-pixel/-.git
-git push origin main
-```
+This is a repository setting issue, not a static-site build failure.
 
 ## Enable GitHub Pages
 
-After the push succeeds:
-
-1. Open the GitHub repository.
+1. Open the GitHub repository: `https://github.com/1766054554-pixel/-`.
 2. Go to Settings -> Pages.
 3. Set Source to `GitHub Actions`.
-4. Wait for the `Deploy GitHub Pages` workflow to finish.
-5. Open `https://1766054554-pixel.github.io/-/`.
+4. Save the setting if GitHub asks you to confirm.
+5. Go to Actions -> `Deploy GitHub Pages`.
+6. Re-run the latest failed workflow, or push one new commit to `main`.
+7. Wait until the workflow finishes successfully.
+8. Open `https://1766054554-pixel.github.io/-/`.
 
 ## Release Check
 
-Before pushing or after future edits, run:
+Before pushing future edits, run:
 
 ```bash
 npm run validate
@@ -108,15 +58,15 @@ To inspect the exact commit that will be pushed, run:
 git log --oneline --max-count=1
 ```
 
-Expected result:
+Expected validation result format:
 
 ```text
-Static site validation passed: 92 HTML, 15 Markdown, 5 JS files.
+Static site validation passed: ... HTML, ... Markdown, ... JS files.
 ```
 
 ## Recommended Demo Route
 
-For portfolio or interview demos:
+For portfolio, interview, or classmate demos:
 
 1. Open `product_intro.html`.
 2. Show the immersive product deck and interactive demo viewpoints.

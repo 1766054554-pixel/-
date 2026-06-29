@@ -215,11 +215,12 @@
       box-shadow: 0 8px 20px rgba(97, 82, 126, .08);
     }
     h1 {
-      max-width: 10ch;
+      max-width: 9em;
       margin: 18px 0 14px;
-      font-size: clamp(54px, 7.4vw, 98px);
+      font-size: clamp(54px, 6.7vw, 92px);
       line-height: 1.02;
       letter-spacing: 0;
+      text-wrap: balance;
     }
     h2 {
       margin: 0 0 14px;
@@ -265,7 +266,7 @@
 
     .scene {
       position: relative;
-      min-height: 620px;
+      min-height: 580px;
       border: 1px solid rgba(255,255,255,.74);
       border-radius: 8px;
       overflow: hidden;
@@ -541,6 +542,24 @@
       padding: 10px 0;
       border-block: 1px solid rgba(255,255,255,.62);
     }
+    .shot-rail::before,
+    .shot-rail::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 54px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .shot-rail::before {
+      left: 0;
+      background: linear-gradient(90deg, rgba(255,248,251,.94), rgba(255,248,251,0));
+    }
+    .shot-rail::after {
+      right: 0;
+      background: linear-gradient(270deg, rgba(242,250,255,.94), rgba(242,250,255,0));
+    }
     .rail-track {
       display: flex;
       width: max-content;
@@ -692,6 +711,7 @@
       color: #604f78;
       font-weight: 1000;
       border: 1px solid rgba(98,118,150,.18);
+    }
     .stat-row {
       gap: 10px;
       margin-top: 20px;
@@ -926,7 +946,7 @@
               </div>
               <span class="stack-index">04</span>
             </header>
-            <p class="lead">它已经有课程包生成器、质量看板、Issue/PR 模板、CHANGELOG、GitHub Actions 和 Pages 工作流。这个项目可以从“个人救火”继续变成“课程资料共建”。</p>
+            <p class="lead">它已经有课程包生成器、质量看板、Issue/PR 模板、CHANGELOG、GitHub Actions 和 Pages 工作流。这个项目可以从一套课程样例继续扩展成“课程资料共建”。</p>
             <div class="card-meta">
               <span><strong>质量看板</strong>标注来源、校对等级和下一步改进。</span>
               <span><strong>发布检查</strong>脚本检查链接、脚本、入口和隐私路径。</span>
@@ -1020,9 +1040,9 @@
       <div class="section-head">
         <div>
           <span class="eyebrow">Open Source Path</span>
-          <h2>从个人救火工具，到可维护项目。</h2>
+          <h2>从学习工具，到可维护项目。</h2>
         </div>
-        <p>它已经有开源协作模板、GitHub Pages 工作流、内容质量元数据和发布检查。下一步接上 GitHub 仓库后，就可以让同学访问、fork 和继续贡献。</p>
+        <p>它已经接入开源协作模板、GitHub Pages 工作流、内容质量元数据和发布检查。仓库公开后，同学可以访问、fork，也可以按课程包规范继续贡献。</p>
       </div>
       <div class="timeline">
         <article class="timeline-card"><span class="num">1</span><h3>清理入口</h3><p>把旧材料沉到资料库，首页只讲课程入口、主动作和进度。</p></article>

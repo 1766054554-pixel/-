@@ -1,6 +1,6 @@
 # GitHub 发布检查清单
 
-把星光学习岛发布到 GitHub 前，按这张清单走。
+把星光学习岛发布到 GitHub 或复核线上版本时，按这张清单走。
 
 当前仓库已经确定为 `https://github.com/1766054554-pixel/-.git`。如果只想看最后推送步骤，先读 `docs/publish_now.md`。
 
@@ -119,7 +119,9 @@ npm run validate
 - `.github/workflows/static-check.yml`：推送到 `main` 或提交 PR 时自动执行 `npm run validate`，作为质量门槛。
 - `.github/workflows/pages.yml`：推送到 `main` 或手动触发时执行静态检查并部署 GitHub Pages。
 
-如果暂时不想使用 Actions 部署，也可以把 Pages Source 改成 `Deploy from a branch`，Branch 选择 `main`，目录选择 `/root`。
+如果公开链接显示 `Site not found`，优先检查 Settings -> Pages 是否已经启用，并确认 Source 是 `GitHub Actions`。当前仓库内的 `.github/workflows/pages.yml` 是按 Actions 部署写的。
+
+如果暂时不想使用 Actions 部署，也可以把 Pages Source 改成 `Deploy from a branch`，Branch 选择 `main`，目录选择 `/root`，但这会绕过自动发布工作流。
 
 ## 5. 简历展示顺序
 
