@@ -85,12 +85,19 @@ npm run validate
 
 ## 如何部署到 GitHub Pages
 
-1. 新建一个 GitHub 仓库，例如 `starlight-study-island`。
-2. 将本目录里的文件提交到仓库根目录。
-3. 推送前运行 `npm run validate`。
+当前仓库：`https://github.com/1766054554-pixel/-.git`。
+
+1. 推送前运行 `npm run validate`。
+2. 若本机还不能推送，按 `docs/publish_now.md` 绑定 SSH key 或登录 GitHub CLI。
+3. 推送到 `main`。
 4. 在 GitHub 仓库 Settings -> Pages 中，Source 选择 `GitHub Actions`。
 5. 推送到 `main` 后，`.github/workflows/pages.yml` 会先运行静态检查，再自动发布站点。
 6. 也可以在 Actions 页面手动触发 `Deploy GitHub Pages` 工作流。
+
+部署完成后的推荐访问地址：
+
+- 主站：`https://1766054554-pixel.github.io/-/`
+- 产品介绍页：`https://1766054554-pixel.github.io/-/product_intro.html`
 
 仓库内同时包含 `.github/workflows/static-check.yml` 和 `.github/workflows/pages.yml`。前者用于 PR 和 push 的质量门槛；后者用于发布。若不想使用 Actions 部署，也可以在 Pages 设置中选择 `Deploy from a branch`，分支选择 `main`，目录选择 `/root`。
 
@@ -114,6 +121,7 @@ npm run validate
 - 发布前检查：运行 `npm run validate`。
 - 架构说明：阅读 `docs/architecture.md`，理解学生路径、数据层、质量层、本地状态和发布外壳。
 - 产品展示：先打开 `product_intro.html` 讲项目定位，再阅读 `docs/demo_script.md`，按首页、课程岛、资源库、训练台、仪表盘和发布链路展示项目。
+- 立即发布：阅读 `docs/publish_now.md`，按 SSH 或 GitHub CLI 路线完成认证和推送。
 - 应用外壳检查：保留 `site.webmanifest`、`service-worker.js`、`404.html`、`offline.html`、`robots.txt` 和 `assets/brand/icon.svg`，它们会被静态校验纳入发布门槛。
 - 迁移学习进度：打开 `progress_vault.html`。
 - 发布前体检：打开 `release_status.html`。

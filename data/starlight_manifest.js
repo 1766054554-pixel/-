@@ -1,5 +1,5 @@
 window.STARLIGHT_MANIFEST = {
-  version: "1.3.9",
+  version: "1.3.10",
   product: {
     name: "星光学习岛",
     englishName: "Starlight Study Island",

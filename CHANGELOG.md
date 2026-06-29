@@ -2,6 +2,12 @@
 
 All notable changes to Starlight Study Island are recorded here.
 
+## 1.3.10 - 2026-06-29
+
+- Added `docs/publish_now.md` with the current repository, expected Pages URLs, authentication options, push commands, and post-push Pages setup.
+- Updated the GitHub launch checklist and README so the final publish path starts from the product intro page and points to the active repository.
+- Extended static validation to keep the final publish guide present, repository-specific, and free from private local paths.
+
 ## 1.3.9 - 2026-06-29
 
 - Upgraded `product_intro.html` into a more immersive portfolio-grade landing page with a constellation canvas, layered product deck, sticky stacked cards, moving feature rail, reveal animation, and gentle 3D hover response.

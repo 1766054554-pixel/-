@@ -1,4 +1,4 @@
-const CACHE_NAME = "starlight-study-island-v1.3.9";
+const CACHE_NAME = "starlight-study-island-v1.3.10";
 const CORE_ASSETS = [
   "./",
   "./index.html",

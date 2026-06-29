@@ -2,6 +2,8 @@
 
 把星光学习岛发布到 GitHub 前，按这张清单走。
 
+当前仓库已经确定为 `https://github.com/1766054554-pixel/-.git`。如果只想看最后推送步骤，先读 `docs/publish_now.md`。
+
 ## 1. 仓库准备
 
 - 仓库名建议：`starlight-study-island`
@@ -14,6 +16,7 @@
 应该提交：
 
 - `index.html`
+- `product_intro.html`
 - `start_here.html`
 - `data/starlight_manifest.js`
 - `focus_dual_exam_game.html`
@@ -41,6 +44,7 @@
 - `offline.html`
 - `robots.txt`
 - `assets/brand/icon.svg`
+- `assets/brand/hero-study-island.png`
 - `README.md`
 - `package.json`
 - `scripts/validate_static_site.mjs`
@@ -87,6 +91,7 @@ npm run validate
 - `quality_board.html`
 - `final_two_wrong_review.html`
 - `operating_system/index.html`
+- `product_intro.html`
 
 同时检查：
 
@@ -104,6 +109,11 @@ npm run validate
 5. 工作流会先执行 `npm run validate`，通过后再部署静态页面。
 6. 部署完成后，在 Pages 或 Actions 页面复制公开访问链接。
 
+当前仓库推荐公开地址：
+
+- 主站：`https://1766054554-pixel.github.io/-/`
+- 产品介绍页：`https://1766054554-pixel.github.io/-/product_intro.html`
+
 仓库已内置两条工作流：
 
 - `.github/workflows/static-check.yml`：推送到 `main` 或提交 PR 时自动执行 `npm run validate`，作为质量门槛。
@@ -113,14 +123,15 @@ npm run validate
 
 ## 5. 简历展示顺序
 
-1. 首页：说明产品定位和主线。
-2. 新手上岛向导：展示第一次打开如何生成三步路线。
-3. 星光海岛小游戏：展示交互体验。
-4. 全科课程入口：展示数据库、AI、软工、军理、离散、马原、操作系统如何被统一组织。
-5. 真题训练台：展示按科目、题型和训练动作收束练习入口。
-6. 交互真题舱：展示真实题型、即时反馈和大题逐步解析。
-7. 精品资源库和继续学习仪表盘：展示全科资源筛选、完成打勾、今日学习包和下一步建议。
-8. 课程包生成器：展示开源后如何低成本新增课程。
-9. 内容质量看板：展示如何持续校对内容质量和维护备注。
-10. GitHub 协作外壳：展示 Issue 模板、PR 模板、CHANGELOG、Actions 和维护者发布手册。
-11. 星光存档室与发布检查台：展示本地状态管理、导入导出、全科覆盖检查和开源质量门槛。
+1. 产品介绍页：展示沉浸式星图、层叠产品卡、互动演示视角和开源路线。
+2. 首页：说明真实学习入口和主线。
+3. 新手上岛向导：展示第一次打开如何生成三步路线。
+4. 星光海岛小游戏：展示交互体验。
+5. 全科课程入口：展示数据库、AI、软工、军理、离散、马原、操作系统如何被统一组织。
+6. 真题训练台：展示按科目、题型和训练动作收束练习入口。
+7. 交互真题舱：展示真实题型、即时反馈和大题逐步解析。
+8. 精品资源库和继续学习仪表盘：展示全科资源筛选、完成打勾、今日学习包和下一步建议。
+9. 课程包生成器：展示开源后如何低成本新增课程。
+10. 内容质量看板：展示如何持续校对内容质量和维护备注。
+11. GitHub 协作外壳：展示 Issue 模板、PR 模板、CHANGELOG、Actions 和维护者发布手册。
+12. 星光存档室与发布检查台：展示本地状态管理、导入导出、全科覆盖检查和开源质量门槛。

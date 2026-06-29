@@ -166,6 +166,16 @@ const requiredProductIntroPageTerms = [
   "demoBoard",
   "renderDemo"
 ];
+const requiredPublishNowTerms = [
+  "Publish Now",
+  "https://github.com/1766054554-pixel/-.git",
+  "384d890 Publish Starlight Study Island platform",
+  "https://1766054554-pixel.github.io/-/",
+  "Option A: Publish With SSH",
+  "Option B: Publish With GitHub CLI",
+  "git push origin main",
+  "Static site validation passed: 92 HTML, 15 Markdown, 5 JS files"
+];
 const requiredManifestTerms = [
   "数据库",
   "人工智能",
@@ -203,6 +213,7 @@ const requiredOpenSourceFiles = [
   ".github/ISSUE_TEMPLATE/course_pack_request.yml",
   "docs/architecture.md",
   "docs/demo_script.md",
+  "docs/publish_now.md",
   "docs/maintainer_release_guide.md"
 ];
 const requiredProductShellFiles = [
@@ -333,6 +344,7 @@ function assertPublicIndex(errors) {
   const vaultPath = path.join(root, "progress_vault.html");
   const releasePath = path.join(root, "release_status.html");
   const productIntroPath = path.join(root, "product_intro.html");
+  const publishNowPath = path.join(root, "docs", "publish_now.md");
   const manifestPath = path.join(root, "data", "starlight_manifest.js");
   const catalogPath = path.join(root, "data", "resource_catalog.js");
   const qualityDataPath = path.join(root, "data", "resource_quality.js");
@@ -347,6 +359,7 @@ function assertPublicIndex(errors) {
   const vault = fs.readFileSync(vaultPath, "utf8");
   const release = fs.readFileSync(releasePath, "utf8");
   const productIntro = fs.readFileSync(productIntroPath, "utf8");
+  const publishNow = fs.readFileSync(publishNowPath, "utf8");
   const manifest = fs.readFileSync(manifestPath, "utf8");
   const qualityDataText = fs.readFileSync(qualityDataPath, "utf8");
   const manifestData = readWindowData(manifestPath, "STARLIGHT_MANIFEST");
@@ -390,6 +403,9 @@ function assertPublicIndex(errors) {
   }
   for (const term of requiredProductIntroPageTerms) {
     if (!productIntro.includes(term)) errors.push(`product_intro.html missing required text: ${term}`);
+  }
+  for (const term of requiredPublishNowTerms) {
+    if (!publishNow.includes(term)) errors.push(`docs/publish_now.md missing required text: ${term}`);
   }
   for (const term of requiredManifestTerms) {
     if (!manifest.includes(term)) errors.push(`manifest missing course entry: ${term}`);
