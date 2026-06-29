@@ -1,4 +1,5 @@
 .DS_Store
+-
 
 # Local/private ingestion traces. Keep these locally for audit, but do not publish
 # raw classroom/exam extraction logs or machine-generated scratch files by default.

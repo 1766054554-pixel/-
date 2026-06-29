@@ -7,7 +7,7 @@ const htmlFiles = [];
 const mdFiles = [];
 const jsFiles = [];
 
-const ignoredDirs = new Set([".git", "node_modules", "tmp"]);
+const ignoredDirs = new Set([".git", "node_modules", "tmp", "-"]);
 const dynamicRefMarkers = ["${", "'+", "+'", "`"];
 const blockedPublicIndexTerms = [
   "开源包装",
