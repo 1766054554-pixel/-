@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 2 离散证明入口与基础题型讲义</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .question { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: inherit;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .math-card {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .math-card .eq {
+      display: block;
+      font-family: "STIX Two Math", "Cambria Math", "Times New Roman", "Songti SC", serif;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--blue);
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-bottom: 8px;
+    }
+    .math-card ul { margin: 8px 0 0 20px; padding: 0; }
+    .mini-svg {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .mini-svg svg { display: block; width: 100%; min-width: 720px; height: auto; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .purplebox { border-left-color: var(--purple); background: #f8f5ff; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .steps { counter-reset: step; display: grid; gap: 9px; margin: 10px 0; }
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px 11px 46px;
+    }
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 13px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .flow .box { min-height: 118px; }
+    .small { font-size: 13px; color: var(--muted); }
+    @media (max-width: 900px) {
+      .grid, .grid.three, .flow { grid-template-columns: 1fr; }
+      .mini-svg svg { min-width: 680px; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 2 离散证明入口与基础题型讲义</h1>
+      <p class="muted">这不是整卷分析，也不是直接上最难证明。今天只把 Day1 的符号地基向前推一步：你要开始会“看到题目目标 -> 选证明动作 -> 写出第一段 -> 检查有没有漏洞”。</p>
+      <div class="strip">
+        <span class="pill hot">离散数学 6/28</span>
+        <span class="pill info">Day1 后续</span>
+        <span class="pill good">证明入门</span>
+        <span class="pill warn">暂不硬啃 2024 整卷</span>
+        <span class="pill purple">依据离散1.md 与往年题型</span>
+      </div>
+      <div class="toc">
+        <a href="#boundary">0. 今天边界</a>
+        <a href="#targets">1. 目标决定第一句</a>
+        <a href="#semantic">2. 语义蕴含</a>
+        <a href="#normal">3. 主范式保底</a>
+        <a href="#predicate">4. 谓词翻译</a>
+        <a href="#scope">5. 辖域与代入坑</a>
+        <a href="#rules">6. 六个推理规则</a>
+        <a href="#cards">7. 题卡训练</a>
+        <a href="#gate">8. 过关闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="boundary">
+      <h2>0. 今天边界：先学“证明的起跑动作”</h2>
+      <p>离散证明题最吓人的地方，是你看见题目后不知道第一行该写什么。其实第一行不是靠灵感，而是靠题目目标触发动作。目标长什么样，你就启动对应套路。</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>今天要会</strong>
+          全称、存在、蕴涵、等价、语义蕴含、反例这 6 类题，第一句怎么写。
+        </div>
+        <div class="box">
+          <strong>今天不做</strong>
+          不分析整张 2024 卷，不做复杂公理系统长证明，不追求一次吃完前束范式和 Skolem。
+        </div>
+        <div class="box">
+          <strong>今天产出</strong>
+          你自己的“证明起手表”：看到目标，能先写出不空白、不跑偏的开头。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>为什么这一步很关键：</strong>期末证明题不是只考你会不会背定义，还考你能不能把定义组织成合规表达。你先把第一段写稳，后面补定理、规则、细节才有地方接。
+      </div>
+    </section>
+
+    <section class="card" id="targets">
+      <h2>1. 证明目标决定第一句：先背这张表</h2>
+      <p>你现在看到证明题，先不要慌，也不要一上来乱变形。先圈出“结论长什么样”。下面这张表就是考场起手动作。</p>
+      <table>
+        <thead><tr><th>目标形状</th><th>第一句模板</th><th>人话理解</th><th>常见坑</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>证明 ∀x P(x)</td>
+            <td>任取论域中一个对象 a。</td>
+            <td>我要证明“每一个”都满足，所以不能只挑一个特殊对象。</td>
+            <td>不要写“取一个特殊的 a”，要强调任意性。</td>
+          </tr>
+          <tr>
+            <td>证明 ∃x P(x)</td>
+            <td>取/构造 a = ...，下面证明 P(a)。</td>
+            <td>存在题需要给“见证”。找到一个就够。</td>
+            <td>只说“显然存在”通常不够，要说明这个对象为什么满足。</td>
+          </tr>
+          <tr>
+            <td>证明 A -> B</td>
+            <td>假设 A 成立，下面证明 B。</td>
+            <td>我要证明“只要 A，就 B”，所以先进入 A 成立的世界。</td>
+            <td>不要反过来假设 B；那是证明 B -> A。</td>
+          </tr>
+          <tr>
+            <td>证明 A ↔ B</td>
+            <td>分别证明 A -> B 与 B -> A。</td>
+            <td>等价就是双向都能推出。</td>
+            <td>只证明一个方向最多拿一半结构分。</td>
+          </tr>
+          <tr>
+            <td>证明 Γ |= Q</td>
+            <td>设 Γ 中所有前提均为真，证明 Q 必为真。</td>
+            <td>语义蕴含说的是：没有一种情况能让前提全真而结论假。</td>
+            <td>不要把 |= 和 |- 混成一回事；|= 是语义真值，|- 是形式推导。</td>
+          </tr>
+          <tr>
+            <td>否定一个“必然成立”</td>
+            <td>构造一个反例：前提真，但结论假。</td>
+            <td>想推翻“所有情况都成立”，只需要给出一种失败情况。</td>
+            <td>反例要同时满足前提，不能只让结论假。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>今天先背到能脱口而出：</strong>全称任取，存在构造，蕴涵假设前件，等价证双向，语义蕴含看“前提全真结论必真”，不成立就造“前提真结论假”的反例。
+      </div>
+      <div class="mini-svg" aria-label="离散证明目标导航图">
+        <svg viewBox="0 0 920 350" role="img">
+          <rect width="920" height="350" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="52" y="42" font-size="21" font-weight="700" fill="#1f5f8b">证明题第一眼：看目标形状，不靠灵感</text>
+            <rect x="60" y="86" width="150" height="58" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="98" y="121" font-weight="700">目标公式</text>
+            <path d="M210 115 H280" stroke="#687581" stroke-width="3" marker-end="url(#targetArrow)"/>
+            <rect x="292" y="52" width="145" height="54" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="325" y="85" font-weight="700">∀x P(x)</text>
+            <rect x="292" y="132" width="145" height="54" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="325" y="165" font-weight="700">∃x P(x)</text>
+            <rect x="292" y="212" width="145" height="54" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="329" y="245" font-weight="700">A -> B</text>
+
+            <path d="M438 79 H535" stroke="#687581" stroke-width="3" marker-end="url(#targetArrow)"/>
+            <path d="M438 159 H535" stroke="#687581" stroke-width="3" marker-end="url(#targetArrow)"/>
+            <path d="M438 239 H535" stroke="#687581" stroke-width="3" marker-end="url(#targetArrow)"/>
+            <rect x="548" y="52" width="270" height="54" rx="10" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="590" y="85" font-weight="700">任取 a，证明 P(a)</text>
+            <rect x="548" y="132" width="270" height="54" rx="10" fill="#fff9e6" stroke="#936b12"/>
+            <text x="596" y="165" font-weight="700">构造 a，验证 P(a)</text>
+            <rect x="548" y="212" width="270" height="54" rx="10" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="585" y="245" font-weight="700">假设 A，推出 B</text>
+            <rect x="160" y="295" width="600" height="36" rx="8" fill="#fbfdfe" stroke="#dce3e8"/>
+            <text x="200" y="319" fill="#687581">考场动作：先写第一句，再补定义/定理/推理规则。</text>
+          </g>
+          <defs><marker id="targetArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+    </section>
+
+    <section class="card" id="semantic">
+      <h2>2. 语义蕴含：证明题里最常见的“真值版反证”</h2>
+      <p>符号 Γ |= Q 读作“前提集合 Γ 语义蕴含 Q”。它不是在问你“有没有背过推理规则”，而是在问：只要前提都是真的，结论是不是一定真。</p>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">Γ</span><span class="op">⊨</span><span class="mi">Q</span>
+        </div>
+        <div class="math-note">读法：所有让 Γ 里前提为真的解释/赋值，也必须让 Q 为真。</div>
+        <ul>
+          <li><strong>Γ</strong>：一组前提，可以有一个，也可以有多个。</li>
+          <li><strong>⊨</strong>：语义蕴含，讨论所有真值赋值/解释下的真假关系。</li>
+          <li><strong>Q</strong>：要被前提保证的结论。</li>
+          <li><strong>成立标准</strong>：不存在“Γ 全真但 Q 假”的情况。</li>
+        </ul>
+      </div>
+      <div class="flow">
+        <div class="box"><strong>第 1 步</strong>假设所有前提都真。</div>
+        <div class="box"><strong>第 2 步</strong>为了证明必真，可以反设结论假。</div>
+        <div class="box"><strong>第 3 步</strong>从前提真和结论假推出冲突。</div>
+        <div class="box"><strong>第 4 步</strong>所以不存在“前提全真结论假”，蕴含成立。</div>
+      </div>
+      <div class="mini-svg" aria-label="语义蕴含反例检查图">
+        <svg viewBox="0 0 920 270" role="img">
+          <rect width="920" height="270" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">Γ |= Q 只怕一种坏情况</text>
+            <rect x="90" y="88" width="220" height="76" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="136" y="120" font-weight="700">所有前提 Γ 为真</text>
+            <text x="127" y="148" fill="#687581">P1=1, P2=1, ...</text>
+            <path d="M315 126 H430" stroke="#687581" stroke-width="3" marker-end="url(#semArrow)"/>
+            <rect x="448" y="88" width="190" height="76" rx="12" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="500" y="120" font-weight="700">结论 Q 为假</text>
+            <text x="514" y="148" fill="#687581">Q=0</text>
+            <path d="M640 126 H735" stroke="#687581" stroke-width="3" marker-end="url(#semArrow)"/>
+            <rect x="750" y="88" width="110" height="76" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="778" y="120" font-weight="700">反例</text>
+            <text x="771" y="148" fill="#687581">蕴含失败</text>
+            <rect x="165" y="205" width="590" height="36" rx="8" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="218" y="229" fill="#687581">证明成立：排除这种坏情况；证明不成立：构造这种坏情况。</text>
+          </g>
+          <defs><marker id="semArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <p>如果你要证明“不蕴含”，方向正好相反：不要写长篇大论，直接给一个真值赋值，让所有前提为真、结论为假。</p>
+      <div class="mark danger">
+        <strong>最重要的检查：</strong>反例不是“结论假就行”。反例必须同时满足两件事：前提全真，结论假。少一个都不是反例。
+      </div>
+    </section>
+
+    <section class="card" id="normal">
+      <h2>3. 主范式保底：从真值表读答案，不靠玄学变形</h2>
+      <p>主析取范式和主合取范式听起来吓人，但考试里可以靠真值表保底。它们的本质是：把一个公式的真假模式写成唯一标准格式。</p>
+      <table>
+        <thead><tr><th>项目</th><th>看真值表哪几行</th><th>怎么写小项</th><th>怎么把小项连起来</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>主析取范式 Σ</td>
+            <td>看公式结果为 1 的行。</td>
+            <td>极小项：这一行里变量为 1 写原变量，为 0 写否定。</td>
+            <td>用“或”连接所有极小项。</td>
+          </tr>
+          <tr>
+            <td>主合取范式 Π</td>
+            <td>看公式结果为 0 的行。</td>
+            <td>极大项：这一行里变量为 0 写原变量，为 1 写否定。</td>
+            <td>用“与”连接所有极大项。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">P</span><span class="op">↔</span><span class="mi">Q</span>
+        </div>
+        <div class="math-note">真值为 1 的行是 00、11；真值为 0 的行是 01、10。</div>
+        <div class="display-eq">
+          <span class="op">(</span>¬<span class="mi">P</span><span class="op">∧</span>¬<span class="mi">Q</span><span class="op">)</span>
+          <span class="op">∨</span>
+          <span class="op">(</span><span class="mi">P</span><span class="op">∧</span><span class="mi">Q</span><span class="op">)</span>
+        </div>
+        <div class="math-note">主析取范式：看结果为 1 的行，写极小项，再用 ∨ 连接。</div>
+        <div class="display-eq">
+          <span class="op">(</span><span class="mi">P</span><span class="op">∨</span>¬<span class="mi">Q</span><span class="op">)</span>
+          <span class="op">∧</span>
+          <span class="op">(</span>¬<span class="mi">P</span><span class="op">∨</span><span class="mi">Q</span><span class="op">)</span>
+        </div>
+        <div class="math-note">主合取范式：看结果为 0 的行，写极大项，再用 ∧ 连接。</div>
+        <ul>
+          <li>主析取看 <strong>1 行</strong>，每一行写一个极小项。</li>
+          <li>主合取看 <strong>0 行</strong>，每一行写一个极大项。</li>
+        </ul>
+      </div>
+      <p>这里最容易错的是主合取范式的小项写法：结果为 0 的那一行，变量为 0 写原变量，变量为 1 写否定。它和主析取正好反着来。</p>
+    </section>
+
+    <section class="card" id="predicate">
+      <h2>4. 谓词翻译：先把中文句式固定住</h2>
+      <p>谓词逻辑比命题逻辑多了对象和量词。考试常见不是让你“创造数学”，而是把中文准确翻译成公式。你先记四个句式。</p>
+      <table>
+        <thead><tr><th>中文句式</th><th>公式模板</th><th>为什么这样写</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>所有 A 都是 B</td>
+            <td>∀x(A(x) -> B(x))</td>
+            <td>任取一个对象，如果它是 A，那它必须是 B。</td>
+          </tr>
+          <tr>
+            <td>存在 A 是 B</td>
+            <td>∃x(A(x) ∧ B(x))</td>
+            <td>要找一个对象，它同时满足 A 和 B。</td>
+          </tr>
+          <tr>
+            <td>没有 A 是 B</td>
+            <td>∀x(A(x) -> &not;B(x))，或 &not;∃x(A(x) ∧ B(x))</td>
+            <td>两种写法等价：每个 A 都不是 B；不存在既是 A 又是 B 的对象。</td>
+          </tr>
+          <tr>
+            <td>恰有一个 A</td>
+            <td>∃x(A(x) ∧ ∀y(A(y) -> y = x))</td>
+            <td>先说至少有一个 x，再说任何满足 A 的 y 都必须等于这个 x。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>全称常配蕴涵，存在常配合取：</strong>这不是死规定，但初学阶段非常稳。看到“所有 A 都 B”，先想 ∀ + ->；看到“存在 A 且 B”，先想 ∃ + ∧。
+      </div>
+    </section>
+
+    <section class="card" id="scope">
+      <h2>5. 辖域与代入坑：变量不是名字重复就一定是同一个</h2>
+      <p>量词只管理自己的辖域。你可以把它想成程序里的局部变量：同名不一定同作用域。考试如果问自由变元、约束变元、可代入，核心就是看变量有没有被量词“绑住”。</p>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="op">(</span>∃<span class="mi">x</span>
+          <span class="op">(</span><span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span>
+          <span class="op">)</span>
+          <span class="op">→</span>
+          <span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+        </div>
+        <div class="math-note">读法：前面 ∃x 只管括号里的 P(x,y)，管不到箭头右边的 Q(x)。</div>
+      </div>
+      <table>
+        <thead><tr><th>位置</th><th>身份</th><th>原因</th></tr></thead>
+        <tbody>
+          <tr><td>P(x, y) 里的 x</td><td>约束变元</td><td>它在 ∃x 的辖域里，被 ∃x 管住。</td></tr>
+          <tr><td>P(x, y) 里的 y</td><td>自由变元</td><td>没有 ∀y 或 ∃y 管它。</td></tr>
+          <tr><td>Q(x) 里的 x</td><td>自由变元</td><td>它在 ∃x(P(x,y)) 的括号外，不受前面的 ∃x 管。</td></tr>
+        </tbody>
+      </table>
+      <h3>代入为什么会出事故</h3>
+      <p>如果你用一个带变量的项去替换自由变元，替换后这个变量掉进了同名量词的辖域，就会被错误绑定，原意被改变。</p>
+      <div class="math-card">
+        <div class="display-eq">∃<span class="mi">y</span><span class="op">(</span><span class="mi">x</span><span class="op">&lt;</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="math-note">原式：想把自由变元 x 替换成 y。</div>
+        <div class="display-eq danger">∃<span class="mi">y</span><span class="op">(</span><span class="mi">y</span><span class="op">&lt;</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="math-note">错误替换：新放进去的 y 掉进 ∃y 的辖域，被错误绑定，原意改变。</div>
+      </div>
+      <div class="mark">
+        <strong>安全动作：</strong>先改名避让，比如把原式改成 ∃z(x < z)，再替换 x 为 y，得到 ∃z(y < z)。这才保留原意。
+      </div>
+    </section>
+
+    <section class="card" id="rules">
+      <h2>6. 六个推理规则：证明中写“理由”的小工具箱</h2>
+      <p>形式证明每一步都要有理由。下面六个规则不用今天全做难题，但要看见就知道它在干什么。</p>
+      <table>
+        <thead><tr><th>规则</th><th>形式</th><th>人话</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td>假言推理 MP</td><td>P, P -> Q ⟹ Q</td><td>有条件，也满足条件，所以推出结果。</td><td>若下雨则地湿；下雨；所以地湿。</td></tr>
+          <tr><td>拒取式 MT</td><td>P -> Q, &not;Q ⟹ &not;P</td><td>如果 P 会导致 Q，但 Q 没发生，所以 P 不可能。</td><td>若开机则灯亮；灯不亮；所以没开机。</td></tr>
+          <tr><td>假言三段论 HS</td><td>P -> Q, Q -> R ⟹ P -> R</td><td>条件可以接力。</td><td>学会 SQL -> 会查表；会查表 -> 能做题。</td></tr>
+          <tr><td>析取三段论 DS</td><td>P ∨ Q, &not;P ⟹ Q</td><td>两个里面至少一个真，排除一个，剩下的真。</td><td>去图书馆或教室；不去图书馆；所以去教室。</td></tr>
+          <tr><td>化简</td><td>P ∧ Q ⟹ P</td><td>并且成立，任一部分都成立。</td><td>会 SQL 且会范式，所以会 SQL。</td></tr>
+          <tr><td>附加</td><td>P ⟹ P ∨ Q</td><td>一个真，则“它或别的”也真。</td><td>会 SQL，所以会 SQL 或会离散。</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">你写证明时，旁边可以标：MP、MT、DS、化简。哪怕老师不要求英文缩写，写出中文理由也能让答案更像“证明”而不是“感觉”。</p>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>7. 题卡训练：先写骨架，再看完整解析</h2>
+      <p class="muted">每题都先写“题眼 + 第一动作 + 推理路线”。不要只看答案。</p>
+
+      <article class="question">
+        <h3>题 1：语义蕴含证明</h3>
+        <p>证明：P ∧ Q -> R，&not;S，&not;R ∨ S |= &not;P ∨ &not;Q。</p>
+        <textarea data-note="d2q1" placeholder="先写：为了证明语义蕴含，我要假设什么？如果结论为假，P 和 Q 分别怎样？"></textarea>
+        <details>
+          <summary>看标准骨架和解析</summary>
+          <div class="answer-block">
+            <p><strong>题眼：</strong>符号是 |=，所以这是语义蕴含题。核心检查“是否存在前提全真但结论假”的情况。</p>
+            <p><strong>证明骨架：</strong>假设三个前提均为真，并反设结论 &not;P ∨ &not;Q 为假。析取为假说明 &not;P 假且 &not;Q 假，因此 P 真且 Q 真，所以 P ∧ Q 真。由 P ∧ Q -> R 为真且 P ∧ Q 为真，得 R 真。又由 &not;S 为真，得 S 假。前提 &not;R ∨ S 为真，而 S 假，所以 &not;R 必真，即 R 假。于是 R 真且 R 假矛盾。因此不存在前提全真而结论假的赋值，原语义蕴含成立。</p>
+            <p><strong>为什么这题适合入门：</strong>它把语义蕴含、反设结论假、蕴涵使用、析取排除都串起来，但每一步都只是基础真值规则。</p>
+            <p><strong>容易错：</strong>不要一上来把 &not;P ∨ &not;Q 当成 P ∧ Q。正确关系是：结论为假时，才推出 P ∧ Q 为真。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 2：编号式证明</h3>
+        <p>已知 P -> Q，&not;Q，P ∨ R，证明 R。</p>
+        <textarea data-note="d2q2" placeholder="先写：哪两条能推出 ¬P？得到 ¬P 后，和 P ∨ R 怎么推出 R？"></textarea>
+        <details>
+          <summary>看标准答案和解析</summary>
+          <div class="answer-block">
+            <pre>1. P -> Q          前提
+2. &not;Q             前提
+3. &not;P             由 1,2 拒取式 MT
+4. P ∨ R           前提
+5. R              由 3,4 析取三段论 DS</pre>
+            <p><strong>题眼：</strong>题干给了 P -> Q 和 &not;Q，这几乎是在提醒你用拒取式 MT 得到 &not;P。再看到 P ∨ R 和 &not;P，就用析取三段论推出 R。</p>
+            <p><strong>考试写法：</strong>每行写公式，右边写“前提”或“由第几行和什么规则得到”。这比散文式证明更稳。</p>
+            <p><strong>迁移：</strong>以后见到 A -> B 与 &not;B，优先想到 &not;A；见到 A ∨ B 与 &not;A，优先想到 B。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 3：构造反例</h3>
+        <p>判断 P ∨ Q |= P 是否成立；如果不成立，给出反例。</p>
+        <textarea data-note="d2q3" placeholder="先写：要否定蕴含，需要让前提 P ∨ Q 真，同时让结论 P 假。P、Q 可以怎么取？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>不成立。取 P = 0，Q = 1，则前提 P ∨ Q = 1，但结论 P = 0。所以存在前提真、结论假的赋值，P ∨ Q 不语义蕴含 P。</p>
+            <p><strong>题眼：</strong>不成立题不要证明半天，直接找反例。前提是一个“或”，想让它真很容易；结论 P 要假，就设 P = 0，再用 Q = 1 保住前提为真。</p>
+            <p><strong>容易错：</strong>如果你取 P = 0，Q = 0，结论虽然假，但前提也假，这不是合格反例。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 4：主范式小题</h3>
+        <p>求 P ↔ Q 的主析取范式和主合取范式。</p>
+        <textarea data-note="d2q4" placeholder="先写真值为 1 的行和真值为 0 的行，再写两个范式。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>真值表思路：</strong>P ↔ Q 在 P、Q 同真或同假时为真，所以 1 行是 00 和 11；0 行是 01 和 10。</p>
+            <p><strong>主析取范式：</strong>(&not;P ∧ &not;Q) ∨ (P ∧ Q)。结果为 1 的行写极小项，00 对应 &not;P ∧ &not;Q，11 对应 P ∧ Q。</p>
+            <p><strong>主合取范式：</strong>(P ∨ &not;Q) ∧ (&not;P ∨ Q)。结果为 0 的行写极大项，01 对应 P ∨ &not;Q，10 对应 &not;P ∨ Q。</p>
+            <p><strong>记忆钩子：</strong>主析取看 1 行，主合取看 0 行；析取小项“照着写”，合取小项“反着写”。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 5：谓词翻译</h3>
+        <p>设 Student(x)：x 是学生；Course(y)：y 是课程；Take(x,y)：x 选修 y。翻译：“每个学生至少选修一门课程”。</p>
+        <textarea data-note="d2q5" placeholder="先写：每个学生是全称；至少一门课程是存在。量词顺序应该是谁在外？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>∀x(Student(x) -> ∃y(Course(y) ∧ Take(x,y)))。</p>
+            <p><strong>题眼：</strong>“每个学生”控制 x，所以最外层是 ∀x；“至少一门课程”是在每个学生确定后，为这个学生找一门课程，所以 ∃y 放在蕴涵后件里。</p>
+            <p><strong>为什么不是 ∃y∀x：</strong>∃y∀x 会变成“有一门固定课程，所有学生都选它”，意思变强了，和原句不同。</p>
+            <p><strong>为什么 Student(x) 后面用 ->：</strong>论域里可能有非学生对象。全称句“所有学生都...”通常写成 Student(x) -> 后面的性质。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 6：证明拼图</h3>
+        <p>目标：证明 A ∧ B -> B。请把下面四步按正确顺序写出来，并解释每一步为什么能接上。</p>
+        <ol>
+          <li>因此 B 成立。</li>
+          <li>由 A ∧ B 的含义可知 B 成立。</li>
+          <li>假设 A ∧ B 成立。</li>
+          <li>所以 A ∧ B -> B 成立。</li>
+        </ol>
+        <textarea data-note="d2q6" placeholder="写正确顺序，例如 3 -> ...，然后用人话解释为什么。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案顺序：</strong>3 -> 2 -> 1 -> 4。</p>
+            <p><strong>解析：</strong>目标是蕴涵 A ∧ B -> B，所以第一步假设前件 A ∧ B 成立。根据合取的含义，A ∧ B 成立说明 A 成立并且 B 成立，因此可以取出 B。于是从假设 A ∧ B 出发推出了 B，最后收束为 A ∧ B -> B 成立。</p>
+            <p><strong>你要学会的不是这题本身：</strong>它在训练“蕴涵证明的开头和收尾”。复杂证明的第一步和最后一步常常就是这么来的。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>8. 过关闸门：今天学到什么程度算可以</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>B 级：可以继续推进</strong>
+          你能不看表说出 6 类证明目标第一句；能用“前提全真结论假”解释语义蕴含和反例；能用真值表求 P ↔ Q 的主范式。
+        </div>
+        <div class="box">
+          <strong>A 级：可以接真题桥接</strong>
+          你能独立写出题 1 的语义蕴含证明、题 2 的编号式证明、题 5 的量词翻译，并能解释每一步为什么合法。
+        </div>
+      </div>
+      <textarea data-note="d2-summary" placeholder="闭眼复述：1. 全称/存在/蕴涵/等价/语义蕴含/反例分别怎么起手？2. 我今天最容易错的是？3. 明天需要回炉哪一题？"></textarea>
+      <p><a href="./day1_discrete_logic_proof.html">回到 Day1 离散基础地图</a> · <a href="./day3_discrete_equiv_normal_predicate.html">接离散 Day3 等值范式谓词</a> · <a href="./index.html">回到期末陪跑学习舱</a> · <a href="./day1_master_route.html">回到 Day1 总路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-discrete-day2-proof-notes";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const id = area.dataset.note;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

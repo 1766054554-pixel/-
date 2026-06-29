@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据库 Day5 考前速查与真题风味混合小测</title>
+  <style>
+    :root {
+      --bg: #f4f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #d9e2e7;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf4f6 0, rgba(244,247,248,0) 310px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.58;
+      margin: 10px 0;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    button {
+      border: 1px solid #b8d5e6;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      padding: 7px 11px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    button:hover { background: #eef7fc; }
+    .timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    .clock {
+      min-width: 72px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #fbfdfe;
+      color: var(--red);
+      text-align: center;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .checklist label {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .rubric, .checklist { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>数据库 Day5 考前速查与真题风味混合小测</h1>
+      <p class="muted">这页用来“临时抱佛脚但抱得准”。依据 2020 试卷、SQL1/SQL2 专题、Transaction and Recovery 题和前面 Day1-Day4 讲义，把数据库压成考前可调用的速查清单和 10 张真题风味题卡。</p>
+      <div class="strip">
+        <span class="pill hot">数据管理技术 6/22</span>
+        <span class="pill good">考前速查</span>
+        <span class="pill warn">真题风味变式</span>
+        <span class="pill purple">SQL / RA / 范式 / 事务 / ER</span>
+      </div>
+      <div class="toc">
+        <a href="#route">0. 怎么使用</a>
+        <a href="#last">1. 最后 90 分钟</a>
+        <a href="#signals">2. 题眼速查</a>
+        <a href="#drills">3. 混合小测</a>
+        <a href="#wrong">4. 错题回炉</a>
+        <a href="#gate">5. 考前闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 怎么使用：不是从头学，是把脑子调到考试模式</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>还有 4 小时以上</strong>
+          先回 <a href="./day4_database_full_exam_closure.html">Day4 全卷闭环</a> 做 8 张混合题，再用本页查漏补缺。
+        </div>
+        <div class="box">
+          <strong>只有 90 分钟</strong>
+          直接看本页“最后 90 分钟”和“题眼速查”，再挑 5 张题卡限时写骨架。
+        </div>
+        <div class="box">
+          <strong>考前 20 分钟</strong>
+          只看 SQL 顺序、全部/没有、候选键闭包、冲突图、Undo/Redo、ER 转关系模式的第一步。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>这页的原则：</strong>不追求每题写成满分论文，而是先保证你不会在题型识别上卡住。考试中最亏的是“其实学过，但第一步没反应出来”。
+      </div>
+    </section>
+
+    <section class="card" id="last">
+      <h2>1. 最后 90 分钟：按这个顺序抱</h2>
+      <table>
+        <thead><tr><th>时间</th><th>做什么</th><th>目标</th></tr></thead>
+        <tbody>
+          <tr><td>0-15 分钟</td><td>看 SQL 题眼：连接、分组、HAVING、全部/没有、最高/最早、插删改。</td><td>中文题干能翻译成 SQL 骨架。</td></tr>
+          <tr><td>15-25 分钟</td><td>看关系代数：选择 σ、投影 Π、连接 ⋈、差 −、除法 ÷。</td><td>遇到“全部/所有”能想到除法或双重 NOT EXISTS。</td></tr>
+          <tr><td>25-45 分钟</td><td>看范式：闭包、候选键、部分依赖、传递依赖、BCNF 分解。</td><td>能写候选键和分解第一步。</td></tr>
+          <tr><td>45-65 分钟</td><td>看事务：冲突边、优先图、2PL、严格 2PL、可恢复。</td><td>能从读写序列画边和判断有环。</td></tr>
+          <tr><td>65-78 分钟</td><td>看恢复：提交事务保留/重做，未提交事务撤销。</td><td>Undo/Redo 不乱。</td></tr>
+          <tr><td>78-90 分钟</td><td>看 ER：实体、属性、多值属性、弱实体/联系实体、M:N 拆表。</td><td>能把自然语言落成关系模式。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="signals">
+      <h2>2. 题眼速查：看到这些词，脑子立刻切模板</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>SQL：全部/所有/每一个</strong>
+          优先想两种写法：<code>GROUP BY ... HAVING COUNT(DISTINCT ...)=总数</code>，或双重 <code>NOT EXISTS</code>。如果是关系代数，优先想到除法。
+        </div>
+        <div class="box">
+          <strong>SQL：没有/从未/不学</strong>
+          想 <code>NOT EXISTS</code> 或差集。不要用 <code>!=</code> 硬写，因为“不等于某一行”不代表“不存在任何一行”。
+        </div>
+        <div class="box">
+          <strong>SQL：至少两门/三门以上</strong>
+          想 <code>GROUP BY 学生 HAVING COUNT(DISTINCT 课程)>=2/3</code>。如果题目要求姓名，最后回学生表。
+        </div>
+        <div class="box">
+          <strong>SQL：最高/最早/最多</strong>
+          想“先聚合得到 max/min/count，再回表取完整信息”。只写 <code>MAX</code> 通常拿不到姓名或完整元组。
+        </div>
+        <div class="box">
+          <strong>范式：主键是 AB，A->C</strong>
+          这是部分依赖信号：非主属性 C 依赖候选键的一部分 A，所以不满足 2NF。
+        </div>
+        <div class="box">
+          <strong>事务：读写交错</strong>
+          同一数据项、不同事务、至少一个写，就画冲突边。优先图有环就不是冲突可串行化。
+        </div>
+        <div class="box">
+          <strong>恢复：START 但无 COMMIT</strong>
+          这是未提交事务，崩溃后要撤销；有 COMMIT 的事务要保证结果保留，必要时重做。
+        </div>
+        <div class="box">
+          <strong>ER：一个客户多个电话</strong>
+          多值属性不要硬塞一个字段，通常单独建电话表：客户电话(客户ID, 电话)。
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="drills">
+      <h2>3. 混合小测：真题风味，不靠猜</h2>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 1：SQL “不学某人学过的课程”</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>表：S(S#, SNAME, AGE, SEX)，SC(S#, C#, GRADE)，C(C#, CNAME, TEACHER)。写 SQL：检索 WANG 同学不学的课程号和课程名。</p>
+        <textarea data-note="q1" placeholder="先写题眼：这是“没有/不学”，不是 C# != 某个课程号。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <pre>SELECT c.C#, c.CNAME
+FROM C AS c
+WHERE NOT EXISTS (
+  SELECT *
+  FROM S AS s, SC AS sc
+  WHERE s.S# = sc.S#
+    AND sc.C# = c.C#
+    AND s.SNAME = 'WANG'
+);</pre>
+          <div class="rubric"><span>题眼</span><span>“WANG 不学的课程”要对每一门课程问：是否不存在一条 WANG 选了这门课的记录。</span></div>
+          <div class="rubric"><span>坑</span><span>不能写 <code>sc.C# != c.C#</code>，因为只要 WANG 学过别的课，就会产生很多“不等于”行，逻辑会错。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 2：SQL “所有学生都选修的课程”</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>同样三张表。写 SQL：检索全部学生都选修的课程号与课程名。</p>
+        <textarea data-note="q2" placeholder="先写：这是“对所有学生成立”，可以双重 NOT EXISTS。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <pre>SELECT c.C#, c.CNAME
+FROM C AS c
+WHERE NOT EXISTS (
+  SELECT *
+  FROM S AS s
+  WHERE NOT EXISTS (
+    SELECT *
+    FROM SC AS sc
+    WHERE sc.S# = s.S#
+      AND sc.C# = c.C#
+  )
+);</pre>
+          <div class="rubric"><span>翻译</span><span>不存在一个学生，使得这个学生没有选这门课。双重否定就是“所有学生都选了”。</span></div>
+          <div class="rubric"><span>替代</span><span>如果无重修，也可按课程分组，要求选这门课的人数等于学生总数。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 3：SQL “成绩加分但不能超过 100”</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>把物理课成绩都加 20 分，但最终不能超过 100。假设课程表 C 中课程名为 CNAME，选课表 SC 中成绩为 GRADE。</p>
+        <textarea data-note="q3" placeholder="先写：可以用两个 UPDATE，先加分，再把超过 100 的压回 100。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <pre>UPDATE SC
+SET GRADE = GRADE + 20
+WHERE C# IN (
+  SELECT C#
+  FROM C
+  WHERE CNAME = '物理'
+);
+
+UPDATE SC
+SET GRADE = 100
+WHERE GRADE > 100
+  AND C# IN (
+    SELECT C#
+    FROM C
+    WHERE CNAME = '物理'
+  );</pre>
+          <div class="rubric"><span>题眼</span><span>“但不能超过 100”是边界条件。先加分后截断，是 SQL 专题里常见写法。</span></div>
+          <div class="rubric"><span>坑</span><span>第二句也要限定物理课，否则可能把别的课原本大于 100 的异常数据也改掉。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 4：关系代数 “演员参加全部剧目”</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>Actor(actor_id, name, year_born)，Play(play_id, title, author, year_written)，Role(actor_id, character_name, play_id)。写关系代数：找参加过所有剧目的演员姓名。</p>
+        <textarea data-note="q4" placeholder="先写：所有/全部 -> 除法；先得到演员-剧目，再除以所有剧目。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <pre>Π_name (
+  Actor ⋈ (
+    Π_actor_id, play_id(Role) ÷ Π_play_id(Play)
+  )
+)</pre>
+          <div class="rubric"><span>题眼</span><span>“所有剧目”是除法最典型信号。被除关系必须包含 actor_id 和 play_id，除数只包含 play_id。</span></div>
+          <div class="rubric"><span>步骤</span><span>先算出满足条件的 actor_id，再和 Actor 连接取 name。不要一开始就投影 name，否则除法需要的 actor_id 会丢。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 5：外键级联判断</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>Take_course(courseID REFERENCES Course(courseID) ON DELETE SET NULL, stuID REFERENCES Student(stuID) ON DELETE CASCADE)。判断：删除 Course 中某门课时，Take_course 中相关 courseID 可能被置 NULL；删除 Take_course 中一行会级联删除 Student 中的学生。</p>
+        <textarea data-note="q5" placeholder="先写：ON DELETE 是父表被删时对子表怎么办，不是删子表影响父表。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>第一句正确。</strong>Course 是父表，Take_course.courseID 是引用它的外键。删除 Course 中被引用的课程时，子表 Take_course 的 courseID 按 <code>ON DELETE SET NULL</code> 置空。</p>
+            <p><strong>第二句错误。</strong><code>ON DELETE CASCADE</code> 的方向是“父表 Student 被删 -> 子表 Take_course 相关行被删”，不是删除子表 Take_course 反过来删父表 Student。</p>
+          </div>
+          <div class="rubric"><span>口诀</span><span>外键动作看父表被删时，子表怎么办。不要把方向想反。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 6：2NF 部分依赖</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>R(A,B,C,D,E)，主键为 (A,B)，函数依赖有 (A,B)->CDE，A->C。判断 R 是否满足 2NF，并给出一个分解方向。</p>
+        <textarea data-note="q6" placeholder="先写：主键 AB，A 是主键的一部分，C 是非主属性。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <div class="answer-block">
+            <p>R 不满足 2NF。因为 C 是非主属性，却依赖于候选键 (A,B) 的真子集 A，即存在部分函数依赖 A->C。</p>
+            <p>分解方向：把部分依赖单独拿出来，可分为 R1(A,C) 和 R2(A,B,D,E)。R1 保存 A->C，R2 保存原主键对其他属性的依赖。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>组合主键 + 非主属性依赖主键一部分 = 违反 2NF。</span></div>
+          <div class="rubric"><span>别混</span><span>3NF 重点是传递依赖；BCNF 重点是每个非平凡 FD 的左边都必须是超键。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="10">
+        <h3>题 7：候选键与 BCNF</h3>
+        <div class="timer"><button type="button" class="start">开始 10 分钟</button><span class="clock">10:00</span></div>
+        <p>R(A,B,C,D,E,F)，函数依赖 F={A->BC, D->AF}。求候选键，并判断是否 BCNF。</p>
+        <textarea data-note="q7" placeholder="先写闭包：A+ 有什么？D+ 有什么？哪些属性没人推出？"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>候选键：</strong>D。因为 D->AF，A->BC，所以 D+ = {D,A,F,B,C}，再加上 D 自己，得到 A,B,C,D,F；注意 E 没有被任何依赖推出，所以所有候选键必须包含 E。于是 DE+ = {D,E,A,F,B,C}，覆盖全体属性，候选键是 DE。</p>
+            <p><strong>BCNF：</strong>不满足。A->BC 中 A 不是超键；D->AF 中 D 也不是超键，因为缺 E。因此违反 BCNF。</p>
+            <p><strong>分解方向：</strong>可先按 A->BC 分解为 R1(A,B,C) 和 R2(A,D,E,F)，再在 R2 中按 D->AF 分解为 R21(D,A,F) 和 R22(D,E)。</p>
+          </div>
+          <div class="rubric"><span>关键</span><span>E 没出现在任何右部，说明 E 不能被推出，候选键必须带 E。这是候选键题的高频隐藏点。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="10">
+        <h3>题 8：冲突可串行化</h3>
+        <div class="timer"><button type="button" class="start">开始 10 分钟</button><span class="clock">10:00</span></div>
+        <p>调度：R1(A), W1(A), R2(A), R2(B), R1(B), W1(B)。判断是否冲突可串行化，并说明理由。</p>
+        <textarea data-note="q8" placeholder="先列同一数据项上的冲突：A 上谁先写谁后读？B 上谁先读谁后写？"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <div class="answer-block">
+            <p>A 上有 W1(A) 在 R2(A) 前，得到边 T1 -> T2。B 上有 R2(B) 在 W1(B) 前，得到边 T2 -> T1。优先图出现环 T1 -> T2 -> T1，因此该调度不是冲突可串行化。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>同一数据项、不同事务、至少一个写，才画冲突边。</span></div>
+          <div class="rubric"><span>步骤</span><span>先按数据项分组看 A、B，不要按整串从左到右乱扫。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="10">
+        <h3>题 9：恢复 Undo / Redo</h3>
+        <div class="timer"><button type="button" class="start">开始 10 分钟</button><span class="clock">10:00</span></div>
+        <p>日志：&lt;START T&gt; &lt;T,A,10,11&gt; &lt;START U&gt; &lt;U,B,20,21&gt; &lt;T,C,30,31&gt; &lt;U,D,40,41&gt; &lt;COMMIT U&gt;，随后崩溃。恢复时 T 和 U 分别怎么处理？</p>
+        <textarea data-note="q9" placeholder="先写：谁提交了？谁没提交？提交保留/重做，未提交撤销。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <div class="answer-block">
+            <p>U 有 COMMIT，是已提交事务，恢复后应保证它的修改 B:20->21、D:40->41 生效；如果数据库页还没落盘，就需要 redo。</p>
+            <p>T 没有 COMMIT，是未提交事务，恢复后不能保留它的修改，应撤销 A:10->11、C:30->31，把 A、C 恢复到旧值 10、30。</p>
+          </div>
+          <div class="rubric"><span>核心</span><span>恢复题先分 winner/loser：有 COMMIT 是 winner，无 COMMIT 是 loser。</span></div>
+          <div class="rubric"><span>别乱</span><span>不要被 old/new value 绕晕。未提交用 old value 撤销，已提交用 new value 保证结果。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="12">
+        <h3>题 10：银行 ER 到关系模式</h3>
+        <div class="timer"><button type="button" class="start">开始 12 分钟</button><span class="clock">12:00</span></div>
+        <p>银行系统：客户有身份证、姓名、一个或多个电话、职业；账户由账号和所属支行标识，有余额和账户类型；一个账户属于一个或多个客户，一个客户可有多个账户；账户属于且只属于一个支行；员工属于一个支行；员工可作为多个客户的联系人，每个客户至多一个联系人。给出关系模式骨架。</p>
+        <textarea data-note="q10" placeholder="先圈实体：客户、账户、支行、员工；再处理多值电话和 M:N 客户-账户。"></textarea>
+        <details>
+          <summary>答案与解析</summary>
+          <pre>客户(客户ID, 姓名, 职业, 联系员工ID)
+客户电话(客户ID, 电话)
+支行(支行代码, 地址, 员工数)
+员工(员工ID, 姓名, 工资, 支行代码)
+账户(支行代码, 账号, 余额, 账户类型)
+拥有账户(客户ID, 支行代码, 账号)</pre>
+          <div class="rubric"><span>多值属性</span><span>一个客户多个电话，拆成 客户电话(客户ID, 电话)，不要在客户表里写 电话1/电话2。</span></div>
+          <div class="rubric"><span>M:N</span><span>客户和账户是多对多，必须建中间表 拥有账户。</span></div>
+          <div class="rubric"><span>联系员工</span><span>每个客户至多一个联系人，所以可在客户表放 联系员工ID；员工可联系多个客户。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="wrong">
+      <h2>4. 错题回炉：把错误改成考场动作</h2>
+      <p>每做错一题，不写“我粗心”。写下面三句：</p>
+      <div class="formula">1. 我把题眼看成了什么？
+2. 正确题眼应该是什么？
+3. 下次看到哪个信号，我第一步做什么？</div>
+      <textarea data-note="wrong" placeholder="例：我把“不学”错看成 !=；正确题眼是不存在选课记录；下次看到“没有/不学/从未”，先写 NOT EXISTS。"></textarea>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>5. 考前闸门：能勾这些，数据库才算真进入可考状态</h2>
+      <div class="checklist">
+        <label><input type="checkbox" data-check="sql-order"> SQL 能按 FROM/JOIN -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY 解释。</label>
+        <label><input type="checkbox" data-check="all-none"> “全部/所有/没有/从未”能分别想到双重 NOT EXISTS、计数法或除法/差集。</label>
+        <label><input type="checkbox" data-check="ra"> 关系代数能认出 σ、Π、⋈、−、÷，并知道最外层通常投影输出列。</label>
+        <label><input type="checkbox" data-check="fd"> 候选键会算闭包，知道“右边从未出现的属性必须带上”。</label>
+        <label><input type="checkbox" data-check="normal"> 2NF/3NF/BCNF 的题眼能区分：部分依赖、传递依赖、左边不是超键。</label>
+        <label><input type="checkbox" data-check="txn"> 事务题会画冲突边，有环就不是冲突可串行化。</label>
+        <label><input type="checkbox" data-check="recovery"> 恢复题会先分已提交和未提交，知道 redo/undo 的对象。</label>
+        <label><input type="checkbox" data-check="er"> ER 题能先圈实体、属性、联系、多重性，再转关系模式。</label>
+      </div>
+      <div class="mark">
+        <strong>下一步：</strong>如果这 8 项能勾 6 项以上，数据库就进入真题/错题回炉阶段；如果少于 6 项，先回 Day4 或本页对应题卡补第一反应。
+      </div>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day4_database_full_exam_closure.html">回数据库 Day4 全卷闭环</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-db-day5-exam-sprint";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const id = area.dataset.note;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+    document.querySelectorAll("input[data-check]").forEach(input => {
+      const id = "check:" + input.dataset.check;
+      input.checked = Boolean(saved[id]);
+      input.addEventListener("change", () => {
+        saved[id] = input.checked;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+
+    const timers = new Map();
+    document.querySelectorAll(".drill").forEach((card, index) => {
+      const button = card.querySelector(".start");
+      const clock = card.querySelector(".clock");
+      const minutes = Number(card.dataset.minutes || "7");
+      let total = minutes * 60;
+      const render = () => {
+        const m = String(Math.floor(total / 60)).padStart(2, "0");
+        const s = String(total % 60).padStart(2, "0");
+        clock.textContent = `${m}:${s}`;
+      };
+      button.addEventListener("click", () => {
+        if (timers.has(index)) {
+          clearInterval(timers.get(index));
+          timers.delete(index);
+          total = minutes * 60;
+          render();
+          button.textContent = `开始 ${minutes} 分钟`;
+          return;
+        }
+        button.textContent = "重置计时";
+        render();
+        const id = setInterval(() => {
+          total -= 1;
+          if (total <= 0) {
+            total = 0;
+            render();
+            clearInterval(id);
+            timers.delete(index);
+            button.textContent = `重新开始 ${minutes} 分钟`;
+            clock.textContent = "到点";
+            return;
+          }
+          render();
+        }, 1000);
+        timers.set(index, id);
+      });
+      render();
+    });
+  </script>
+</body>
+</html>

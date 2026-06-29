@@ -1,0 +1,126 @@
+/* Shared local math display style for the finals study pack.
+   The goal is readable textbook-like equations without relying on network MathJax. */
+.math-card {
+  border: 1px solid #cdddeb;
+  border-radius: 8px;
+  background: #f7fbff;
+  padding: 14px 16px;
+  margin: 14px 0;
+}
+
+.math-card .eq,
+.display-eq {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  padding: 3px 2px 6px;
+  color: #101923;
+  font-family: "STIX Two Math", "Cambria Math", "Times New Roman", "Songti SC", serif !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.math-card .eq {
+  font-family: "STIX Two Math", "Cambria Math", "Times New Roman", "Songti SC", serif !important;
+}
+
+.display-eq.is-large {
+  font-size: 22px !important;
+}
+
+.display-eq .mi,
+.display-eq .var,
+.display-eq var {
+  font-style: italic;
+}
+
+.display-eq .mb {
+  font-style: italic;
+  font-weight: 800;
+}
+
+.display-eq .op {
+  padding: 0 0.24em;
+  font-style: normal;
+}
+
+.display-eq .func {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.display-eq sub,
+.display-eq sup {
+  font-size: 0.56em;
+  line-height: 0;
+}
+
+.display-eq .frac {
+  display: inline-grid;
+  grid-template-rows: auto auto;
+  vertical-align: middle;
+  margin: 0 0.12em;
+  text-align: center;
+  font-size: 0.86em;
+}
+
+.display-eq .frac > span:first-child {
+  border-bottom: 1.7px solid currentColor;
+  padding: 0 0.2em 0.04em;
+}
+
+.display-eq .frac > span:last-child {
+  padding: 0.04em 0.2em 0;
+}
+
+.display-eq .sum {
+  display: inline-grid;
+  grid-template-rows: 0.65em 1.2em 0.65em;
+  align-items: center;
+  justify-items: center;
+  vertical-align: middle;
+  margin: 0 0.18em;
+  line-height: 1;
+}
+
+.display-eq .sum .top,
+.display-eq .sum .bot {
+  font-size: 0.42em;
+  font-style: italic;
+}
+
+.display-eq .sum .sym {
+  font-size: 1.35em;
+  line-height: 1;
+}
+
+.display-eq .sqrt {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.03em;
+}
+
+.display-eq .sqrt .radicand {
+  border-top: 1.7px solid currentColor;
+  padding: 0 0.12em 0 0.08em;
+}
+
+.display-eq .bracket {
+  display: inline-block;
+  padding: 0 0.04em;
+  transform: scaleY(1.12);
+}
+
+.math-note {
+  color: #5e6f82;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.math-card ul {
+  margin-top: 8px;
+}

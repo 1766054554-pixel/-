@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>期末考点覆盖控制板</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 275px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    .muted { color: var(--muted); }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .strip, .toc, .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 10px 0 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .key {
+      display: inline;
+      border-radius: 5px;
+      background: linear-gradient(180deg, rgba(255,249,230,0) 48%, #fff1a8 48%);
+      color: #10202d;
+      font-weight: 760;
+      padding: 0 2px;
+    }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+    .done { background: #eaf7f0; color: var(--green); border: 1px solid #a7d8bf; }
+    .partial { background: #fff7da; color: var(--yellow); border: 1px solid #dcc682; }
+    .todo { background: #fff2ef; color: var(--red); border: 1px solid #e5b3ad; }
+    .path {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 10px;
+    }
+    .path > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+    }
+    .path .label {
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+    }
+    @media (max-width: 920px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .path { grid-template-columns: 1fr; }
+      .toc a, .links a, .pill { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>期末考点覆盖控制板</h1>
+      <p class="muted">这页不是今天必须读完的新讲义。它用来盯住“资料有没有继续读、考点有没有覆盖、学习舱有没有放错难度”。你正常学习仍然按 Day 主线走；这页是我后续生产讲义和题卡时的检查表。</p>
+      <div class="strip">
+        <span class="pill hot">作用：防漏考点</span>
+        <span class="pill info">不占 Day 编号</span>
+        <span class="pill good">新增内容要少而准</span>
+        <span class="pill warn">题目必须先教再考</span>
+      </div>
+      <div class="toc">
+        <a href="./index.html">回学习舱</a>
+        <a href="./exam_scope_master_map.html">考试总地图</a>
+        <a href="./source_coverage_audit.html">资料覆盖台账</a>
+        <a href="./db_2023a_full_interactive.html">数据库 2023A 整卷</a>
+        <a href="./ai_reference_final_interactive.html">AI 综合交互卷</a>
+        <a href="./se_official_final_interactive.html">软工综合交互卷</a>
+        <a href="./day2_master_route.html">Day2 总路线</a>
+        <a href="#principle">怎么用</a>
+        <a href="#sources">资料核查</a>
+        <a href="#coverage">全科覆盖</a>
+        <a href="#db">数据库题型雷达</a>
+        <a href="#se">软工题型雷达</a>
+        <a href="#ai">AI 细化雷达</a>
+        <a href="#ai-types">AI 五类题型</a>
+        <a href="#governance">AI 去重规则</a>
+        <a href="#quality">题目质量</a>
+        <a href="#next">下一批</a>
+      </div>
+    </section>
+
+    <section class="card" id="principle">
+      <h2>0. 怎么用：你不用背这页，我用它防止路线跑偏</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>你今天怎么用</strong>
+          Day2 标准包仍然是：数据库 SQL 连接/嵌套、AI 模型故事线、AI 机器学习题卡、软工 2020 三图、离散证明入口。你只需要知道这页存在，卡住时看“为什么今天不学某些东西”。
+        </div>
+        <div class="box">
+          <strong>我后续怎么用</strong>
+          每做 Day3/Day4/Day5 以后内容，都先查这页：有没有资料依据，是否和考试题型有关，是否重复，是否出现“还没讲就出题”的问题。
+        </div>
+        <div class="box">
+          <strong>新增量原则</strong>
+          标准包不再无脑加厚。新增文件优先补<span class="key">覆盖缺口</span>和<span class="key">卡点解释</span>，不为了好看而堆页面。
+        </div>
+        <div class="box">
+          <strong>学习舱与讲义分工</strong>
+          讲义负责从零讲透；学习舱负责快速唤醒、题眼训练和错题回炉。两边可以出现同一个关键词，但不能重复一整段长讲解。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>本轮已经修正：</strong>主页 AI 零基础板块不再先问 AdaBoost 权重更新，而是改成“有标签数据预测是否及格”这种监督学习/分类入门题；数据库 Day1 已补关系代数符号识字课，明确 σ、Π、×、⋈、∪、−、÷、ρ 在试卷上会长什么样；软工 Day5 已把单选、多选、判断补成正式题风格题卡；新增 <a href="./source_coverage_audit.html">资料覆盖审计台账</a>、<a href="./db_2023a_full_interactive.html">数据库 2023A 整卷交互</a>、<a href="./ai_reference_final_interactive.html">AI 综合交互卷</a>、<a href="./se_official_final_interactive.html">软工综合交互卷</a> 和 <a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>，把“资料读过”和“整卷练过”分开验收。
+      </div>
+    </section>
+
+    <section class="card" id="sources">
+      <h2>1. 资料核查：哪些已经进入讲义，哪些还要继续读</h2>
+      <table>
+        <thead>
+          <tr><th>科目</th><th>已确认使用</th><th>仍需继续核查</th><th>后续处理</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>数据库</td>
+            <td>数据管理技术笔记、期末复习大题、2023A 卷、SQL/事务/恢复相关往年资料，已写入 SQL、关系代数、范式、事务、恢复、ER。Day1 已补关系代数符号识字课，避免只会读 sigma/pi 不认识卷面符号；2023A 已单独做成 <a href="./db_2023a_full_interactive.html">整卷交互练习</a>。</td>
+            <td>继续抽查更多往年 SQL/事务题，确认是否有触发器、视图、完整性约束等边角高频；抽查状态统一写入 <a href="./source_coverage_audit.html">资料覆盖台账</a>。</td>
+            <td><span class="status done">主线较完整</span> Day3-Day6 已有闭环，2023A 已整卷化；后面优先做错题回炉、半套模拟和考前速查。</td>
+          </tr>
+          <tr>
+            <td>AI</td>
+            <td>参考习题 15 页已渲染，理论 md、lab md、复习.pdf、笔记.pdf、课程 PPT 第2-14讲已具备文本抽取条件；课程总结、Transformer/RL/生成式 PPT 线索已进入 Day1-Day5；已新增 <a href="./ai_reference_final_interactive.html">AI 参考习题综合交互卷</a>。</td>
+            <td>参考习题 PDF 和《人工智能导论：模型与算法》仍需继续按重点页查漏；信号处理边界仍需结合复习笔记再核查。</td>
+            <td><span class="status partial">整套入口已补</span> 后续不继续堆同类 AI 大课，重点做错题回炉、变式题和公式/模型解释润色。</td>
+          </tr>
+          <tr>
+            <td>软工</td>
+            <td>十讲合集、画图题 PDF、2020 上机、期末试题及部分 PPT、myPPT 需求/设计/测试内容，已写入画图、纸质开卷索引、用例/类图/顺序图/测试。画图题 PDF 作为复习来源已命中用例图 34-35 页、系统/组件顺序图 38-42 页、概念/设计类图 49-52 和 95 页、活动图 102-112 页；测试笔记第 2 页命中白盒覆盖、等价类和边界值。</td>
+            <td>6/18 正式通知已发布：题型为单选、多选、判断、简答、综合；平台为希冀 + CodeArts Modeling；可带材料仅限纸质 PPT、与 PPT 装订的个人笔记和指定教材。Day5 已按五类题型补概念边界、客观题专项、简答模板和综合题 UML 建模分流；已新增 <a href="./se_official_final_interactive.html">软工官方五类题型综合交互卷</a>。</td>
+            <td><span class="status done">公告已接入</span> 画图、纸质索引、客观题、简答题、综合题分流和第一版整套交互已形成。</td>
+          </tr>
+          <tr>
+            <td>离散</td>
+            <td>离散1 md、定义必须背、总复习、2022/2020/2019/2018 往年题、用户贴出的 2024 参考卷，已写入命题/谓词/范式/证明入口/前束 Skolem/公理证明、Day5 2024 分块、<a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> 和 <a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>。</td>
+            <td>还要继续把 2016/2014/2013/2012 等更老往年题按“定义、语义、范式、证明骨架”抽样拆成可迁移题型，补完全集、公理系统、归结等边角。</td>
+            <td><span class="status done">整套入口已补</span> Day1/Day2 不整卷，Day7 闸门达到 7/10 后再进入混合限时。</td>
+          </tr>
+          <tr>
+            <td>军理/马原</td>
+            <td>目前仅列入低成本开卷/关键词策略。</td>
+            <td>后续需要在理工科主线稳定后整理关键词索引和材料题框架。</td>
+            <td><span class="status todo">后置处理</span> 不抢数据库、AI、软工、离散主时间。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>诚实边界：</strong>“已进入讲义”不等于所有 PDF 每一页都已完全消化。后续新增内容会继续写进资料使用记录，并优先补“可能考试但目前讲义薄”的部分。
+      </div>
+    </section>
+
+    <section class="card" id="coverage">
+      <h2>2. 全科覆盖：从 6.16 到各科考试前怎么补齐</h2>
+      <table>
+        <thead>
+          <tr><th>科目</th><th>已完成的正式主线</th><th>接下来必须稳住</th><th>考前闭环</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>数据库 6.22</td>
+            <td>Day1 SQL 从零；Day2 连接/嵌套；Day3 范式事务 ER；Day4 全卷闭环；Day5 考前速查；<a href="./day6_database_final_rehearsal.html">Day6 最后排雷</a>；<a href="./db_2023a_full_interactive.html">2023A 整卷交互</a>。</td>
+            <td>SQL、关系代数、范式、事务恢复、ER 之间混合切换。重点不是再看新词，而是看到题干能 10 秒分流。</td>
+            <td>最后两天按 2023A 原卷结构做一轮限时骨架，再用 Day6 错题回炉补漏洞。</td>
+          </tr>
+          <tr>
+            <td>AI 6.23</td>
+            <td>Day1 概念地基；Day2 模型故事线和参考习题题卡；Day3 公式模型；Day4 无监督/强化；Day5 混合小测。</td>
+            <td>补 CNN/Transformer/生成模型/信号处理的“题眼和一句话答案”，同时防止公式只会背不会解释。</td>
+            <td>考前用 <a href="./ai_reference_final_interactive.html">AI 综合交互卷</a> 完成五类题型混排，再只保留公式解释、模型对比、参考习题错题、典型小计算。</td>
+          </tr>
+          <tr>
+            <td>软工 6.25</td>
+            <td>Day1 画图从零；Day2 2020 三图；Day3 纸质开卷索引；Day4 同题干图型分流；Day5 官方五类题型闭环。</td>
+            <td>按正式五类题型覆盖需求、设计、测试、故障/错误/失效、软件过程模型和项目管理对象；Git/前后端/云平台只作为可能背景。</td>
+            <td>考前用 <a href="./se_official_final_interactive.html">软工综合交互卷</a> 过一遍五类题型，再只看纸质开卷索引、图形模板、测试题模板、五类题型对照表和 CodeArts 检查项。</td>
+          </tr>
+          <tr>
+            <td>离散 6.28</td>
+            <td>Day1 命题/谓词/证明第一句；Day2 证明入口；Day3 等值/范式/谓词；Day4 前束/Skolem/公理证明；Day5 2024 分块桥接；<a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>；<a href="./day7_discrete_final_recall.html">Day7 最终速查</a>；<a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>。</td>
+            <td>定义和公式要背牢，证明要从“目标识别 -> 可用定义/定理 -> 第一行 -> 骨架”训练；重点练语义证明、反例构造、量词顺序和公理证明起手。</td>
+            <td>集中突破 4-6 类证明骨架；Day7 勾到 7/10 后，用真题混合卷按前 70 分 + 证明 30 分完整练手。</td>
+          </tr>
+          <tr>
+            <td>军理/马原</td>
+            <td>暂不展开大讲义。</td>
+            <td>理工科考前不抢主时间，等靠近考试整理关键词和材料题框架。</td>
+            <td>开卷定位、关键词、材料题三段式。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="db">
+      <h2>2.3 数据库题型雷达：大题之外还有选择和判断</h2>
+      <p class="muted">数据库 6/22 最近，本雷达只用于考前查漏，不新增日常学习负担。2023A 参考卷和 2020 卷证明：数据库不仅考 SQL、事务、范式、ER，也会用选择/判断考索引、授权、触发器、外键级联、ACID/BASE 等概念边界。</p>
+      <table>
+        <thead><tr><th>卷面形态</th><th>高频信号</th><th>训练入口</th><th>过关标准</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>选择/多选</td>
+            <td>联合索引、ACID/CAP/BASE、授权传播、触发器、关系代数等价、2NF/3NF/BCNF 概念。</td>
+            <td><a href="./day6_database_final_rehearsal.html#objective">Day6 客观题排雷</a></td>
+            <td>能说出为什么错项错，例如“普通 SELECT 权限不等于可传播权限”。</td>
+          </tr>
+          <tr>
+            <td>判断题</td>
+            <td>外键 <code>ON DELETE SET NULL/CASCADE</code> 的方向、父表/子表删除、插入不存在父元组。</td>
+            <td><a href="./day5_database_exam_sprint.html#drills">Day5 外键级联题</a>、<a href="./day6_database_final_rehearsal.html#objective">Day6 排雷</a></td>
+            <td>能画出“子表外键引用父表主键”，并按父表被删时子表动作判断。</td>
+          </tr>
+          <tr>
+            <td>SQL 大题</td>
+            <td>全部/没有/每组最高/插删改/视图/授权。</td>
+            <td><a href="./day5_database_exam_sprint.html#drills">Day5 混合小测</a>、<a href="./day6_database_final_rehearsal.html#mock">Day6 半套模拟</a></td>
+            <td>能先写题眼和 SQL 骨架，不把全称查询写成普通 JOIN。</td>
+          </tr>
+          <tr>
+            <td>后半大题</td>
+            <td>事务调度、2PL、Undo/Redo、候选键、BCNF 分解、保持依赖、无损连接、ER 转关系模式。</td>
+            <td><a href="./day4_database_full_exam_closure.html">Day4 全卷闭环</a>、<a href="./day6_database_final_rehearsal.html#past">Day6 往年题矩阵</a></td>
+            <td>能先分题型，再调用对应第一步：冲突图/锁时间线/日志状态/属性闭包/实体联系。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>本轮新增检查：</strong>Day6 已补“客观题排雷”，把 2023A 的联合索引、授权、触发器和 2020 的外键级联判断显性接入考前路线。
+      </div>
+    </section>
+
+    <section class="card" id="se">
+      <h2>2.5 软工题型雷达：正式卷面要先长这样</h2>
+      <p class="muted">这块专门回应“为什么没看到软工选择/判断训练”。以后软工不只按画图推进，还要按 6/18 官方五类题型验收。主页只做叫醒，Day5 负责正式题风格训练，Day6 负责上场彩排。</p>
+      <table>
+        <thead>
+          <tr><th>正式题型</th><th>卷面会怎么问</th><th>当前训练入口</th><th>过关标准</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>单选题</td>
+            <td>问“不属于”“最适合”“核心任务”，例如不属于软件过程模型、某阶段不该产出什么。</td>
+            <td><a href="./day5_se_official_types_closure.html#drills">Day5 题 1、题 3A、题 3E、题 3F</a></td>
+            <td>能先写类别边界，再排除干扰项，不靠眼熟。</td>
+          </tr>
+          <tr>
+            <td>多选题</td>
+            <td>把同类概念和混入项放一起，例如项目管理对象、黑盒测试方法。</td>
+            <td><a href="./day5_se_official_types_closure.html#drills">Day5 题 2、题 3C</a></td>
+            <td>逐项判断；能说明“判定覆盖/路径覆盖为什么不是黑盒”。</td>
+          </tr>
+          <tr>
+            <td>判断题</td>
+            <td>用“一定、只要、核心任务是”等绝对说法考概念边界，例如故障是否必然导致失效。</td>
+            <td><a href="./day5_se_official_types_closure.html#drills">Day5 题 3、题 3B、题 3D</a></td>
+            <td>能把绝对词改成严谨说法：可能导致、主要关注、通常依据。</td>
+          </tr>
+          <tr>
+            <td>简答题</td>
+            <td>要求定义、区别、关系和例子，例如故障、错误、失效。</td>
+            <td><a href="./day5_se_official_types_closure.html#short">Day5 简答模板</a>、<a href="./day6_se_final_codearts_rehearsal.html#short">Day6 简答闸门</a></td>
+            <td>不能只列三个名词；要写传播链和一个业务例子。</td>
+          </tr>
+          <tr>
+            <td>综合题</td>
+            <td>给案例材料，拆需求分析与建模、系统概要设计、详细设计，可能要求 CodeArts Modeling 作图。</td>
+            <td><a href="./day4_se_diagram_microclass.html">Day4 同题干画图</a>、<a href="./day5_se_official_types_closure.html#comprehensive">Day5 分层</a>、<a href="./day6_se_final_codearts_rehearsal.html#case">Day6 案例彩排</a></td>
+            <td>先判断层次，再选图；不把所有小问都画成类图。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>历史上机内容处理：</strong>2020 卷里的 Git、Vue、Flask 选择题只做低优先保温。除非老师再明确提示，否则它们不抢过程模型、需求/设计/测试、UML 综合题这条主线。
+      </div>
+    </section>
+
+    <section class="card" id="ai">
+      <h2>3. AI 细化雷达：把“很多名词”变成一条考试路线</h2>
+      <p class="muted">这部分是专门回应“AI 零基础跟不上”和“资料会不会漏”的问题。正常 Day2 仍然只学模型故事线和机器学习题卡；如果你觉得名词散、公式不知道怎么用，打开 <a href="./ai_exam_storyline_master_map.html">AI 考试总纲与模型故事线</a> 当导航；如果担心 PPT 覆盖漏项，查 <a href="./ai_lecture_coverage_map.html">AI 讲次覆盖地图</a>，不把它们当今天新任务。</p>
+      <div class="mark warnbox" id="ai-types">
+        <strong>先按卷面题型分流：</strong>AI 已知题型是选择、填空、计算、简答和综合，且无需计算器。所以复习目标不是“背完所有模型名”，而是看到题先判断它要你做哪种动作。
+      </div>
+      <table>
+        <thead>
+          <tr><th>正式题型</th><th>卷面会怎么问</th><th>第一动作</th><th>当前训练入口</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>选择/填空</td>
+            <td>给模型名、性质、适用场景或容易混的说法，问概念边界。</td>
+            <td>先归类：监督/无监督/强化，回归/分类，判别/生成，再逐项排除。</td>
+            <td><a href="./day5_ai_exam_sprint_mixed.html#ref-triage">Day5 参考题眼闯关</a>、<a href="./day7_ai_teacher_summary_final.html#types">Day7 题型雷达</a></td>
+          </tr>
+          <tr>
+            <td>计算题</td>
+            <td>信息熵/信息增益、卷积乘加、Precision/Recall、Q-learning 一步更新、线性回归损失或梯度方向。</td>
+            <td>先写公式里每个量是什么，再代小数；无需计算器意味着数值通常不会太刁钻。</td>
+            <td><a href="./day5_ai_exam_sprint_mixed.html#formulas">Day5 公式默写</a>、<a href="./day7_ai_teacher_summary_final.html#formulas">Day7 必会动作表</a></td>
+          </tr>
+          <tr>
+            <td>简答题</td>
+            <td>解释模型原理、优缺点、为什么这样设计、和相邻模型有什么区别。</td>
+            <td>按“定义 -> 原理 -> 优缺点/适用场景 -> 易混点”写，别只写一句模型名。</td>
+            <td><a href="./day5_ai_exam_sprint_mixed.html#compare">Day5 模型比较</a>、<a href="./day7_ai_teacher_summary_final.html#drills">Day7 终局题卡</a></td>
+          </tr>
+          <tr>
+            <td>综合题</td>
+            <td>同时给场景、曲线、表格或模型名，让你判断问题、计算指标、解释模型并给建议。</td>
+            <td>拆四层：任务层、模型层、证据层、建议层；先分流再展开。</td>
+            <td><a href="./day5_ai_exam_sprint_mixed.html#mixed-router">Day5 混合题拆法</a>、<a href="./ai_lecture_coverage_map.html#reference-pages">AI 参考习题覆盖图</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr><th>AI 板块</th><th>资料信号</th><th>目前承接页</th><th>状态</th><th>考试化处理</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>任务类型与基本词</td>
+            <td>理论 md、复习资料、参考习题概念题。</td>
+            <td><a href="./day1_ai_se_visual.html">Day1 AI 从零</a>、主页 AI 零基础地图。</td>
+            <td><span class="status done">已讲</span></td>
+            <td>分类/回归/监督/无监督/强化先会分，题目只问入门判断，不提前考复杂算法。</td>
+          </tr>
+          <tr>
+            <td>线性回归、逻辑回归、LDA、SVM</td>
+            <td>理论 md、复习资料、PPT 第2-4讲、参考习题。</td>
+            <td><a href="./day2_ai_model_storyline.html">Day2 模型故事线</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式模型闭环</a>、<a href="./ai_exam_storyline_master_map.html">AI 总纲</a>。</td>
+            <td><span class="status done">已补总纲</span></td>
+            <td>公式不只列，要会说输入、输出、参数、损失或目标函数、题干信号；总纲页已把线性/逻辑回归、信息增益、AdaBoost、Attention、Q-learning 放进“公式动作表”。</td>
+          </tr>
+          <tr>
+            <td>决策树、熵、信息增益、AdaBoost</td>
+            <td>参考习题第3-6页、PPT 第5讲、理论 md。</td>
+            <td><a href="./day2_ai_reference_ml_cards.html">AI 机器学习题卡</a>、<a href="./day2_ai_model_storyline.html">模型故事线</a>。</td>
+            <td><span class="status partial">已入题卡</span></td>
+            <td>先讲“为什么要选划分/为什么给错分样本加权”，再做表格小计算和权重更新。</td>
+          </tr>
+          <tr>
+            <td>训练流程、数据划分、过拟合、正则、指标</td>
+            <td>理论 md、lab md、参考习题误差曲线和指标题。</td>
+            <td><a href="./day3_ai_formula_model_closure.html">Day3 公式模型闭环</a>、<a href="./day5_ai_exam_sprint_mixed.html">Day5 混合小测</a>。</td>
+            <td><span class="status partial">要加高亮总结</span></td>
+            <td>题眼包括训练集/验证集/测试集、过拟合、类别不均衡、Precision/Recall/F1。</td>
+          </tr>
+          <tr>
+            <td>BP、前馈神经网络、梯度下降、sigmoid、LSTM</td>
+            <td>参考习题第6-8页、PPT 第6讲、理论和题卡。</td>
+            <td><a href="./day2_ai_reference_nn_cards.html">AI 神经网络题卡</a>、<a href="./tips_ai_visual_model_masterclass.html">AI 图解 Tips</a>。</td>
+            <td><span class="status partial">需减少术语堆叠</span></td>
+            <td>把前向传播、损失、反向传播、参数更新讲成流程；LSTM 只抓门控和长期依赖。</td>
+          </tr>
+          <tr>
+            <td>CNN、ResNet、ViT、Attention、Transformer/BERT/GPT</td>
+            <td>lab md、PPT 第7-9讲、Transformer 渲染页。</td>
+            <td><a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a>、<a href="./tips_ai_visual_model_masterclass.html">AI 图解 Tips</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式模型闭环</a>。</td>
+            <td><span class="status done">已补桥接</span></td>
+            <td>已按考试高频补卷积/池化/残差、ViT patch、Q/K/V、自注意力、BERT/GPT 区别；后续只做错题和变式，不再扩大范围。</td>
+          </tr>
+          <tr>
+            <td>AE、VAE、GAN、Diffusion</td>
+            <td>lab md、PPT 第10-11讲、课程总结、参考习题 GAN。</td>
+            <td><a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a>、<a href="./day5_ai_exam_sprint_mixed.html">AI Day5 混合小测</a>。</td>
+            <td><span class="status done">已补短讲</span></td>
+            <td>已补模型目的、训练信号、优缺点和典型问法：AE 重构、VAE 重参数化/KL、GAN 对抗、Diffusion 预测噪声。</td>
+          </tr>
+          <tr>
+            <td>无监督学习、PCA、EM、强化学习、Q-learning/Sarsa</td>
+            <td>参考习题第9-14页、PPT 第12-13讲、RL 渲染页。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html">AI Day4 无监督与强化学习</a>。</td>
+            <td><span class="status done">主线已建</span></td>
+            <td>考试小计算主要是 K-means/PCA/样本方差/Q-learning 一步更新，简答抓状态、动作、奖励、策略、V/Q。</td>
+          </tr>
+          <tr>
+            <td>信号处理基础</td>
+            <td>期末复习笔记里有信号能量/功率、卷积、傅里叶等。</td>
+            <td>主页已有“信号处理公式速记”模块。</td>
+            <td><span class="status partial">低频但不能漏</span></td>
+            <td>若考试确认覆盖，做关键词索引和极简公式题；否则只保留速查。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="path">
+        <div class="label">Day2</div>
+        <div>只学 AI 模型故事线 + 机器学习题卡。目标是知道 LDA、熵、SVM、AdaBoost、BP 这些词分别在解决什么问题，不要求一次吃完深度学习全家桶。</div>
+        <div class="label">Day3</div>
+        <div>用公式模型闭环把线性回归、逻辑回归、SVM、信息增益、指标、Attention、Q-learning 的符号解释清楚。若模型之间串不起来，先用 <a href="./ai_exam_storyline_master_map.html">AI 总纲</a> 看大图，再回 Day3 做题卡。</div>
+        <div class="label">Day4-Day5</div>
+        <div>无监督/强化学习 + <a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a> + AI 混合小测。目标是让 CNN/Transformer/生成模型不再只是名词，而能写出题眼、机制和简答模板。</div>
+        <div class="label">考前</div>
+        <div>只留公式默写、模型比较表、参考习题错题和小计算。不会再新增大块正课。</div>
+      </div>
+    </section>
+
+    <section class="card" id="governance">
+      <h2>4. AI 去重规则：先把现有内容打磨成路线，不继续堆同类模块</h2>
+      <p class="muted">本轮审查结论：AI 内容不是少，而是层级容易混。后续新增必须先判断能否合并进现有 Day 讲义或学习舱模块，不能再随手开一个“看起来很有用”的新页面。</p>
+      <table>
+        <thead><tr><th>层级</th><th>保留用途</th><th>你什么时候看</th><th>后续怎么改</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Day 正课</td>
+            <td>从零讲新知识、公式、模型主线和完整例题。</td>
+            <td>按每日任务顺序看，例如 Day2 先模型故事线，再机器学习题卡。</td>
+            <td>新讲解优先融合进对应 Day 页；如果只是补一个新词，就加入词典/例题，不新开页。</td>
+          </tr>
+          <tr>
+            <td>参考习题题卡</td>
+            <td>把参考习题 PDF 拆成可作答题卡，练题眼、步骤、解析和变式。</td>
+            <td>学完对应概念后看，不直接从整页截图开始刷。</td>
+            <td>继续逐页抽题，但每题必须有“为什么这样想”和干扰项排除。</td>
+          </tr>
+          <tr>
+            <td>学习舱 AI 板块</td>
+            <td>叫醒知识：题眼、第一步、模型分流、错题回炉。</td>
+            <td>讲义看完后做，用来检验能不能换问法反应。</td>
+            <td>删掉纯复述题，保留有迁移压力的题；长讲解不复制讲义，只给反应链和错因。</td>
+          </tr>
+          <tr>
+            <td>AI 总纲</td>
+            <td>导航和查漏，不承担当天学习量。</td>
+            <td>你迷路、忘了某模型属于哪条线时查。</td>
+            <td>不再扩写成第二套主讲义，只维护路线、词典和覆盖检查。</td>
+          </tr>
+          <tr>
+            <td>Tips</td>
+            <td>公式读法、模型图解、题干分流补课。</td>
+            <td>公式/图/名词卡住时回看，状态好才加做。</td>
+            <td>只做辅助，不进入 Day 编号；若某段内容变成必学，就迁回 Day 正课。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>后续生产硬规则：</strong>AI 新内容先问三件事：是不是考试范围里的缺口？能否放进现有 Day 页？学习舱是否已有同类叫醒题？只有三问都过，才允许新增独立文件。
+      </div>
+    </section>
+
+    <section class="card" id="quality">
+      <h2>5. 题目质量闸门：以后不再用“看起来像题”的水题</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>好题必须有来源感</strong>
+          题目要贴近参考习题、往年题、PPT 总结或老师公告范围。不能考页面元信息、分值记忆、工具使用说明这类和期末能力无关的东西。
+        </div>
+        <div class="box">
+          <strong>好题必须先铺垫</strong>
+          如果题目涉及 AdaBoost、Q-learning、Skolem、用例 include/extend，前面必须先有概念、流程、题眼和一个可模仿例子。
+        </div>
+        <div class="box">
+          <strong>好解析不能只有一句话</strong>
+          标准解析要包含：题眼、第一反应、完整步骤、为什么其他选项错、下次遇到什么信号该这么做。
+        </div>
+        <div class="box">
+          <strong>好题要能迁移</strong>
+          同一知识点至少要有一种变式：换题干、换表格、换图、换问法。目标是考试稍微拐弯也能反应。
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>题型</th><th>合格形式</th><th>不合格形式</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>AI 入门题</td>
+            <td>给有标签/无标签/奖励反馈场景，让你判断学习范式并说理由。</td>
+            <td>还没讲算法流程就直接问权重怎么更新。</td>
+          </tr>
+          <tr>
+            <td>数据库 SQL 题</td>
+            <td>给表结构和中文需求，要求写题眼、来源表、连接桥、条件和 SQL 骨架。</td>
+            <td>只问某份资料第几页、第几部分多少分。</td>
+          </tr>
+          <tr>
+            <td>软工画图题</td>
+            <td>给真实场景，要求先圈角色、动作、对象、状态，再决定图类型和元素。</td>
+            <td>只让背图名，或者放一张图但不解释每条线为什么存在。</td>
+          </tr>
+          <tr>
+            <td>离散证明题</td>
+            <td>先判断目标类型，再写第一句、可用定义/定理、证明骨架和反例可能性。</td>
+            <td>一上来整张卷，基础概念没补齐就要求独立证明。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="next">
+      <h2>6. 下一批稳步推进：少量新增，优先补最有价值的洞</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>AI：先有总图，再做变式</strong>
+          <a href="./ai_exam_storyline_master_map.html">AI 考试总纲与模型故事线</a>用于串联大纲、模型家族、公式动作和题型路由；<a href="./ai_lecture_coverage_map.html">AI 讲次覆盖地图</a>用于核查第 2-14 讲 PPT 是否被承接；<a href="./ai_deep_generation_exam_bridge.html">AI 深度学习与生成模型考点桥接</a>用于补后半模型；<a href="./ai_reference_final_interactive.html">AI 综合交互卷</a>用于 6/22 晚完整练手。下一步只做错题回炉、变式题和信号处理边界核查，不再把一堆公式直接扔给你。
+        </div>
+        <div class="box">
+          <strong>软工：公告已接入，按五类题型走</strong>
+          现在不再只看画图。先用 <a href="./day5_se_official_types_closure.html#drills">Day5 客观题专项</a>练单选、多选、判断，再用 <a href="./se_official_final_interactive.html">软工综合交互卷</a>把需求分析、概要设计、详细设计、测试和 CodeArts Modeling 接起来。Git/Vue/Flask 只做低优先保温。
+        </div>
+        <div class="box">
+          <strong>离散：证明骨架加固</strong>
+          <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>已补 2020/2022 高频证明专项；<a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>已补前 70 分和证明 30 分整套练手。使用顺序仍然是先 Day5-Day7，再整卷，不提前压人。
+        </div>
+      </div>
+      <div class="mark">
+        <strong>给 6/20-6/22 的实际建议：</strong>现在不再重开 Day2。6/20 以数据库 Day4 全卷混合闭环为主，补关系代数符号和 SQL/范式/事务分流；6/21-6/22 上午只做数据库 Day5/Day6 收口、<a href="./db_2023a_full_interactive.html">2023A 整卷骨架</a>和错题回炉。AI 卡住时回 <a href="./day2_ai_model_storyline.html">模型故事线</a> 或 <a href="./day5_ai_exam_sprint_mixed.html#ref-triage">参考题眼闯关</a>，软工只保温 <a href="./day5_se_official_types_closure.html#drills">客观题 1-3G</a>，不要让其他科抢数据库临考主时间。
+      </div>
+    </section>
+  </main>
+</body>
+</html>

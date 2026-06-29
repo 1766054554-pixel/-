@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>软工官方五类题型综合交互卷：客观题、简答、案例建模、CodeArts</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #647383;
+      --line: #dbe5ee;
+      --blue: #1f6fa8;
+      --green: #1c7b55;
+      --red: #b43b33;
+      --amber: #a86a16;
+      --soft: #eef6fc;
+      --cream: #fff8ed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #eef4f8 0%, #f8fbfd 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 26px 18px 76px; }
+    .hero, .card {
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 12px 34px rgba(32, 54, 76, .08);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { margin: 8px 0 10px; font-size: clamp(28px, 4vw, 44px); line-height: 1.14; }
+    h2 { margin: 0 0 12px; font-size: 25px; }
+    h3 { margin: 16px 0 8px; font-size: 20px; }
+    p { margin: 8px 0; }
+    .muted { color: var(--muted); }
+    .strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; padding: 6px 10px;
+      background: var(--soft); color: #31566f; font-weight: 900; font-size: 13px;
+      border: 1px solid #d7e5ef;
+    }
+    .hot { background: #fff0ed; color: var(--red); border-color: #f4c6be; }
+    .good { background: #effaf4; color: var(--green); border-color: #bfe4cc; }
+    .warn { background: #fff7e8; color: var(--amber); border-color: #f0d59f; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .toc a, .btn {
+      color: var(--blue); text-decoration: none; font-weight: 900;
+      background: #eef7ff; border: 1px solid #cfe3f4; border-radius: 8px; padding: 8px 10px;
+      cursor: pointer;
+    }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.ghost { background: #fff; }
+    .key {
+      font-weight: 900;
+      color: #14364c;
+      background: linear-gradient(transparent 58%, #fff1aa 58%);
+      padding: 0 2px;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #f3f8fb;
+      border: 1px solid #dce7ef;
+      border-radius: 6px;
+      padding: 1px 5px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; }
+    .box, .panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fbfe;
+      padding: 14px;
+    }
+    .box strong { display: block; color: #244b64; margin-bottom: 6px; }
+    .question {
+      border: 1px solid #dce7ef;
+      background: #fcfeff;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .question h3 { margin-top: 0; }
+    .options { display: grid; gap: 7px; margin: 10px 0; }
+    label.option {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+    }
+    label.option input { margin-top: 6px; }
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #dce7ef;
+      background: #f6fbff;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { border-color: #bfe4cc; background: #effaf4; }
+    .feedback.bad { border-color: #f2c2ba; background: #fff2ef; }
+    textarea {
+      width: 100%;
+      min-height: 116px;
+      resize: vertical;
+      border: 1px solid #cfdde8;
+      border-radius: 10px;
+      padding: 12px;
+      font: 15px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, "Microsoft YaHei", monospace;
+      color: #18232e;
+      background: #fbfdff;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    summary { cursor: pointer; color: #244a63; font-weight: 900; }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 10px; margin: 10px 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; }
+    th { background: #eaf3fa; color: #244a63; text-align: left; }
+    tr:nth-child(even) td { background: #fbfdff; }
+    .rubric {
+      background: var(--cream);
+      border: 1px solid #efd6a9;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .scorebar {
+      position: sticky;
+      bottom: 12px;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #cfe0ec;
+      border-radius: 12px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 10px 30px rgba(26, 50, 74, .14);
+      padding: 10px 12px;
+      margin-top: 18px;
+    }
+    .mini { font-size: 13px; color: var(--muted); }
+    @media (max-width: 920px) {
+      main { padding: 16px 10px 56px; }
+      .hero, .card { padding: 18px; }
+      .grid, .split { grid-template-columns: 1fr; }
+      .scorebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="strip">
+      <span class="pill hot">软工 6/25 考前整套</span>
+      <span class="pill good">官方五类题型</span>
+      <span class="pill warn">CodeArts Modeling</span>
+    </div>
+    <h1>软工官方五类题型综合交互卷</h1>
+    <p class="muted">这页用于 AI 考后、软工考前：把官方通知里的单选、多选、判断、简答、综合题合成一套练习。它不替代 Day1-Day6 讲义，而是帮你确认自己能不能把知识用到卷面上。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./source_coverage_audit.html">资料覆盖台账</a>
+      <a href="./day5_se_official_types_closure.html">Day5 官方五类题型</a>
+      <a href="./day6_se_final_codearts_rehearsal.html">Day6 CodeArts 彩排</a>
+      <a href="#objective">一、客观题</a>
+      <a href="#short">二、简答题</a>
+      <a href="#case-course">三、选课系统案例</a>
+      <a href="#case-inventory">四、库存系统图题</a>
+      <a href="#codearts">五、CodeArts 检查</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>0. 考场总路线：30 分卷，先分层再作答</h2>
+    <div class="grid">
+      <div class="box"><strong>单选</strong>找“不属于”“最适合”“核心任务”。先抓限定词。</div>
+      <div class="box"><strong>多选</strong>逐项判定同类概念，别被熟词骗。</div>
+      <div class="box"><strong>判断</strong>警惕“一定、只要、总是、核心就是”。</div>
+      <div class="box"><strong>简答</strong>定义 + 区别 + 关系/例子，别写散词。</div>
+      <div class="box"><strong>综合</strong>需求、概要、详细、测试分层，不把所有题都画成类图。</div>
+    </div>
+    <div class="rubric">
+      <strong>使用时机：</strong>6/24 或 6/25 考前使用。救火版只做客观题 + 简答 1/2 + 选课系统用例图；标准版做完整页；冲分版再把自己的纸质 PPT 边注补齐。
+    </div>
+  </section>
+
+  <section class="card" id="objective">
+    <h2>一、客观题闸门：官方样题风格 + 老题保温</h2>
+    <p class="muted">题目故意混合过程模型、项目管理、需求/设计层次、测试、UML 和 CodeArts 约束。解析会告诉你为什么其它项不选。</p>
+    <div id="mcqBox"></div>
+    <button class="btn primary" id="checkMcq">检查客观题</button>
+    <button class="btn ghost" id="resetMcq">清空选择</button>
+    <div class="panel" id="mcqScore">还没检查。</div>
+  </section>
+
+  <section class="card" id="short">
+    <h2>二、简答题：三段式写法，不要只写关键词</h2>
+    <div class="question">
+      <h3>1. 简述故障、错误、失效三者的区别与关系。</h3>
+      <textarea data-save="se-final-short-1" placeholder="先写：故障是什么，错误是什么，失效是什么；再写故障可能导致错误，错误可能导致失效。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>故障是软件制品中存在的不正确描述或实现，可出现在代码、模型、文档、需求说明中。错误是含有故障的程序运行时产生的不正确内部状态。失效是软件对外表现为不能提供规定功能或行为。</p>
+        <p><span class="key">关系：</span>故障可能在特定输入或环境下触发错误，错误传播到系统边界后可能表现为失效，但不是每个故障都一定导致失效。</p>
+        <p><strong>例子：</strong>条件判断写反是故障；运行时变量状态错误是错误；用户看到错误结果是失效。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. 比较瀑布、增量、螺旋模型的适用场景。</h3>
+      <textarea data-save="se-final-short-2" placeholder="先写：需求稳定 -> 瀑布；分批交付 -> 增量；高风险/不确定 -> 螺旋。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>瀑布模型：</strong>适合需求稳定、阶段边界清晰、文档和评审要求高的项目。</p>
+        <p><strong>增量模型：</strong>适合总体方向明确，但希望先交付核心功能，再逐步扩展的项目。</p>
+        <p><strong>螺旋模型：</strong>适合规模大、技术风险高、需求不确定的项目，因为它强调每轮迭代中的风险分析和原型验证。</p>
+        <p><strong>题眼：</strong>“需求稳定”想瀑布；“分批交付”想增量；“风险高、新技术、不确定”想螺旋。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>3. 黑盒测试和白盒测试有什么区别？各举方法。</h3>
+      <textarea data-save="se-final-short-3" placeholder="先写：黑盒看需求输入输出；白盒看内部结构路径。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>黑盒测试依据需求规格和输入输出行为设计测试，不关心程序内部实现，常用等价类划分、边界值分析、错误推测、因果图、场景分析。</p>
+        <p>白盒测试依据程序内部控制结构、分支和路径设计测试，常用语句覆盖、判定覆盖、条件覆盖、路径覆盖、基本路径测试。</p>
+        <p><strong>迁移：</strong>给输入规则就先想黑盒；给代码或控制流图才想白盒。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>4. 需求分析、概要设计、详细设计分别交什么产物？</h3>
+      <textarea data-save="se-final-short-4" placeholder="先写：需求回答做什么；概要回答系统分成哪些块；详细回答对象/方法怎么协作。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <table>
+          <thead><tr><th>层次</th><th>回答什么</th><th>典型产物</th></tr></thead>
+          <tbody>
+            <tr><td>需求分析</td><td>系统要为谁做什么，业务概念是什么。</td><td>用例图、系统顺序图、操作合约、概念类图、需求规格说明。</td></tr>
+            <tr><td>概要设计</td><td>系统分成哪些模块/组件，接口和依赖怎样组织。</td><td>组件图、包图、架构图、接口说明。</td></tr>
+            <tr><td>详细设计</td><td>对象、类、方法、状态和消息如何实现某个功能。</td><td>设计类图、设计顺序图、状态图、活动图、方法流程。</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="case-course">
+    <h2>三、综合题 1：选课管理系统（12/13 级老题风格）</h2>
+    <div class="panel">
+      <p><strong>材料：</strong>学生可以查询新学期开设课程和授课教师，可以进行课程注册，可以查询成绩单；教务管理员维护教师、学生、课程信息，也可以开启/关闭课程注册；教师可以查询开设课程和选课学生，可以登记成绩单；所有用户登录后才能使用系统。课程注册开启后，学生进入课程注册，获得课程目录，每名学生最多选 3 门选修课，每门课人数不超过 30 人、不少于 5 人，选课期间允许试听和改变已注册课程，关闭后形成最终结果。</p>
+    </div>
+    <div class="question">
+      <h3>1. 画用例图前，先列参与者、用例和系统边界。</h3>
+      <textarea data-save="se-final-course-1" placeholder="先写参与者：学生、教师、教务管理员；用例：查询课程、课程注册、查询成绩、维护信息、开启/关闭注册、登记成绩等。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>参与者：</strong>学生、教师、教务管理员。可以抽象出“用户”作为泛化父参与者，关联登录、修改密码等公共用例。</p>
+        <p><strong>学生用例：</strong>登录、查询课程与教师、课程注册、查询成绩单、试听/改选课程。</p>
+        <p><strong>教师用例：</strong>登录、查询开设课程、查询选课学生、登记成绩单。</p>
+        <p><strong>教务管理员用例：</strong>维护教师/学生/课程信息、开启课程注册、关闭课程注册、发布最终结果。</p>
+        <p><strong>系统边界：</strong>所有用例在“选课管理系统”边界内，参与者在边界外。课程、成绩单、教师信息是业务对象，不是参与者。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. 写“课程注册”的事件流。</h3>
+      <textarea data-save="se-final-course-2" placeholder="按基本流/备选流写：前置条件、主成功场景、异常/备选。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>前置条件：</strong>教务管理员已开启课程注册；学生已登录。</p>
+        <p><strong>主成功场景：</strong>学生进入课程注册；系统显示课程目录；学生查看课程信息、开课教师和选课条件；学生选择不超过 3 门课程；系统检查是否满足条件、人数上限和时间规则；系统保存注册结果；学生可查询当前选课结果。</p>
+        <p><strong>备选流：</strong>若课程人数已达 30 人，系统拒绝并提示人数已满；若学生已选 3 门，系统拒绝继续选择；若教务管理员关闭注册，学生不能再改选；若课程最终人数低于 5 人，课程取消并通知学生。</p>
+        <p><strong>得分点：</strong>事件流不是一句“学生选课”。要体现前置条件、系统响应、约束和异常。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>3. 用等价类划分法设计登录用户名测试。</h3>
+      <p>用户名由英文字母和数字组成，长度 8-12 位，不能仅有字母，也不能仅有数字，也不能有其它字符。</p>
+      <textarea data-save="se-final-course-3" placeholder="先列有效等价类和无效等价类，再给代表测试用例。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <table>
+          <thead><tr><th>类别</th><th>代表输入</th><th>预期</th></tr></thead>
+          <tbody>
+            <tr><td>有效：8-12 位，字母数字混合</td><td>abc12345</td><td>通过</td></tr>
+            <tr><td>无效：长度小于 8</td><td>a123456</td><td>拒绝</td></tr>
+            <tr><td>无效：长度大于 12</td><td>abc1234567890</td><td>拒绝</td></tr>
+            <tr><td>无效：仅字母</td><td>abcdefgh</td><td>拒绝</td></tr>
+            <tr><td>无效：仅数字</td><td>12345678</td><td>拒绝</td></tr>
+            <tr><td>无效：含非英文字母/数字</td><td>abc123_45</td><td>拒绝</td></tr>
+          </tbody>
+        </table>
+        <p><strong>边界补强：</strong>长度 8 和 12 是有效边界；7 和 13 是无效边界。考试如果要求边界值分析，要把这些也写出来。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="case-inventory">
+    <h2>四、综合题 2：库存管理系统（14 级老题风格）</h2>
+    <div class="panel">
+      <p><strong>材料：</strong>公司由计划部、采购部、销售部、库存部组成。计划部制定库存计划，包括库存品种及上下限；采购部根据库存制定采购计划并采购；销售部根据库存制定出货单；库存部根据采购单入库、根据出货单出库；商品入出库和数量更新记入商品流通表；低于下限时系统通知计划部采购；系统有部门权限管理和工作人员注册，管理员负责授权和注册。</p>
+    </div>
+    <div class="question">
+      <h3>1. 如果要求用例图和类图，你的第一步是什么？</h3>
+      <textarea data-save="se-final-inv-1" placeholder="先写：用例图列部门/管理员和功能；类图抽商品、库存计划、采购单、出货单、流通记录、工作人员等。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>用例图：</strong>参与者包括计划部人员、采购部人员、销售部人员、库存部人员、系统管理员。主要用例：制定库存计划、制定采购计划、采购商品、制定出货单、商品入库、商品出库、记录流通、库存预警通知、工作人员注册、权限授权。</p>
+        <p><strong>类图：</strong>候选类包括商品、库存计划、采购计划/采购单、出货单、库存记录、商品流通记录、部门、工作人员、权限、系统管理员。关系要标多重性，例如一个库存计划包含多个商品品种；一个商品可对应多条流通记录。</p>
+        <p><strong>扣分坑：</strong>部门可以作为参与者或组织概念，但类图里更常落为 Department/Staff/Permission 等业务类；不要只列部门不列单据和流通记录。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. 如果要求状态图和顺序图，应该选哪个对象和哪个场景？</h3>
+      <textarea data-save="se-final-inv-2" placeholder="先写：状态图选商品/库存项/采购单/出货单；顺序图选库存低于下限触发采购或商品入库/出库流程。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>状态图：</strong>先选一个有生命周期的对象。可选“库存项”状态：正常、低于下限、待采购、已补货；也可选“采购单”状态：草拟、已提交、已审批、已采购、已入库、关闭。</p>
+        <p><strong>顺序图：</strong>先选一个具体场景，例如“库存低于下限自动通知计划部并生成采购计划”。生命线可包括库存监控、库存记录、通知服务、计划部人员、采购计划。消息按时间写：更新库存 -> 检查上下限 -> 发现低于下限 -> 创建通知 -> 计划部查看 -> 制定采购计划。</p>
+        <p><strong>得分点：</strong>状态图回答一个对象如何随事件变化；顺序图回答一次业务流程里对象/组件如何按时间交互。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="codearts">
+    <h2>五、CodeArts Modeling 上场检查</h2>
+    <div class="split">
+      <div class="panel">
+        <h3>画图前 60 秒</h3>
+        <p>先在草稿里列三列：<span class="key">参与者/对象</span>、<span class="key">功能/消息/状态</span>、<span class="key">约束/多重性</span>。别打开工具就乱拖图形。</p>
+        <p>题干问“需求分析”先用例图、系统顺序图、概念类图；问“概要设计”先组件/包/接口；问“详细设计”再设计类图、设计顺序图、状态图。</p>
+      </div>
+      <div class="panel">
+        <h3>提交前 5 分钟</h3>
+        <p>检查图名、系统边界、参与者位置、箭头方向、多重性、消息顺序、状态转换触发事件、文字说明是否齐全。</p>
+        <p>只使用 CodeArts Modeling。不要打开 CodeArts 代码库、云盘、微信、编程辅助工具或其它外部材料。</p>
+      </div>
+    </div>
+    <div class="question">
+      <h3>把你的纸质开卷边注压缩成 6 行</h3>
+      <textarea data-save="se-final-paper-index" placeholder="例：过程模型 -> 稳定/分批/风险；测试 -> 黑盒输入输出/白盒结构路径；综合 -> 需求/概要/详细/测试四层……"></textarea>
+      <details>
+        <summary>展开推荐边注</summary>
+        <p>过程模型：瀑布=需求稳定；增量=分批交付；螺旋=风险分析；敏捷=快速反馈。</p>
+        <p>项目管理对象：过程、产品、人员；CodeArts 工作项：Epic/Feature/Story/Task/Bug。</p>
+        <p>测试：黑盒=等价类/边界值/错误推测/因果图/场景；白盒=语句/判定/条件/路径/基本路径。</p>
+        <p>需求：参与者、用例、系统边界、操作合约、概念类图。</p>
+        <p>概要：组件、包、架构、接口、依赖。</p>
+        <p>详细：设计类、方法、对象消息、状态、活动。</p>
+      </details>
+    </div>
+    <div class="rubric">
+      <strong>最低闸门：</strong>客观题 10/14 以上；四道简答至少能写两段；选课系统能列参与者/用例/事件流/等价类；库存系统能判断图类型和对象；能把纸质边注压到 6 行。
+    </div>
+  </section>
+
+  <div class="scorebar">
+    <div>
+      <strong id="progressText">主观题草稿保存：0 项</strong>
+      <div class="mini">客观题自动判分；综合题请先写“第一步”，再展开答案。</div>
+    </div>
+    <div>
+      <button class="btn primary" id="saveAll">保存当前草稿</button>
+      <button class="btn ghost" id="clearDrafts">清空本页草稿</button>
+    </div>
+  </div>
+</main>
+
+<script>
+  const mcq = [
+    {
+      id: "q1",
+      title: "以下哪个选项不属于软件过程模型？",
+      options: { A: "瀑布模型", B: "面向对象模型", C: "增量模型", D: "螺旋模型" },
+      answer: ["B"],
+      explain: "瀑布、增量、螺旋描述软件开发过程如何组织。面向对象是分析、设计和编程方法，不是过程模型。"
+    },
+    {
+      id: "q2",
+      title: "下面哪些属于软件项目管理的对象？",
+      options: { A: "过程管理", B: "人员管理", C: "产品管理", D: "对象管理" },
+      answer: ["A", "B", "C"],
+      explain: "项目管理通常围绕过程、产品和人员展开。对象管理容易和面向对象概念混淆，不是这里的标准对象。"
+    },
+    {
+      id: "q3",
+      title: "下面哪些通常属于黑盒测试方法？",
+      options: { A: "等价类划分", B: "边界值分析", C: "基本路径覆盖", D: "因果图分析" },
+      answer: ["A", "B", "D"],
+      explain: "黑盒看输入输出和需求规格；基本路径覆盖要看程序控制流，是白盒测试。"
+    },
+    {
+      id: "q4",
+      title: "判断：概要设计的核心任务是确定模块内部算法和局部数据结构。",
+      options: { A: "正确", B: "错误" },
+      answer: ["B"],
+      explain: "概要设计关注系统结构、组件/模块划分和接口；模块内部算法、数据结构和对象协作更偏详细设计。"
+    },
+    {
+      id: "q5",
+      title: "需求分析阶段最不应该直接产出的是：",
+      options: { A: "用例图", B: "需求规格说明", C: "概念类图", D: "模块内部算法伪代码" },
+      answer: ["D"],
+      explain: "需求阶段回答系统应做什么和业务概念是什么；算法伪代码是设计/实现细节。"
+    },
+    {
+      id: "q6",
+      title: "判断：软件制品中存在故障时，系统运行时一定会表现为失效。",
+      options: { A: "正确", B: "错误" },
+      answer: ["B"],
+      explain: "故障可能导致错误，错误可能导致失效，但故障不一定被触发，也不一定传播到用户可见的失效。"
+    },
+    {
+      id: "q7",
+      title: "某项目需求不清、技术风险高，需要多轮风险分析和原型验证，优先考虑：",
+      options: { A: "瀑布模型", B: "螺旋模型", C: "一次性编码", D: "完全不做需求分析" },
+      answer: ["B"],
+      explain: "螺旋模型的强信号是风险分析、原型验证和迭代推进。"
+    },
+    {
+      id: "q8",
+      title: "模块按照概要设计要求组装成子系统，重点发现模块接口问题，属于：",
+      options: { A: "单元测试", B: "集成测试", C: "确认测试", D: "回归测试" },
+      answer: ["B"],
+      explain: "集成测试关注模块组装和接口协作；确认测试关注是否满足用户需求。"
+    },
+    {
+      id: "q9",
+      title: "用例图中最不应该直接作为参与者的是：",
+      options: { A: "学生", B: "教师", C: "管理员", D: "课程" },
+      answer: ["D"],
+      explain: "参与者是系统外部与系统交互的人或外部系统。课程是业务对象，通常进入类图/概念模型。"
+    },
+    {
+      id: "q10",
+      title: "include 与 extend 的判断，哪项更稳？",
+      options: { A: "必做公共步骤用 include，可选/异常扩展用 extend", B: "include 一定表示继承", C: "extend 一定表示数据库外键", D: "两者方向和语义完全相同" },
+      answer: ["A"],
+      explain: "include 表示基础用例必然包含的公共子用例；extend 表示在特定条件下发生的可选/异常扩展。"
+    },
+    {
+      id: "q11",
+      title: "题干强调“一个对象随事件在待确认、已预约、已取消之间变化”，优先画：",
+      options: { A: "状态图", B: "用例图", C: "部署图", D: "ER 图" },
+      answer: ["A"],
+      explain: "状态图回答一个对象生命周期中有哪些状态、事件如何触发状态变化。"
+    },
+    {
+      id: "q12",
+      title: "题干要求“学生查询课程安排时，界面、服务、数据对象之间按时间发送消息”，优先画：",
+      options: { A: "设计顺序图", B: "用例图", C: "状态图", D: "甘特图" },
+      answer: ["A"],
+      explain: "按时间顺序描述对象/组件之间消息交互，就是顺序图；若展开内部对象，就是设计顺序图。"
+    },
+    {
+      id: "q13",
+      title: "关于 CodeArts Modeling 考试约束，哪项正确？",
+      options: { A: "只使用 Modeling 作图", B: "可以打开 CodeArts 代码库查资料", C: "可以用云盘传文件", D: "可以用任意编程辅助工具" },
+      answer: ["A"],
+      explain: "正式通知强调希冀 + CodeArts Modeling，禁止使用其它工具和 CodeArts 其它组件。"
+    },
+    {
+      id: "q14",
+      title: "下面哪些通常属于白盒测试覆盖准则？",
+      options: { A: "语句覆盖", B: "判定/分支覆盖", C: "条件覆盖", D: "等价类划分" },
+      answer: ["A", "B", "C"],
+      explain: "白盒测试看程序内部结构和执行路径，常见准则包括语句覆盖、判定/分支覆盖、条件覆盖、路径覆盖、基本路径测试。等价类划分依据输入域和规格说明，是黑盒测试方法。"
+    }
+  ];
+
+  const box = document.getElementById("mcqBox");
+  box.innerHTML = mcq.map((q, idx) => `
+    <div class="question" data-q="${q.id}">
+      <h3>${idx + 1}. ${q.title}</h3>
+      <div class="options">
+        ${Object.entries(q.options).map(([k, v]) => `
+          <label class="option">
+            <input type="checkbox" name="${q.id}" value="${k}">
+            <span><strong>${k}.</strong> ${v}</span>
+          </label>
+        `).join("")}
+      </div>
+      <div class="feedback" id="${q.id}-feedback"></div>
+    </div>
+  `).join("");
+
+  function sameSet(a, b) {
+    return a.length === b.length && a.every(x => b.includes(x));
+  }
+  document.getElementById("checkMcq").addEventListener("click", () => {
+    let correct = 0;
+    mcq.forEach(q => {
+      const picked = [...document.querySelectorAll(`input[name="${q.id}"]:checked`)].map(x => x.value).sort();
+      const answer = [...q.answer].sort();
+      const ok = sameSet(picked, answer);
+      if (ok) correct += 1;
+      const fb = document.getElementById(`${q.id}-feedback`);
+      fb.className = `feedback show ${ok ? "ok" : "bad"}`;
+      fb.innerHTML = `<strong>${ok ? "答对了" : "需要回炉"}：</strong>正确答案 ${answer.join("")}。<br>${q.explain}`;
+    });
+    document.getElementById("mcqScore").innerHTML = `<strong>客观题：</strong>${correct}/14。${correct < 10 ? "低于 10 题，先回 Day5 客观题专项，不要直接硬画综合题。" : "可以进入简答和案例建模了。"}`
+  });
+  document.getElementById("resetMcq").addEventListener("click", () => {
+    document.querySelectorAll("#mcqBox input[type='checkbox']").forEach(x => x.checked = false);
+    document.querySelectorAll(".feedback").forEach(x => {
+      x.className = "feedback";
+      x.innerHTML = "";
+    });
+    document.getElementById("mcqScore").textContent = "已清空选择。";
+  });
+
+  const areas = [...document.querySelectorAll("textarea[data-save]")];
+  function updateProgress() {
+    const filled = areas.filter(a => a.value.trim()).length;
+    document.getElementById("progressText").textContent = `主观题草稿保存：${filled}/${areas.length} 项`;
+  }
+  areas.forEach(area => {
+    area.value = localStorage.getItem(area.dataset.save) || "";
+    area.addEventListener("input", () => {
+      localStorage.setItem(area.dataset.save, area.value);
+      updateProgress();
+    });
+  });
+  updateProgress();
+  document.getElementById("saveAll").addEventListener("click", () => {
+    areas.forEach(area => localStorage.setItem(area.dataset.save, area.value));
+    updateProgress();
+  });
+  document.getElementById("clearDrafts").addEventListener("click", () => {
+    if (!confirm("确认清空本页主观题草稿吗？")) return;
+    areas.forEach(area => {
+      localStorage.removeItem(area.dataset.save);
+      area.value = "";
+    });
+    updateProgress();
+  });
+</script>
+</body>
+</html>

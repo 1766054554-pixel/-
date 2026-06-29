@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据库老卷边角排雷：符号、语法坑、客观题盲区</title>
+  <style>
+    :root {
+      --ink: #172331;
+      --muted: #637183;
+      --bg: #f3f7fa;
+      --paper: #ffffff;
+      --line: #d8e3eb;
+      --blue: #1d6798;
+      --green: #26734f;
+      --red: #ac4037;
+      --amber: #9b6814;
+      --soft-blue: #eaf5fb;
+      --soft-green: #eff8f3;
+      --soft-red: #fff1ef;
+      --soft-amber: #fff7e6;
+      --shadow: 0 14px 34px rgba(23, 35, 49, .09);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(29,103,152,.10), transparent 360px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+    }
+    main { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 28px 0 60px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.24; letter-spacing: 0; }
+    h1 { font-size: clamp(30px, 4.2vw, 48px); }
+    h2 { font-size: 25px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    h3 { font-size: 19px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); font-weight: 800; text-decoration: none; }
+    .hero, .card, .q-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+    }
+    .hero { padding: 30px; margin-bottom: 18px; }
+    .card { padding: 24px; margin: 18px 0; }
+    .muted { color: var(--muted); }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 11px;
+      background: #fff;
+      color: var(--blue);
+      font-weight: 850;
+      font-size: 14px;
+      margin: 0 8px 8px 0;
+    }
+    .pill.hot { color: var(--red); background: var(--soft-red); border-color: #eab9b2; }
+    .pill.good { color: var(--green); background: var(--soft-green); border-color: #b9ddc5; }
+    .pill.warn { color: var(--amber); background: var(--soft-amber); border-color: #ebd09c; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .toc a { border-radius: 9px; }
+    .focus {
+      font-weight: 900;
+      color: #5b400a;
+      background: linear-gradient(transparent 58%, rgba(255,212,91,.62) 58%);
+      padding: 0 3px;
+    }
+    .key { color: var(--blue); font-weight: 900; }
+    .danger-text { color: var(--red); font-weight: 900; }
+    .note {
+      border-left: 5px solid var(--blue);
+      background: var(--soft-blue);
+      border-radius: 10px;
+      padding: 13px 15px;
+      margin: 14px 0;
+    }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.danger { border-left-color: var(--red); background: var(--soft-red); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #edf7fc; color: var(--blue); }
+    tr:nth-child(even) td { background: #fbfdff; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      background: #f6fbff;
+      border-radius: 6px;
+      padding: 1px 5px;
+    }
+    pre {
+      white-space: pre-wrap;
+      overflow-x: auto;
+      line-height: 1.58;
+      border-radius: 10px;
+      padding: 13px;
+      background: #102030;
+      color: #eef8ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+    }
+    .formula {
+      font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+      font-size: 1.08em;
+      font-weight: 760;
+    }
+    .q-list { display: grid; gap: 12px; margin-top: 12px; }
+    .q-card {
+      padding: 16px;
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(23,35,49,.05);
+    }
+    .q-card.done { border-color: #91c9aa; background: #f5fbf7; }
+    .tag { color: var(--blue); font-weight: 900; font-size: 14px; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 10px; }
+    .symbol-lab {
+      display: grid;
+      grid-template-columns: minmax(260px, .85fr) minmax(0, 1.15fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .symbol-stack { display: grid; gap: 10px; }
+    .symbol-chip {
+      border: 1px solid #cfe1ec;
+      border-radius: 10px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+    .symbol-chip strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+      font-size: 22px;
+      color: var(--blue);
+      line-height: 1.3;
+    }
+    .mini-drill {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .mini-drill h3 { color: var(--blue); }
+    .answer-line {
+      border-left: 4px solid var(--green);
+      background: var(--soft-green);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    button {
+      border: 1px solid #cad9e3;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      line-height: 1.5;
+    }
+    button:hover { border-color: var(--blue); background: var(--soft-blue); }
+    button.correct { border-color: #8bc79f; background: var(--soft-green); }
+    button.wrong { border-color: #e0a49d; background: var(--soft-red); }
+    .explain {
+      display: none;
+      border-left: 4px solid var(--blue);
+      background: #f6fbff;
+      border-radius: 8px;
+      padding: 11px 12px;
+      margin-top: 10px;
+    }
+    .q-card.done .explain { display: block; }
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      border: 1px solid #cad9e3;
+      border-radius: 10px;
+      padding: 11px;
+      background: #fbfdff;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.65;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: #fbfdff;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 900; }
+    .score {
+      position: sticky;
+      bottom: 12px;
+      border: 1px solid #b7dcc4;
+      background: rgba(239,248,243,.97);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: var(--shadow);
+      margin-top: 18px;
+      font-weight: 900;
+    }
+    @media (max-width: 780px) {
+      main { width: min(100% - 18px, 1180px); padding-top: 14px; }
+      .hero, .card, .q-card { padding: 16px; }
+      .grid, .grid.three, .choices, .symbol-lab { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div>
+      <span class="pill hot">数据库 6/22 前扫尾</span>
+      <span class="pill good">2014/2013/2009/12级老卷题眼</span>
+      <span class="pill warn">只补漏点，不重开大课</span>
+    </div>
+    <h1>数据库老卷边角排雷</h1>
+    <p class="muted">这页是给 6/21 或考试当天早上用的：你已经学过 SQL、关系代数、范式、事务、ER 后，再用它扫一遍旧卷里最容易“明明会知识、卷面却认不出来”的边角。它不会替代 Day1-Day6 主线，只负责把盲区打亮。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./day6_database_final_rehearsal.html#past">Day6 往年题矩阵</a>
+      <a href="./db_final_variant_drill.html">临考变式训练营</a>
+      <a href="./db_2023a_full_interactive.html">2023A 整卷</a>
+      <a href="#signals">老卷信号</a>
+      <a href="#symbols">符号排雷</a>
+      <a href="#symbol-lab">符号闯关</a>
+      <a href="#quiz">客观题排雷</a>
+      <a href="#subjective">主观题骨架</a>
+    </div>
+  </section>
+
+  <section class="card" id="signals">
+    <h2>1. 老卷给出的 8 个警报</h2>
+    <p>我这轮重新抽了 2014A、14级例卷、13级回忆、09年试题、12级片段和 2016 PDF。2016 的文字层仍然很差，只能确认文件和标题，不能假装完整读透；但 2014/13/09/12 已经足够告诉我们：<span class="focus">北航数据库旧卷喜欢用客观题和小大题考“边界概念”</span>。</p>
+    <table>
+      <thead><tr><th>旧卷信号</th><th>你要形成的第一反应</th><th>怕什么</th></tr></thead>
+      <tbody>
+        <tr><td>SQL 语法选择题</td><td><span class="key">WHERE 不能写聚合条件，HAVING 才筛组；GROUP BY 后 SELECT 只能写分组列或聚合。</span></td><td>凭语感选，而不是按 SQL 逻辑顺序验。</td></tr>
+        <tr><td>LIKE 匹配字面量 `%`</td><td>遇到“倒数第几位是百分号”，立刻想 <span class="formula">ESCAPE</span>。</td><td>把 `%` 当普通字符，或忘记“至少 4 位”需要一个必有前缀字符。</td></tr>
+        <tr><td>关系代数基本运算</td><td>基本运算常见说法是 <span class="formula">σ, Π, ×, ∪, −</span>，连接/除/交/重命名可由基本运算派生或作为扩展使用。</td><td>只认识中文，不认识卷面符号。</td></tr>
+        <tr><td>关系代数结果手算</td><td>先看连接条件和同名列，再决定输出列；外连接要保留没匹配的行并补 <span class="formula">NULL</span>。</td><td>把自然连接、笛卡尔积筛选、外连接混成一团。</td></tr>
+        <tr><td>二元关系/BCNF 客观题</td><td>二元关系模式一定能达到 BCNF；但有部分依赖的多属性关系可能只到 1NF。</td><td>看见“范式”就机械套 2NF/3NF，不先求键。</td></tr>
+        <tr><td>2PL 与可串行化</td><td><span class="key">2PL 推出冲突可串行化，但冲突可串行化不一定满足 2PL。</span></td><td>把充分条件当必要条件。</td></tr>
+        <tr><td>索引/安全/完整性</td><td>索引加速查找但不是安全机制，也不是每列都应该建；完整性约束保证正确性和相容性。</td><td>把“数据库保护”泛化成所有优化工具。</td></tr>
+        <tr><td>ER 转关系计数</td><td>实体先变表；M:N 联系一定另建表；1:1/1:N 联系通常可用外键合并。</td><td>见联系就都建表，表数直接爆炸。</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <strong>使用时机：</strong>做完 <a href="./db_final_variant_drill.html">数据库临考变式训练营</a> 后看本页；如果这里客观题错 4 道以上，不要急着刷整卷，回 Day1 关系代数、Day3 范式事务、Day6 往年题矩阵各补 10 分钟。
+    </div>
+  </section>
+
+  <section class="card" id="symbols">
+    <h2>2. 关系代数符号：按卷面长相认，不按想象认</h2>
+    <p>你之前指出得对：如果我只说“选择、投影”，但试卷写的是 <span class="formula">σ</span> 和 <span class="formula">Π</span>，那等于没有真正教到考试形态。这里把旧卷出现或容易出现的写法放一起。</p>
+    <div class="grid three">
+      <div class="box"><strong><span class="formula">σ<sub>条件</sub>(R)</span></strong>选择，筛行。对应 SQL 的 <code>WHERE</code>。例：<span class="formula">σ<sub>Age&gt;18</sub>(Student)</span>。</div>
+      <div class="box"><strong><span class="formula">Π<sub>列</sub>(R)</span> / <span class="formula">∏<sub>列</sub>(R)</span></strong>投影，筛列。旧卷可能用大写 Π，也可能抽取成 ∏。</div>
+      <div class="box"><strong><span class="formula">R × S</span></strong>笛卡尔积。先暴力两两组合，再用 <span class="formula">σ</span> 筛连接条件。</div>
+      <div class="box"><strong><span class="formula">R ⋈ S</span> / <span class="formula">R ▷◁ S</span></strong>自然连接。同名属性自动相等；如果没有同名属性，自然连接等价于笛卡尔积。</div>
+      <div class="box"><strong><span class="formula">R ⟕ S</span> / <span class="formula">R ]▷◁ S</span></strong>左外连接。保留左表所有行，右边没匹配就补 NULL。</div>
+      <div class="box"><strong><span class="formula">ρ<sub>新名</sub>(R)</span></strong>重命名。自连接、同一张表出现两次时特别有用，例如 <span class="formula">I1, I2, I3</span>。</div>
+      <div class="box"><strong><span class="formula">R ∪ S, R − S, R ∩ S</span></strong>并、差、交。要求两边属性结构相容；“没有/不在”常用差集。</div>
+      <div class="box"><strong><span class="formula">R ÷ S</span></strong>除法。看到“所有/全部/德国的所有邻国”要警觉；意思是找出能覆盖 S 中每个对象的左侧对象。</div>
+      <div class="box"><strong><span class="formula">γ<sub>分组;聚合</sub>(R)</span></strong>扩展关系代数里的分组聚合。旧卷更常要求 SQL 写 <code>GROUP BY/HAVING</code>，但看到它不要慌。</div>
+    </div>
+    <div class="note warn">
+      <strong>旧卷里的典型互转：</strong><code>SELECT A,B,D FROM R,S WHERE R.C=S.C</code> 对应 <span class="formula">Π<sub>A,B,D</sub>(σ<sub>R.C=S.C</sub>(R×S))</span>。顺序是 <span class="focus">先 FROM 成 R×S，再 WHERE 成 σ，最后 SELECT 成 Π</span>。
+    </div>
+  </section>
+
+  <section class="card" id="symbol-lab">
+    <h2>2.5 关系代数卷面闯关：先认长相，再写骨架</h2>
+    <p>这块专门补“我在卷子上看到它到底该做什么”。你不需要把关系代数当数学怪物背，先把符号翻译成数据库动作：<span class="focus">筛行、筛列、拼表、排除、覆盖全部</span>。只要这五个动作稳住，SQL 和关系代数互转就不容易懵。</p>
+    <div class="symbol-lab">
+      <div class="symbol-stack">
+        <div class="symbol-chip"><strong>σ<sub>C</sub>(R)</strong>先读作“在 R 里筛出满足 C 的行”。题干对应 WHERE。</div>
+        <div class="symbol-chip"><strong>Π<sub>A,B</sub>(R)</strong>先读作“只留下 A、B 两列”。题干对应 SELECT。</div>
+        <div class="symbol-chip"><strong>σ<sub>R.x=S.x</sub>(R×S)</strong>先读作“先暴力拼 R 和 S，再按相等条件筛”。题干对应 FROM R,S WHERE R.x=S.x。</div>
+        <div class="symbol-chip"><strong>R ⋈ S</strong>先读作“按同名属性自动拼表”。没有同名属性时退化成笛卡尔积。</div>
+        <div class="symbol-chip"><strong>R ÷ S</strong>先读作“找能覆盖 S 里每一个对象的 R 侧对象”。题干常写“所有、全部、每一门”。</div>
+      </div>
+      <div>
+        <div class="mini-drill">
+          <h3>闯关 1：把符号读成人话</h3>
+          <p><span class="formula">Π<sub>Name</sub>(σ<sub>CourseName='Database'</sub>(Student ⋈ Take ⋈ Course))</span></p>
+          <textarea data-save="db-ra-symbol-lab-1" placeholder="先写人话：这题在查什么？哪些表先拼？最后输出什么？"></textarea>
+          <details>
+            <summary>展开标准读法</summary>
+            <div class="answer-line">
+              先把 Student、Take、Course 通过学号和课程号连接起来，再筛出课程名为 Database 的记录，最后只投影学生姓名 Name。人话答案是：查询选修了 Database 课程的学生姓名。
+            </div>
+          </details>
+        </div>
+
+        <div class="mini-drill">
+          <h3>闯关 2：把 SQL 改写成关系代数</h3>
+          <p><code>SELECT S.name FROM Student S, Take T WHERE S.sid=T.sid AND T.cid='C01'</code></p>
+          <textarea data-save="db-ra-symbol-lab-2" placeholder="先写骨架：FROM -> WHERE -> SELECT，分别对应哪个符号？"></textarea>
+          <details>
+            <summary>展开标准骨架</summary>
+            <div class="answer-line">
+              逻辑顺序是 FROM 到 WHERE 到 SELECT，所以可写成 <span class="formula">Π<sub>S.name</sub>(σ<sub>S.sid=T.sid ∧ T.cid='C01'</sub>(Student S × Take T))</span>。如果题目允许连接符号，也可把相等连接写成连接形式，但基础写法用 × + σ 最不容易丢步骤。
+            </div>
+          </details>
+        </div>
+
+        <div class="mini-drill">
+          <h3>闯关 3：看到“全部”别硬套 JOIN</h3>
+          <p>题干：查询选修了全部课程的学生学号。</p>
+          <textarea data-save="db-ra-symbol-lab-3" placeholder="先写：被除关系是哪两列？除数是哪一列？"></textarea>
+          <details>
+            <summary>展开标准起手</summary>
+            <div class="answer-line">
+              被除关系是 <span class="formula">Π<sub>SID,CID</sub>(Take)</span>，表示每个学生选了哪些课；除数是 <span class="formula">Π<sub>CID</sub>(Course)</span>，表示全部课程。关系代数核心骨架是 <span class="formula">Π<sub>SID,CID</sub>(Take) ÷ Π<sub>CID</sub>(Course)</span>。它的人话是：找一个 SID，使得 Course 里的每个 CID 都出现在这个学生的选课记录里。
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <strong>临考 8 分钟用法：</strong>先遮住答案，把每道题读成人话；再写符号骨架；最后展开答案。你不是要在这里刷很多题，而是把“卷面符号 -> 数据库动作”这条神经接牢。
+    </div>
+  </section>
+
+  <section class="card" id="quiz">
+    <h2>3. 16 题客观题排雷</h2>
+    <p>这些题不是为了背选项，而是为了训练你看见旧卷风格的“第一动作”。每题解析都写了为什么选、为什么不选，重点词已经高亮。</p>
+    <div class="q-list" id="quizList"></div>
+    <div class="score" id="score">已完成 0 / 16。目标：错题不超过 3 道；超过就回对应板块补。</div>
+  </section>
+
+  <section class="card" id="subjective">
+    <h2>4. 主观题骨架：只练第一步和坑点</h2>
+    <p>这里不再要求你写完整大题。临考前更重要的是：看到题干时，脑子里能自动弹出 <span class="focus">“这题属于哪类、第一步写什么、哪句话能拿基础分”</span>。</p>
+
+    <div class="grid">
+      <div class="box">
+        <h3>SQL：没有购买商品的顾客</h3>
+        <p><strong>旧卷信号：</strong>Customer、Goods、sale 三表，问“没有购买”。</p>
+        <textarea placeholder="先写你的骨架：用 NOT EXISTS、LEFT JOIN，还是差集？为什么？"></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <p><span class="key">首选 NOT EXISTS：</span>外层枚举顾客，内层查 sale 中是否存在该顾客购买记录。不存在则留下。</p>
+          <pre>SELECT C.cn
+FROM Customer C
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM sale S
+  WHERE S.cno = C.cno
+);</pre>
+          <p><strong>扣分坑：</strong>不要把 Goods 强行连进来，因为题目只问“有没有购买记录”，sale 已经够判断。也不要写 <code>NOT IN</code> 后忘记 NULL 风险。</p>
+        </details>
+      </div>
+
+      <div class="box">
+        <h3>关系代数：与德国所有邻国都接壤</h3>
+        <p><strong>旧卷信号：</strong>“所有邻国都”就是除法或双重差集。</p>
+        <textarea placeholder="写第一反应：被除关系是什么？除数是什么？"></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <p><span class="key">除数：</span>德国的邻国集合 <span class="formula">Π<sub>邻国</sub>(σ<sub>国名='德国'</sub>(邻国))</span>。被除关系要整理成“候选国家, 德国邻国”两列，表示候选国家接壤了哪些国家。</p>
+          <p>如果不熟除法，就用人话记：找国家 X，使得 <span class="focus">不存在一个德国邻国 Y，X 没有和 Y 接壤</span>。这就是 SQL 里的双重 <code>NOT EXISTS</code>。</p>
+        </details>
+      </div>
+
+      <div class="box">
+        <h3>范式：R(A,B,C,D,E), F={AB→C, C→D, D→B, D→E}</h3>
+        <p><strong>旧卷信号：</strong>先求闭包和候选键，再谈 BCNF。</p>
+        <textarea placeholder="写 D+、AB+，再写候选键候选思路。"></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <p><span class="key">D+ = DBE</span>，因为 D→B、D→E。<span class="key">AB+ = ABCDE</span>，因为 AB→C，C→D，再 D→B/E。</p>
+          <p>候选键要覆盖 A，而 A 不在任何右部，所以候选键必须含 A；再试能推出 C/D/B/E 的搭配，旧卷答案给出 AB、AC、AD。BCNF 检查时看每条非平凡依赖左部是不是超键；C→D、D→B、D→E 左部不是超键，所以不满足 BCNF。</p>
+        </details>
+      </div>
+
+      <div class="box">
+        <h3>ER：5 个实体、2 个 1:1、3 个 M:N</h3>
+        <p><strong>旧卷信号：</strong>问“转换出来的关系表个数不可能是”。</p>
+        <textarea placeholder="先写最少表数和最多表数。"></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <p>5 个实体先至少 5 张表。3 个 M:N 联系一定各自变关系表，所以至少再加 3 张，得到 <span class="key">8 张</span>。2 个 1:1 联系可以用外键合并进实体表，也可以单独建关系表，所以最多到 <span class="key">10 张</span>。因此 7 张不可能。</p>
+          <p><strong>扣分坑：</strong>M:N 一定另建表；1:1 不一定另建表。这句话很值钱。</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. 考前使用顺序</h2>
+    <div class="grid three">
+      <div class="box"><strong>第一步：Day6 题眼矩阵</strong>先看大题主线，保证 SQL、关系代数、范式、事务、ER 都有第一动作。</div>
+      <div class="box"><strong>第二步：本页扫边角</strong>只补旧卷客观题盲区：语法坑、符号、锁协议、索引/完整性/ER 计数。</div>
+      <div class="box"><strong>第三步：2023A 整卷</strong>限时写骨架。错题回 <a href="./db_final_variant_drill.html">变式训练营</a>，不要整章重读。</div>
+    </div>
+    <div class="note danger">
+      <strong>最后提醒：</strong>你不是基础差才会怕，是之前没有把知识训练到“卷面形态”。现在这页就是补这个缺口。能把符号、题眼、第一步认出来，数据库会稳很多。继续，真的有戏。
+    </div>
+  </section>
+</main>
+
+<script>
+const questions = [
+  {
+    tag: "SQL 语法",
+    stem: "哪条 SQL 语句最可能没有语法错误？",
+    options: [
+      "SELECT a, COUNT(DISTINCT b) FROM TableA GROUP BY a HAVING COUNT(a)>1",
+      "SELECT a, COUNT(a) FROM TableA GROUP BY a WHERE a>1",
+      "SELECT MAX(AVG(score)) FROM TableA GROUP BY course",
+      "SELECT a,b,c FROM TableA GROUP BY a"
+    ],
+    answer: 0,
+    explain: "WHERE 的逻辑位置在 GROUP BY 之前，不能写在 GROUP BY 后面；WHERE 不能直接筛聚合结果，HAVING 才筛组；分组后 SELECT 普通列必须出现在 GROUP BY 中。A 同时满足“分组列 a + 聚合 COUNT(DISTINCT b) + HAVING 筛组”。"
+  },
+  {
+    tag: "LIKE / ESCAPE",
+    stem: "要找长度至少 4，且倒数第三个字符是字面量百分号 % 的 DNAME，最稳的 LIKE 写法是？",
+    options: [
+      "DNAME LIKE '%_/%__' ESCAPE '/'",
+      "DNAME LIKE '%%%__'",
+      "DNAME LIKE '%__%'",
+      "DNAME LIKE '_%__'"
+    ],
+    answer: 0,
+    explain: "百分号在 LIKE 里默认是通配符，想匹配字面量 % 必须 ESCAPE。倒数第三个字符是 %，后面要有两个下划线表示两个任意字符；至少 4 位意味着 % 前面还必须至少有 1 个字符，所以用 '%_/%__' ESCAPE '/'。"
+  },
+  {
+    tag: "关系代数",
+    stem: "SELECT A,B,D FROM R,S WHERE R.C=S.C 的等价关系代数应先做什么、最后做什么？",
+    options: [
+      "先 R×S，再 σ 筛 R.C=S.C，最后 Π 投影 A,B,D",
+      "先 Π 投影 A,B,D，再 σ 筛 R.C=S.C",
+      "先删除 C 列，再自然连接",
+      "直接写 R∪S"
+    ],
+    answer: 0,
+    explain: "SQL 的逻辑顺序是 FROM -> WHERE -> SELECT。FROM R,S 对应 R×S，WHERE R.C=S.C 对应 σ，SELECT A,B,D 对应 Π。旧卷就是喜欢用这个测试你是否真的知道 SQL 和关系代数是一件事的两种表达。"
+  },
+  {
+    tag: "基本运算",
+    stem: "下列哪一个通常不属于传统集合运算？",
+    options: ["除", "并", "差", "笛卡尔积"],
+    answer: 0,
+    explain: "并、差、交、笛卡尔积常被放在传统集合运算里；除法是关系代数里的派生/专门查询运算，常用于“所有/全部”。老卷问这个，是为了检查你有没有把关系代数操作分层。"
+  },
+  {
+    tag: "自然连接",
+    stem: "R(A,B) 和 S(C,D) 没有同名属性，R ⋈ S 等价于什么？",
+    options: ["R × S", "R ∩ S", "R − S", "空关系"],
+    answer: 0,
+    explain: "自然连接会自动要求同名属性相等。没有同名属性，就没有可比较的相等条件，因此退化为笛卡尔积。旧卷判断题出现过这个坑。"
+  },
+  {
+    tag: "三值逻辑",
+    stem: "SQL 中 0 != NULL 的结果最准确应理解为？",
+    options: ["UNKNOWN，不是 TRUE", "TRUE", "FALSE", "0"],
+    answer: 0,
+    explain: "NULL 表示未知，不等于任何确定值，也不和任何确定值直接比较出 TRUE/FALSE。WHERE 只留下 TRUE，FALSE 和 UNKNOWN 都不会留下，但判断题里说“0!=NULL 为 true”就是错的。"
+  },
+  {
+    tag: "范式",
+    stem: "若一个关系模式只有两个属性，它至少一定能达到哪一级范式？",
+    options: ["BCNF", "只能 1NF", "只能 2NF", "一定不满足 3NF"],
+    answer: 0,
+    explain: "二元关系里，只要有非平凡函数依赖 X→Y，X 加上 Y 就覆盖全部属性，所以 X 是超键；没有非平凡依赖时也不违反 BCNF。因此“二元关系模式必定 BCNF”是常见客观题结论。"
+  },
+  {
+    tag: "部分依赖",
+    stem: "R(A,B,C,D), F={AB→CD, A→D}。如果 AB 是候选键，A→D 暴露了什么问题？",
+    options: ["存在对候选键真子集的部分依赖，通常只能保证 1NF", "一定是 BCNF", "一定无函数依赖", "A 一定不是属性"],
+    answer: 0,
+    explain: "AB 是组合键，A 是它的真子集；A→D 说明非主属性 D 依赖于组合键的一部分，破坏 2NF。因此这种题不要一上来背 3NF/BCNF，先看“左部是不是键、是不是键的一部分”。"
+  },
+  {
+    tag: "候选键",
+    stem: "F={(a)→b, (a,c)→d, (c,d)→e, (e)→f} 中最像候选键的是？",
+    options: ["(a,c)", "(a,c,e)", "(b,d,f)", "(a,c,d,e)"],
+    answer: 0,
+    explain: "a 能推出 b；a,c 能推出 d；c,d 能推出 e；e 能推出 f。所以 (a,c)+ 覆盖 a,b,c,d,e,f。去掉 a 或 c 都推不全，因此 (a,c) 是候选键。旧卷会把超键和候选键混在选项里，最小性必须检查。"
+  },
+  {
+    tag: "无损分解",
+    stem: "判断 R 分解为 R1(ACD), R2(ABC) 是否无损时，第一动作是什么？",
+    options: [
+      "看交集 AC 是否能函数决定 R1 或 R2",
+      "看两个子模式名字是否好看",
+      "只看属性个数是否相等",
+      "只要有公共属性就一定无损"
+    ],
+    answer: 0,
+    explain: "二分解无损的常用判据：R1∩R2 -> R1−R2 或 R1∩R2 -> R2−R1。这里交集是 AC，要看 AC 能不能决定 D 或 B。只要有公共属性并不代表无损。"
+  },
+  {
+    tag: "并发控制",
+    stem: "“可串行化的调度一定满足两段锁协议”这句话为什么错？",
+    options: [
+      "2PL 能推出冲突可串行化，但可串行化不一定来自 2PL",
+      "2PL 和可串行化完全无关",
+      "所有调度都满足 2PL",
+      "可串行化只和 ER 图有关"
+    ],
+    answer: 0,
+    explain: "2PL 是保证冲突可串行化的充分条件，不是必要条件。考试里看到“一定”要格外小心：有些可串行化调度并不是按两段锁协议产生的。"
+  },
+  {
+    tag: "锁协议",
+    stem: "哪一级封锁协议能解决读脏数据问题？",
+    options: ["二级封锁协议", "一级封锁协议", "三级封锁协议", "没有任何协议"],
+    answer: 0,
+    explain: "一级协议主要防丢失修改；二级在一级基础上要求读前加 S 锁、读后释放，能防止读到未提交数据；三级把 S 锁保持到事务结束，进一步保证可重复读。"
+  },
+  {
+    tag: "参照完整性",
+    stem: "关于外键方向，哪种说法最稳？",
+    options: [
+      "子表插入/修改外键值可能破坏参照完整性，主表删除/修改被引用主键也可能破坏",
+      "主表插入新元组一定破坏参照完整性",
+      "子表删除自己的元组一定破坏参照完整性",
+      "外键只影响查询速度"
+    ],
+    answer: 0,
+    explain: "外键方向是老卷客观题高频坑。子表引用主表：子表插入或改外键时，要检查主表有没有对应主键；主表删除或改被引用主键时，要检查子表是否还引用它。主表插入新行通常安全，子表删除自己的行通常也安全。"
+  },
+  {
+    tag: "索引",
+    stem: "“每个字段都应该建立索引”为什么不对？",
+    options: [
+      "索引加速查询但占空间，并会拖慢插入、删除、更新",
+      "索引只能用于 ER 图",
+      "索引会删除数据",
+      "索引是数据库安全机制"
+    ],
+    answer: 0,
+    explain: "索引像目录，适合常查、选择性高、连接/排序/分组常用的列。每列都建索引会增加维护成本，写入变慢，而且低选择性字段效果也差。旧卷也会问“索引是否属于安全机制”，答案是否。"
+  },
+  {
+    tag: "ER 转关系",
+    stem: "5 个实体、2 个 1:1 联系、3 个 M:N 联系，转换出的关系表个数不可能是？",
+    options: ["7", "8", "9", "10"],
+    answer: 0,
+    explain: "5 个实体至少 5 张表，3 个 M:N 联系一定另建 3 张表，所以至少 8 张。两个 1:1 联系可合并进实体表，也可单独建表，所以 8、9、10 都可能，7 不可能。"
+  },
+  {
+    tag: "数据库安全",
+    stem: "下列哪项通常不属于数据库保护数据安全的机制？",
+    options: ["索引", "存取控制", "并发控制", "完整性约束"],
+    answer: 0,
+    explain: "索引是性能优化工具，不是安全保护机制。存取控制保护谁能访问，并发控制保护并发时不乱，完整性约束保护数据正确性和相容性。"
+  }
+];
+
+const stateKey = "db-oldpaper-edge-sweep-v1";
+const saved = JSON.parse(localStorage.getItem(stateKey) || "{}");
+
+document.querySelectorAll("textarea[data-save]").forEach((el) => {
+  const key = el.dataset.save;
+  el.value = localStorage.getItem(key) || "";
+  el.addEventListener("input", () => localStorage.setItem(key, el.value));
+});
+
+function render() {
+  const list = document.getElementById("quizList");
+  list.innerHTML = questions.map((q, i) => {
+    const done = saved[i] !== undefined;
+    const selected = saved[i];
+    return `<article class="q-card ${done ? "done" : ""}" data-q="${i}">
+      <div class="tag">${i + 1}. ${q.tag}</div>
+      <h3>${q.stem}</h3>
+      <div class="choices">
+        ${q.options.map((opt, j) => {
+          let cls = "";
+          if (done && j === q.answer) cls = "correct";
+          if (done && selected === j && j !== q.answer) cls = "wrong";
+          return `<button class="${cls}" data-choice="${j}">${opt}</button>`;
+        }).join("")}
+      </div>
+      <div class="explain"><strong>解析：</strong>${q.explain}</div>
+    </article>`;
+  }).join("");
+  list.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".q-card");
+      const qIndex = Number(card.dataset.q);
+      saved[qIndex] = Number(btn.dataset.choice);
+      localStorage.setItem(stateKey, JSON.stringify(saved));
+      render();
+    });
+  });
+  const done = Object.keys(saved).length;
+  const wrong = Object.entries(saved).filter(([i, choice]) => Number(choice) !== questions[Number(i)].answer).length;
+  document.getElementById("score").textContent = `已完成 ${done} / ${questions.length}，当前错 ${wrong} 道。${done === questions.length && wrong <= 3 ? "这一轮很稳，可以进 2023A 整卷。" : "错题看解析后，用自己的话说“题眼和第一动作”。"}`;
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 参考习题综合交互卷：选择、填空、计算、简答、综合</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #637282;
+      --line: #dbe5ee;
+      --paper: #fbfdff;
+      --blue: #1f6fa8;
+      --green: #1c7b55;
+      --red: #b43b33;
+      --amber: #a86a16;
+      --soft: #eef6fc;
+      --cream: #fff8ed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #edf4f8 0%, #f8fbfd 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 26px 18px 76px; }
+    .hero, .card {
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 12px 34px rgba(32, 54, 76, .08);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { margin: 8px 0 10px; font-size: clamp(28px, 4vw, 44px); line-height: 1.14; }
+    h2 { margin: 0 0 12px; font-size: 25px; }
+    h3 { margin: 16px 0 8px; font-size: 20px; }
+    p { margin: 8px 0; }
+    .muted { color: var(--muted); }
+    .strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; padding: 6px 10px;
+      background: var(--soft); color: #31566f; font-weight: 900; font-size: 13px;
+      border: 1px solid #d7e5ef;
+    }
+    .hot { background: #fff0ed; color: var(--red); border-color: #f4c6be; }
+    .good { background: #effaf4; color: var(--green); border-color: #bfe4cc; }
+    .warn { background: #fff7e8; color: var(--amber); border-color: #f0d59f; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .toc a, .btn {
+      color: var(--blue); text-decoration: none; font-weight: 900;
+      background: #eef7ff; border: 1px solid #cfe3f4; border-radius: 8px; padding: 8px 10px;
+      cursor: pointer;
+    }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.ghost { background: #fff; }
+    .key {
+      font-weight: 900;
+      color: #14364c;
+      background: linear-gradient(transparent 58%, #fff1aa 58%);
+      padding: 0 2px;
+    }
+    .math {
+      display: inline-block;
+      font-family: ui-serif, "Times New Roman", "Cambria Math", "Songti SC", serif;
+      font-size: 1.02em;
+      line-height: 1.48;
+      padding: 0 4px;
+      color: #153247;
+      background: #f4f9fd;
+      border: 1px solid #dbe8f1;
+      border-radius: 6px;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #f3f8fb;
+      border: 1px solid #dce7ef;
+      border-radius: 6px;
+      padding: 1px 5px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; }
+    .box, .panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fbfe;
+      padding: 14px;
+    }
+    .box strong { display: block; color: #244b64; margin-bottom: 6px; }
+    .question {
+      border: 1px solid #dce7ef;
+      background: #fcfeff;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .question h3 { margin-top: 0; }
+    .options { display: grid; gap: 7px; margin: 10px 0; }
+    label.option {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+    }
+    label.option input { margin-top: 6px; }
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #dce7ef;
+      background: #f6fbff;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { border-color: #bfe4cc; background: #effaf4; }
+    .feedback.bad { border-color: #f2c2ba; background: #fff2ef; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      resize: vertical;
+      border: 1px solid #cfdde8;
+      border-radius: 10px;
+      padding: 12px;
+      font: 15px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, "Microsoft YaHei", monospace;
+      color: #18232e;
+      background: #fbfdff;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    summary { cursor: pointer; color: #244a63; font-weight: 900; }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 10px; margin: 10px 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; }
+    th { background: #eaf3fa; color: #244a63; text-align: left; }
+    tr:nth-child(even) td { background: #fbfdff; }
+    .rubric {
+      background: var(--cream);
+      border: 1px solid #efd6a9;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+    .rubric strong { color: #7a4c10; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .scorebar {
+      position: sticky;
+      bottom: 12px;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #cfe0ec;
+      border-radius: 12px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 10px 30px rgba(26, 50, 74, .14);
+      padding: 10px 12px;
+      margin-top: 18px;
+    }
+    .mini { font-size: 13px; color: var(--muted); }
+    @media (max-width: 920px) {
+      main { padding: 16px 10px 56px; }
+      .hero, .card { padding: 18px; }
+      .grid, .split { grid-template-columns: 1fr; }
+      .scorebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="strip">
+      <span class="pill hot">AI 6/23 考前整套</span>
+      <span class="pill good">参考习题 + 第14讲</span>
+      <span class="pill warn">选择/填空/计算/简答/综合</span>
+    </div>
+    <h1>AI 参考习题综合交互卷</h1>
+    <p class="muted">这页用于数据库考后、AI 考前：不是把所有知识重新讲一遍，而是把参考习题和老师总纲压成卷面训练。你先判断题型，再写答案；做完再展开解析。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./source_coverage_audit.html">资料覆盖台账</a>
+      <a href="./day7_ai_teacher_summary_final.html">老师总纲终局</a>
+      <a href="./day5_ai_exam_sprint_mixed.html#ref-triage">参考题眼闯关</a>
+      <a href="#mcq">一、选择判断</a>
+      <a href="#fill">二、填空速记</a>
+      <a href="#calc">三、小计算</a>
+      <a href="#short">四、简答模板</a>
+      <a href="#case">五、综合题</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>0. 怎么做：先像考场一样分流</h2>
+    <div class="grid">
+      <div class="box"><strong>选择/判断</strong>抓概念边界：不属于、正确/不正确、最贴切。</div>
+      <div class="box"><strong>填空</strong>背关键词：模型家族、公式量、训练信号。</div>
+      <div class="box"><strong>计算</strong>写公式和一步代入：无需计算器，不等于不考步骤。</div>
+      <div class="box"><strong>简答</strong>定义 + 原理 + 优缺点/场景，别只背一句话。</div>
+      <div class="box"><strong>综合</strong>先拆任务、模型、证据、建议，再组织答案。</div>
+    </div>
+    <div class="rubric">
+      <strong>时间包：</strong>救火 30 分钟只做选择题 + 小计算 1/2/4 + 综合题 1；标准 70 分钟做全页第一遍；冲分 100 分钟做完后把错题写进最后的复盘框。
+    </div>
+  </section>
+
+  <section class="card" id="mcq">
+    <h2>一、选择/判断：高频题眼自动判分</h2>
+    <p class="muted">这些题贴近参考习题和第14讲口径，但我避开了 OCR 不清导致答案不稳的题。目标是练边界，不是背选项位置。</p>
+    <div id="mcqBox"></div>
+    <button class="btn primary" id="checkMcq">检查选择题</button>
+    <button class="btn ghost" id="resetMcq">清空选择</button>
+    <div class="panel" id="mcqScore">还没检查。</div>
+  </section>
+
+  <section class="card" id="fill">
+    <h2>二、填空速记：考前必须能顺嘴说出</h2>
+    <div class="question">
+      <h3>1. AI/ML/DL/生成式 AI 的层级关系</h3>
+      <textarea data-save="ai-final-fill-1" placeholder="先自己写：人工智能、机器学习、深度学习、生成式 AI 的关系。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><span class="key">人工智能</span>是总目标；<span class="key">机器学习</span>是实现 AI 的重要方法；<span class="key">深度学习</span>是机器学习中的一类多层神经网络方法；<span class="key">生成式 AI</span>强调生成文本、图像、音频等新内容，常依托深度学习模型。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. 过拟合、欠拟合、正则化</h3>
+      <textarea data-save="ai-final-fill-2" placeholder="先自己写：训练误差/测试误差分别怎样时叫过拟合或欠拟合？正则化在约束什么？"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><span class="key">过拟合：</span>训练误差低，测试/验证误差高，说明模型记住训练集细节但泛化差。</p>
+        <p><span class="key">欠拟合：</span>训练误差和测试误差都高，说明模型能力不足、特征不够或训练不充分。</p>
+        <p><span class="key">正则化：</span>在损失里加入参数复杂度惩罚，例如 <span class="math">L(w) = ||Y - Xw||² + λ||w||²</span>，鼓励更平滑、更简单的模型。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>3. 强化学习四件套</h3>
+      <textarea data-save="ai-final-fill-3" placeholder="先自己写：状态、动作、奖励、策略分别是什么；MDP 比 MRP 多了什么。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>强化学习的基本语言是 <span class="key">状态 state、动作 action、奖励 reward、策略 policy</span>。MRP 只有状态转移和奖励，MDP 多了动作与策略：智能体要在状态下选择动作，进而影响转移和奖励。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="calc">
+    <h2>三、小计算：无需计算器也要会写步骤</h2>
+    <div class="question">
+      <h3>1. L2 正则化损失</h3>
+      <p>已知真实值 <span class="math">Y=[3,5]</span>，预测值 <span class="math">Xw=[2,6]</span>，参数 <span class="math">w=[1,2]</span>，<span class="math">λ=0.5</span>。计算 <span class="math">||Y-Xw||² + λ||w||²</span>。</p>
+      <textarea data-save="ai-final-calc-1" placeholder="先写误差平方和，再写参数平方惩罚。"></textarea>
+      <details>
+        <summary>展开解析</summary>
+        <p>误差是 <span class="math">[1,-1]</span>，平方和是 <span class="math">1² + (-1)² = 2</span>。参数平方和是 <span class="math">1² + 2² = 5</span>，正则项是 <span class="math">0.5 × 5 = 2.5</span>。总损失 <span class="math">2 + 2.5 = 4.5</span>。</p>
+        <p><strong>迁移：</strong>如果题目问 λ 小于 0 为什么不行，答：它会奖励参数变大，不能起到约束复杂度的作用。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. Precision / Recall / F1</h3>
+      <p>某分类器对正类预测中，<span class="math">TP=8, FP=2, FN=4</span>。计算 Precision、Recall 和 F1。</p>
+      <textarea data-save="ai-final-calc-2" placeholder="先写公式，再代入。"></textarea>
+      <details>
+        <summary>展开解析</summary>
+        <p><span class="math">Precision = TP/(TP+FP)=8/(8+2)=0.8</span>。</p>
+        <p><span class="math">Recall = TP/(TP+FN)=8/(8+4)=2/3≈0.667</span>。</p>
+        <p><span class="math">F1 = 2PR/(P+R)≈2×0.8×0.667/(1.467)≈0.727</span>。</p>
+        <p><strong>题眼：</strong>Precision 问“预测为正的里面有多少真阳性”，Recall 问“真实正类里找回了多少”。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>3. AdaBoost 第一轮权重</h3>
+      <p>4 个样本初始权重都为 <span class="math">0.25</span>。某弱分类器只错分 1 个样本，所以 <span class="math">ε=0.25</span>。若 <span class="math">α=0.5 ln((1-ε)/ε)=0.5 ln3</span>，归一化后错分样本权重是多少？正确样本各是多少？</p>
+      <textarea data-save="ai-final-calc-3" placeholder="先写：错分样本权重会变大，正确样本权重会变小；再算归一化。"></textarea>
+      <details>
+        <summary>展开解析</summary>
+        <p>更新前每个权重是 <span class="math">0.25</span>。错分样本乘 <span class="math">e^α=√3</span>，正确样本乘 <span class="math">e^{-α}=1/√3</span>。</p>
+        <p>归一化后，错分样本权重会变成 <span class="math">0.5</span>，三个正确样本各为 <span class="math">1/6</span>。</p>
+        <p><strong>为什么：</strong>AdaBoost 下一轮要更关注上一轮被错分的样本。考场不一定让你算这么细，但必须先算<span class="key">加权错误率</span>，不能只数错题个数。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>4. Q-learning 一步更新</h3>
+      <p>已知 <span class="math">Q(s,a)=2</span>，<span class="math">α=0.5</span>，<span class="math">r=1</span>，<span class="math">γ=0.9</span>，下一状态最大动作价值 <span class="math">max Q(s',a')=4</span>。计算新 <span class="math">Q(s,a)</span>。</p>
+      <textarea data-save="ai-final-calc-4" placeholder="先写目标值 r + gamma * maxQ，再做旧值向目标靠近。"></textarea>
+      <details>
+        <summary>展开解析</summary>
+        <p>Q-learning 更新式是：</p>
+        <p><span class="math">Q ← Q + α [r + γ max Q(s',a') - Q]</span></p>
+        <p>目标值是 <span class="math">1 + 0.9×4 = 4.6</span>，TD 误差是 <span class="math">4.6 - 2 = 2.6</span>，新值是 <span class="math">2 + 0.5×2.6 = 3.3</span>。</p>
+        <p><strong>区分 Sarsa：</strong>Sarsa 用实际下一动作 <span class="math">Q(s',a')</span>，Q-learning 用最大值 <span class="math">max Q(s',a')</span>。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="short">
+    <h2>四、简答模板：会写第一句，才能拿分</h2>
+    <div class="question">
+      <h3>1. 比较符号主义、联结主义、行为主义</h3>
+      <textarea data-save="ai-final-short-1" placeholder="先写：它们分别靠规则、数据、交互经验。每个写优点和不足。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>符号主义：</strong>用符号、规则和逻辑推理表示知识。优点是解释性强、接近人类显式推理；不足是知识库和规则难以完备，面对开放环境很脆。</p>
+        <p><strong>联结主义：</strong>从数据中学习，例如神经网络和深度学习。优点是能处理图像、语音、文本等复杂模式；不足是依赖数据和算力，可解释性较弱。</p>
+        <p><strong>行为主义：</strong>强调智能体与环境交互，通过奖励和惩罚学习策略，例如强化学习。优点是能学习决策能力；不足是探索成本高、样本效率和安全性问题明显。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. 监督学习和强化学习的反馈有什么不同？</h3>
+      <textarea data-save="ai-final-short-2" placeholder="先写：监督学习有标准答案标签；强化学习只有环境奖励，且奖励可能延迟。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>监督学习的反馈通常是明确标签，模型预测后能立刻和正确答案比较，损失函数直接告诉模型错多少。强化学习没有每一步的标准答案，智能体采取动作后从环境得到奖励，奖励可能稀疏或延迟，目标是最大化长期累计回报。</p>
+        <p><strong>一句话：</strong>监督学习像老师批改答案，强化学习像在游戏里试错并根据长期得分改策略。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>3. LDA 决策边界为什么是线性的？</h3>
+      <textarea data-save="ai-final-short-3" placeholder="先写：高斯类条件分布 + 共享协方差，取对数几率比后 x 的二次项抵消，只剩线性项。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>LDA 假设各类别样本服从高斯分布，并且不同类别共享相同协方差矩阵。进行分类时比较后验概率，取对数几率比后，由于协方差相同，关于 <span class="math">x</span> 的二次项会相互抵消，只留下 <span class="math">w^T x + b</span> 形式，因此决策边界是线性的。</p>
+        <p><strong>考试句式：</strong>不需要完整推导矩阵，只要写出“共享协方差导致二次项抵消”这个核心理由。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>4. 为什么单层感知机不能表示 XOR？如何用前馈网络解决？</h3>
+      <textarea data-save="ai-final-short-4" placeholder="先写：XOR 不是线性可分；隐藏层 + 非线性激活可以组合出非线性边界。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>XOR 的正负样本在二维平面上不能用一条直线分开，所以单层感知机这种线性分类器无法表示。加入隐藏层后，前馈网络可以先用多个神经元构造中间特征，再通过非线性激活组合出非线性决策边界，从而表示 XOR。</p>
+        <p><strong>补一句更稳：</strong>多层网络的核心价值不是“层数看起来多”，而是线性变换和非线性激活的组合提高了函数表达能力。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>5. PCA、AE、VAE、GAN、Diffusion 怎么区分？</h3>
+      <textarea data-save="ai-final-short-5" placeholder="先写关键词：PCA 最大方差降维；AE 重构；VAE 概率隐空间；GAN 对抗；Diffusion 加噪去噪。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <table>
+          <thead><tr><th>模型</th><th>第一句</th><th>题眼</th></tr></thead>
+          <tbody>
+            <tr><td>PCA</td><td>线性降维，找最大方差方向。</td><td>主成分、特征人脸、正交方向。</td></tr>
+            <tr><td>AE</td><td>编码再解码，通过重构学习表示。</td><td>encoder/decoder、重构误差。</td></tr>
+            <tr><td>VAE</td><td>学习概率隐空间，可从隐变量采样生成。</td><td>μ、σ、KL、重参数化。</td></tr>
+            <tr><td>GAN</td><td>生成器和判别器对抗训练。</td><td>真假判别、模式崩塌、训练不稳定。</td></tr>
+            <tr><td>Diffusion</td><td>正向加噪，反向学习逐步去噪生成。</td><td>噪声预测、多步采样、生成质量高。</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="case">
+    <h2>五、综合题：题干混在一起时怎么拆</h2>
+    <div class="question">
+      <h3>综合题 1：训练曲线 + 指标 + 改进建议</h3>
+      <p>某二分类模型训练误差持续降低，验证误差先降低后升高；另一个模型训练误差和验证误差都很高。题目还给出正类 <span class="math">TP=8, FP=2, FN=4</span>。请判断问题，计算指标，并给出改进建议。</p>
+      <textarea data-save="ai-final-case-1" placeholder="先拆：曲线判断 -> 指标计算 -> 改进建议。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>曲线判断：</strong>训练误差低而验证误差升高是过拟合；训练和验证误差都高是欠拟合或优化不足。</p>
+        <p><strong>指标计算：</strong>Precision = 0.8，Recall = 2/3，F1 约 0.727。</p>
+        <p><strong>建议：</strong>过拟合可用正则化、早停、数据增强、降低模型复杂度；欠拟合可增加模型容量、改进特征、训练更充分或调整学习率。</p>
+        <p><strong>综合题套路：</strong>不要一上来只写“加正则化”。先说明证据，再给方案。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>综合题 2：图像分类任务选模型</h3>
+      <p>给你一个医学图像分类任务，标注样本较少，但有大量无标注图像。要求说明可选模型、训练策略和风险。</p>
+      <textarea data-save="ai-final-case-2" placeholder="先拆：任务是图像分类；监督样本少；可以迁移学习/预训练/CNN/ViT/半监督；风险是过拟合和数据偏差。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>任务层：</strong>这是图像分类，输出是离散类别，属于监督学习任务；样本少意味着过拟合风险高。</p>
+        <p><strong>模型层：</strong>可用 CNN 或 ViT 作为图像特征提取模型。数据少时优先考虑预训练模型和迁移学习，而不是从零训练大模型。</p>
+        <p><strong>训练层：</strong>可采用数据增强、正则化、早停、交叉验证；无标注图像可考虑半监督学习或自监督预训练。</p>
+        <p><strong>风险层：</strong>医学数据可能类别不平衡、标注噪声、分布偏移，评价时不能只看 Accuracy，要关注 Recall、Precision、F1 等。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>综合题 3：AlphaGo 不是只靠一个算法</h3>
+      <p>参考习题问 AlphaGo 没有使用哪种 AI 方法。请把 AlphaGo 用到的关键方法、没有使用的典型方法，以及为什么它体现混合智能写清楚。</p>
+      <textarea data-save="ai-final-case-3" placeholder="先写：深度学习/监督学习/强化学习/MCTS；不是传统逻辑推理。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p>AlphaGo 综合使用了深度神经网络、监督学习、强化学习和蒙特卡洛树搜索。策略网络/价值网络帮助评估局面和选择动作，强化学习通过自我对弈改进策略，蒙特卡洛树搜索用于在巨大搜索空间中做更有效的决策。</p>
+        <p>它不是主要依靠符号主义的传统逻辑推理，也不是手写完备规则库逐步证明最优棋步。它体现的是学习、搜索和决策的结合。</p>
+        <p><strong>考场第一句：</strong>AlphaGo 的题眼是“学习 + 搜索 + 强化学习”，不是单纯逻辑推理。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>复盘：把不会的点收进错题回炉</h2>
+    <textarea data-save="ai-final-review" placeholder="写三句话：1. 我最容易混的模型是什么？2. 我最容易卡的小计算是哪类？3. 下次看到什么题眼，我要先调用哪个模板？"></textarea>
+    <div class="rubric">
+      <strong>最低闸门：</strong>选择题 10/14 以上；4 道小计算至少会 3 道；简答题能写出 5 个模板的第一句；综合题能按“任务、模型、证据、建议”拆开。达不到就回 Day5 参考题眼闯关和 Day7 老师总纲。
+    </div>
+  </section>
+
+  <div class="scorebar">
+    <div>
+      <strong id="progressText">主观题草稿保存：0 项</strong>
+      <div class="mini">选择题自动判分；填空、计算、简答和综合题请先写骨架，再展开答案。</div>
+    </div>
+    <div>
+      <button class="btn primary" id="saveAll">保存当前草稿</button>
+      <button class="btn ghost" id="clearDrafts">清空本页草稿</button>
+    </div>
+  </div>
+</main>
+
+<script>
+  const mcq = [
+    {
+      id: "q1",
+      title: "DeepMind 的 AlphaGo 主要没有依赖哪种传统 AI 方法？",
+      options: { A: "强化学习", B: "蒙特卡洛树搜索", C: "深度神经网络", D: "传统符号逻辑推理" },
+      answer: ["D"],
+      explain: "AlphaGo 的关键词是深度学习、强化学习和蒙特卡洛树搜索，不是靠手写逻辑规则逐步推理出棋步。"
+    },
+    {
+      id: "q2",
+      title: "Judea Pearl 的因果阶梯由易到难的顺序是：",
+      options: { A: "关联、介入、反事实", B: "反事实、介入、关联", C: "介入、关联、反事实", D: "关联、反事实、介入" },
+      answer: ["A"],
+      explain: "先观察变量一起发生的关联，再问如果主动干预会怎样，最后问如果过去没有这样做会怎样。"
+    },
+    {
+      id: "q3",
+      title: "下列哪种搜索最典型地属于启发式搜索？",
+      options: { A: "广度优先搜索", B: "深度优先搜索", C: "A* 搜索", D: "顺序遍历所有节点" },
+      answer: ["C"],
+      explain: "A* 使用 f(n)=g(n)+h(n)，其中 h(n) 是启发函数，用额外估计指导搜索方向。"
+    },
+    {
+      id: "q4",
+      title: "以下哪项明显属于无监督学习任务？",
+      options: { A: "带标签图像分类", B: "线性回归预测房价", C: "K-means 聚类", D: "带标签垃圾邮件识别" },
+      answer: ["C"],
+      explain: "聚类没有标准标签，目标是根据相似性发现数据内部结构。"
+    },
+    {
+      id: "q5",
+      title: "线性判别分析 LDA 常被理解为最大化什么？",
+      options: { A: "类间差异与类内差异的比值", B: "训练集样本数量", C: "神经网络层数", D: "随机探索概率" },
+      answer: ["A"],
+      explain: "LDA 希望类间分得开、类内尽量紧，因此关注类间散度和类内散度的比。"
+    },
+    {
+      id: "q6",
+      title: "决策树划分后结果熵很高，最贴切的解释是：",
+      options: { A: "纯度高", B: "纯度低", C: "一定过拟合", D: "一定是最优划分" },
+      answer: ["B"],
+      explain: "熵越高表示混乱程度越高，类别越不纯；熵越低表示划分后更纯。"
+    },
+    {
+      id: "q7",
+      title: "SVM 的典型关键词是：",
+      options: { A: "生成模型、最小化间隔", B: "判别模型、最大化间隔", C: "聚类模型、更新质心", D: "强化学习、奖励回报" },
+      answer: ["B"],
+      explain: "SVM 是判别式分类模型，核心是找到最大间隔分类超平面，支持向量决定边界。"
+    },
+    {
+      id: "q8",
+      title: "AdaBoost 每轮最先应该计算什么？",
+      options: { A: "普通错误样本个数", B: "每个弱分类器的加权错误率", C: "K-means 聚类中心", D: "PCA 主成分方向" },
+      answer: ["B"],
+      explain: "AdaBoost 的样本权重会变化，因此错分高权重样本比错分低权重样本更严重。"
+    },
+    {
+      id: "q9",
+      title: "BP 反向传播依赖的核心数学工具是：",
+      options: { A: "链式法则和梯度", B: "蒙特卡洛树搜索", C: "最大方差方向", D: "马尔可夫奖励过程" },
+      answer: ["A"],
+      explain: "BP 是从输出层误差开始，沿网络反向用链式法则计算各层参数梯度。"
+    },
+    {
+      id: "q10",
+      title: "Sigmoid 在输入过大或过小时容易带来的训练问题是：",
+      options: { A: "梯度消失", B: "样本标签消失", C: "支持向量消失", D: "数据集变大" },
+      answer: ["A"],
+      explain: "Sigmoid 饱和区导数接近 0，多层连乘后前面层几乎学不动。"
+    },
+    {
+      id: "q11",
+      title: "PCA 的核心目标更接近：",
+      options: { A: "沿最大方差方向降维", B: "最大化分类间隔", C: "让生成器骗过判别器", D: "计算动作价值函数" },
+      answer: ["A"],
+      explain: "PCA 是线性降维，寻找主成分方向，让投影后保留尽量多的信息。"
+    },
+    {
+      id: "q12",
+      title: "MDP 相比 MRP 增加了什么核心要素？",
+      options: { A: "动作和策略", B: "主成分", C: "卷积核", D: "判别器" },
+      answer: ["A"],
+      explain: "MDP 引入动作，状态转移和奖励与动作有关，因此需要策略决定在状态下采取什么动作。"
+    },
+    {
+      id: "q13",
+      title: "Q-learning 和 Sarsa 的关键区别是：",
+      options: { A: "Q-learning 用下一状态最大 Q 值，Sarsa 用实际下一动作 Q 值", B: "Q-learning 是聚类，Sarsa 是降维", C: "Q-learning 不需要奖励", D: "二者完全相同" },
+      answer: ["A"],
+      explain: "看到 max Q(s',a') 就想 Q-learning；看到实际采取的 a' 就想 Sarsa。"
+    },
+    {
+      id: "q14",
+      title: "GAN 的典型风险包括：",
+      options: { A: "训练不稳定和模式崩塌", B: "必然收敛到全局最优", C: "只能做线性回归", D: "必须有人工写规则库" },
+      answer: ["A"],
+      explain: "GAN 是对抗优化，训练不稳定、模式崩塌是常见问题，不能保证训练足够久就全局最优。"
+    }
+  ];
+
+  const box = document.getElementById("mcqBox");
+  box.innerHTML = mcq.map((q, idx) => `
+    <div class="question" data-q="${q.id}">
+      <h3>${idx + 1}. ${q.title}</h3>
+      <div class="options">
+        ${Object.entries(q.options).map(([k, v]) => `
+          <label class="option">
+            <input type="checkbox" name="${q.id}" value="${k}">
+            <span><strong>${k}.</strong> ${v}</span>
+          </label>
+        `).join("")}
+      </div>
+      <div class="feedback" id="${q.id}-feedback"></div>
+    </div>
+  `).join("");
+
+  function sameSet(a, b) {
+    return a.length === b.length && a.every(x => b.includes(x));
+  }
+
+  document.getElementById("checkMcq").addEventListener("click", () => {
+    let correct = 0;
+    mcq.forEach(q => {
+      const picked = [...document.querySelectorAll(`input[name="${q.id}"]:checked`)].map(x => x.value).sort();
+      const answer = [...q.answer].sort();
+      const ok = sameSet(picked, answer);
+      if (ok) correct += 1;
+      const fb = document.getElementById(`${q.id}-feedback`);
+      fb.className = `feedback show ${ok ? "ok" : "bad"}`;
+      fb.innerHTML = `<strong>${ok ? "答对了" : "需要回炉"}：</strong>正确答案 ${answer.join("")}。<br>${q.explain}`;
+    });
+    document.getElementById("mcqScore").innerHTML = `<strong>选择题：</strong>${correct}/14。${correct < 10 ? "低于 10 题就先回 Day5 参考题眼闯关，别急着刷综合。" : "可以进入小计算和综合题了。"}`
+  });
+
+  document.getElementById("resetMcq").addEventListener("click", () => {
+    document.querySelectorAll("#mcqBox input[type='checkbox']").forEach(x => x.checked = false);
+    document.querySelectorAll(".feedback").forEach(x => {
+      x.className = "feedback";
+      x.innerHTML = "";
+    });
+    document.getElementById("mcqScore").textContent = "已清空选择。";
+  });
+
+  const areas = [...document.querySelectorAll("textarea[data-save]")];
+  function updateProgress() {
+    const filled = areas.filter(a => a.value.trim()).length;
+    document.getElementById("progressText").textContent = `主观题草稿保存：${filled}/${areas.length} 项`;
+  }
+  areas.forEach(area => {
+    area.value = localStorage.getItem(area.dataset.save) || "";
+    area.addEventListener("input", () => {
+      localStorage.setItem(area.dataset.save, area.value);
+      updateProgress();
+    });
+  });
+  updateProgress();
+  document.getElementById("saveAll").addEventListener("click", () => {
+    areas.forEach(area => localStorage.setItem(area.dataset.save, area.value));
+    updateProgress();
+  });
+  document.getElementById("clearDrafts").addEventListener("click", () => {
+    if (!confirm("确认清空本页主观题草稿吗？")) return;
+    areas.forEach(area => {
+      localStorage.removeItem(area.dataset.save);
+      area.value = "";
+    });
+    updateProgress();
+  });
+</script>
+</body>
+</html>

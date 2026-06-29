@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 3 总路线与掌握闸门</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+    }
+    main { max-width: 1140px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc, .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .route { display: grid; gap: 12px; counter-reset: route; margin-top: 12px; }
+    .route-item {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px 13px 13px 54px;
+    }
+    .route-item:before {
+      counter-increment: route;
+      content: counter(route);
+      position: absolute;
+      left: 14px;
+      top: 15px;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .route-item strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    @media (max-width: 860px) {
+      main { padding: 18px 12px 42px; }
+      .grid { grid-template-columns: 1fr; }
+      .route-item { padding-left: 46px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 3 总路线与掌握闸门</h1>
+      <p class="muted">Day3 是数据库大题后半的主战日。Day1/Day2 解决 SQL，Day3 要把范式、事务、恢复、ER 图这四块变成可写步骤。AI 和离散继续插针，但数据库仍是最近考试的主线。</p>
+      <div class="strip">
+        <span class="pill hot">主线：数据库大题后半</span>
+        <span class="pill info">AI：公式模型闭环</span>
+        <span class="pill warn">离散：等值/谓词保温</span>
+        <span class="pill good">目标：题眼到第一步</span>
+      </div>
+      <div class="toc">
+        <a href="#route">1. 今天顺序</a>
+        <a href="#gates">2. 掌握闸门</a>
+        <a href="#why">3. 为什么这样排</a>
+        <a href="#next">4. Day4 怎么接</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>1. Day3 正确顺序：先学懂，再限时调用</h2>
+      <div class="route">
+        <div class="route-item">
+          <strong>保底 1：数据库范式事务 ER 深学</strong>
+          打开 <a href="./day3_database_fd_tx_er.html">Day3 数据库范式事务 ER 从零深学讲义</a>。先按“函数依赖/候选码 -> BCNF 分解 -> 事务调度 -> 恢复 -> ER 图”的顺序学。
+        </div>
+        <div class="route-item">
+          <strong>保底 2：数据库大题后半主动回忆</strong>
+          打开 <a href="./day3_database_big_four_arena.html">Day3 数据库大题后半主动回忆</a>。它专门训练候选码、BCNF、优先图、Undo/Redo、ER 抽取的题眼和第一步。
+        </div>
+        <div class="route-item">
+          <strong>标准 1：数据库考前闭环限时调用</strong>
+          打开 <a href="./day3_database_exam_closure.html">数据库 Day3 考前闭环</a>。先做 10 秒题型分流，再做限时题卡，不要无限重读讲义。
+        </div>
+        <div class="route-item">
+          <strong>标准 2：AI 公式模型闭环</strong>
+          打开 <a href="./day3_ai_formula_model_closure.html">AI Day3 公式与模型闭环</a>。目标是能解释公式符号和模型适用场景，不追求一次背完所有神经网络细节。
+        </div>
+        <div class="route-item">
+          <strong>插针：离散等值/范式/谓词</strong>
+          打开 <a href="./day3_discrete_equiv_normal_predicate.html">离散 Day3 等值范式谓词</a>，只做保温：主范式、辖域、谓词翻译、语义证明起手。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>Day3 不做什么：</strong>不再把数据库时间花在只看 SQL 基础；不直接整卷硬刷；不把 AI/离散完全放弃。今天的平衡是数据库 60%，AI 25%，离散/软工保温 15%。
+      </div>
+    </section>
+
+    <section class="card" id="gates">
+      <h2>2. 掌握闸门：Day3 到 B+ 的标准</h2>
+      <table>
+        <thead><tr><th>板块</th><th>B 级：能继续推进</th><th>A 级：可进混合卷</th><th>没过怎么办</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>范式/候选码</td>
+            <td>能求属性闭包，能判断某属性集是否为候选码，知道右边没出现的属性通常要带。</td>
+            <td>能判 3NF/BCNF，能按违反 BCNF 的依赖做分解。</td>
+            <td>回到候选码流程，不要先背范式定义。</td>
+          </tr>
+          <tr>
+            <td>事务调度</td>
+            <td>能找冲突操作，画优先图，判断是否有环。</td>
+            <td>能判断 2PL/严格 2PL，并解释为什么会产生级联回滚风险。</td>
+            <td>先只练 read/write 优先图，不急着做锁协议。</td>
+          </tr>
+          <tr>
+            <td>恢复</td>
+            <td>能按 commit/crash 分 Undo 与 Redo。</td>
+            <td>能根据日志写恢复动作和恢复后数据值。</td>
+            <td>先画“提交事务 / 未提交事务”两栏。</td>
+          </tr>
+          <tr>
+            <td>ER 图</td>
+            <td>能从业务题干圈实体、属性、联系、基数。</td>
+            <td>能转换成关系模式，并标出主键/外键。</td>
+            <td>回四支笔：实体名词、动作联系、属性细节、数量词。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="why">
+      <h2>3. 为什么 Day3 这样排</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>数据库大题后半必须今天启动</strong>
+          6.22 前时间很紧，SQL 已经有 Day1/Day2，Day3 必须把范式、事务、恢复、ER 图这几个大题得分点拉起来。
+        </div>
+        <div class="box">
+          <strong>先讲义后闯关</strong>
+          候选码、BCNF、Undo/Redo 不能只靠题卡猜。先用深学讲义建立原理，再用主动回忆检验能否调用。
+        </div>
+        <div class="box">
+          <strong>AI 不能等到考前一天</strong>
+          AI 6.23 紧跟数据库，Day3 必须开始公式和模型闭环，否则 6.22 考完再学会来不及。
+        </div>
+        <div class="box">
+          <strong>离散要持续保温</strong>
+          离散证明难，但 Day3 只保温等值/范式/谓词。真正长题放到 Day4/Day5。
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="next">
+      <h2>4. Day3 学完怎么接 Day4</h2>
+      <table>
+        <thead><tr><th>Day3 完成状态</th><th>Day4 接法</th></tr></thead>
+        <tbody>
+          <tr><td>数据库大题后半到 B+</td><td>进入 <a href="./day4_database_full_exam_closure.html">数据库 Day4 全卷闭环</a>，开始 SQL、关系代数、范式、事务、ER 混合切换。</td></tr>
+          <tr><td>候选码/BCNF 仍卡</td><td>继续做 <a href="./day3_database_big_four_arena.html">Day3 数据库主动回忆</a> 的范式关，不急着整卷。</td></tr>
+          <tr><td>AI 公式读得懂但不会用</td><td>接 <a href="./day4_ai_unsupervised_rl_closure.html">AI Day4 无监督与强化学习</a>，并用 <a href="./day5_ai_exam_sprint_mixed.html">AI Day5 混合小测</a> 做题型切换。</td></tr>
+          <tr><td>离散谓词/范式保温完成</td><td>接 <a href="./day4_discrete_prenex_skolem_axiom.html">离散 Day4 前束/Skolem/公理证明</a>，开始长题工具。</td></tr>
+        </tbody>
+      </table>
+      <p><a href="./index.html">回到学习舱</a> · <a href="./day3_database_big_four_arena.html">打开 Day3 数据库主动回忆</a> · <a href="./full_final_schedule_0616_0630.html">查看全程计划</a></p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 讲次覆盖地图：PPT 到期末题型的完整路线</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --ink: #1c2836;
+      --muted: #657386;
+      --line: #d8e3ee;
+      --panel: #ffffff;
+      --blue: #1f66b3;
+      --green: #15704f;
+      --orange: #a85d13;
+      --red: #a93636;
+      --purple: #6546a3;
+      --shadow: 0 12px 30px rgba(28, 40, 54, .07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #edf5fb 0, #f6f8fb 300px, #fff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+      letter-spacing: 0;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 20px 64px; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 35px; }
+    h2 { font-size: 25px; }
+    h3 { font-size: 18px; margin-top: 18px; }
+    p { margin: 8px 0 0; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .pillrow, nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .pill, nav a {
+      border: 1px solid #c9d9e8;
+      border-radius: 999px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 5px 11px;
+      font-size: 13px;
+      font-weight: 760;
+      text-decoration: none;
+    }
+    nav a { border-radius: 6px; }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff3f1; }
+    .good { color: var(--green); border-color: #acd8c1; background: #f1faf5; }
+    .warn { color: var(--orange); border-color: #e0c08e; background: #fff8eb; }
+    .purple { color: var(--purple); border-color: #c9bce8; background: #f7f3ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f1f7ff;
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .note.good { border-left-color: var(--green); background: #f1faf5; }
+    .note.warn { border-left-color: var(--orange); background: #fff8eb; }
+    .note.hot { border-left-color: var(--red); background: #fff4f2; }
+    .key {
+      color: var(--red);
+      font-weight: 850;
+      background: linear-gradient(transparent 58%, #ffe8dd 58%);
+      padding: 0 2px;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #eef6ff; color: var(--blue); }
+    .figure {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .figure svg { width: 100%; min-width: 860px; height: auto; display: block; }
+    .timeline {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stage {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+    .stage b { color: var(--blue); }
+    .status {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid #c9d9e8;
+      background: #fff;
+      white-space: nowrap;
+    }
+    .done { color: var(--green); border-color: #acd8c1; background: #f1faf5; }
+    .partial { color: var(--orange); border-color: #e0c08e; background: #fff8eb; }
+    .todo { color: var(--red); border-color: #e5b3ad; background: #fff3f1; }
+    .checkpoint-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .checkpoint-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .checkpoint-card h3 { margin-top: 0; color: var(--blue); }
+    .checkpoint-card dl {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 6px 10px;
+      margin: 10px 0 0;
+    }
+    .checkpoint-card dt {
+      color: var(--muted);
+      font-weight: 850;
+    }
+    .checkpoint-card dd { margin: 0; }
+    .mini-question {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #f8fbff;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    .mini-question strong { color: var(--red); }
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .priority-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .priority-card h3 { margin-top: 0; color: var(--blue); }
+    .radar-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .radar-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .radar-card h3 { margin-top: 0; color: var(--blue); }
+    .radar-meta {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 6px 10px;
+      margin: 10px 0 0;
+    }
+    .radar-meta dt {
+      margin: 0;
+      color: var(--muted);
+      font-weight: 850;
+    }
+    .radar-meta dd { margin: 0; }
+    .radar-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px 10px;
+      margin-top: 11px;
+    }
+    .radar-check.done {
+      border-color: #acd8c1;
+      background: #f1faf5;
+    }
+    .radar-status {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f1f7ff;
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+    .rank {
+      display: inline-flex;
+      border: 1px solid #c9d9e8;
+      border-radius: 999px;
+      padding: 3px 9px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 850;
+      background: #fff;
+    }
+    .rank.must { color: var(--red); border-color: #e5b3ad; background: #fff3f1; }
+    .rank.core { color: var(--orange); border-color: #e0c08e; background: #fff8eb; }
+    .rank.know { color: var(--green); border-color: #acd8c1; background: #f1faf5; }
+    .math-card {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #f8fbff;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .math-note { color: var(--muted); font-size: 14px; margin-top: 6px; }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe0ee;
+      border-radius: 6px;
+      background: #f5fbff;
+      padding: 1px 6px;
+    }
+    @media (max-width: 860px) {
+      main { padding: 18px 12px 44px; }
+      header, section { padding: 18px; }
+      h1 { font-size: 28px; }
+      .grid, .grid.three, .timeline, .priority-grid, .radar-grid { grid-template-columns: 1fr; }
+      .figure svg { min-width: 760px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <div class="pillrow">
+        <span class="pill hot">AI 覆盖地图</span>
+        <span class="pill">不占 Day 任务量</span>
+        <span class="pill good">PPT 讲次证据</span>
+        <span class="pill warn">防漏考点</span>
+      </div>
+      <h1>AI 讲次覆盖地图：从 PPT 到期末题型的完整路线</h1>
+      <p class="muted">这页不是今天要额外学完的新讲义。它是“备课地图”和“查漏地图”：告诉你第 2-14 讲、复习 PDF、参考习题分别支撑哪些考点，已经被哪份讲义承接，后面还要用什么题型把它练熟。</p>
+      <nav>
+        <a href="#route">0. 怎么用</a>
+        <a href="#radar">0.8 防漏雷达</a>
+        <a href="#flow">1. 总路线</a>
+        <a href="#lectures">2. 讲次覆盖表</a>
+        <a href="#priority">2.5 掌握级别</a>
+        <a href="#reference-pages">2.8 参考习题逐页覆盖</a>
+        <a href="#checkpoints">3. 每讲闯关</a>
+        <a href="#formula">4. 公式动作表</a>
+        <a href="#gaps">5. 后续补洞</a>
+        <a href="#sources">6. 资料证据</a>
+      </nav>
+      <div class="note warn">
+        <strong>进度提醒：</strong>你现在 6/18 仍按 Day2 标准包吸收，不因为这页新增就加量。等你进入 Day3/Day4 或考前回看时，这页负责告诉你“为什么下一步学这些、有没有漏掉 PPT 板块”。
+      </div>
+    </header>
+
+    <section id="route">
+      <h2>0. 这页怎么用：只解决“有没有漏”和“后面怎么接”</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>今天不要硬啃</strong>
+          Day2 继续看模型故事线、ML 题卡和必要的 NN 术语地基。这里不是正课，只是地图。
+        </div>
+        <div class="box">
+          <strong>Day3 以后查路线</strong>
+          当你看到公式、Transformer、VAE、Q-learning 这些词混起来，就回这页看它属于哪一讲、该接哪份讲义。
+        </div>
+        <div class="box">
+          <strong>考前查缺口</strong>
+          6/22 数据库后转 AI 时，这页用来确认：经典机器学习、神经网络、生成模型、强化学习、信号处理有没有保底。
+        </div>
+      </div>
+    </section>
+
+    <section id="radar">
+      <h2>0.8 AI 防漏雷达：你不是要“看过”，你要知道哪块能上考场</h2>
+      <p>这块是给你建立安全感的。AI 名词很多，但期末不会随机炸你，它会围绕老师总结和参考习题里的几个板块反复换问法。下面 8 个雷达点就是后续 AI 复习的硬骨架：<span class="key">会勾选，不代表看过，而代表你能写出最低过关句</span>。</p>
+      <div class="radar-grid">
+        <div class="radar-card">
+          <h3>1. 机器学习语言 + 线性/逻辑回归</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第14讲机器学习目标；第2-3讲 PPT；老师最后一课强调回归/分类、损失、风险、过拟合。</dd>
+            <dt>考法</dt><dd>选择/填空问术语边界；简答问经验风险、期望风险、正则化；小计算问 MSE 或梯度下降一步。</dd>
+            <dt>过关句</dt><dd>我能先看输出是连续值还是类别，再选择回归/分类，并解释模型、参数、损失、训练、泛化的关系。</dd>
+            <dt>回炉页</dt><dd><a href="./day2_ai_model_storyline.html">Day2 故事线</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="ml-language"> 我能不看答案讲出“样本 -> 模型 -> 损失 -> 训练 -> 泛化”这条链。</label>
+        </div>
+        <div class="radar-card">
+          <h3>2. 决策树 + AdaBoost</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第5讲；第14讲要求掌握决策树划分度量；参考习题命中信息增益率和 AdaBoost 综合题。</dd>
+            <dt>考法</dt><dd>给小表格选根节点；问高熵/低熵；问错分样本权重如何变；混合题里让你解释模型选择。</dd>
+            <dt>过关句</dt><dd>决策树先算总熵和子熵；AdaBoost 先算加权错误率，错分样本下一轮变重，最后加权投票。</dd>
+            <dt>回炉页</dt><dd><a href="./day2_ai_reference_ml_cards.html">ML 题卡</a>、<a href="./day5_ai_exam_sprint_mixed.html#prelesson">Day5 题前补课</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="tree-boost"> 我能看到信息增益/AdaBoost 题先写第一步，而不是直接猜选项。</label>
+        </div>
+        <div class="radar-card">
+          <h3>3. LDA / SVM / 线性分类模型比较</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第4讲线性分类模型对比；参考习题 SVM 分类边界和支持向量图题。</dd>
+            <dt>考法</dt><dd>选择题比较模型；图题找支持向量；简答问为什么最大间隔有利于泛化。</dd>
+            <dt>过关句</dt><dd>LDA 抓“类间远、类内近”；SVM 抓“最大间隔、支持向量”；逻辑回归抓“概率输出 + 交叉熵”。</dd>
+            <dt>回炉页</dt><dd><a href="./day2_ai_reference_ml_cards.html#svm">SVM 图题</a>、<a href="./day3_ai_formula_model_closure.html">Day3 模型比较</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="lda-svm"> 我能用题眼区分 LDA、逻辑回归、SVM、感知器。</label>
+        </div>
+        <div class="radar-card">
+          <h3>4. BP / 训练策略 / Loss 曲线</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第6讲前馈神经网络与训练策略；参考习题 BP、sigmoid、训练/测试误差曲线。</dd>
+            <dt>考法</dt><dd>判断 BP 描述正误；解释激活函数；根据训练/验证曲线判断过拟合、欠拟合或优化问题。</dd>
+            <dt>过关句</dt><dd>神经网络先前向算预测和损失，BP 用链式法则反向分配责任，梯度下降更新参数。</dd>
+            <dt>回炉页</dt><dd><a href="./day2_ai_reference_nn_cards.html">NN 题卡</a>、<a href="./tips_ai_model_gate_practice.html">模型闯关 Tips</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="bp-loss"> 我能解释“没有激活函数，多层线性仍等价一层线性”。</label>
+        </div>
+        <div class="radar-card">
+          <h3>5. CNN / Attention / Transformer / BERT-GPT</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第7-9讲；第14讲明确 CNN 和自注意力要掌握基本原理和计算方式。</dd>
+            <dt>考法</dt><dd>卷积核/池化/参数共享简答；Q/K/V 公式解释；BERT/GPT/ViT 模型分流。</dd>
+            <dt>过关句</dt><dd>CNN 适合图像因为局部连接和参数共享；Attention 是 Q 查 K 得权重，再加权汇总 V。</dd>
+            <dt>回炉页</dt><dd><a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>、<a href="./tips_ai_visual_model_masterclass.html">图解 Tips</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="cnn-attention"> 我能看到图像/patch/QKV/BERT/GPT 题干先切模型，再写机制第一句。</label>
+        </div>
+        <div class="radar-card">
+          <h3>6. PCA / AE / VAE / GAN / Diffusion</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第10-11讲；第14讲说明生成式 AI 重概念和核心思想，不追复杂推导。</dd>
+            <dt>考法</dt><dd>模型识别、比较优缺点、解释 KL/重构/对抗/加噪去噪；选择填空和简答为主。</dd>
+            <dt>过关句</dt><dd>PCA 最大方差降维，AE 重构，VAE 可采样隐变量分布，GAN 对抗，Diffusion 多步去噪。</dd>
+            <dt>回炉页</dt><dd><a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/生成</a>、<a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="gen-models"> 我能根据训练信号区分 AE、VAE、GAN、Diffusion。</label>
+        </div>
+        <div class="radar-card">
+          <h3>7. 强化学习：MDP / V-Q / Q-learning-Sarsa</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>第12-13讲；第14讲强化学习目标；参考习题后半出现 MDP、探索利用、Q-learning、Sarsa。</dd>
+            <dt>考法</dt><dd>场景翻译、概念辨析、一步 Q 值更新；机器人网格/游戏类题很典型。</dd>
+            <dt>过关句</dt><dd>先翻译 Agent、State、Action、Reward、Policy；Q-learning 看下一状态最大 Q，Sarsa 看实际下一动作。</dd>
+            <dt>回炉页</dt><dd><a href="./day4_ai_unsupervised_rl_closure.html#rl">Day4 强化学习</a>、<a href="./day7_ai_teacher_summary_final.html">Day7 终局</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="rl-q"> 我能写出 Q-learning 一步更新的 target 含义，并区分 Sarsa。</label>
+        </div>
+        <div class="radar-card">
+          <h3>8. 参考习题混合题 + 最后一课总纲</h3>
+          <dl class="radar-meta">
+            <dt>资料依据</dt><dd>AI 参考习题 OCR 第 1-15 页；最后一课转写；第14讲课程总结。</dd>
+            <dt>考法</dt><dd>选择、填空、计算、简答、综合题混合出现；无计算器意味着更重步骤、题眼和公式解释。</dd>
+            <dt>过关句</dt><dd>我能先分任务层、模型层、训练/证据层、建议层，再写答案，不被一堆模型名吓住。</dd>
+            <dt>回炉页</dt><dd><a href="./day5_ai_exam_sprint_mixed.html">Day5 混合小测</a>、<a href="./day7_ai_teacher_summary_final.html">Day7 终局闭环</a></dd>
+          </dl>
+          <label class="radar-check"><input type="checkbox" data-radar="mixed-final"> 我能做混合题前先排答题顺序，不直接翻答案。</label>
+        </div>
+      </div>
+      <div class="radar-status" id="radarStatus">AI 防漏雷达读取中。</div>
+      <div class="note good">
+        <strong>使用方法：</strong>这 8 项不是今天的额外作业。你学到对应 Day 后再回来勾；6/22 晚冲 AI 时，先看没勾的项，直接回对应讲义补，不再盲目重看所有页面。
+      </div>
+    </section>
+
+    <section id="flow">
+      <h2>1. 总路线：AI 不是一堆名词，是五段故事</h2>
+      <p>从老师 PPT 和课程总结看，AI 主线可以压成五段：先学机器学习的基本语言，再学经典模型，再学神经网络，再学深度/生成模型，最后学强化学习和信号处理边界。</p>
+      <div class="figure">
+        <svg viewBox="0 0 1080 390" role="img" aria-label="AI 讲次到考试路线图">
+          <defs>
+            <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#1f66b3"></path>
+            </marker>
+          </defs>
+          <rect x="38" y="82" width="180" height="96" rx="8" fill="#eef6ff" stroke="#9fc0df"/>
+          <text x="128" y="112" text-anchor="middle" font-size="18" font-weight="800">第2-3讲</text>
+          <text x="128" y="140" text-anchor="middle" font-size="14">机器学习语言</text>
+          <text x="128" y="163" text-anchor="middle" font-size="13">回归/分类/损失</text>
+          <rect x="258" y="82" width="180" height="96" rx="8" fill="#f1faf5" stroke="#aad4bf"/>
+          <text x="348" y="112" text-anchor="middle" font-size="18" font-weight="800">第4-5讲</text>
+          <text x="348" y="140" text-anchor="middle" font-size="14">经典模型</text>
+          <text x="348" y="163" text-anchor="middle" font-size="13">LDA/SVM/树/集成</text>
+          <rect x="478" y="82" width="180" height="96" rx="8" fill="#fff8eb" stroke="#e0c08e"/>
+          <text x="568" y="112" text-anchor="middle" font-size="18" font-weight="800">第6-9讲</text>
+          <text x="568" y="140" text-anchor="middle" font-size="14">深度学习</text>
+          <text x="568" y="163" text-anchor="middle" font-size="13">BP/CNN/Attention/GPT</text>
+          <rect x="698" y="82" width="180" height="96" rx="8" fill="#f7f3ff" stroke="#c9bce8"/>
+          <text x="788" y="112" text-anchor="middle" font-size="18" font-weight="800">第10-11讲</text>
+          <text x="788" y="140" text-anchor="middle" font-size="14">生成模型</text>
+          <text x="788" y="163" text-anchor="middle" font-size="13">PCA/AE/VAE/GAN/Diffusion</text>
+          <rect x="918" y="82" width="130" height="96" rx="8" fill="#fff3f1" stroke="#e5b3ad"/>
+          <text x="983" y="112" text-anchor="middle" font-size="18" font-weight="800">第12-13讲</text>
+          <text x="983" y="140" text-anchor="middle" font-size="14">强化学习</text>
+          <text x="983" y="163" text-anchor="middle" font-size="13">策略/价值/Q</text>
+          <line x1="218" y1="130" x2="258" y2="130" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="438" y1="130" x2="478" y2="130" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="658" y1="130" x2="698" y2="130" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr)"/>
+          <line x1="878" y1="130" x2="918" y2="130" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr)"/>
+          <rect x="145" y="252" width="790" height="64" rx="8" fill="#ffffff" stroke="#d8e3ee"/>
+          <text x="540" y="279" text-anchor="middle" font-size="17" font-weight="800">第14讲课程总结 + 复习/笔记/参考习题</text>
+          <text x="540" y="304" text-anchor="middle" font-size="14">负责把模型家族、公式、典型题眼和信号处理边界重新压成考前可调用清单</text>
+          <line x1="128" y1="180" x2="330" y2="252" stroke="#657386" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="568" y1="180" x2="568" y2="252" stroke="#657386" stroke-width="2" marker-end="url(#arr)"/>
+          <line x1="983" y1="180" x2="760" y2="252" stroke="#657386" stroke-width="2" marker-end="url(#arr)"/>
+        </svg>
+      </div>
+      <div class="note good">
+        <strong>核心判断：</strong>经典机器学习和参考习题最接近期末可考小题/小计算；深度和生成模型更像选择、填空、简答、模型比较；强化学习可能出一步更新或概念分流；信号处理只先做低成本公式边界。
+      </div>
+    </section>
+
+    <section id="lectures">
+      <h2>2. 讲次覆盖表：每讲核心考点、承接页面、后续题型</h2>
+      <table>
+        <thead>
+          <tr><th>资料讲次</th><th>老师材料里的核心信号</th><th>考试要会到什么程度</th><th>已承接页面</th><th>状态</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第2讲 线性回归</td>
+            <td>课程目标明确列出回归/分类、监督/无监督/强化、训练/测试、损失、经验风险、期望风险、过拟合/欠拟合、正则化；并要求掌握线性回归、对数几率回归、最小二乘、梯度下降。</td>
+            <td>会分任务类型；会解释样本/特征/标签/模型/参数/损失；会读线性模型和 MSE；知道过拟合不是训练错，而是泛化差。</td>
+            <td><a href="./day1_ai_se_visual.html">Day1 AI 从零</a>、<a href="./day2_ai_model_storyline.html">Day2 故事线</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a></td>
+            <td><span class="status done">主线已承接</span></td>
+          </tr>
+          <tr>
+            <td>第3讲 线性分类</td>
+            <td>从线性回归转到线性分类，强调二分类、线性分类器、为什么不能直接把线性回归当分类器。</td>
+            <td>会说回归输出连续值，分类输出类别；会解释逻辑回归为什么用于分类；会区分 MSE 与交叉熵的任务适配。</td>
+            <td><a href="./day2_ai_model_storyline.html">Day2 故事线</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a></td>
+            <td><span class="status done">已承接</span></td>
+          </tr>
+          <tr>
+            <td>第4讲 LDA 与 SVM</td>
+            <td>PPT 有 bias 省略问题、逻辑回归回顾、线性分类模型对比表、LDA 类间/类内、SVM 从最大间隔问题入手。</td>
+            <td>会一句话区分逻辑回归、LDA、感知器、SVM；会解释 bias、最大间隔、支持向量；会把“类间大/类内小”识别成 LDA。</td>
+            <td><a href="./day2_ai_reference_ml_cards.html">ML 题卡</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a></td>
+            <td><span class="status done">已承接</span></td>
+          </tr>
+          <tr>
+            <td>第5讲 决策树与集成学习</td>
+            <td>PPT 回顾线性模型，随后进入决策树定义、算法流程、信息熵下降、规则集合、集成学习和 AdaBoost。</td>
+            <td>会解释熵/信息增益/信息增益率/基尼；会手算小表格第一步；会写 AdaBoost 的加权错误率、样本权重更新和加权投票。</td>
+            <td><a href="./day2_ai_reference_ml_cards.html">ML 题卡</a>、<a href="./day2_ai_model_storyline.html">Day2 故事线</a></td>
+            <td><span class="status partial">需错题回炉</span></td>
+          </tr>
+          <tr>
+            <td>第6讲 前馈神经网络与训练策略</td>
+            <td>PPT 进入前馈神经网络、训练策略；参考习题覆盖 BP、梯度下降、sigmoid、误差曲线。</td>
+            <td>会讲前向传播 -> 损失 -> BP -> 梯度下降；知道 sigmoid 饱和和梯度消失；会根据训练/验证 loss 判断欠拟合、过拟合、优化问题。</td>
+            <td><a href="./day2_ai_reference_nn_cards.html">NN 题卡</a>、<a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a></td>
+            <td><span class="status partial">需高亮总结</span></td>
+          </tr>
+          <tr>
+            <td>第7讲 CNN 与自注意力机制</td>
+            <td>PPT 命中 CNN 参数与 filter、卷积比全连接参数少、感受野、参数共享、自注意力入口。</td>
+            <td>会说 CNN 为什么适合图像：局部感受野、参数共享、平移模式；会识别卷积核/通道/步长；知道注意力是相关性加权。</td>
+            <td><a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>、<a href="./tips_ai_visual_model_masterclass.html">AI 图解 Tips</a></td>
+            <td><span class="status done">已桥接</span></td>
+          </tr>
+          <tr>
+            <td>第8讲 Transformer / BERT</td>
+            <td>提纲进入序列数据模型和大模型与智能体，承接自注意力、Transformer、BERT。</td>
+            <td>会解释 Q/K/V、缩放点积注意力、为什么能处理长距离依赖；会区分 BERT 偏理解、GPT 偏生成。</td>
+            <td><a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a>、<a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a></td>
+            <td><span class="status done">已承接</span></td>
+          </tr>
+          <tr>
+            <td>第9讲 GPT 与智能体</td>
+            <td>深度学习课程目标明确要求掌握深度学习基本概念、CNN、自注意力基本原理和计算方式，了解训练策略、Transformer、BERT、GPT、大模型智能体。</td>
+            <td>会把 GPT 放进自回归生成；知道智能体是模型 + 工具/环境/规划的组合；简答能写“输入、核心机制、输出、局限”。</td>
+            <td><a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>、<a href="./day5_ai_exam_sprint_mixed.html">AI 混合小测</a></td>
+            <td><span class="status partial">考前做比较题</span></td>
+          </tr>
+          <tr>
+            <td>第10讲 AE / VAE</td>
+            <td>课程目标明确：了解 PCA，不要求推导；了解自编码器与 PCA 异同；了解 VAE 与 AE 区别、重构损失 + KL 散度作用、生成图像模糊问题。</td>
+            <td>会说 PCA 是线性降维，AE 是编码-解码重构，VAE 是学习可采样隐变量分布；知道 KL 是把隐空间往易采样分布拉。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/生成/强化</a>、<a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a></td>
+            <td><span class="status done">已加厚</span></td>
+          </tr>
+          <tr>
+            <td>第11讲 Diffusion / GAN</td>
+            <td>提纲包括 VAE、扩散模型、生成对抗网络、生成式模型评估。</td>
+            <td>会区分 GAN 对抗训练与 Diffusion 加噪去噪；知道 GAN 训练不稳定/模式崩塌，Diffusion 训练稳定但采样慢。</td>
+            <td><a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>、<a href="./day5_ai_exam_sprint_mixed.html">AI 混合小测</a></td>
+            <td><span class="status done">已承接</span></td>
+          </tr>
+          <tr>
+            <td>第12-13讲 强化学习</td>
+            <td>提纲包括强化学习问题定义、基于策略、基于价值、Actor-Critic、其他方法；参考习题后半有 Q-learning / Sarsa 等题眼。</td>
+            <td>会解释智能体、环境、状态、动作、奖励、策略；会写 Q-learning 一步更新；会区分策略方法和值方法的基本思路。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/生成/强化</a>、<a href="./day5_ai_exam_sprint_mixed.html">AI 混合小测</a></td>
+            <td><span class="status done">主线已建</span></td>
+          </tr>
+          <tr>
+            <td>第14讲 课程总结</td>
+            <td>总提纲覆盖绪论、机器学习、深度学习、生成式 AI、强化学习，是考前压缩和查缺口的总入口。</td>
+            <td>不再学新模型，而是用它回看模型家族、公式动作、题型路由和错题回炉。</td>
+            <td><a href="./ai_exam_storyline_master_map.html">AI 总纲</a>、<a href="./exam_coverage_control_board.html">覆盖控制板</a></td>
+            <td><span class="status done">导航层</span></td>
+          </tr>
+          <tr>
+            <td>信号处理复习笔记</td>
+            <td>命中能量/功率、奇偶分解、卷积、傅里叶、采样、Z 变换等公式；同一笔记第 6-8 页也压缩了 AI 核心公式。</td>
+            <td>如果考试确认覆盖，做低成本公式定位；否则只保留关键词速查，不抢 AI 主线时间。</td>
+            <td>主页信号处理模块；后续可补 <span class="key">低成本速查包</span></td>
+            <td><span class="status partial">低频保底</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="priority">
+      <h2>2.5 掌握级别仪表盘：哪些必须会算，哪些会比较就够</h2>
+      <p>第14讲的用词很有用：<span class="key">熟练掌握</span>意味着要能解释、会写步骤、会做小计算；<span class="key">掌握</span>意味着能按题眼调用模板；<span class="key">了解</span>意味着能辨析概念、比较优缺点，不需要大推导。下面这张仪表盘决定后续 AI 时间怎么花。</p>
+      <div class="priority-grid">
+        <div class="priority-card">
+          <span class="rank must">A. 必须练到会用</span>
+          <h3>机器学习基本语言 + 线性回归/逻辑回归</h3>
+          <p><strong>来源信号：</strong>第14讲明确写“熟练掌握机器学习基本概念”，并要求线性回归、对数几率回归、最小二乘、梯度下降的原理、推导和计算。</p>
+          <ul>
+            <li><strong>考场能力：</strong>能解释样本、特征、标签、模型、参数、损失、经验风险、期望风险、泛化、过拟合、正则化。</li>
+            <li><strong>题型：</strong>选择/填空考概念边界；简答考风险和正则化；计算题可能考 MSE、最小二乘骨架、梯度下降更新。</li>
+            <li><strong>第一步：</strong>先判断输出是连续值还是类别，再写模型、损失、优化目标。</li>
+          </ul>
+        </div>
+        <div class="priority-card">
+          <span class="rank must">A. 必须练到会分流</span>
+          <h3>决策树、信息增益、AdaBoost</h3>
+          <p><strong>来源信号：</strong>第14讲要求掌握决策树划分度量和构建算法；最后一节课也提醒决策树计算和作业题型要会。参考习题 OCR 明确覆盖信息增益率和 AdaBoost 综合题。</p>
+          <ul>
+            <li><strong>考场能力：</strong>会写总熵 -> 条件熵 -> 信息增益/增益率；会解释错分样本权重为什么变大。</li>
+            <li><strong>题型：</strong>小计算、表格综合题、选择题干扰项。</li>
+            <li><strong>第一步：</strong>决策树先算总熵；AdaBoost 先算加权错误率，不看普通错误个数。</li>
+          </ul>
+        </div>
+        <div class="priority-card">
+          <span class="rank core">B+. 掌握核心思想</span>
+          <h3>LDA / SVM / 集成学习</h3>
+          <p><strong>来源信号：</strong>第14讲写 LDA、SVM、集成学习“了解核心思想，不要求推导和计算”。但参考习题里 SVM 支持向量和分类边界很有考试味。</p>
+          <ul>
+            <li><strong>考场能力：</strong>LDA 抓类间远类内近；SVM 抓最大间隔和支持向量；集成学习抓弱分类器组合成强分类器。</li>
+            <li><strong>题型：</strong>选择、填空、简答、图形辨析。</li>
+            <li><strong>第一步：</strong>先写模型选择原则，不展开复杂优化推导。</li>
+          </ul>
+        </div>
+        <div class="priority-card">
+          <span class="rank must">A. 深度学习小计算要会</span>
+          <h3>CNN、自注意力、训练策略</h3>
+          <p><strong>来源信号：</strong>第14讲明确要求掌握 CNN 和自注意力机制的基本原理和计算方式，并了解训练策略如何判断欠拟合、过拟合和优化问题。</p>
+          <ul>
+            <li><strong>考场能力：</strong>会做小卷积乘加；会解释 Q/K/V 和 <span class="key">√d<sub>k</sub></span> 缩放；会看训练损失/验证损失曲线。</li>
+            <li><strong>题型：</strong>小计算、模型结构简答、曲线诊断综合题。</li>
+            <li><strong>第一步：</strong>图片题先看局部窗口和卷积核；attention 题先写 Q 查 K，再加权汇总 V。</li>
+          </ul>
+        </div>
+        <div class="priority-card">
+          <span class="rank know">B. 会比较，不追推导</span>
+          <h3>PCA、AE、VAE、GAN、Diffusion</h3>
+          <p><strong>来源信号：</strong>第14讲写 PCA 不要求推导；生成模型要求掌握相关概念、了解核心思想，不要求推导和计算。</p>
+          <ul>
+            <li><strong>考场能力：</strong>PCA 是最大方差正交方向；AE 是编码-解码重构；VAE 是可采样隐变量分布；GAN 是对抗；Diffusion 是加噪/去噪。</li>
+            <li><strong>题型：</strong>选择、填空、简答比较、模型识别。</li>
+            <li><strong>第一步：</strong>先圈训练信号：重构、KL/采样、生成器/判别器、加噪/去噪。</li>
+          </ul>
+        </div>
+        <div class="priority-card">
+          <span class="rank core">B+. 概念多，要会场景翻译</span>
+          <h3>强化学习：状态动作奖励、V/Q、Bellman、Q-learning</h3>
+          <p><strong>来源信号：</strong>第14讲要求掌握强化学习相关概念，并了解基于策略和值方法；参考习题后半覆盖 MDP、策略评估/优化、Q-learning、Sarsa。</p>
+          <ul>
+            <li><strong>考场能力：</strong>能把机器人迷宫/游戏题翻译成状态、动作、奖励、策略；会区分 V(s) 和 Q(s,a)；会做一步 Q-learning 更新。</li>
+            <li><strong>题型：</strong>选择/填空、场景简答、小计算。</li>
+            <li><strong>第一步：</strong>先写四件套，再找 target = r + gamma max Q(s',a')。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note good">
+        <strong>复习分配结论：</strong>AI 后续不是平均用力。机器学习基础、树/集成、CNN/Attention、RL 小计算要练到会动手；生成模型和 BERT/GPT/ViT 更重模型比较和题眼识别。这样既不漏点，也不会把时间浪费在考试不要求的大推导上。
+      </div>
+    </section>
+
+    <section id="reference-pages">
+      <h2>2.8 参考习题逐页覆盖：每一页接到哪里，什么时候做</h2>
+      <p>这段是专门解决“AI 参考习题这么多，我到底有没有漏”的焦虑。OCR 后的参考习题能分成五组：基础概念、经典机器学习、神经网络、无监督/生成、强化学习。你现在不用逐页硬刷，但后续每组都要在对应 Day 讲义里过一遍<span class="key">题眼、第一步、变式解析</span>。</p>
+      <table>
+        <thead>
+          <tr><th>OCR 页段</th><th>主要题型信号</th><th>已承接页面</th><th>什么时候做</th><th>最低闸门</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第 1-2 页<br><span class="status done">基础概念</span></td>
+            <td>形式化系统性质、AlphaGo 方法、Pearl 三层推理、启发式搜索、监督/无监督/强化学习、人机混合增强。</td>
+            <td><a href="./day1_ai_reference_bridge.html">Day1 AI 参考习题第 1 页桥接</a>、<a href="./day1_ai_se_visual.html">Day1 AI 从零</a></td>
+            <td>AI 启动期。只要求建立题感，不要在这里追大题深度。</td>
+            <td>能把“概念题”扩成一句简答：是什么、为什么不是相邻概念、考试题眼是什么。</td>
+          </tr>
+          <tr>
+            <td>第 3-5 页<br><span class="status done">经典机器学习</span></td>
+            <td>LDA 类间/类内、信息熵和信息增益、样本组合数、SVM 最大间隔/支持向量、监督学习边界、AdaBoost 权重、误差曲线、L2 正则、决策树和 LDA 决策边界。</td>
+            <td><a href="./day2_ai_reference_ml_cards.html">Day2 ML 参考题卡</a> <span class="status done">选择题已可点击校验</span>、<a href="./day3_ai_formula_model_closure.html">Day3 公式模型闭环</a>、<a href="./day5_ai_exam_sprint_mixed.html#prelesson">Day5 题前补课</a></td>
+            <td>Day2-Day3 主练；Day5 回炉变式。这里是最像期末小计算/综合题的一组。做选择题时先写题眼，再点击校验。</td>
+            <td>看到 LDA/SVM/树/AdaBoost 题干能写第一句；AdaBoost 会先算加权错误率；SVM 图题会先找支持向量。</td>
+          </tr>
+          <tr>
+            <td>第 6-8 页<br><span class="status done">神经网络</span></td>
+            <td>BP 描述辨析、梯度下降/随机梯度下降、sigmoid 梯度消失、前馈网络、LSTM 门控、GAN 训练、XOR、参数初始化、编码器-解码器损失、LSTM 为什么缓解梯度消失。</td>
+            <td><a href="./day2_ai_reference_nn_cards.html">Day2 NN 参考题卡</a> <span class="status done">选择题已可点击校验</span>、<a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>、<a href="./day5_ai_exam_sprint_mixed.html">Day5 混合小测</a></td>
+            <td>Day2 只吃故事线和典型题；Day3/Day5 再做综合表达。选择题区先写题眼，再点击校验，不靠猜。</td>
+            <td>能把 BP 讲成“算错多少 -> 反向追责 -> 更新参数”；能写 LSTM 门控为什么缓解长依赖；GAN 题能说对抗和不稳定。</td>
+          </tr>
+          <tr>
+            <td>第 9-11 页<br><span class="status partial">无监督/生成底座</span></td>
+            <td>K-means 簇内方差、相关性和独立性、PCA、特征人脸、潜在语义分析、K-means 迭代图、K-means 目标函数递减、EM 硬币估计、K-means 作为 EM 特例、样本方差无偏估计。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/生成/强化闭环</a>、<a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a></td>
+            <td>Day4 主练；考前只保 K-means/PCA/EM 的题眼和第一句，统计证明题不深追。</td>
+            <td>能区分 K-means 是聚类、PCA 是降维、EM 是含隐藏变量的迭代估计；能说明 K-means 的 E 步/M 步含义。</td>
+          </tr>
+          <tr>
+            <td>第 12-15 页<br><span class="status done">强化学习</span></td>
+            <td>强化学习/监督学习/卷积网络学习方式、策略评估和策略优化、探索与利用、MDP 比 MRP 多动作、V(s)/Q(s,a)、机器人网格、Bellman 方程、价值迭代、Q-learning、Sarsa。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html#rl">Day4 强化学习</a>、<a href="./day5_ai_exam_sprint_mixed.html#prelesson">Day5 题前补课</a>、<a href="./day7_ai_teacher_summary_final.html">Day7 老师总纲终局闭环</a></td>
+            <td>Day4 建概念，Day5 做一步更新，6/22 晚用 Day7 终局核对。</td>
+            <td>能先圈 Agent/State/Action/Reward；会区分 V 和 Q；看到 max Q 写 Q-learning，看到实际下一动作写 Sarsa。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note warn">
+        <strong>不要误用这张表：</strong>它不是新任务清单，不要求你今天把 15 页全部刷完。它是覆盖证明：后续你每到一个 Day，就按对应页段打开题卡。AI 资料多而散，我们用这张表把它收进路线里。
+      </div>
+      <div class="grid three">
+        <div class="box">
+          <strong>机器学习高分点</strong>
+          第 3-5 页最值得反复回炉。它们同时覆盖选择、判断、小计算和综合题，最能训练“换问法也会做”。
+        </div>
+        <div class="box">
+          <strong>深度学习保分点</strong>
+          第 6-8 页不要只背 BP/LSTM/GAN 名字。考试更可能问“为什么”“哪里错”“为什么不能这样初始化”。
+        </div>
+        <div class="box">
+          <strong>强化学习守门点</strong>
+          第 12-15 页概念很多，但第一步固定：先翻译四件套，再判断是 V/Q、Bellman、Q-learning 还是 Sarsa。
+        </div>
+      </div>
+    </section>
+
+    <section id="checkpoints">
+      <h2>3. 每讲闯关大纲：学什么 -> 怎么考 -> 当场例题</h2>
+      <p>这一段是给后续 Day3+ 和考前回看用的，不是今天额外加量。它把老师 PPT 和参考习题 OCR 里的信号压成可执行闸门：每讲只问三件事，<span class="key">先学什么</span>、<span class="key">考试怎么问</span>、<span class="key">你当场要写哪一步</span>。</p>
+      <div class="checkpoint-grid">
+        <div class="checkpoint-card">
+          <h3>第2-3讲：机器学习语言与线性/逻辑回归</h3>
+          <dl>
+            <dt>先学什么</dt><dd>样本、特征、标签、模型、参数、损失、训练、泛化；回归看连续值，分类看类别；逻辑回归用 sigmoid 把线性分数变成概率。</dd>
+            <dt>怎么考</dt><dd>选择/填空考概念边界；简答考“为什么逻辑回归用于分类”；小题考 MSE、交叉熵、过拟合/欠拟合。</dd>
+            <dt>接哪页</dt><dd>Day2 故事线先建立坐标；Day3 公式闭环负责公式和模型比较。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>题干说“预测 PM2.5 数值”和“判断邮件是否垃圾”。先写：前者是回归，输出连续标量，常用 MSE；后者是二分类，输出类别或正类概率，常用 sigmoid/交叉熵。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第4讲：LDA 与 SVM</h3>
+          <dl>
+            <dt>先学什么</dt><dd>LDA 是利用标签找投影方向，让类间距离大、类内距离小；SVM 是在可分边界中找最大间隔，支持向量决定边界。</dd>
+            <dt>怎么考</dt><dd>参考习题里有 SVM 分类边界和支持向量；选择题常把 LDA、SVM、逻辑回归、决策树放在一起让你分辨。</dd>
+            <dt>接哪页</dt><dd>Day2 ML 题卡识别题眼；Day3 公式闭环补“最大间隔/支持向量”的标准表述。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>题干出现“类间尽量远、类内尽量近、找投影方向”，写 LDA；题干出现“最大间隔、离边界最近样本”，写 SVM 和支持向量。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第5讲：决策树与 AdaBoost</h3>
+          <dl>
+            <dt>先学什么</dt><dd>决策树是按属性逐步提问；信息增益等于划分前熵减去划分后加权熵；AdaBoost 不是普通投票，而是错分样本下一轮权重变大。</dd>
+            <dt>怎么考</dt><dd>参考习题 OCR 明确有信息增益率构建决策树；AdaBoost 常考加权错误率、弱分类器权重、样本权重更新。</dd>
+            <dt>接哪页</dt><dd>Day2 ML 题卡先做同类小题；Day5 混合小测把树、SVM、指标放在一起分流。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>总熵 1.0，属性 A 划分后加权熵 0.25，属性 B 为 0.55，先写 Gain(A)=0.75、Gain(B)=0.45，所以选 A。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第6讲：前馈网络、BP、训练策略</h3>
+          <dl>
+            <dt>先学什么</dt><dd>神经网络是线性变换 + 非线性激活的层叠；BP 用链式法则把输出层误差往前传；训练/验证曲线用来诊断欠拟合、过拟合、优化问题。</dd>
+            <dt>怎么考</dt><dd>参考习题有 BP 描述辨析；PPT 强调 ReLU、分段线性、模型训练策略。常见题是“为什么需要非线性激活”和“训练好测试差怎么办”。</dd>
+            <dt>接哪页</dt><dd>Day2 NN 题卡补术语；Day3 公式闭环补 loss/过拟合/评价指标。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>如果不用激活函数，多层线性变换叠起来仍等价于一层线性模型；因此 ReLU/sigmoid 的作用是引入非线性表达能力。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第7-9讲：CNN、Attention、Transformer、BERT/GPT</h3>
+          <dl>
+            <dt>先学什么</dt><dd>CNN 抓局部空间特征，核心是感受野、卷积核、参数共享、池化；Attention 用 Q/K/V 做相关性加权；BERT 偏理解，GPT 偏生成。</dd>
+            <dt>怎么考</dt><dd>PPT 有 CNN 参数、filter、3x3 卷积核、自注意力是否包含位置信息等思考题；考试更可能问机制、优势、模型比较。</dd>
+            <dt>接哪页</dt><dd>AI 深度/生成桥接系统讲；学习舱只做题干分流和第一句作答。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>题干说“图片切成 patch 当作 token 输入 Transformer”，第一句写 ViT；若题干说“局部窗口滑动、参数共享、池化”，第一句写 CNN。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第10-11讲：PCA、AE/VAE、GAN、Diffusion</h3>
+          <dl>
+            <dt>先学什么</dt><dd>PCA 是线性降维，不要求推导；AE 是压缩-重构；VAE 多了潜变量分布、重参数化和 KL；GAN 是生成器/判别器对抗；Diffusion 是加噪再去噪。</dd>
+            <dt>怎么考</dt><dd>第10讲课程目标明确要求理解 AE/PCA 异同、VAE 的重构损失 + KL；生成模型多考比较和题眼识别。</dd>
+            <dt>接哪页</dt><dd>Day4 无监督/生成/强化和 AI 深度/生成桥接，后续 Day5 只做混合分流。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>题干出现 μ/logσ²、z=μ+σ·ε、KL 散度，写 VAE；出现生成器和判别器，写 GAN；出现逐步加噪/预测噪声，写 Diffusion。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第12-13讲：强化学习</h3>
+          <dl>
+            <dt>先学什么</dt><dd>先翻译 Agent、Environment、State、Action、Reward、Policy；再区分基于策略、基于价值、Actor-Critic；Q-learning 用下一状态最大 Q，Sarsa 用实际下一动作。</dd>
+            <dt>怎么考</dt><dd>参考习题 OCR 有 Sarsa、Q-learning、MDP、探索/利用；考试大概率是概念辨析或一步小表格更新，不会让你算大数。</dd>
+            <dt>接哪页</dt><dd>Day4 无监督/生成/强化先建四件套；Day5 混合小测练 Q-learning/Sarsa 分流。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>Q-learning 第一步不是背公式，而是找当前 s,a,r,s'，再取下一状态所有动作中最大的 Q(s',a')。</div>
+        </div>
+        <div class="checkpoint-card">
+          <h3>第14讲：课程总结怎么用</h3>
+          <dl>
+            <dt>先学什么</dt><dd>第14讲不是新课，而是覆盖核查表：绪论、机器学习、深度学习、生成式 AI、强化学习五段都要能说出主线。</dd>
+            <dt>怎么考</dt><dd>考前用它检查有没有漏掉大类；不要拿它代替具体讲义和题卡。</dd>
+            <dt>接哪页</dt><dd>AI 老师总纲终局闭环和覆盖控制板；只在考前做压缩复盘。</dd>
+          </dl>
+          <div class="mini-question"><strong>当场例题：</strong>如果一道题同时出现“训练数据、损失函数、过拟合、测试集”，它属于机器学习主线；如果出现“状态、动作、奖励、策略”，它属于强化学习主线。</div>
+        </div>
+      </div>
+      <div class="note good">
+        <strong>搭配规则：</strong>深学讲义负责把一块内容讲懂；学习舱只保留题眼、第一步、错因和自测；覆盖地图只做查漏和排程。后续如果发现一个新页面只是重复已有讲义，就合并进现有页，不再单开入口。
+      </div>
+    </section>
+
+    <section id="formula">
+      <h2>4. 公式动作表：不是背符号，是知道考场第一步</h2>
+      <p>AI 公式必须可读，也必须知道“什么时候用”。下面这些是后续 Day3+ 和考前混合题要反复调用的动作。</p>
+      <table>
+        <thead><tr><th>题眼</th><th>第一步</th><th>可读公式/表达</th><th>常见错法</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>线性回归 / MSE</td>
+            <td>先说明输入特征、权重、预测值和真实值。</td>
+            <td>
+              <div class="math-card">
+                <div class="display-eq"><span class="var">ŷ</span><span class="op">=</span><span class="var">w</span><sup>T</sup><span class="var">x</span><span class="op">+</span><span class="var">b</span></div>
+                <div class="display-eq"><span class="func">MSE</span><span class="op">=</span><span class="frac"><span>1</span><span>n</span></span><span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>(<span class="var">y</span><sub>i</sub><span class="op">−</span><span class="var">ŷ</span><sub>i</sub>)<sup>2</sup></div>
+              </div>
+            </td>
+            <td>只写公式，不解释 x、w、b、ŷ、y 各代表什么。</td>
+          </tr>
+          <tr>
+            <td>决策树 / 信息增益</td>
+            <td>先算划分前总熵，再算按属性划分后的加权子熵。</td>
+            <td>
+              <div class="math-card">
+                <div class="display-eq"><span class="func">Gain</span>(D,a)<span class="op">=</span><span class="func">H</span>(D)<span class="op">−</span><span class="func">H</span>(D|a)</div>
+              </div>
+            </td>
+            <td>把子熵越大当越好；忘记按分支样本数加权。</td>
+          </tr>
+          <tr>
+            <td>AdaBoost</td>
+            <td>先算每个弱分类器的加权错误率。</td>
+            <td>
+              <div class="math-card">
+                <div class="display-eq"><span class="var">ε</span><sub>t</sub><span class="op">=</span><span class="sum"><span class="top">错分样本</span><span class="sym">∑</span><span class="bot">i</span></span><span class="var">D</span><sub>t</sub>(i)</div>
+              </div>
+            </td>
+            <td>看普通准确率，不看样本权重；忘记错分样本下一轮权重变大。</td>
+          </tr>
+          <tr>
+            <td>Attention</td>
+            <td>先解释 Q/K/V，再说 QK 算相关性。</td>
+            <td>
+              <div class="math-card">
+                <div class="display-eq"><span class="func">Attention</span>(Q,K,V)<span class="op">=</span><span class="func">softmax</span>(<span class="frac"><span>QK<sup>T</sup></span><span>√d<sub>k</sub></span></span>)V</div>
+              </div>
+            </td>
+            <td>把 Q 误当 Q-learning 的 Q 表；只背公式不解释缩放。</td>
+          </tr>
+          <tr>
+            <td>Q-learning</td>
+            <td>先找当前 Q、即时奖励、下一状态最大 Q。</td>
+            <td>
+              <div class="math-card">
+                <div class="display-eq"><span class="func">target</span><span class="op">=</span><span class="var">r</span><span class="op">+</span><span class="var">γ</span><span class="func">max</span><sub>a'</sub>Q(s',a')</div>
+                <div class="display-eq">Q<span class="subtle">(新)</span><span class="op">=</span>Q<span class="subtle">(旧)</span><span class="op">+</span><span class="var">α</span>[<span class="func">target</span><span class="op">−</span>Q<span class="subtle">(旧)</span>]</div>
+              </div>
+            </td>
+            <td>直接把 target 当新 Q；把下一状态所有 Q 相加，而不是取最大。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="gaps">
+      <h2>5. 后续补洞计划：新增内容只补真正缺口</h2>
+      <div class="timeline">
+        <div class="stage"><b>6/18-6/20</b></div>
+        <div class="stage">你按 Day2 吸收 + Day3 慢启动。我不再改 Day2 讲义；后续新增优先是 Day3+、覆盖地图、错题回炉和考前包。</div>
+        <div class="stage"><b>数据库后</b></div>
+        <div class="stage">AI 进入考前窗口：公式模型闭环、无监督/生成/强化学习、参考习题错题、模型比较表。新内容只做“考前可调用”，不再开同类大课。</div>
+        <div class="stage"><b>AI 考前</b></div>
+        <div class="stage">压缩为三件事：公式动作表、模型对比表、参考习题错题回炉。重点是换问法也会反应，而不是再看一大堆新名词。</div>
+        <div class="stage"><b>低频边界</b></div>
+        <div class="stage">信号处理基础只做低成本速查；除非老师明确强调，否则不抢机器学习/神经网络/强化学习主时间。</div>
+      </div>
+      <div class="note hot">
+        <strong>新增硬规则：</strong>后续每做一个 AI 新页面，都必须能指出它补的是哪一讲、哪种题型、哪份资料依据；如果只能重复现有讲义，就不新建。
+      </div>
+    </section>
+
+    <section id="sources">
+      <h2>6. 资料证据：这页读了哪些 PDF</h2>
+      <table>
+        <thead><tr><th>资料</th><th>已抽取到的关键信号</th><th>使用方式</th></tr></thead>
+        <tbody>
+          <tr><td>第2讲 线性回归</td><td>第 6 页课程目标列出机器学习基本概念、线性回归/对数几率回归、决策树、LDA/SVM/集成学习掌握要求。</td><td>作为机器学习主线和公式动作表依据。</td></tr>
+          <tr><td>第9讲 GPT 与智能体</td><td>第 2 页课程目标列出深度学习基本概念、CNN、自注意力、训练策略、Transformer/BERT/GPT/智能体。</td><td>作为深度学习和大模型比较题依据。</td></tr>
+          <tr><td>第10讲 AE/VAE</td><td>第 3 页课程目标明确 PCA 不要求推导，要求了解 AE/PCA 异同、VAE 训练目标和 KL 散度作用。</td><td>作为 Day4 PCA-AE-VAE 桥接依据。</td></tr>
+          <tr><td>第12-13讲 强化学习</td><td>提纲包括强化学习问题定义、基于策略、基于价值、Actor-Critic、其他方法。</td><td>作为强化学习题型分层依据。</td></tr>
+          <tr><td>第14讲 课程总结</td><td>总提纲覆盖绪论、机器学习、深度学习、生成式 AI、强化学习。</td><td>作为考前查漏和总路线依据。</td></tr>
+          <tr><td>信号处理复习笔记</td><td>第 1-5 页覆盖信号处理公式，第 6-8 页压缩 AI 公式和强化学习关键词。</td><td>作为低频保底，不抢 AI 主线。</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <strong>诚实边界：</strong>本轮先用可抽取文本定位讲次目标和考点。后续若要做某一讲的细图或逐题题卡，我会再看对应渲染页，不把“只看到提纲”当作“已经精读全讲”。
+      </div>
+    </section>
+  </main>
+  <script>
+    const radarKey = "ai-lecture-coverage-radar";
+    const radarChecks = Array.from(document.querySelectorAll("input[data-radar]"));
+    const radarStatus = document.getElementById("radarStatus");
+    function renderRadar() {
+      const done = radarChecks.filter((el) => el.checked).length;
+      radarChecks.forEach((el) => {
+        const label = el.closest(".radar-check");
+        if (label) label.classList.toggle("done", el.checked);
+      });
+      if (!radarStatus) return;
+      const next = done >= 6
+        ? "你已经有考前闭环雏形，下一步做 Day5/Day7 混合题和错题回炉。"
+        : "先别追新页面，优先回没勾项对应的 Day 讲义，把最低过关句说出来。";
+      radarStatus.innerHTML = `<strong>AI 防漏雷达：</strong>${done}/${radarChecks.length} 项已能上场。${next}`;
+    }
+    radarChecks.forEach((el) => {
+      const key = `${radarKey}:${el.dataset.radar}`;
+      el.checked = localStorage.getItem(key) === "1";
+      el.addEventListener("change", () => {
+        localStorage.setItem(key, el.checked ? "1" : "0");
+        renderRadar();
+      });
+    });
+    renderRadar();
+  </script>
+</body>
+</html>

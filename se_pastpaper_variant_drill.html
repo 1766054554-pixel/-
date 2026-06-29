@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>软工往年题变式训练营：客观题、图题、测试题</title>
+  <style>
+    :root {
+      --ink: #142231;
+      --muted: #657489;
+      --line: #d8e3eb;
+      --bg: #f3f7fa;
+      --paper: #fff;
+      --blue: #1e6f9f;
+      --green: #28734f;
+      --red: #ad3f37;
+      --amber: #a76713;
+      --soft-blue: #eaf5fb;
+      --soft-green: #ecf7f0;
+      --soft-red: #fff0ee;
+      --soft-amber: #fff7e8;
+      --shadow: 0 16px 36px rgba(20,34,49,.10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(30,111,159,.10), transparent 340px), var(--bg);
+      line-height: 1.75;
+    }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+    .hero, .card, .drill {
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .hero { padding: 30px; margin-bottom: 18px; }
+    .card { padding: 24px; margin: 18px 0; }
+    .drill { padding: 20px; margin: 16px 0; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: clamp(29px, 4vw, 46px); }
+    h2 { font-size: 25px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 19px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); font-weight: 800; text-decoration: none; }
+    code, pre { font-family: "SFMono-Regular", Consolas, Menlo, monospace; font-size: 14px; }
+    pre { white-space: pre-wrap; background: #102033; color: #f2f8ff; border-radius: 10px; padding: 13px; overflow-x: auto; }
+    .muted { color: var(--muted); }
+    .focus { font-weight: 850; background: linear-gradient(transparent 58%, rgba(255, 218, 94, .60) 58%); padding: 0 2px; }
+    .key { color: var(--blue); font-weight: 850; }
+    .pill {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 850;
+      margin: 0 8px 8px 0;
+    }
+    .pill.hot { color: var(--red); background: var(--soft-red); border-color: #efc1bc; }
+    .pill.good { color: var(--green); background: var(--soft-green); border-color: #bddfc9; }
+    .pill.warn { color: var(--amber); background: var(--soft-amber); border-color: #edd09c; }
+    .toc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .toc a { padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box { border: 1px solid var(--line); border-radius: 12px; padding: 15px; background: #fbfdff; }
+    .box strong { display: block; margin-bottom: 6px; }
+    .note { border-left: 5px solid var(--blue); border-radius: 10px; padding: 13px 15px; background: var(--soft-blue); margin: 14px 0; }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .quiz-list { display: grid; gap: 12px; margin-top: 12px; }
+    .q-card { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: #fff; }
+    .tag { color: var(--blue); font-weight: 850; font-size: 14px; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 10px; }
+    button {
+      border: 1px solid #c7d7e2;
+      background: #fff;
+      border-radius: 10px;
+      color: var(--ink);
+      padding: 10px 12px;
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      line-height: 1.45;
+    }
+    button:hover { border-color: var(--blue); background: var(--soft-blue); }
+    button.correct { border-color: #8bc49b; background: var(--soft-green); }
+    button.wrong { border-color: #e4a29b; background: var(--soft-red); }
+    .explain { display: none; margin-top: 12px; padding: 12px; border-radius: 10px; background: #f7fbfd; border: 1px dashed #bfd4e3; }
+    .q-card.done .explain { display: block; }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      border: 1px solid #cfdde7;
+      border-radius: 12px;
+      padding: 12px;
+      font: inherit;
+      line-height: 1.65;
+      background: #fbfdff;
+      color: var(--ink);
+    }
+    details { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #fff; margin-top: 10px; }
+    summary { cursor: pointer; font-weight: 850; color: var(--blue); }
+    .rubric { display: grid; grid-template-columns: 138px 1fr; gap: 10px; border-top: 1px dashed #cfdae3; padding-top: 10px; margin-top: 10px; }
+    .rubric span:first-child { font-weight: 850; color: var(--blue); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #edf5fb; }
+    .score { position: sticky; bottom: 12px; border: 1px solid #bddfc9; background: rgba(236,247,240,.96); border-radius: 14px; padding: 12px 16px; box-shadow: var(--shadow); margin-top: 18px; font-weight: 850; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 18px, 1180px); padding-top: 14px; }
+      .hero, .card, .drill { padding: 16px; border-radius: 12px; }
+      .grid, .grid.three, .choices, .rubric { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div>
+      <span class="pill hot">软工 6/25</span>
+      <span class="pill good">往年题变式</span>
+      <span class="pill warn">五类题型收束</span>
+    </div>
+    <h1>软工往年题变式训练营</h1>
+    <p class="muted">这页把 2020 上机、12 级选课、14 级库存、2016 图片卷和参考答案整理里的高频题眼，改造成正式考试可用的训练。目标不是背某一张图，而是让你看到材料后能立刻判断：<span class="focus">这是客观概念边界、用例/类图、顺序/状态图、事件流，还是测试设计</span>。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./pastpaper_ingestion_radar.html#se">吞吐雷达</a>
+      <a href="./day5_se_official_types_closure.html">Day5 五类题型</a>
+      <a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 CodeArts 彩排</a>
+      <a href="#quiz">18 题客观分流</a>
+      <a href="#scenario">5 类材料变式</a>
+      <a href="#test">测试设计模板</a>
+      <a href="#gate">过关闸门</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. 先把老题压成五个盒子</h2>
+    <p>软工综合题通常给你一段业务材料。你不能一看到材料就画图，要先分盒子。下面这些盒子来自往年题，不是我凭空编的。</p>
+    <div class="grid three">
+      <div class="box"><strong>实验上机安排</strong>来自 2020：类图、用例图、两张顺序图。题眼是教师、学生、管理员、实验项目、机房、安排、新闻。</div>
+      <div class="box"><strong>选课管理</strong>来自 12 级：用例图、课程注册事件流、用户名等价类。题眼是角色功能和基本/异常事件流。</div>
+      <div class="box"><strong>库存管理</strong>来自 14 级：用例图/类图、状态图/顺序图、白盒覆盖。题眼是部门职责、商品流通、库存上下限。</div>
+      <div class="box"><strong>在线审稿</strong>来自 2016：作者、审稿人、主席、投稿、分配审稿、关闭审稿。题眼是参与者和用例识别。</div>
+      <div class="box"><strong>预订系统</strong>来自 2016：游客、售票处、预订、支付、取消、退款、天气自动取消。题眼是类名填空、状态/策略、支付方式。</div>
+      <div class="box"><strong>测试设计</strong>来自 12/14/参考答案：等价类、边界值、白盒分支/判定覆盖、测试用例表。</div>
+    </div>
+    <div class="note good">
+      <strong>学习顺序：</strong>先做本页 18 题客观分流，确认概念边界；再做 5 类材料变式，练“题干 -> 图类型 -> 元素清单”；最后回 <a href="./se_official_final_interactive.html">软工综合交互卷</a> 做整套。
+    </div>
+  </section>
+
+  <section class="card" id="quiz">
+    <h2>2. 18 题客观分流：概念边界不要丢分</h2>
+    <p>这些题不是资料元问题，而是正式卷面可能出现的边界判断。每题解析会告诉你为什么其他项容易错。</p>
+    <div id="quizList" class="quiz-list"></div>
+    <div id="scoreBox" class="score">已完成 0/18，正确 0。先选第一反应，再看解析。</div>
+  </section>
+
+  <section class="card" id="scenario">
+    <h2>3. 5 类材料变式：同一段材料问法不同，图也不同</h2>
+    <p>每个材料都按“题眼、该画什么、必备元素、扣分点”训练。你先写自己的骨架，再展开答案。能写出骨架就已经不是裸奔了。</p>
+  </section>
+
+  <section class="drill">
+    <h3>材料 1｜实验上机安排系统：2020 老题换成正式综合题</h3>
+    <p>教师提交课程实验项目、安排实验机房、查询安排结果并打印报表；学生查询实验项目和课程实验安排；管理员管理教师、学生、课程实验和新闻公告；所有用户可修改密码、查看公告，未登录用户登录后成为对应用户。</p>
+    <textarea data-save="se-var-1" placeholder="先写：若问用例图、类图、顺序图，各自第一笔是什么？"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="rubric"><span>用例图</span><span>参与者：教师、学生、管理员、未登录用户/用户。用例：登录、修改密码、查看公告、提交实验项目、安排机房、查询安排、打印报表、管理基本信息、管理新闻。<span class="focus">参与者在系统边界外，用例用动宾短语。</span></span></div>
+      <div class="rubric"><span>类图</span><span>领域类：用户/教师/学生/管理员、课程、实验项目、实验机房、实验安排、新闻公告、报表。关系要标多重性：课程包含实验项目，实验安排关联项目和机房。</span></div>
+      <div class="rubric"><span>顺序图</span><span>学生查询安排：学生 -> 查询界面 -> 查询服务 -> 实验安排/数据库 -> 返回结果。管理员管理新闻：管理员 -> 新闻管理界面 -> 新闻服务 -> 新闻公告/数据库 -> 返回成功。</span></div>
+      <div class="rubric"><span>扣分点</span><span>把“课程/机房/新闻”画成参与者；类图不写多重性；顺序图只画“学生 -> 系统”一条线，没有界面/服务/数据对象。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>材料 2｜选课管理系统：用例图 + 事件流 + 等价类</h3>
+    <p>学生查询课程、课程注册、查询成绩；教务管理员维护教师/学生/课程信息，开启/关闭课程注册；教师查询课程和选课学生，登记成绩；所有用户登录后使用系统。课程注册有时间窗口、最多 3 门、课程人数 5-30、可试听和改选。</p>
+    <textarea data-save="se-var-2" placeholder="先写：用例图角色与用例；课程注册基本事件流；异常事件流。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="rubric"><span>用例图</span><span>学生、教务管理员、教师是核心参与者。登录可作为公共前置用例；课程注册、查询课程、查询成绩、维护信息、开启/关闭注册、登记成绩分别归到对应角色。</span></div>
+      <div class="rubric"><span>事件流</span><span>基本流：学生登录 -> 进入课程注册 -> 系统显示课程目录 -> 学生选择课程 -> 系统校验人数/上限/时间 -> 保存结果 -> 提示成功。</span></div>
+      <div class="rubric"><span>异常流</span><span>注册未开启、超过 3 门、课程已满、低于 5 人课程取消、注册关闭后不能改选。异常流要写“系统如何响应”，不是只列异常名。</span></div>
+      <div class="rubric"><span>扣分点</span><span>事件流写成图名堆砌；异常只写“出错”；登录前置条件和课程注册业务规则漏掉。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>材料 3｜库存管理系统：多图分流</h3>
+    <p>计划部制定库存计划和上下限；采购部根据库存制定采购计划并采购；销售部制定出货单；库存部根据采购单入库、根据出货单出库，并记录商品流通。库存低于下限时自动通知计划部。管理员负责授权和注册。</p>
+    <textarea data-save="se-var-3" placeholder="先写：A卷用例图/类图怎么起手？B卷状态图/顺序图怎么起手？"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="rubric"><span>用例图</span><span>参与者：计划部人员、采购部人员、销售部人员、库存部人员、管理员。用例：制定库存计划、制定采购计划、采购、制定出货单、安排入库、安排出库、记录流通、通知采购、授权注册。</span></div>
+      <div class="rubric"><span>类图</span><span>类：库存计划、商品、采购计划、采购单、出货单、入库记录、出库记录、商品流通记录、部门/工作人员。关系：计划包含商品上下限，入/出库记录改变商品数量。</span></div>
+      <div class="rubric"><span>状态图</span><span>选一个对象，如“商品库存项”或“采购单”。商品库存项可有正常、低于下限、待采购、已补货等状态。<span class="focus">状态图不是把所有部门流程塞进去。</span></span></div>
+      <div class="rubric"><span>顺序图</span><span>库存低于下限自动通知：库存监控 -> 库存项 -> 通知服务 -> 计划部/采购计划服务。按时间展示消息。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>材料 4｜在线会议审稿：参与者/用例识别</h3>
+    <p>用户注册为作者或审稿人；作者提交稿件、浏览审阅结果；审稿人设置兴趣领域、审阅稿件、列出录用/拒绝稿件；主席是特殊审稿人，可浏览稿件、分配审稿、关闭审稿过程，关闭必须包括列出录用/拒绝稿件。</p>
+    <textarea data-save="se-var-4" placeholder="先写：参与者层次、include/extend 可能在哪里、哪些是系统功能。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="rubric"><span>参与者</span><span>作者、审稿人、会议主席。主席是特殊审稿人，可画成泛化关系。普通“用户”也可作为抽象参与者承接注册/登录。</span></div>
+      <div class="rubric"><span>用例</span><span>注册、登录、提交稿件、浏览审阅结果、设置兴趣、审阅稿件、列出录用/拒绝稿件、分配稿件、关闭审稿过程。</span></div>
+      <div class="rubric"><span>include</span><span>关闭审稿过程必须包括列出录用/拒绝稿件，偏 include。提交稿件前的标题、摘要、主题、文件位置校验属于提交稿件内部流程，不一定拆成外部参与者用例。</span></div>
+      <div class="rubric"><span>扣分点</span><span>把“稿件”“主题类型”“数据库”当参与者；主席和审稿人关系不清；把必须发生和可选扩展混在一起。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>材料 5｜预订系统：类图/状态图/策略识别</h3>
+    <p>游客通过售票处预订小木屋或营地，登记信息、计算租赁费用、付款；信用卡支付有 3% 折扣；取消预订按时间收赔偿金；恶劣天气自动取消并全额退款；售票处工作人员查询预订和使用情况。</p>
+    <textarea data-save="se-var-5" placeholder="先写：可能的类、状态对象、支付策略、取消规则。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="rubric"><span>类图</span><span>Customer、TicketingOfficer、Reservation、ReservationItem、Bungalow、CampSite、Payment、CashPayment、CreditCardPayment、Discount、Rate、NationalPark。支付方式可用继承/策略表达。</span></div>
+      <div class="rubric"><span>状态图</span><span>选 Reservation：申请中、已批准/已预订、已支付、已取消、已退款、已入住/已结束。取消事件根据时间触发不同赔偿规则。</span></div>
+      <div class="rubric"><span>顺序图</span><span>游客提出申请 -> 售票员录入 -> 预订服务查询资源 -> 费用服务计算 -> 支付服务付款 -> 创建 Reservation -> 返回确认。</span></div>
+      <div class="rubric"><span>扣分点</span><span>把支付折扣写成普通备注不建模；取消规则没有状态/条件；类图只列类名不写关系。</span></div>
+    </details>
+  </section>
+
+  <section class="card" id="test">
+    <h2>4. 测试设计模板：等价类和白盒覆盖最容易拿分</h2>
+    <div class="grid">
+      <div class="box">
+        <strong>等价类三步</strong>
+        拆输入条件 -> 列有效/无效等价类 -> 用最少测试覆盖每类。比如用户名：长度 8-12、字母数字混合、不能纯字母/纯数字、不能含非法字符。
+      </div>
+      <div class="box">
+        <strong>白盒覆盖三步</strong>
+        画/读控制流 -> 找判断条件 -> 设计输入让每个分支或条件取到要求值。分支覆盖看真假分支，条件覆盖看每个小条件。
+      </div>
+      <div class="box">
+        <strong>故障、错误、失效</strong>
+        故障是代码或设计里的缺陷；错误是缺陷被触发后的内部异常状态；失效是外部用户看到的“不符合需求”。简答题写成“内部原因 -> 运行状态 -> 外部表现”最稳。
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>题型</th><th>标准答案结构</th><th>高频扣分点</th></tr></thead>
+      <tbody>
+        <tr><td>等价类</td><td>输入条件、有效类、无效类、编号、测试输入、预期结果、覆盖编号。</td><td>只列有效类；无效类重复；测试用例没有预期结果。</td></tr>
+        <tr><td>边界值</td><td>围绕最小值、最大值、刚小于、刚大于设计测试。</td><td>只测中间值，不测边界。</td></tr>
+        <tr><td>判定/分支覆盖</td><td>让每个判断的真分支和假分支至少执行一次。</td><td>把条件覆盖和分支覆盖混用，没说明覆盖了哪条分支。</td></tr>
+        <tr><td>条件覆盖</td><td>让每个判断中的每个基本条件都取到真和假。</td><td>只覆盖了总判断结果，没有覆盖每个小条件。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="gate">
+    <h2>5. 过关闸门：什么时候去做整套软工卷</h2>
+    <div class="grid">
+      <div class="box"><strong>客观题闸门</strong>18 题至少对 14 题，且能解释错题为什么错。</div>
+      <div class="box"><strong>图题闸门</strong>看到材料能先说出：用例图、类图、顺序图、状态图分别回答什么问题。</div>
+      <div class="box"><strong>测试题闸门</strong>能独立写一张等价类表，能解释分支覆盖和条件覆盖区别。</div>
+      <div class="box"><strong>下一步</strong>通过后做 <a href="./se_official_final_interactive.html">软工官方五类题型综合交互卷</a>，再做 <a href="./day6_se_final_codearts_rehearsal.html#codearts">CodeArts 检查清单</a>。</div>
+    </div>
+    <div class="note good">
+      <strong>加油一下：</strong>软工其实很适合临时抱佛脚，因为它不是靠玄学灵感，而是靠“题干信号 -> 图类型 -> 元素清单 -> 检查项”。你现在把这条链练熟，考场会明显稳很多。
+    </div>
+  </section>
+</main>
+
+<script>
+  const quiz = [
+    {tag:"过程模型", q:"以下哪项不属于软件过程模型？", choices:["瀑布模型","增量模型","螺旋模型","面向对象模型"], answer:3, explain:"瀑布、增量、螺旋都是开发过程如何推进。面向对象是分析/设计思想或建模方法，不是过程模型。正式样题就喜欢考这种边界。"},
+    {tag:"项目管理对象", q:"多选：软件项目管理常见对象包括哪些？", choices:["过程管理、人员管理、产品管理","对象管理、继承管理","只管理代码仓库","只管理数据库表"], answer:0, explain:"项目管理看过程怎么组织、人员怎么安排、产品/交付物怎么控制。对象/继承是面向对象术语。"},
+    {tag:"黑盒测试", q:"等价类划分、边界值分析、错误推测、因果图通常属于？", choices:["黑盒测试","白盒测试","概要设计","版本控制"], answer:0, explain:"这些方法依据需求规格和输入输出，不看代码内部结构。白盒才看语句、判定、条件、路径。"},
+    {tag:"白盒覆盖", q:"“每个判定的真分支和假分支至少执行一次”说的是？", choices:["判定/分支覆盖","等价类划分","边界值分析","场景分析"], answer:0, explain:"分支覆盖也常叫判定覆盖。它关心每个判断结果 true/false 都走到。"},
+    {tag:"需求 vs 详细", q:"需求分析阶段最不应该直接产出什么？", choices:["用例图","概念类图","系统顺序图","模块内部算法伪代码"], answer:3, explain:"需求分析回答用户目标和业务概念，详细设计才写模块内部算法、类方法细节。"},
+    {tag:"概要设计", q:"系统概要设计最贴近下面哪类产物？", choices:["组件/包划分、接口和依赖","参与者和用例","方法内部代码","等价类测试表"], answer:0, explain:"概要设计回答系统如何分块、组件如何协作。用例偏需求，代码偏详细，测试表偏测试。"},
+    {tag:"详细设计", q:"题目问“对象如何协作完成某用例”，最贴近哪张图？", choices:["设计顺序图","用例图","项目甘特图","主数据表"], answer:0, explain:"对象协作和消息顺序是设计顺序图的题眼。用例图只说明谁使用系统做什么。"},
+    {tag:"用例图", q:"画用例图时，最不应该放在系统边界外当参与者的是？", choices:["教师","学生","管理员","数据库表"], answer:3, explain:"参与者是系统外部与系统交互的人或外部系统。数据库表是内部数据对象，不是参与者。"},
+    {tag:"include", q:"某用例执行前必须先完成登录，这更接近？", choices:["include","extend","泛化","聚合"], answer:0, explain:"必须发生的公共子功能偏 include。extend 更像可选扩展或条件发生。"},
+    {tag:"extend", q:"完成预订后，用户可以选择开发票。开发票更接近？", choices:["extend","include","继承","组合"], answer:0, explain:"可选、条件发生的附加行为更接近 extend。必做前置步骤才考虑 include。"},
+    {tag:"事件流", q:"课程注册事件流中，异常事件流应该写什么？", choices:["注册未开启、课程已满、超过3门时系统如何响应","所有类的属性","数据库索引","Git push 命令"], answer:0, explain:"事件流描述用例执行过程。异常流要写异常条件和系统响应，不能只列名词。"},
+    {tag:"类图", q:"概念类图最应该从材料中抽什么？", choices:["稳定业务名词和关系","所有按钮颜色","每个 SQL 索引","每行代码"], answer:0, explain:"概念类图回答业务对象及关系，类名来自领域名词，不来自界面实现细节。"},
+    {tag:"顺序图", q:"顺序图最核心的阅读方向是？", choices:["生命线之间的消息按时间从上到下","类之间继承关系","模块目录结构","状态集合"], answer:0, explain:"顺序图强调一次场景中对象之间消息的时间顺序。"},
+    {tag:"状态图", q:"状态图应该围绕什么画？", choices:["一个对象的生命周期","整个系统所有流程","所有参与者列表","数据库范式"], answer:0, explain:"状态图看一个对象在事件触发下如何从一种状态转到另一种状态。"},
+    {tag:"活动图", q:"活动图更适合表达什么？", choices:["业务流程、判断、并行、循环","静态类关系","对象生命周期状态","权限角色清单"], answer:0, explain:"活动图像流程图，表达动作流。类关系用类图，生命周期用状态图。"},
+    {tag:"等价类", q:"用户名要求8-12位且字母数字混合，设计等价类时最关键的是？", choices:["把长度、字符集、混合性分开列有效/无效类","只测一个合法用户名","只测空字符串","只写预期通过"], answer:0, explain:"等价类要覆盖每个输入条件的有效/无效类别。只测一个合法值远远不够。"},
+    {tag:"Git 低优先保温", q:"2020 上机考过 git push --force 的风险。现在应如何处理这类题？", choices:["作为低优先保温，知道强推可能覆盖远端历史","完全不看任何工具题","把它当今年综合题核心","只背 Vue 路由"], answer:0, explain:"正式通知今年更偏五类题型和建模，但工具题可能作为边角出现。知道基本风险即可，不抢 UML/测试主线。"},
+    {tag:"故障错误失效", q:"“故障 -> 错误 -> 失效”这条链怎么理解？", choices:["缺陷被触发形成运行时错误，错误传播到外部表现为失效","三者完全同义","失效一定先于故障","错误就是测试用例"], answer:0, explain:"故障是缺陷，错误是内部错误状态，失效是外部可观察的不符合需求。链条是可能传播，不是每个故障必然失效。"}
+  ];
+
+  const list = document.getElementById("quizList");
+  const scoreBox = document.getElementById("scoreBox");
+  const state = JSON.parse(localStorage.getItem("se-past-quiz") || "{}");
+  function saveState(){ localStorage.setItem("se-past-quiz", JSON.stringify(state)); }
+  function renderScore(){
+    const done = Object.keys(state).length;
+    const correct = Object.values(state).filter(Boolean).length;
+    scoreBox.textContent = `已完成 ${done}/${quiz.length}，正确 ${correct}。${done < quiz.length ? "先把边界词叫醒。" : (correct >= 14 ? "可以进入综合卷和彩排。" : "先回看错题解析，尤其图类型和测试方法。")}`;
+  }
+  quiz.forEach((item, index) => {
+    const card = document.createElement("article");
+    card.className = "q-card";
+    card.innerHTML = `
+      <div class="tag">${index + 1}. ${item.tag}</div>
+      <h3>${item.q}</h3>
+      <div class="choices">${item.choices.map((c,i)=>`<button type="button" data-choice="${i}">${String.fromCharCode(65+i)}. ${c}</button>`).join("")}</div>
+      <div class="explain"><strong>解析：</strong>${item.explain}</div>
+    `;
+    const buttons = [...card.querySelectorAll("button")];
+    function paint(selected){
+      card.classList.add("done");
+      buttons.forEach((btn,i)=>{
+        btn.classList.toggle("correct", i === item.answer);
+        btn.classList.toggle("wrong", i === selected && i !== item.answer);
+      });
+    }
+    if(state[index] !== undefined){
+      const selected = Number(localStorage.getItem(`se-past-choice-${index}`));
+      paint(Number.isFinite(selected) ? selected : item.answer);
+    }
+    buttons.forEach((btn,i)=>{
+      btn.addEventListener("click", ()=>{
+        state[index] = i === item.answer;
+        localStorage.setItem(`se-past-choice-${index}`, String(i));
+        saveState();
+        paint(i);
+        renderScore();
+      });
+    });
+    list.appendChild(card);
+  });
+  document.querySelectorAll("textarea[data-save]").forEach(area => {
+    const key = area.dataset.save;
+    area.value = localStorage.getItem(key) || "";
+    area.addEventListener("input", () => localStorage.setItem(key, area.value));
+  });
+  renderScore();
+</script>
+</body>
+</html>

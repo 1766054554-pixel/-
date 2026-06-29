@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散 + 马原错题回炉台</title>
+  <style>
+    :root {
+      --bg: #fff8fb;
+      --panel: #ffffff;
+      --ink: #251d34;
+      --muted: #71677f;
+      --line: #eaddeb;
+      --blue: #3f78c9;
+      --green: #278766;
+      --red: #bf4d6e;
+      --amber: #a46f18;
+      --purple: #7759cf;
+      --pink: #d96da5;
+      --soft-blue: #eef7ff;
+      --soft-green: #eefaf4;
+      --soft-red: #fff0f5;
+      --soft-amber: #fff7df;
+      --soft-purple: #f6f0ff;
+      --shadow: 0 18px 46px rgba(82, 61, 119, .12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 8%, rgba(255, 207, 232, .68), transparent 26%),
+        radial-gradient(circle at 88% 12%, rgba(194, 225, 255, .72), transparent 28%),
+        radial-gradient(circle at 70% 92%, rgba(209, 247, 233, .76), transparent 28%),
+        linear-gradient(180deg, #fff8fc 0, #eef8ff 52%, #fffdf3 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(255,224,139,.72) 0 1.5px, transparent 2.5px);
+      background-size: 92px 92px, 138px 138px;
+      background-position: 16px 22px, 54px 74px;
+      opacity: .72;
+      z-index: -1;
+    }
+    main { width: min(1160px, calc(100% - 28px)); margin: 0 auto; padding: 24px 0 64px; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: clamp(28px, 4vw, 42px); }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); font-weight: 850; }
+    .hero, section, .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.88);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(16px);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(250px, .75fr);
+      gap: 18px;
+      align-items: center;
+      overflow: hidden;
+    }
+    .muted { color: var(--muted); }
+    .key {
+      color: #10202d;
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #ffe9a8 58%);
+      padding: 0 2px;
+    }
+    .pillrow, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .pill, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border: 1px solid #bdd5e8;
+      border-radius: 999px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 6px 11px;
+      font-size: 14px;
+      font-weight: 850;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .btn { border-radius: 14px; cursor: pointer; box-shadow: 0 6px 14px rgba(63, 120, 201, .08); }
+    .btn.primary { background: linear-gradient(135deg, #7759cf, #3f78c9); border-color: #6e62cf; color: #fff; }
+    .pill.hot { color: var(--red); border-color: #dfaaa3; background: var(--soft-red); }
+    .pill.good { color: var(--green); border-color: #a7d3b8; background: var(--soft-green); }
+    .pill.warn { color: var(--amber); border-color: #ddc184; background: var(--soft-amber); }
+    .pill.purple { color: var(--purple); border-color: #c7bae5; background: var(--soft-purple); }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card {
+      margin: 0;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -62px;
+      bottom: -70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 218, 122, .45), rgba(255,255,255,0) 70%);
+      pointer-events: none;
+    }
+    .score {
+      font-size: 30px;
+      font-weight: 950;
+      color: var(--blue);
+      margin: 5px 0;
+    }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 18px;
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      margin-top: 12px;
+    }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .list { display: grid; gap: 10px; margin-top: 12px; }
+    .wrong {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.82);
+      padding: 12px 13px;
+    }
+    .wrong strong { color: var(--purple); }
+    .wrong .mini { margin-top: 5px; }
+    .mini { color: var(--muted); font-size: 13px; }
+    .empty {
+      border: 1px dashed #cabee2;
+      border-radius: 18px;
+      background: rgba(255,255,255,.58);
+      padding: 14px;
+      color: var(--muted);
+    }
+    .crystal {
+      border: 1px solid rgba(234, 220, 240, .9);
+      border-radius: 22px;
+      min-height: 230px;
+      background:
+        radial-gradient(circle at 32% 22%, rgba(255,255,255,.95), transparent 18%),
+        linear-gradient(145deg, rgba(252, 232, 255, .92), rgba(225, 245, 255, .92) 48%, rgba(255, 249, 220, .9));
+      overflow: hidden;
+    }
+    .crystal svg { width: 100%; height: 100%; min-height: 230px; display: block; }
+    .floaty { animation: floaty 4.2s ease-in-out infinite alternate; transform-origin: center; }
+    .floaty.slow { animation-duration: 5.8s; }
+    @keyframes floaty { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fbfdff;
+      padding: 12px;
+      resize: vertical;
+      font: inherit;
+      line-height: 1.7;
+    }
+    @media (max-width: 920px) {
+      main { width: min(100% - 22px, 1160px); padding-top: 14px; }
+      .hero, .grid, .grid.two { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div>
+        <h1>离散 + 马原错题回炉台</h1>
+        <p class="muted">这里不让你重新刷一遍所有东西，只把已经做过的页面进度收拢起来：<span class="key">错哪一盒</span>、<span class="key">回哪一页</span>、<span class="key">下一步只补什么</span>。临考前最怕“感觉都看过”，这里专门帮你抓住没变成能力的部分。</p>
+        <div class="pillrow">
+          <span class="pill hot">离散：证明与真题优先</span>
+          <span class="pill warn">马原：定位和第一段</span>
+          <span class="pill good">只回炉错题，不重复已会</span>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="refreshBtn">刷新错题收纳</button>
+          <a class="btn" href="./focus_dual_exam_game.html">打一局专注闯关</a>
+          <a class="btn" href="./final_two_subject_command_center.html">回最后两科作战台</a>
+          <a class="btn" href="./index.html">回学习舱</a>
+        </div>
+      </div>
+      <div class="crystal" aria-hidden="true">
+        <svg viewBox="0 0 520 300">
+          <defs>
+            <linearGradient id="ribbon" x1="0" x2="1">
+              <stop offset="0" stop-color="#9be7ff"/>
+              <stop offset=".5" stop-color="#cbb8ff"/>
+              <stop offset="1" stop-color="#ffd4ec"/>
+            </linearGradient>
+            <linearGradient id="gem" x1="0" x2="1">
+              <stop offset="0" stop-color="#fff2a6"/>
+              <stop offset="1" stop-color="#ff90c7"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 232 C84 188 132 252 224 212 C306 176 356 236 520 198 L520 300 L0 300 Z" fill="url(#ribbon)" opacity=".74"/>
+          <path class="floaty" d="M154 78 l18 36 40 6 -29 28 7 40 -36 -19 -36 19 7 -40 -29 -28 40 -6Z" fill="url(#gem)"/>
+          <path class="floaty slow" d="M326 48 C340 82 362 102 398 112 C362 122 340 144 326 178 C312 144 290 122 254 112 C290 102 312 82 326 48Z" fill="#c6f7e2"/>
+          <circle cx="96" cy="72" r="7" fill="#fff"/>
+          <circle cx="430" cy="76" r="5" fill="#fff"/>
+          <circle cx="452" cy="146" r="8" fill="#fff"/>
+          <path d="M86 214 C134 156 210 150 268 202 C318 246 376 236 438 178" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".86"/>
+          <path d="M86 214 C134 156 210 150 268 202 C318 246 376 236 438 178" fill="none" stroke="#ff9fcb" stroke-width="4" stroke-linecap="round" opacity=".78"/>
+          <text x="260" y="256" text-anchor="middle" fill="#5a477f" font-size="20" font-weight="800">把错题收成下一次得分线索</text>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>1. 今日总览</h2>
+      <div class="grid" id="summaryCards"></div>
+      <div class="note warn" id="topAdvice"></div>
+    </section>
+
+    <section>
+      <h2>2. 先补这三格</h2>
+      <p class="muted">这里按临考优先级压缩成最多三件事。离散考前，证明/真题错题排在前面；马原错题先留作索引和第一段训练。</p>
+      <div class="list" id="priorityList"></div>
+    </section>
+
+    <section>
+      <h2>3. 离散错题收纳</h2>
+      <div class="grid two" id="discreteLists"></div>
+    </section>
+
+    <section>
+      <h2>4. 希冀近三年真题回炉</h2>
+      <p class="muted">这里只统计你已经提交核对过的客观题。主观题仍要在原卷页面里写骨架、看解析、自己复述第一步。</p>
+      <div class="grid" id="hijiLists"></div>
+    </section>
+
+    <section>
+      <h2>5. 马原开卷回炉</h2>
+      <div class="grid two" id="marxLists"></div>
+    </section>
+
+    <section>
+      <h2>6. 收口闸门回炉</h2>
+      <p class="muted">这里不是“错题”，而是临考前还没真正上手的收口动作。离散看 Day7 闸门和混合题；马原看材料题第一段闸门。</p>
+      <div class="grid two" id="gateLists"></div>
+    </section>
+
+    <section>
+      <h2>7. 专注小游戏最近一局</h2>
+      <div id="gameBox"></div>
+    </section>
+
+    <section>
+      <h2>8. 今天自己的回炉口令</h2>
+      <p class="muted">把最容易再错的 2-3 句写成口令。越短越好，考前能读进去。</p>
+      <textarea id="manualNote" placeholder="例：Γ⊨Q 先想失败情形；Skolem 参数只看左边全称变量；马原材料题先定原理再贴材料，不要大段抄书。"></textarea>
+    </section>
+  </main>
+
+  <script>
+    const singleAnswer = Array(20).fill(0);
+    const last36Labels = [
+      "主范式看真/假行", "辖域/自由变量", "Skolem 参数", "语义反例",
+      "推演序列", "对偶式", "偏序/最大元", "可靠性/完全性",
+      "替换式", "量词顺序", "前束范式", "Γ⊨Q"
+    ];
+    const proofLabels = [
+      "语义成立", "语义反例", "量词反例", "量词顺序", "Skolem",
+      "公理证明", "可靠性", "完全性", "辖域", "前束化",
+      "最大元唯一", "函数复合", "谓词反例", "重言式反例"
+    ];
+    const final48Labels = [
+      "可靠性扩充公理", "可靠性/完全性方向", "主合取范式", "Skolem 参数",
+      "前束流程", "语义推论", "反例三件套", "量词反例",
+      "2024语义构造", "公理证明禁用演绎定理", "2023公理证明", "考场策略"
+    ];
+    const day7GateLabels = [
+      "卷面结构和前 70 分保底", "七类题眼与第一步", "主析取/主合取", "自由/约束/辖域",
+      "谓词翻译：所有/存在/唯一", "前束/Skolem 顺序", "语义反例三件套", "2022 风味语义证明",
+      "可靠性/完备性方向", "公理证明公式序列"
+    ];
+    const day7DrillLabels = [
+      "类型判断：矛盾式等价", "变量辖域", "主范式行号", "唯一最大值点翻译",
+      "语义证明", "量词反例", "可靠性扩充公理", "公理证明红线"
+    ];
+    const marxLocatorLabels = [
+      "实践与认识", "矛盾分析法", "人与自然", "新质生产力/生产力生产关系",
+      "就业/人民群众", "劳动价值论", "剩余价值", "资本主义基本矛盾",
+      "人民群众与杰出人物", "共产主义实践运动"
+    ];
+    const marxQuizLabels = [
+      "实践与认识", "机器/劳动价值论", "人与自然", "新质生产力",
+      "资本主义基本矛盾", "实践观点", "历史创造", "就业",
+      "商品二因素/劳动二重性", "矛盾分析法", "经济基础/上层建筑", "价值规律",
+      "剩余价值多选", "剩余价值来源", "共产主义实践运动", "开卷危险做法"
+    ];
+    const marxGateLabels = [
+      ["marx-gate-practice", "材料题闸门：实践认识"],
+      ["marx-gate-productivity", "材料题闸门：新质生产力"],
+      ["marx-gate-surplus", "材料题闸门：剩余价值"],
+      ["marx-gate-contradiction", "材料题闸门：矛盾分析"]
+    ];
+    const marxWritingLabels = [
+      ["marx-write-new-quality", "自由第一段：新质生产力"],
+      ["marx-write-employment", "自由第一段：就业/人民"],
+      ["marx-write-practice", "自由第一段：实践认识"],
+      ["marx-write-capitalism", "自由第一段：资本主义矛盾"],
+      ["marx-write-nature", "自由第一段：人与自然"],
+      ["marx-write-history", "自由第一段：历史创造"],
+      ["marx-write-surplus", "自由第一段：剩余价值"],
+      ["marx-write-communism", "自由第一段：共产主义实践"]
+    ];
+    const marxQuizAnswers = [
+      [0], [1], [0], [0], [1], [0], [0], [0],
+      [0,1,2], [0,1], [0], [0], [0,1], [1], [0], [1]
+    ];
+
+    const sources = {
+      precision: {
+        title: "离散精练闸门 18 题",
+        href: "./discrete_hiji_ingest/discrete_hiji_precision_drill.html",
+        key: "discrete_hiji_precision_answers_v1",
+        kind: "savedPrecision",
+        labels: [
+          "公理系统：⊨/⊢", "推演序列", "量词辖域", "替换式",
+          "唯一存在翻译", "主析取范式", "Skolem 依赖", "语义证明",
+          "反模型", "量词顺序", "等值演算", "复杂度",
+          "前束步骤", "公理证明依据", "命题判断", "长公式可读",
+          "2023缺损题处理", "证明题考场策略"
+        ],
+        answers: []
+      },
+      last36: {
+        title: "离散先学后练 12 题",
+        href: "./discrete_last36_learning_ladder.html",
+        key: "discrete-last36-quiz-v1",
+        kind: "objectSingle",
+        labels: last36Labels,
+        answers: singleAnswer
+      },
+      proof: {
+        title: "离散证明链条 14 题",
+        href: "./discrete_proof_chain_lab.html",
+        key: "discrete-proof-chain-state",
+        kind: "numberState",
+        labels: proofLabels,
+        answers: singleAnswer
+      },
+      final48: {
+        title: "离散48小时查漏 12 题",
+        href: "./final48_discrete_score_booster.html",
+        key: "final48-discrete-score-booster",
+        kind: "qState",
+        labels: final48Labels,
+        answers: singleAnswer
+      },
+      marxLocator: {
+        title: "马原30秒定位 10 题",
+        href: "./marx_openbook_final_sprint.html#locator",
+        key: "marxLocatorStateV1",
+        kind: "objectSingle",
+        labels: marxLocatorLabels,
+        answers: singleAnswer
+      },
+      marxQuiz: {
+        title: "马原原理分流 16 题",
+        href: "./marx_openbook_final_sprint.html#quiz",
+        key: "marxQuizStateV2",
+        kind: "multiQuiz",
+        labels: marxQuizLabels,
+        answers: marxQuizAnswers
+      }
+    };
+
+    const hiji = [
+      { year: "2024", href: "./discrete_hiji_ingest/discrete_2024_hiji_interactive.html", role: "主战：语义、证明、长题" },
+      { year: "2025", href: "./discrete_hiji_ingest/discrete_2025_hiji_interactive.html", role: "查漏：客观题边界" },
+      { year: "2023", href: "./discrete_hiji_ingest/discrete_2023_hiji_interactive.html", role: "表达：主观题和公理证明" }
+    ];
+
+    const $ = id => document.getElementById(id);
+    const esc = text => String(text ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const getJSON = (key, fallback) => {
+      try { return JSON.parse(localStorage.getItem(key) || ""); }
+      catch { return fallback; }
+    };
+    const sameSet = (a, b) => {
+      const x = [...(a || [])].map(Number).sort((m, n) => m - n);
+      const y = [...(b || [])].map(Number).sort((m, n) => m - n);
+      return x.length === y.length && x.every((v, i) => v === y[i]);
+    };
+
+    function evaluateSource(source) {
+      const state = getJSON(source.key, {});
+      const wrong = [];
+      let done = 0;
+      let right = 0;
+      source.labels.forEach((label, i) => {
+        let checked = false;
+        let correct = false;
+        if (source.kind === "objectSingle") {
+          const s = state[i];
+          checked = !!(s && s.checked);
+          correct = checked && Number(s.selected) === Number(source.answers[i]);
+        } else if (source.kind === "numberState") {
+          checked = state[i] !== undefined;
+          correct = checked && Number(state[i]) === Number(source.answers[i]);
+        } else if (source.kind === "qState") {
+          checked = state["q" + i] !== undefined;
+          correct = checked && Number(state["q" + i]) === Number(source.answers[i]);
+        } else if (source.kind === "multiQuiz") {
+          const s = state[i];
+          checked = !!(s && s.checked);
+          correct = checked && sameSet(s.selected || [], source.answers[i]);
+        } else if (source.kind === "savedPrecision") {
+          const s = state[i];
+          checked = !!(s && s.checked);
+          correct = checked && !!s.correct;
+        }
+        if (checked) done += 1;
+        if (correct) right += 1;
+        if (checked && !correct) wrong.push({ label, href: source.href });
+      });
+      return { ...source, done, right, total: source.labels.length, wrong };
+    }
+
+    function evaluateHiji(item) {
+      const state = getJSON("discrete-hiji-" + item.year, {});
+      const entries = Object.entries(state).filter(([, v]) => v && v.checked);
+      const wrong = entries.filter(([, v]) => !v.correct).map(([id]) => id);
+      const right = entries.length - wrong.length;
+      return { ...item, done: entries.length, right, wrong, total: entries.length || 0 };
+    }
+
+    function evaluateDay7Closeout() {
+      const base = "buaa-finals-discrete-day7-final";
+      const gateDone = day7GateLabels.filter((_, i) => localStorage.getItem(`${base}:gate:g${i + 1}`) === "1").length;
+      const drillDone = day7DrillLabels.filter((_, i) => (localStorage.getItem(`${base}:d7-q${i + 1}`) || "").replace(/\s+/g, "").length >= 10).length;
+      const gaps = [];
+      if (gateDone < 7) {
+        day7GateLabels.forEach((label, i) => {
+          if (localStorage.getItem(`${base}:gate:g${i + 1}`) !== "1") gaps.push({ label: `Day7 闸门未确认：${label}`, href: "./day7_discrete_final_recall.html#gate" });
+        });
+      }
+      if (drillDone < 5) {
+        day7DrillLabels.forEach((label, i) => {
+          const text = (localStorage.getItem(`${base}:d7-q${i + 1}`) || "").replace(/\s+/g, "");
+          if (text.length < 10) gaps.push({ label: `Day7 混合题未写：${label}`, href: "./day7_discrete_final_recall.html#drills" });
+        });
+      }
+      return { title: "离散 Day7 收口闸门", href: "./day7_discrete_final_recall.html", done: gateDone + drillDone, total: 18, right: gateDone + drillDone, wrong: gaps };
+    }
+
+    function evaluateMarxCloseout() {
+      const gaps = [];
+      let gateDone = 0;
+      let writingDone = 0;
+      marxGateLabels.forEach(([key, label]) => {
+        const text = (localStorage.getItem(key) || "").replace(/\s+/g, "");
+        if (text.length >= 45) gateDone += 1;
+        else gaps.push({ label: `${label} 未写够第一段`, href: "./marx_openbook_final_sprint.html#writing-gate" });
+      });
+      if (gateDone >= 2) {
+        marxWritingLabels.forEach(([key, label]) => {
+          const text = (localStorage.getItem(key) || "").replace(/\s+/g, "");
+          if (text.length >= 22) writingDone += 1;
+          else if (writingDone < 3) gaps.push({ label: `${label} 未完成`, href: "./marx_openbook_final_sprint.html#writing" });
+        });
+      }
+      return { title: "马原材料题写作闸门", href: "./marx_openbook_final_sprint.html#writing-gate", done: gateDone + writingDone, total: 12, right: gateDone + writingDone, wrong: gaps };
+    }
+
+    function card(title, value, desc, tone = "") {
+      return `<article class="card"><span class="pill ${tone}">${esc(title)}</span><div class="score">${esc(value)}</div><p class="muted">${desc}</p></article>`;
+    }
+
+    function renderWrongList(result, emptyText) {
+      const wrongHtml = result.wrong.length
+        ? result.wrong.map((w, i) => `<div class="wrong"><strong>${i + 1}. ${esc(w.label)}</strong><div class="mini">回炉入口：<a href="${result.href || w.href}">${esc(result.title || "原题页面")}</a></div></div>`).join("")
+        : `<div class="empty">${emptyText}</div>`;
+      return `<article class="card">
+        <h3>${esc(result.title)}</h3>
+        <p class="muted">已核对 ${result.done}/${result.total || result.done}，正确 ${result.right}/${result.done || result.total || 0}。</p>
+        <div class="actions"><a class="btn" href="${result.href}">打开回炉页</a></div>
+        <div class="list">${wrongHtml}</div>
+      </article>`;
+    }
+
+    function render() {
+      const discrete = [evaluateSource(sources.precision), evaluateSource(sources.last36), evaluateSource(sources.proof), evaluateSource(sources.final48)];
+      const marx = [evaluateSource(sources.marxLocator), evaluateSource(sources.marxQuiz)];
+      const hijiResults = hiji.map(evaluateHiji);
+      const closeout = [evaluateDay7Closeout(), evaluateMarxCloseout()];
+      const allDiscreteWrong = discrete.flatMap(x => x.wrong.map(w => ({ ...w, group: x.title, href: x.href })));
+      const allMarxWrong = marx.flatMap(x => x.wrong.map(w => ({ ...w, group: x.title, href: x.href })));
+      const allHijiWrong = hijiResults.flatMap(x => x.wrong.map(id => ({ label: `${x.year} ${id}`, group: `${x.year} 希冀卷`, href: x.href })));
+      const closeoutGaps = closeout.flatMap(x => x.wrong.map(w => ({ ...w, group: x.title, href: w.href || x.href })));
+      const totalDone = [...discrete, ...marx, ...closeout].reduce((n, x) => n + x.done, 0) + hijiResults.reduce((n, x) => n + x.done, 0);
+      const totalWrong = allDiscreteWrong.length + allMarxWrong.length + allHijiWrong.length;
+      $("summaryCards").innerHTML = [
+        card("已核对", totalDone, "只统计你已经点过“核对/提交”的题；没做的题不会被算成错。", "purple"),
+        card("待回炉", totalWrong + closeoutGaps.length, totalWrong ? "这些不是坏消息，是最后两科最值钱的补分入口。" : "传统错题不多时，就看收口闸门还缺什么。", (totalWrong + closeoutGaps.length) ? "hot" : "good"),
+        card("小游戏", gameSummaryText(), "专注闯关只负责把注意力叫回来，错题会在下面给出口令。", "warn")
+      ].join("");
+
+      $("topAdvice").innerHTML = topAdvice(totalDone, totalWrong, allDiscreteWrong, allHijiWrong, allMarxWrong, closeoutGaps);
+      $("priorityList").innerHTML = renderPriority(allDiscreteWrong, allHijiWrong, allMarxWrong, closeoutGaps);
+      $("discreteLists").innerHTML = discrete.map(x => renderWrongList(x, "这一组还没有已核对错题。下一步可以继续做题，或者只读错题口令。")).join("");
+      $("hijiLists").innerHTML = hijiResults.map(x => {
+        const wrong = x.wrong.length
+          ? x.wrong.map(id => `<div class="wrong"><strong>${esc(id)}</strong><div class="mini">${esc(x.role)}。回原卷看题干、解析和图片核对。</div></div>`).join("")
+          : `<div class="empty">${x.done ? "已核对客观题暂无错题。" : "还没有核对记录。先回原卷做客观题，主观题至少写第一步。"}</div>`;
+        return `<article class="card"><h3>${x.year} 希冀卷</h3><p class="muted">${esc(x.role)}。已核对 ${x.done}，正确 ${x.right}。</p><div class="actions"><a class="btn" href="${x.href}">打开 ${x.year}</a></div><div class="list">${wrong}</div></article>`;
+      }).join("");
+      $("marxLists").innerHTML = marx.map(x => renderWrongList(x, "这一组还没有已核对错题。离散考完后优先做定位和原理分流。")).join("");
+      $("gateLists").innerHTML = closeout.map(x => renderWrongList(x, "这个收口闸门已经达到最低线。继续按作战台推进即可。")).join("");
+      renderGameBox();
+    }
+
+    function topAdvice(totalDone, totalWrong, discreteWrong, hijiWrong, marxWrong, closeoutGaps) {
+      if (!totalDone) return "<strong>现在先从一个很小的入口开始：</strong>打一局专注闯关，或者做离散精练闸门 18 题。做完再刷新这里，错题会变成明确回炉路线。";
+      if (discreteWrong.length || hijiWrong.length) return "<strong>今天优先救离散：</strong>先补证明/语义/Skolem/公理这类错题，再做整卷。马原错题先保留，不要用马原逃避离散主战。";
+      if (closeoutGaps.length) return "<strong>传统错题暂时不多，开始补收口闸门：</strong>离散看 Day7 闸门和混合题，马原看材料题第一段。别再开新坑，把能上卷面的第一句补出来。";
+      if (marxWrong.length) return "<strong>离散已记录错题暂时稳住：</strong>马原现在只补定位和第一段，不大段抄书。";
+      if (!totalWrong) return "<strong>很好：</strong>已核对题里暂时没有错题。下一步不要反复看会的内容，去开一组新题：离散真题或马原 30 秒定位。";
+      return "<strong>回炉顺序：</strong>离散证明优先，其次希冀客观错题，最后马原定位。每个错题只问一句：下次看到什么题眼，我第一步写什么？";
+    }
+
+    function renderPriority(discreteWrong, hijiWrong, marxWrong, closeoutGaps) {
+      const picks = [];
+      if (discreteWrong.length) picks.push({ title: "离散错题先回盒子", text: `${discreteWrong[0].group}：${discreteWrong[0].label}`, href: discreteWrong[0].href });
+      if (hijiWrong.length) picks.push({ title: "希冀卷错题回原题", text: `${hijiWrong[0].group}：${hijiWrong[0].label}`, href: hijiWrong[0].href });
+      if (discreteWrong.length > 1) picks.push({ title: "再补一个离散薄弱点", text: `${discreteWrong[1].group}：${discreteWrong[1].label}`, href: discreteWrong[1].href });
+      if (picks.length < 3 && closeoutGaps.length) picks.push({ title: "补收口闸门", text: `${closeoutGaps[0].group}：${closeoutGaps[0].label}`, href: closeoutGaps[0].href });
+      if (picks.length < 3 && marxWrong.length) picks.push({ title: "马原只补定位", text: `${marxWrong[0].group}：${marxWrong[0].label}`, href: marxWrong[0].href });
+      if (!picks.length) {
+        picks.push({ title: "先做离散精练闸门", text: "还没有错题数据，先做 18 道题型闸门，让系统知道该回炉哪里。", href: "./discrete_hiji_ingest/discrete_hiji_precision_drill.html" });
+        picks.push({ title: "分心时打一局", text: "8 题专注闯关会把题眼、第一动作、错题口令压短。", href: "./focus_dual_exam_game.html" });
+        picks.push({ title: "马原先做30秒定位", text: "离散主战之外，只用短时间练开卷翻资料能力。", href: "./marx_openbook_final_sprint.html#locator" });
+      }
+      return picks.slice(0, 3).map((p, i) => `<div class="wrong"><span class="pill purple">第 ${i + 1} 格</span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p><div class="actions"><a class="btn primary" href="${p.href}">去补这一格</a></div></div>`).join("");
+    }
+
+    function gameSummaryText() {
+      const history = getJSON("focus-game-history", []);
+      if (Array.isArray(history) && history.length) {
+        const latest = history[history.length - 1];
+        return `${latest.right}/${latest.total}`;
+      }
+      const stats = getJSON("focus-game-stats", { played: 0, right: 0 });
+      if (!stats.played) return "未开局";
+      return `${stats.right}/${stats.played}`;
+    }
+
+    function renderGameBox() {
+      const last = getJSON("focus-game-last-wrong", null);
+      const history = getJSON("focus-game-history", []);
+      if (!last && !history.length) {
+        $("gameBox").innerHTML = `<div class="empty">还没有专注闯关记录。分心时先打一局，系统会保存最近一局错题口令。</div>`;
+        return;
+      }
+      const wrong = last && last.wrong && last.wrong.length
+        ? last.wrong.map((q, i) => `<div class="wrong"><strong>${i + 1}. ${esc(q.topic)}</strong><p>${esc(q.prompt)}</p><div class="mini"><span class="key">假线索：</span>${esc(q.trap || "先回题眼，不要只背答案。")}</div><div class="mini"><span class="key">第一动作：</span>${esc(q.action || q.eye || "写出题眼和第一句。")}</div><div class="mini">${esc(q.back)}</div></div>`).join("")
+        : `<div class="empty">最近一局没有记录错题，适合接 20 分钟正式训练。</div>`;
+      const latest = history[history.length - 1];
+      $("gameBox").innerHTML = `<article class="card">
+        <h3>最近一局：${latest ? `${esc(latest.right)}/${esc(latest.total)}，星光 ${esc(latest.score)}` : "已记录"}</h3>
+        <p class="muted">小游戏错题只做提示，真正回炉还是要打开对应讲义或真题页，把第一步写出来。</p>
+        <div class="actions"><a class="btn" href="./focus_dual_exam_game.html">再打一局</a></div>
+        <div class="list">${wrong}</div>
+      </article>`;
+    }
+
+    $("refreshBtn").addEventListener("click", render);
+    const manualKey = "final-two-wrong-review-note";
+    $("manualNote").value = localStorage.getItem(manualKey) || "";
+    $("manualNote").addEventListener("input", () => localStorage.setItem(manualKey, $("manualNote").value));
+    render();
+  </script>
+</body>
+</html>

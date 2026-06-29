@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>课程岛 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛课程中转页：按考试形态、推荐步骤和核心资源进入对应复习模块。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(246, 185, 207, .42), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 78% 78%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.94) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .20) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo,
+    .icon {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo { width: 40px; height: 40px; }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .btn,
+    .navlinks a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .btn:hover,
+    .navlinks a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap: 20px;
+      align-items: stretch;
+      padding: 42px 0 24px;
+    }
+    .panel,
+    .card,
+    .hero-main,
+    .route-card {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .hero-main {
+      padding: 28px;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 90% 12%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .hero-aside {
+      display: grid;
+      gap: 14px;
+    }
+    .panel { padding: 20px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(42px, 7vw, 82px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 68ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .tag-row,
+    .course-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .tag,
+    .tab {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(115, 135, 168, .22);
+      background: rgba(255,255,255,.72);
+      color: #6a617c;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+    .tab.active {
+      color: #28354b;
+      background: linear-gradient(135deg, #ffe4ef, #e8f8ff);
+      border-color: rgba(196, 142, 180, .42);
+    }
+    .tag.level-exam-like {
+      color: #315f50;
+      background: linear-gradient(135deg, #e4fbf3, #f9fff7);
+      border-color: rgba(83, 155, 133, .34);
+    }
+    .tag.level-reviewed {
+      color: #315f73;
+      background: linear-gradient(135deg, #e7f7ff, #fbfdff);
+      border-color: rgba(89, 151, 190, .32);
+    }
+    .tag.level-archive {
+      color: #6c6574;
+      background: #f1eef7;
+    }
+    .tag.level-draft {
+      color: #73506a;
+      background: #ffe7f1;
+    }
+    .hero-icon {
+      width: 86px;
+      height: 86px;
+      margin-bottom: 16px;
+    }
+    .hero-icon svg { width: 64px; height: 64px; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .metric {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+    }
+    .metric strong {
+      display: block;
+      margin: 3px 0;
+      font-size: 24px;
+      color: #293047;
+      line-height: 1.1;
+    }
+    .metric span {
+      color: #65718a;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    section { padding: 24px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .section-head p { max-width: 72ch; }
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .route-card {
+      position: relative;
+      min-height: 210px;
+      padding: 18px;
+      overflow: hidden;
+    }
+    .route-card::before {
+      content: attr(data-step);
+      position: absolute;
+      right: 14px;
+      top: 8px;
+      font-size: 58px;
+      line-height: 1;
+      font-weight: 1000;
+      color: rgba(102, 86, 148, .10);
+    }
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .resource-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 12px;
+      border: 1px solid rgba(115, 135, 168, .18);
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+    }
+    .segment {
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+      color: #31516f;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .segment:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px rgba(66, 86, 122, .10);
+    }
+    .segment.active {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .card {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 14px;
+      min-height: 168px;
+      padding: 18px;
+      text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card.done {
+      border-color: rgba(96, 164, 146, .44);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.90), rgba(240,255,249,.78)),
+        radial-gradient(circle at 86% 12%, rgba(159, 218, 203, .28), transparent 32%);
+    }
+    .card .tag-row {
+      margin-top: 10px;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(159, 218, 203, .62);
+    }
+    .card .icon {
+      width: 54px;
+      height: 54px;
+    }
+    .card .icon svg {
+      width: 42px;
+      height: 42px;
+    }
+    .card-title {
+      color: inherit;
+      text-decoration: none;
+    }
+    .card-title:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .done-btn {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: #31516f;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .done-btn.done {
+      color: #285a50;
+      border-color: rgba(96, 164, 146, .46);
+      background: linear-gradient(135deg, #e4fbf3, #f6f1ff);
+    }
+    .empty {
+      grid-column: 1 / -1;
+      padding: 24px;
+      text-align: center;
+    }
+    .steps {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .steps li {
+      position: relative;
+      padding-left: 20px;
+      color: #5e6980;
+      font-weight: 780;
+    }
+    .steps li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .72em;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--pink), var(--blue));
+      box-shadow: 0 0 0 3px rgba(255,255,255,.78);
+    }
+    .footer {
+      padding: 30px 0 46px;
+      color: #65718a;
+    }
+    .footer .panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 860px) {
+      .hero,
+      .route-grid,
+      .resource-grid,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+      .navlinks { display: none; }
+      .section-head { display: block; }
+      .hero-main { min-height: auto; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 22px, 1120px); }
+      .card { grid-template-columns: 1fr; }
+      .actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="课程页导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M32 7l6.8 13.8L54 23l-11 10.7 2.6 15.1L32 41.6 18.4 48.8 21 33.7 10 23l15.2-2.2L32 7Z" fill="#ffd76f" stroke="#6b5a92" stroke-width="2"/>
+          </svg>
+        </span>
+        <span>星光学习岛</span>
+      </a>
+      <div class="navlinks">
+        <a href="./start_here.html">新手向导</a>
+        <a href="./index.html#courses">全部课程</a>
+        <a href="#route">推荐路线</a>
+        <a href="#resources">核心资源</a>
+        <a href="./dashboard.html">继续学习</a>
+        <a href="./practice_lab.html">训练台</a>
+        <a href="./resources.html">资源库</a>
+        <a href="./progress_vault.html">学习存档</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="app" class="wrap" hidden>
+    <section class="hero">
+      <article class="hero-main">
+        <div>
+          <span class="eyebrow" id="courseStatus">课程岛</span>
+          <h1 id="courseTitle">课程岛</h1>
+          <p class="lead" id="courseDescription"></p>
+          <p class="lead" id="courseMode" style="margin-top:14px;"></p>
+          <div class="tag-row" id="courseTags"></div>
+        </div>
+        <div>
+          <div class="actions" id="primaryActions"></div>
+          <div class="metric-grid">
+            <article class="metric"><span>必做完成</span><strong id="requiredDoneMetric">0/0</strong><p>先把每科主线入口打通</p></article>
+            <article class="metric"><span>本课资源</span><strong id="resourceCount">0</strong><p>讲义、真题、速查或闪卡</p></article>
+            <article class="metric"><span>当前显示</span><strong id="visibleResourceCount">0</strong><p>按本课筛选后剩下的资源</p></article>
+          </div>
+        </div>
+      </article>
+      <aside class="hero-aside">
+        <div class="panel">
+          <span class="icon hero-icon" id="courseIcon" aria-hidden="true"></span>
+          <h3>这一科怎么打开？</h3>
+          <ul class="steps" id="actionSteps"></ul>
+        </div>
+        <div class="panel">
+          <h3>切换课程岛</h3>
+          <p>所有课程共用同一套产品壳，方便后续开源后继续扩展。</p>
+          <div class="course-tabs" id="courseTabs"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="route">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">推荐路线</span>
+          <h2>不要乱点，按这三步走。</h2>
+        </div>
+        <p>每门课的资源很多，但复习动作只有三件事：先看考试样子，再补卡住的知识，最后回炉错题或大题步骤。</p>
+      </div>
+      <div class="route-grid" id="routeGrid"></div>
+    </section>
+
+    <section id="resources">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">核心资源</span>
+          <h2>这门课最值得点开的页面。</h2>
+        </div>
+        <p>默认展示这门课的主线资源，维护资料和历史路线放在完整资源库里查。用本课筛选切换真题、讲义、回炉和全部资源，先做必做，再按短板补推荐。</p>
+      </div>
+      <div class="resource-toolbar" id="courseResourceFilters" aria-label="本课筛选"></div>
+      <div class="resource-grid" id="resourceGrid"></div>
+    </section>
+  </main>
+
+  <main id="missing" class="wrap" hidden>
+    <section class="hero">
+      <article class="hero-main">
+        <span class="eyebrow">没有找到课程</span>
+        <h1>课程岛走丢了</h1>
+        <p class="lead">这个课程 id 暂时不在清单里。先回首页选择已有课程入口。</p>
+        <div class="actions"><a class="btn primary" href="./index.html#courses">回到课程入口</a></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <div class="panel">
+      <p><strong>课程岛</strong><br>把每门课从“文件堆”整理成“考试形态、推荐路线、核心资源”的统一入口。</p>
+      <div class="actions" style="margin-top:0;">
+        <a class="btn" href="./index.html">回首页</a>
+        <a class="btn" href="./dashboard.html">继续学习</a>
+        <a class="btn" href="./resources.html">资源库</a>
+        <a class="btn" href="./final_two_wrong_review.html">错题回炉</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function iconSvg(type) {
+      const icons = {
+        db: `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="14" rx="19" ry="8" fill="#dff4ff" stroke="#52708c" stroke-width="3"/><path d="M13 14v28c0 5 8.5 9 19 9s19-4 19-9V14" fill="#eef9ff" stroke="#52708c" stroke-width="3"/><path d="M13 28c0 5 8.5 9 19 9s19-4 19-9M13 40c0 5 8.5 9 19 9s19-4 19-9" fill="none" stroke="#52708c" stroke-width="3"/></svg>`,
+        ai: `<svg viewBox="0 0 64 64"><rect x="16" y="14" width="32" height="32" rx="10" fill="#f2ebff" stroke="#725f8f" stroke-width="3"/><path d="M24 25h16M24 33h16M24 41h10" stroke="#725f8f" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="8" r="4" fill="#ffd76f"/><circle cx="48" cy="52" r="5" fill="#aee2d6"/></svg>`,
+        se: `<svg viewBox="0 0 64 64"><rect x="12" y="13" width="40" height="30" rx="6" fill="#fff4d8" stroke="#8f7650" stroke-width="3"/><path d="M20 51h24M28 43v8M20 23h24M20 32h14" stroke="#8f7650" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="32" r="5" fill="#ffc2dc" stroke="#8f7650" stroke-width="2"/></svg>`,
+        military: `<svg viewBox="0 0 64 64"><path d="M32 9l21 8v14c0 12-8 20-21 25C19 51 11 43 11 31V17l21-8Z" fill="#e8fbf3" stroke="#527d6d" stroke-width="3"/><path d="M32 18v26M22 29h20" stroke="#527d6d" stroke-width="4" stroke-linecap="round"/></svg>`,
+        ladder: `<svg viewBox="0 0 64 64"><path d="M10 48 C18 22 44 20 54 48Z" fill="#b9e4f6" stroke="#426c8f" stroke-width="3"/><path d="M18 48h28M22 40h22M26 32h16" stroke="#426c8f" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="20" r="8" fill="#fff3a8" stroke="#8c7a38" stroke-width="3"/></svg>`,
+        marx: `<svg viewBox="0 0 64 64"><path d="M16 12h26a8 8 0 0 1 8 8v34H24a8 8 0 0 1-8-8Z" fill="#ffeef5" stroke="#8d6076" stroke-width="3"/><path d="M24 24h18M24 34h18M24 44h12" stroke="#8d6076" stroke-width="3" stroke-linecap="round"/></svg>`,
+        os: `<svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="8" fill="#eef1ff" stroke="#626f8e" stroke-width="3"/><rect x="22" y="22" width="20" height="20" rx="4" fill="#fff" stroke="#626f8e" stroke-width="3"/><path d="M8 24h8M8 40h8M48 24h8M48 40h8M24 8v8M40 8v8M24 48v8M40 48v8" stroke="#626f8e" stroke-width="3" stroke-linecap="round"/></svg>`
+      };
+      return icons[type] || icons.ladder;
+    }
+
+    function hubHref(course) {
+      return `./course.html?id=${encodeURIComponent(course.id)}`;
+    }
+
+    const qualityLabels = {
+      "exam-like": "真题级",
+      reviewed: "已校对",
+      draft: "草稿",
+      archive: "维护资料"
+    };
+    const doneKey = "starlight-resource-done-v1";
+    const examTypes = new Set(["真题卷", "交互卷", "真题包"]);
+    let activeResourceFilter = "main";
+
+    const courseFilterOptions = [
+      { id: "main", label: "主线资源" },
+      { id: "required", label: "必做清单" },
+      { id: "exam", label: "真题卷" },
+      { id: "lecture", label: "讲义/速查" },
+      { id: "review", label: "回炉补洞" },
+      { id: "all", label: "全部" }
+    ];
+
+    function readDone() {
+      try {
+        return JSON.parse(localStorage.getItem(doneKey) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function writeDone(done) {
+      localStorage.setItem(doneKey, JSON.stringify(done));
+    }
+
+    function qualityOf(item) {
+      return (window.STARLIGHT_RESOURCE_QUALITY || {})[item.id] || { level: "draft" };
+    }
+
+    function isArchive(item) {
+      return qualityOf(item).level === "archive";
+    }
+
+    function isLectureResource(item) {
+      return /(讲义|速查|闪卡|开卷|背诵|知识地图|学习 Tips|总地图|覆盖地图)/.test(item.type);
+    }
+
+    function isReviewResource(item) {
+      return (
+        /(补洞|回炉|举一反三|考前收口|低成本|定位|回忆)/.test(item.stage) ||
+        /(闸门|变式|混合训练|证明训练|召回题|专项训练)/.test(item.type)
+      );
+    }
+
+    function filterCourseResource(item) {
+      if (activeResourceFilter === "all") return true;
+      if (activeResourceFilter === "main") return !isArchive(item);
+      if (activeResourceFilter === "required") return !isArchive(item) && item.priority === "必做";
+      if (activeResourceFilter === "exam") return !isArchive(item) && (examTypes.has(item.type) || qualityOf(item).level === "exam-like");
+      if (activeResourceFilter === "lecture") return !isArchive(item) && isLectureResource(item);
+      if (activeResourceFilter === "review") return !isArchive(item) && isReviewResource(item);
+      return true;
+    }
+
+    function sortResources(a, b) {
+      const priorityWeight = { "必做": 0, "推荐": 1, "可选": 2 };
+      const qualityWeight = { "exam-like": 0, reviewed: 1, draft: 2, archive: 3 };
+      const pa = priorityWeight[a.priority] ?? 9;
+      const pb = priorityWeight[b.priority] ?? 9;
+      if (pa !== pb) return pa - pb;
+      const qa = qualityWeight[qualityOf(a).level] ?? 9;
+      const qb = qualityWeight[qualityOf(b).level] ?? 9;
+      if (qa !== qb) return qa - qb;
+      return `${a.stage}-${a.title}`.localeCompare(`${b.stage}-${b.title}`, "zh-CN");
+    }
+
+    function courseResources(courseId) {
+      return (window.STARLIGHT_RESOURCE_CATALOG || [])
+        .filter(item => item.courseId === courseId && qualityOf(item).level !== "archive")
+        .sort(sortResources);
+    }
+
+    function allCourseResources(courseId) {
+      return (window.STARLIGHT_RESOURCE_CATALOG || [])
+        .filter(item => item.courseId === courseId)
+        .sort(sortResources);
+    }
+
+    function getCourse() {
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id") || manifest.courses[0]?.id;
+      return {
+        manifest,
+        course: manifest.courses.find(item => item.id === id)
+      };
+    }
+
+    function render() {
+      const { manifest, course } = getCourse();
+      if (!course) {
+        $("#missing").hidden = false;
+        return;
+      }
+
+      document.title = `${course.title} | 星光学习岛`;
+      $("#app").hidden = false;
+      $("#courseStatus").textContent = course.status;
+      $("#courseTitle").textContent = course.title;
+      $("#courseDescription").innerHTML = escapeHtml(course.description).replace(course.title, `<span class="key">${escapeHtml(course.title)}</span>`);
+      $("#courseMode").innerHTML = `<span class="key">考试形态：</span>${escapeHtml(course.examMode || course.status)}`;
+      $("#courseIcon").innerHTML = iconSvg(course.icon);
+      const allResources = allCourseResources(course.id);
+      const resources = allResources.filter(item => !isArchive(item));
+      const requiredResources = resources.filter(item => item.priority === "必做");
+      const done = readDone();
+      const requiredDone = requiredResources.filter(item => done[item.id]);
+      const visibleResources = allResources.filter(filterCourseResource);
+      $("#resourceCount").textContent = resources.length || (1 + (course.secondary || []).length);
+      $("#requiredDoneMetric").textContent = `${requiredDone.length}/${requiredResources.length}`;
+      $("#visibleResourceCount").textContent = String(visibleResources.length);
+      $("#courseTags").innerHTML = (course.resourceTags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
+      $("#actionSteps").innerHTML = (course.studyActions || []).map(step => `<li>${escapeHtml(step)}</li>`).join("");
+      $("#primaryActions").innerHTML = `
+        <a class="btn primary" href="${escapeHtml(course.href)}">${escapeHtml(course.button)}</a>
+        <a class="btn mint" href="#resources">看本课资源</a>
+        <a class="btn mint" href="./resources.html?course=${encodeURIComponent(course.id)}">本课资料库</a>
+        <a class="btn" href="./dashboard.html">继续学习</a>
+        <a class="btn" href="./index.html#resource-map">回资源地图</a>
+      `;
+      $("#courseTabs").innerHTML = manifest.courses.map(item => `
+        <a class="tab ${item.id === course.id ? "active" : ""}" href="${escapeHtml(hubHref(item))}">${escapeHtml(item.title)}</a>
+      `).join("");
+
+      const route = [
+        {
+          step: "01",
+          title: "先校准考试样子",
+          text: course.studyActions?.[0] || "先从核心入口进入，确认题型和卷面要求。",
+          button: course.button,
+          href: course.href,
+          style: "primary"
+        },
+        {
+          step: "02",
+          title: "再补最卡的洞",
+          text: course.studyActions?.[1] || "回到讲义、速查、闪卡或辅助训练，把不会的地方补清楚。",
+          button: "看辅助资源",
+          href: `./resources.html?course=${encodeURIComponent(course.id)}&scope=main`,
+          style: "mint"
+        },
+        {
+          step: "03",
+          title: "最后错题回炉",
+          text: course.studyActions?.[2] || "把错题和卡壳题收进回炉路径，隔天只补最该补的点。",
+          button: "打开错题回炉",
+          href: "./final_two_wrong_review.html",
+          style: ""
+        }
+      ];
+      $("#routeGrid").innerHTML = route.map(item => `
+        <article class="route-card" data-step="${escapeHtml(item.step)}">
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.text)}</p>
+          <div class="actions"><a class="btn ${escapeHtml(item.style)}" href="${escapeHtml(item.href)}">${escapeHtml(item.button)}</a></div>
+        </article>
+      `).join("");
+
+      $("#courseResourceFilters").innerHTML = courseFilterOptions.map(item => `
+        <button class="segment ${activeResourceFilter === item.id ? "active" : ""}" type="button" data-filter="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button>
+      `).join("");
+      document.querySelectorAll("[data-filter]").forEach(button => {
+        button.addEventListener("click", () => {
+          activeResourceFilter = button.dataset.filter;
+          render();
+        });
+      });
+
+      const displayResources = visibleResources.length ? visibleResources : [
+        { priority: "必做", type: "核心入口", stage: "题型校准", href: course.href, title: course.button, description: course.examMode || course.description, tags: course.resourceTags || [], id: `${course.id}-fallback` }
+      ];
+      $("#resourceGrid").innerHTML = displayResources.map(item => {
+        const quality = qualityOf(item);
+        const qualityText = qualityLabels[quality.level] || quality.level;
+        const isDone = Boolean(done[item.id]);
+        return `
+          <article class="card ${isDone ? "done" : ""}">
+            <span class="icon" aria-hidden="true">${iconSvg(course.icon)}</span>
+            <span>
+              <span class="tag ${item.priority === "必做" ? "level-exam-like" : ""}">${escapeHtml(item.priority)}</span>
+              <span class="tag">${escapeHtml(item.stage)}</span>
+              <span class="tag level-${escapeHtml(quality.level)}">${escapeHtml(qualityText)}</span>
+              <a class="card-title" href="${escapeHtml(item.href)}"><h3>${escapeHtml(item.title)}</h3></a>
+              <p>${escapeHtml(item.description)}</p>
+              <span class="tag-row">${(item.tags || []).slice(0, 4).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</span>
+              <span class="card-actions">
+                <a class="btn primary" href="${escapeHtml(item.href)}">打开资源</a>
+                <button class="done-btn ${isDone ? "done" : ""}" type="button" data-done-id="${escapeHtml(item.id)}">${isDone ? "已完成" : "标记完成"}</button>
+              </span>
+            </span>
+          </article>
+        `;
+      }).join("");
+      document.querySelectorAll("[data-done-id]").forEach(button => {
+        button.addEventListener("click", () => {
+          const next = readDone();
+          next[button.dataset.doneId] = !next[button.dataset.doneId];
+          if (!next[button.dataset.doneId]) delete next[button.dataset.doneId];
+          writeDone(next);
+          render();
+        });
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>

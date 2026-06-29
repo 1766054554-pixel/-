@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据库临考变式训练营：题眼、模板、换问法</title>
+  <style>
+    :root {
+      --ink: #152231;
+      --muted: #657385;
+      --line: #d9e2ea;
+      --paper: #ffffff;
+      --bg: #f3f7fa;
+      --blue: #1f6f9f;
+      --green: #257a54;
+      --red: #ad3f37;
+      --amber: #a76713;
+      --soft-blue: #eaf5fb;
+      --soft-green: #ecf7f0;
+      --soft-red: #fff0ee;
+      --soft-amber: #fff7e8;
+      --shadow: 0 14px 36px rgba(21, 34, 49, .10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(31,111,159,.08), transparent 360px),
+        var(--bg);
+      line-height: 1.75;
+    }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+    .hero, .card, .drill {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .hero { padding: 30px; margin-bottom: 18px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: clamp(28px, 4vw, 46px); }
+    h2 { font-size: 25px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 19px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); font-weight: 700; text-decoration: none; }
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 14px;
+    }
+    pre {
+      white-space: pre-wrap;
+      background: #0f1d2b;
+      color: #ecf7ff;
+      border-radius: 10px;
+      padding: 14px;
+      overflow-x: auto;
+      line-height: 1.55;
+    }
+    .muted { color: var(--muted); }
+    .key { color: var(--blue); font-weight: 800; }
+    .focus {
+      font-weight: 800;
+      background: linear-gradient(transparent 58%, rgba(255, 210, 94, .55) 58%);
+      padding: 0 2px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--muted);
+      margin: 0 8px 8px 0;
+    }
+    .pill.hot { color: var(--red); background: var(--soft-red); border-color: #f0c0ba; }
+    .pill.good { color: var(--green); background: var(--soft-green); border-color: #bddfc9; }
+    .pill.warn { color: var(--amber); background: var(--soft-amber); border-color: #edd09d; }
+    .toc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .toc a {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .card { padding: 24px; margin: 18px 0; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfdff;
+      padding: 15px;
+    }
+    .box strong { display: block; margin-bottom: 5px; }
+    .note {
+      border-left: 5px solid var(--blue);
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      border-radius: 10px;
+      margin: 14px 0;
+    }
+    .warnbox {
+      border-left-color: var(--amber);
+      background: var(--soft-amber);
+    }
+    .danger {
+      border-left-color: var(--red);
+      background: var(--soft-red);
+    }
+    .quiz-list { display: grid; gap: 12px; margin-top: 12px; }
+    .q-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      background: #fff;
+    }
+    .tag { color: var(--blue); font-weight: 800; font-size: 14px; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 10px; }
+    button {
+      border: 1px solid #c8d7e2;
+      background: #fff;
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      line-height: 1.45;
+    }
+    button:hover { border-color: var(--blue); background: var(--soft-blue); }
+    button.correct { border-color: #8bc49b; background: var(--soft-green); }
+    button.wrong { border-color: #e5a29b; background: var(--soft-red); }
+    .explain {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f7fbfd;
+      border: 1px dashed #bfd4e3;
+    }
+    .q-card.done .explain { display: block; }
+    textarea {
+      width: 100%;
+      min-height: 118px;
+      resize: vertical;
+      border: 1px solid #cfdde7;
+      border-radius: 12px;
+      padding: 12px;
+      font: inherit;
+      line-height: 1.65;
+      background: #fbfdff;
+      color: var(--ink);
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 800; color: var(--blue); }
+    .drill { padding: 20px; margin: 16px 0; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 10px;
+      border-top: 1px dashed #cfdae3;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    .rubric span:first-child { font-weight: 800; color: var(--blue); }
+    .formula {
+      font-family: Georgia, "Times New Roman", "Noto Serif SC", serif;
+      font-size: 1.05em;
+      font-weight: 700;
+    }
+    .score {
+      position: sticky;
+      bottom: 12px;
+      border: 1px solid #bddfc9;
+      background: rgba(236,247,240,.96);
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: var(--shadow);
+      margin-top: 18px;
+      font-weight: 800;
+    }
+    @media (max-width: 760px) {
+      main { width: min(100% - 18px, 1180px); padding-top: 14px; }
+      .hero, .card, .drill { padding: 16px; border-radius: 12px; }
+      .grid, .grid.three, .choices { grid-template-columns: 1fr; }
+      .rubric { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div>
+      <span class="pill hot">数据库 6/22 临考</span>
+      <span class="pill good">往年题题眼变式</span>
+      <span class="pill warn">先识别，再作答</span>
+    </div>
+    <h1>数据库临考变式训练营</h1>
+    <p class="muted">这页不再从头讲数据库，而是把 SQL1、SQL2、2020 试卷、Transaction and Recovery、2023A 参考卷里反复出现的题眼，改造成“换问法也能认出来”的训练。你要练的是：<span class="focus">看到陌生表名，也能知道第一步该写什么</span>。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./day6_database_final_rehearsal.html#past">Day6 题眼矩阵</a>
+      <a href="./db_2023a_full_interactive.html">2023A 整卷</a>
+      <a href="#map">题眼地图</a>
+      <a href="#quiz">20 题极速分流</a>
+      <a href="#big">8 个大题骨架</a>
+      <a href="#gate">上场闸门</a>
+    </div>
+  </section>
+
+  <section class="card" id="map">
+    <h2>1. 先把题分进正确盒子</h2>
+    <p>数据库题最怕的不是难，而是<span class="focus">题型没分清就动笔</span>。比如“全部学生都选修”不是普通 JOIN，“成绩超过 10 人才统计”不是 WHERE，“释放锁后又申请锁”不是恢复题，而是 2PL 题。下面这张地图是你做题前的脑内分诊台。</p>
+    <div class="grid three">
+      <div class="box"><strong>SQL 查询</strong>题干出现“检索、统计、平均、至少、全部、没有、最高”。第一步：圈表、连接条件、分组字段、筛选发生在行还是组。</div>
+      <div class="box"><strong>关系代数</strong>题干明说“用关系代数表达”。第一步：先写输出列 <span class="formula">Π</span>，再找筛行 <span class="formula">σ</span>、连接 <span class="formula">⋈</span>、差集 <span class="formula">−</span>、除法 <span class="formula">÷</span>。</div>
+      <div class="box"><strong>DML / 视图</strong>题干出现插入、删除、修改、视图、WITH CHECK OPTION。第一步：先确定目标表，再用 SELECT 子查询找被操作的行。</div>
+      <div class="box"><strong>事务并发</strong>题干出现 read/write、lock/unlock、S/X/U、schedule。第一步：冲突图或第一次 unlock，不要先谈 Undo/Redo。</div>
+      <div class="box"><strong>恢复日志</strong>题干出现 crash、START、COMMIT、old/new value、Undo/Redo。第一步：分 winner/loser，再决定重做还是撤销。</div>
+      <div class="box"><strong>范式与设计</strong>题干出现 R(A,B,C)、F={...}、BCNF、无损、ER、业务需求。第一步：范式求闭包；ER 圈实体/属性/联系/基数。</div>
+    </div>
+    <div class="note warnbox">
+      <strong>你现在的做法：</strong>先做第 2 节 20 题，不会就看解析；再挑第 3 节大题骨架写 3 行：题眼、第一步、最怕错点。最后再去做 2023A 整卷，效果会比硬刷整卷好很多。
+    </div>
+  </section>
+
+  <section class="card" id="quiz">
+    <h2>2. 20 题极速分流：训练“第一反应”</h2>
+    <p>每题只选一个最关键的起手动作。选错不用难过，错题很值钱：把解析最后一句“下次看到什么信号”记住，下一张卷子就不会被同类题偷袭。</p>
+    <div id="quizList" class="quiz-list"></div>
+    <div id="scoreBox" class="score">已完成 0/20，正确 0。先做题，别急着看答案。</div>
+  </section>
+
+  <section class="card" id="big">
+    <h2>3. 8 个大题骨架：从题眼写到可交卷答案</h2>
+    <p>这部分不是让你背八道题，而是练八种“考试会换皮”的答题模板。每道先自己写，再展开答案。写不完整也没关系，但一定要写出第一步。</p>
+  </section>
+
+  <section class="drill">
+    <h3>大题 1｜SQL 全称查询：选修了全部课程的学生</h3>
+    <p>关系：S(S#, SNAME, AGE, SEX)，SC(S#, C#, GRADE)，C(C#, CNAME, TEACHER)。写 SQL：检索选修了全部课程的学生学号和姓名。</p>
+    <textarea data-save="dbv-big-1" placeholder="先写题眼：全部课程 -> 对每个课程都存在选课记录。可用双重 NOT EXISTS 或 COUNT(DISTINCT)=课程总数。"></textarea>
+    <details>
+      <summary>展开标准答案和换问法解析</summary>
+      <p><strong>计数法：</strong></p>
+      <pre>SELECT s.S#, s.SNAME
+FROM S s
+JOIN SC sc ON s.S# = sc.S#
+GROUP BY s.S#, s.SNAME
+HAVING COUNT(DISTINCT sc.C#) = (SELECT COUNT(*) FROM C);</pre>
+      <p><strong>双重 NOT EXISTS：</strong></p>
+      <pre>SELECT s.S#, s.SNAME
+FROM S s
+WHERE NOT EXISTS (
+  SELECT *
+  FROM C c
+  WHERE NOT EXISTS (
+    SELECT *
+    FROM SC sc
+    WHERE sc.S# = s.S# AND sc.C# = c.C#
+  )
+);</pre>
+      <div class="rubric"><span>为什么这样</span><span>“全部”是全称量词。人话是：不存在一门课程 c，使得这个学生没有选 c。计数法更短，双重 NOT EXISTS 更接近逻辑。</span></div>
+      <div class="rubric"><span>变式识别</span><span>“选修了所有刘老师课程”“全部学生都选修的课程”“参加所有剧目”都不是普通 JOIN。看到“所有/全部/每一个”，先想全称查询。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 2｜SQL “没有/不学”：李想不学的课程</h3>
+    <p>写 SQL：检索李想同学不学的课程号和课程名。</p>
+    <textarea data-save="dbv-big-2" placeholder="先写题眼：课程全集 - 李想已选课程。可以用 NOT EXISTS 或 NOT IN。"></textarea>
+    <details>
+      <summary>展开标准答案和扣分点</summary>
+      <pre>SELECT c.C#, c.CNAME
+FROM C c
+WHERE NOT EXISTS (
+  SELECT *
+  FROM S s
+  JOIN SC sc ON s.S# = sc.S#
+  WHERE s.SNAME = '李想'
+    AND sc.C# = c.C#
+);</pre>
+      <div class="rubric"><span>为什么这样</span><span>这题从课程表 C 出发，因为答案要包含“没有被李想选”的课程。若从 SC 出发，天然只能看到已经有人选的课程，容易漏掉没人选过的课程。</span></div>
+      <div class="rubric"><span>变式识别</span><span>“从未参加”“没有选修”“不属于”“未出现”都先从全集表出发，再排除已经发生的记录。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 3｜SQL 分组筛组：选课人数超过阈值</h3>
+    <p>写 SQL：统计每门课程的选修人数，只显示人数超过 10 的课程，按人数降序、课程号升序。</p>
+    <textarea data-save="dbv-big-3" placeholder="先写题眼：每门课程 -> GROUP BY C#；人数超过10 -> HAVING；排序 -> ORDER BY count desc, C# asc。"></textarea>
+    <details>
+      <summary>展开标准答案和 WHERE/HAVING 区分</summary>
+      <pre>SELECT sc.C#, COUNT(sc.S#) AS student_count
+FROM SC sc
+GROUP BY sc.C#
+HAVING COUNT(sc.S#) > 10
+ORDER BY student_count DESC, sc.C# ASC;</pre>
+      <div class="rubric"><span>为什么这样</span><span>WHERE 在分组前筛“某一行”，HAVING 在分组后筛“某一组”。“人数超过 10”必须等每门课人数算出来后才能判断，所以用 HAVING。</span></div>
+      <div class="rubric"><span>变式识别</span><span>“平均成绩超过 80 的课程”“选课人数不少于 2 的学生”“重修人数最多的课程”都先 GROUP BY，再 HAVING/ALL/回表。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 4｜SQL DML：插入、修改、删除都先找目标表</h3>
+    <p>写三个语句骨架：1. 把所有女生的物理课选课记录插入 SC；2. 把物理课成绩加 20 但不超过 100；3. 删除选修 LIU 老师课程的女同学选课元组。</p>
+    <textarea data-save="dbv-big-4" placeholder="先写题眼：INSERT INTO ... SELECT；UPDATE 用 CASE 或两步封顶；DELETE 的目标是 SC，不是 S。"></textarea>
+    <details>
+      <summary>展开标准答案和 DML 陷阱</summary>
+      <pre>-- 1. 插入女生的物理课记录，假设物理课课程号为 C001
+INSERT INTO SC(C#, S#)
+SELECT 'C001', s.S#
+FROM S s
+WHERE s.SEX = 'F';
+
+-- 2. 成绩加 20 但不超过 100
+UPDATE SC
+SET GRADE = CASE
+  WHEN GRADE + 20 > 100 THEN 100
+  ELSE GRADE + 20
+END
+WHERE C# = 'C001';
+
+-- 3. 删除选修 LIU 老师课程的女同学选课元组
+DELETE FROM SC
+WHERE S# IN (SELECT S# FROM S WHERE SEX = 'F')
+  AND C# IN (SELECT C# FROM C WHERE TEACHER = 'LIU');</pre>
+      <div class="rubric"><span>为什么这样</span><span>DML 题先问“要改哪张表”。第 3 题删的是女同学的选课元组，所以目标表是 SC；如果写 DELETE FROM S 就变成删除学生本人，题意变了。</span></div>
+      <div class="rubric"><span>变式识别</span><span>“插入一批满足条件的记录”是 INSERT INTO SELECT；“分段修改”用 CASE；“删除某类关系记录”通常 DELETE 关联表，不一定删实体表。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 5｜关系代数：参加了全部剧目的演员</h3>
+    <p>Actor(actor_id, name, year_born)，Play(play_id, title, author, year_written)，Role(actor_id, character_name, play_id)。用关系代数写出：参加过所有剧目的演员姓名。</p>
+    <textarea data-save="dbv-big-5" placeholder="先写题眼：所有剧目 -> 除法；被除关系是演员-剧目二元关系；除数是全部剧目。"></textarea>
+    <details>
+      <summary>展开关系代数答案和符号读法</summary>
+      <pre>AllActor = Π_actor_id,play_id(Role) ÷ Π_play_id(Play)
+Result = Π_name(Actor ⋈ AllActor)</pre>
+      <div class="rubric"><span>为什么这样</span><span>除法的结果保留“对所有 play_id 都配对出现的 actor_id”。先用 Role 拿到演员-剧目二元关系，再除以 Play 的全集 play_id，最后连接 Actor 取姓名。</span></div>
+      <div class="rubric"><span>变式识别</span><span>“所有课程/全部剧目/每个商品/全部学生”在关系代数里优先想到 <span class="formula">÷</span>。如果只是“参加过某个剧目”，才是普通 <span class="formula">σ + ⋈ + Π</span>。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 6｜事务并发：冲突图与 2PL 不是同一问</h3>
+    <p>调度：r1(A), w1(A), r2(A), r2(B), r1(B), w1(B)。判断是否冲突可串行化，并说明如何用 2PL 让同一事务集合生成可串行化调度。</p>
+    <textarea data-save="dbv-big-6" placeholder="先写题眼：read/write 调度 -> 冲突图；2PL -> 加锁阶段/释放阶段，第一次 unlock 后不能再 lock。"></textarea>
+    <details>
+      <summary>展开答案骨架和常见错法</summary>
+      <p><strong>冲突图：</strong>A 上有 <span class="formula">w1(A)</span> 在 <span class="formula">r2(A)</span> 前，得边 T1 -> T2。B 上有 <span class="formula">r2(B)</span> 在 <span class="formula">w1(B)</span> 前，得边 T2 -> T1。图有环，所以该调度不是冲突可串行化。</p>
+      <p><strong>2PL 改造思路：</strong>让每个事务先获得自己需要的锁，等所有读写完成后再释放。例如 T1 先拿 A、B 的所需锁并完成 r1(A), w1(A), r1(B), w1(B)，再释放；T2 之后拿 A、B 的锁并完成读写。这样生成的调度等价于串行顺序 T1, T2。</p>
+      <div class="rubric"><span>为什么这样</span><span>冲突可串行化看的是“同一数据项、不同事务、至少一个写”。2PL 看的是“释放第一个锁之后有没有再申请新锁”。两问的证据不同，不能混答。</span></div>
+      <div class="rubric"><span>变式识别</span><span>题干只有 r/w 就画优先图；题干有 S/X/U、lock/unlock 就查 2PL；题干有 strict 就看写锁是否持有到 commit/abort。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 7｜恢复日志：先分 winner / loser</h3>
+    <p>日志：&lt;START T&gt;，&lt;T,A,10,11&gt;，&lt;START U&gt;，&lt;U,B,20,21&gt;，&lt;T,C,30,31&gt;，&lt;U,D,40,41&gt;，&lt;COMMIT U&gt;，随后崩溃。分别说 Undo logging 和 Redo logging 的恢复动作。</p>
+    <textarea data-save="dbv-big-7" placeholder="先写题眼：crash + log -> winner/loser。U 已提交，T 未提交。Undo 撤销 loser；Redo 重做 winner。"></textarea>
+    <details>
+      <summary>展开恢复答案和分流口诀</summary>
+      <p><strong>第一步：</strong>U 有 COMMIT，是 winner；T 没有 COMMIT，是 loser。</p>
+      <p><strong>Undo logging：</strong>重点是撤销未提交事务。恢复时把 T 修改过的 A、C 恢复为旧值，即 A=10，C=30。U 已提交，不撤销。</p>
+      <p><strong>Redo logging：</strong>重点是保证已提交事务结果写回。恢复时重做 U 修改过的 B、D，使 B=21，D=41。T 未提交，不重做。</p>
+      <div class="rubric"><span>为什么这样</span><span>恢复题先不要盯每个数值乱算。先分事务状态：已提交是 winner，未提交是 loser。Undo 看 loser 旧值，Redo 看 winner 新值。</span></div>
+      <div class="rubric"><span>变式识别</span><span>如果题干问 force/steal 或 Undo/Redo/Undo-Redo logging，要写清假设；如果问“哪些值可能/必须写盘”，要区分内存、磁盘和日志。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>大题 8｜范式与 ER：一个算法，一个翻译</h3>
+    <p>范式：R(A,B,C,D,E,F)，F={A -> BC, D -> AF}。求候选键，判断 BCNF 并给出一种分解。ER：客户有多个电话，账户可属于多个客户，客户最多一个联系人，如何转关系模式？</p>
+    <textarea data-save="dbv-big-8" placeholder="先写范式第一步：右部没出现的属性必须在候选键里。ER 第一步：多值属性单独表，M:N 联系单独表。"></textarea>
+    <details>
+      <summary>展开范式和 ER 答案</summary>
+      <p><strong>范式第一步：</strong>右部出现 B,C,A,F，没出现的是 D,E，所以每个候选键必须包含 D,E。<span class="formula">(DE)<sup>+</sup></span>：D -> AF，A -> BC，所以推出 A,B,C,D,E,F，DE 是候选键。</p>
+      <p><strong>BCNF 判断：</strong>A -> BC 中 A 不是超键，违反 BCNF；D -> AF 中 D 也不是超键，违反 BCNF。一种分解：</p>
+      <pre>R1(D,A,F)
+R21(D,B,C)
+R22(D,E)</pre>
+      <p><strong>ER 转关系：</strong>客户 Customer(ID, name, occupation, contact_emp_id)；客户电话 CustomerPhone(customer_id, phone)；账户 Account(account_no, branch_code, balance, type)；客户-账户 AccountOwner(customer_id, account_no, branch_code)；支行 Branch(branch_code, location, employee_count)；员工 Employee(emp_id, name, salary, branch_code)。</p>
+      <div class="rubric"><span>为什么这样</span><span>范式题按闭包算法，不靠感觉。ER 题按翻译规则：多值属性单独表，M:N 联系单独表，1:N 在 N 端放外键，0/1 联系可以放可空外键。</span></div>
+      <div class="rubric"><span>变式识别</span><span>诊所、银行、演员剧目、学生选课都一样：名词找实体，动词找联系，数量词找基数，带属性联系或 M:N 单独成表。</span></div>
+    </details>
+  </section>
+
+  <section class="card" id="gate">
+    <h2>4. 上场闸门：做完这页后怎么接</h2>
+    <div class="grid">
+      <div class="box"><strong>如果 20 题低于 14 题正确</strong>不要急着做整卷。回 <a href="./day6_database_final_rehearsal.html#triage">Day6 极速分流</a>，把错题写成“题眼 -> 模板 -> 下次动作”。</div>
+      <div class="box"><strong>如果 SQL 大题写不出骨架</strong>回 <a href="./day2_database_sql_join_nested.html">Day2 SQL 连接/嵌套</a> 和 <a href="./day4_database_full_exam_closure.html#sql">Day4 SQL 速记</a>，只补 FROM、GROUP、HAVING、NOT EXISTS。</div>
+      <div class="box"><strong>如果范式事务卡住</strong>回 <a href="./day3_database_fd_tx_er.html">Day3 范式事务 ER</a>，只补闭包、BCNF、冲突图、Undo/Redo 四件事。</div>
+      <div class="box"><strong>如果这页基本能做</strong>进入 <a href="./db_2023a_full_interactive.html">2023A 整卷交互</a>。第一遍只写骨架；第二遍只做错题；考前最后只看 Day6 口令。</div>
+    </div>
+    <div class="note">
+      <strong>给你一个很实用的自我检查：</strong>每道错题不要只说“我不会”。要改成一句可执行的话：比如“看到超过 10 人先 GROUP BY，再 HAVING，不写 WHERE”。这句话才会在考场救你。
+    </div>
+  </section>
+</main>
+
+<script>
+  const quiz = [
+    {
+      tag: "SQL 全称查询",
+      q: "题干说“检索全部学生都选修的课程”，第一反应是什么？",
+      choices: ["从课程表出发，用双重 NOT EXISTS 表示不存在学生没选它", "直接 JOIN 三张表后 SELECT DISTINCT", "只统计每门课平均成绩", "用 WHERE CNAME LIKE '全部%'"],
+      answer: 0,
+      explain: "“全部学生都选修”是全称查询。普通 JOIN 只能说明有人选过，不能说明每个学生都选了。下次看到“全部/所有/每一个”，SQL 想双重 NOT EXISTS 或 COUNT(DISTINCT)=总数。"
+    },
+    {
+      tag: "SQL 差集/没有",
+      q: "“检索 WANG 同学不学的课程号”最稳的起点是？",
+      choices: ["从 C 课程全集出发，排除 WANG 已选课程", "从 SC 出发找 WANG 的选课", "从 S 出发只看年龄", "先 GROUP BY 教师"],
+      answer: 0,
+      explain: "答案是“不学的课程”，要覆盖所有课程，所以从 C 出发。SC 只包含已经发生的选课记录，天然看不到完全没被选的课程。"
+    },
+    {
+      tag: "SQL 至少两门",
+      q: "“至少选修两门课程的学生”可以怎样判断？",
+      choices: ["GROUP BY 学生 HAVING COUNT(DISTINCT 课程) >= 2", "WHERE COUNT(*) >= 2", "ORDER BY 课程号", "只用 DISTINCT 学号"],
+      answer: 0,
+      explain: "至少两门是按学生分组后的数量条件，应使用 GROUP BY + HAVING。WHERE 不能直接写聚合条件。"
+    },
+    {
+      tag: "HAVING",
+      q: "“选课人数超过 10 人的课程”中“超过 10 人”应该放在哪里？",
+      choices: ["HAVING COUNT(*) > 10", "WHERE COUNT(*) > 10", "SELECT 前面", "ORDER BY 前面随便放"],
+      answer: 0,
+      explain: "人数是分组后才产生的结果，所以用 HAVING。WHERE 筛单行，HAVING 筛分组，这是 SQL1/SQL2 反复出现的坑。"
+    },
+    {
+      tag: "> ALL",
+      q: "“年龄大于所有女学生年龄的男生”不能偷换成什么？",
+      choices: ["大于女学生平均年龄", "大于女学生最大年龄", "> ALL 女学生年龄", "大于 SELECT MAX(age)"],
+      answer: 0,
+      explain: "大于所有女学生等价于大于女学生最大年龄，或者 > ALL。大于平均年龄弱得多，会多选人。"
+    },
+    {
+      tag: "每门课均大于",
+      q: "“所授每门课程平均成绩均大于 80 的教师”第一步最合理的是？",
+      choices: ["先按 teacher, course 分组算每门课平均成绩，再检查该教师所有课程均达标", "直接按 teacher 分组算总平均", "只查最高分", "只看课程数"],
+      answer: 0,
+      explain: "“每门课程均”不能用教师总平均代替。要先得到每个教师每门课的平均成绩，再对同一教师检查所有课程是否 >=80。"
+    },
+    {
+      tag: "不及格比例",
+      q: "统计每门课不及格人数占比时，最容易漏掉什么？",
+      choices: ["分母是该课程总人数，分子是不及格人数", "只算不及格人数即可", "用课程名排序", "先删除及格记录"],
+      answer: 0,
+      explain: "比例题有分子和分母。不及格人数是分子，总选课人数是分母。可以用条件聚合或先建不及格视图再连接统计视图。"
+    },
+    {
+      tag: "INSERT SELECT",
+      q: "“把所有女生的物理选课记录插入选课表”属于什么模式？",
+      choices: ["INSERT INTO ... SELECT ... FROM S WHERE SEX='F'", "UPDATE S SET SEX='物理'", "DELETE FROM SC", "CREATE VIEW 后不插入"],
+      answer: 0,
+      explain: "这是批量插入，不是手写一行 VALUES。数据来源来自查询结果，所以是 INSERT INTO 目标表 SELECT 来源行。"
+    },
+    {
+      tag: "UPDATE 封顶",
+      q: "“成绩加 20，但不能超过 100”最稳的写法是？",
+      choices: ["用 CASE：超过 100 设 100，否则加 20", "直接加 20 不管", "先删掉低分", "只更新成绩为空的行"],
+      answer: 0,
+      explain: "分段更新题用 CASE 最清楚。也可两句完成，但要注意先加分再把超过 100 的封顶。"
+    },
+    {
+      tag: "DELETE 目标表",
+      q: "“删除选修 LIU 老师课程的女同学选课元组”目标表应是？",
+      choices: ["SC", "S", "C", "Teacher"],
+      answer: 0,
+      explain: "题目要删除“选课元组”，不是删除学生本人或课程本人。先确定目标表是 DML 题保命第一步。"
+    },
+    {
+      tag: "关系代数连接",
+      q: "关系代数中带条件连接 R ⋈<sub>R.B&lt;S.C</sub> S 等价于？",
+      choices: ["σ<sub>R.B&lt;S.C</sub>(R × S)", "Π<sub>R.B&lt;S.C</sub>(R × S)", "R ∪ S", "R - S"],
+      answer: 0,
+      explain: "条件连接可以拆成先笛卡尔积，再按条件选择。Π 是投影列，不是筛条件。"
+    },
+    {
+      tag: "关系代数除法",
+      q: "“参加了所有剧目的演员”在关系代数中最强的题眼符号是？",
+      choices: ["÷", "∪", "ρ", "×"],
+      answer: 0,
+      explain: "所有/全部/每一个在关系代数里优先想到除法。先构造 actor-play 二元关系，再除以全部 play。"
+    },
+    {
+      tag: "外键动作方向",
+      q: "courseID REFERENCES Course ON DELETE SET NULL，删除 Course 中被引用的课程时，会发生什么？",
+      choices: ["Take_course 中相关 courseID 可能被置为 NULL", "Course 元组不会被删除，只会置空", "Student 会被级联删除", "Take_course 删除会导致 Course 删除"],
+      answer: 0,
+      explain: "ON DELETE 动作由父表删除触发，影响子表外键。不是删除子表时反向影响父表。方向一定要画箭头。"
+    },
+    {
+      tag: "2PL",
+      q: "判断两阶段锁协议时，最关键的违规信号是？",
+      choices: ["释放过锁之后又申请新锁", "读了 A 又读 B", "事务数量超过 2", "使用了共享锁"],
+      answer: 0,
+      explain: "2PL 有增长阶段和收缩阶段。第一次 unlock 之后进入收缩阶段，不能再 lock。"
+    },
+    {
+      tag: "严格 2PL",
+      q: "严格 2PL 比普通 2PL 多强调什么？",
+      choices: ["写锁保持到 commit/abort", "不能使用读锁", "所有事务必须串行执行", "不能有 SELECT"],
+      answer: 0,
+      explain: "严格 2PL 的关键是排它锁/写锁持有到事务结束，以防其它事务读到未提交数据。"
+    },
+    {
+      tag: "冲突图",
+      q: "画冲突图时，两个操作之间产生冲突的条件是？",
+      choices: ["不同事务、同一数据项、至少一个写", "同一事务、不同数据项", "两个都是读", "只要时间相邻"],
+      answer: 0,
+      explain: "冲突可串行化只关心不同事务对同一数据项的读写/写写冲突。两个读不冲突，同一事务内部不画边。"
+    },
+    {
+      tag: "恢复",
+      q: "崩溃恢复中，没有 COMMIT 的事务通常先被归为？",
+      choices: ["loser，需要撤销或不重做", "winner，必须保留", "索引项", "候选键"],
+      answer: 0,
+      explain: "恢复题先分 winner/loser。已提交 winner，未提交 loser。Undo 看 loser 旧值，Redo 看 winner 新值。"
+    },
+    {
+      tag: "候选键",
+      q: "求候选键时，最常用的起手观察是？",
+      choices: ["右部从未出现的属性通常必须进每个候选键", "左部出现的属性一定不能进键", "属性越少越不用算闭包", "先随便猜一个"],
+      answer: 0,
+      explain: "右部没出现说明它不能由别的依赖推出，所以要靠初始键自带。当然最后仍要算闭包和最小性。"
+    },
+    {
+      tag: "BCNF",
+      q: "BCNF 对每条非平凡函数依赖 X -> Y 的要求是？",
+      choices: ["X 必须是超键", "Y 必须是主键", "X 不能出现在候选键中", "关系至少有 6 个属性"],
+      answer: 0,
+      explain: "BCNF 的核心判据：每条非平凡依赖的左部 X 都必须是超键。左部不是超键，就是分解信号。"
+    },
+    {
+      tag: "ER 多值属性",
+      q: "银行 ER 题中客户有多个电话号码，转关系模式时最稳做法是？",
+      choices: ["单独建 CustomerPhone(customer_id, phone)", "把电话都塞进 Customer 的一个字符串", "把电话当作支行", "删掉电话不存"],
+      answer: 0,
+      explain: "多值属性单独成表，避免一个单元格里塞多个值，也符合 1NF。ER 转关系时这类题很高频。"
+    }
+  ];
+
+  const quizList = document.getElementById("quizList");
+  const scoreBox = document.getElementById("scoreBox");
+  const state = JSON.parse(localStorage.getItem("db-variant-quiz") || "{}");
+
+  function saveState() {
+    localStorage.setItem("db-variant-quiz", JSON.stringify(state));
+  }
+
+  function renderScore() {
+    const done = Object.keys(state).length;
+    const correct = Object.values(state).filter(Boolean).length;
+    const msg = done < quiz.length
+      ? "继续做，目标不是刷完，而是把错题信号记住。"
+      : (correct >= 16 ? "可以进入 2023A 整卷了，漂亮。" : "先回 Day6 分流和本页错题解析，不急着硬冲整卷。");
+    scoreBox.textContent = `已完成 ${done}/${quiz.length}，正确 ${correct}。${msg}`;
+  }
+
+  quiz.forEach((item, index) => {
+    const card = document.createElement("article");
+    card.className = "q-card";
+    card.innerHTML = `
+      <div class="tag">${index + 1}. ${item.tag}</div>
+      <h3>${item.q}</h3>
+      <div class="choices">
+        ${item.choices.map((choice, i) => `<button type="button" data-choice="${i}">${String.fromCharCode(65 + i)}. ${choice}</button>`).join("")}
+      </div>
+      <div class="explain"><strong>解析：</strong>${item.explain}</div>
+    `;
+    const buttons = [...card.querySelectorAll("button")];
+    function paint(selected) {
+      card.classList.add("done");
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle("correct", i === item.answer);
+        btn.classList.toggle("wrong", i === selected && i !== item.answer);
+      });
+    }
+    if (state[index] !== undefined) {
+      const selected = Number(localStorage.getItem(`db-variant-choice-${index}`));
+      paint(Number.isFinite(selected) ? selected : item.answer);
+    }
+    buttons.forEach((btn, i) => {
+      btn.addEventListener("click", () => {
+        state[index] = i === item.answer;
+        localStorage.setItem(`db-variant-choice-${index}`, String(i));
+        saveState();
+        paint(i);
+        renderScore();
+      });
+    });
+    quizList.appendChild(card);
+  });
+
+  document.querySelectorAll("textarea[data-save]").forEach(area => {
+    const key = area.dataset.save;
+    area.value = localStorage.getItem(key) || "";
+    area.addEventListener("input", () => localStorage.setItem(key, area.value));
+  });
+
+  renderScore();
+</script>
+</body>
+</html>

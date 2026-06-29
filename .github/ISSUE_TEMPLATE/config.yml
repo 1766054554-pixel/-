@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Content quality rubric
+    url: ./docs/content_quality_rubric.md
+    about: Read the quality standard before proposing major content changes.

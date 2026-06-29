@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>24-25操作系统期末·交互刷题</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑",sans-serif;}
+body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px 10px;color:#333;}
+.wrap{max-width:880px;margin:0 auto;}
+h1{text-align:center;color:#fff;margin-bottom:8px;font-size:25px;text-shadow:2px 2px 6px rgba(0,0,0,.3);}
+.sub{text-align:center;color:#fff;opacity:.85;margin-bottom:20px;font-size:13px;}
+.nav{position:sticky;top:0;z-index:99;background:rgba(255,255,255,.95);border-radius:14px;padding:10px;margin-bottom:18px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.2);backdrop-filter:blur(8px);}
+.nav button{background:#eef;border:none;color:#445;padding:6px 11px;border-radius:16px;margin:3px;cursor:pointer;font-size:12px;transition:.2s;}
+.nav button:hover{background:#667eea;color:#fff;}
+.sec{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.sec h2{color:#5a3a9a;border-left:5px solid #667eea;padding-left:10px;margin-bottom:14px;font-size:19px;}
+.q{margin-bottom:18px;padding:14px;background:#f7f8ff;border-radius:12px;}
+.qt{font-weight:bold;margin-bottom:10px;line-height:1.6;}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid #e0e4f5;padding:9px 13px;border-radius:9px;margin:6px 0;cursor:pointer;font-size:14px;transition:.2s;}
+.opt:hover{border-color:#667eea;background:#f0f3ff;}
+.opt.right{background:#d4f8d4;border-color:#38c038;}
+.opt.wrong{background:#ffd6d6;border-color:#e84545;}
+.tf button{padding:7px 24px;margin:5px 8px 5px 0;border:2px solid #e0e4f5;background:#fff;border-radius:20px;cursor:pointer;font-size:15px;transition:.2s;}
+.tf button:hover{border-color:#667eea;}
+.tf button.right{background:#d4f8d4;border-color:#38c038;}
+.tf button.wrong{background:#ffd6d6;border-color:#e84545;}
+.exp{display:none;margin-top:10px;padding:11px;background:#fff8e6;border-left:4px solid #ffb300;border-radius:8px;font-size:13px;line-height:1.7;}
+.exp.show{display:block;}
+.blank input{border:2px solid #c0c8e8;border-radius:8px;padding:7px 10px;font-size:14px;width:160px;margin:0 6px;}
+.blank button{background:#667eea;color:#fff;border:none;padding:7px 16px;border-radius:8px;cursor:pointer;margin-left:6px;}
+.blank button:hover{background:#5566d0;}
+.bres{font-weight:bold;margin-left:8px;}
+.step{background:#667eea;color:#fff;border:none;padding:9px 18px;border-radius:10px;cursor:pointer;margin:8px 0;font-size:14px;display:block;width:100%;transition:.2s;}
+.step:hover{background:#5566d0;}
+.stepc{display:none;margin:8px 0;padding:13px;background:#eef5ff;border-left:4px solid #667eea;border-radius:8px;font-size:14px;line-height:1.9;}
+.stepc.show{display:block;}
+.code{background:#2d2d3a;color:#9ef;padding:12px;border-radius:8px;font-family:Consolas,monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;margin:6px 0;}
+.hint{color:#888;font-style:italic;font-size:13px;margin:6px 0;}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;}
+table td,table th{border:1px solid #bbb;padding:5px 8px;text-align:center;}
+table th{background:#eef;}
+b{color:#5a3a9a;}
+.ok{color:#38c038;}.no{color:#e84545;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎓 2024-2025《操作系统》期末·交互刷题</h1>
+<p class="sub">选择/判断点击即判分+解析 ｜ 填空输入校验 ｜ 大题逐步点击揭晓完整解题过程</p>
+
+<div class="nav">
+<button onclick="go('s1')">一·判断</button>
+<button onclick="go('s2')">二·选择</button>
+<button onclick="go('s3')">三·填空</button>
+<button onclick="go('s4')">四·死锁</button>
+<button onclick="go('s5')">五·内存</button>
+<button onclick="go('s6')">六·磁盘</button>
+<button onclick="go('s7')">七·调度</button>
+<button onclick="go('s8')">八·同步</button>
+<button onclick="go('s9')">九·文件</button>
+</div>
+
+<div class="sec" id="s1"><h2>一、判断题（本题共10分，每小题1分）</h2><div id="tfbox"></div></div>
+<div class="sec" id="s2"><h2>二、单项选择题（本题共20分，每小题2分）</h2><div id="mcbox"></div></div>
+<div class="sec" id="s3"><h2>三、填空题（本题共10分，每空1分）</h2><div id="fbbox"></div></div>
+
+<div class="sec" id="s4">
+<h2>四、死锁问题（本题共10分，第1小题5分，第2小题5分）</h2>
+<div class="q">
+<div class="qt">1. 某系统有m台互斥使用的同类设备，n个并发进程完成执行分别需要1, 2, 3, …, n台设备。求m的最小值，使系统不会发生死锁。<br><br>2. 假设具有5个进程的进程集合P={P0,P1,P2,P3,P4}，考虑CPU和内存两类资源，某时刻状态如下表。若当前系统剩余可利用资源为：CPU 4核、内存 6MB。判断系统当前是否安全，若安全请给出安全序列，若不安全说明原因。</div>
+<table>
+<tr><th rowspan="2">进程</th><th colspan="2">已分配</th><th colspan="2">最大需求</th></tr>
+<tr><th>CPU(核)</th><th>内存(MB)</th><th>CPU(核)</th><th>内存(MB)</th></tr>
+<tr><td>P0</td><td>2</td><td>2</td><td>5</td><td>10</td></tr>
+<tr><td>P1</td><td>1</td><td>6</td><td>6</td><td>7</td></tr>
+<tr><td>P2</td><td>1</td><td>15</td><td>4</td><td>20</td></tr>
+<tr><td>P3</td><td>4</td><td>7</td><td>10</td><td>8</td></tr>
+<tr><td>P4</td><td>4</td><td>12</td><td>12</td><td>15</td></tr>
+</table>
+</div>
+<div id="s4steps"></div>
+</div>
+
+<div class="sec" id="s5">
+<h2>五、内存管理（本题共12分，第1小题2分，第2小题4分，第3小题3分，第4小题3分）</h2>
+<div class="q">
+<div class="qt">一个64位系统架构中内存采用4级页表管理，每个页面大小8192字节，每个页表项占8字节，每一级页表项恰好填满一页。<br>(1) 页内偏移在虚拟地址中占几位？<br>(2) 计算有效虚拟地址位长度和有效地址空间大小。<br>(3) 画出虚拟地址结构，标出各个部分起止位置和长度。<br>(4) 假设当前进程第一级页表（页目录）起始物理地址为0x4000，给出虚拟地址 0xFFFFABC123456789 对应的页目录表项的物理地址。</div>
+</div>
+<div id="s5steps"></div>
+</div>
+
+<div class="sec" id="s6">
+<h2>六、磁盘管理（本题共8分）</h2>
+<div class="q">
+<div class="qt">某磁盘的平均寻道时间是10 ms，旋转速度为7500rpm，每磁道可存储32KB。该磁盘上文件系统的数据块大小是4KB，文件的平均大小也是4 KB。若不考虑读取文件控制块和目录的时间，从该磁盘中读取一个文件的平均时间为多少ms？</div>
+</div>
+<div id="s6steps"></div>
+</div>
+
+<div class="sec" id="s7">
+<h2>七、进程调度（本题共10分，第1小题3分，第2小题4分，第3小题3分）</h2>
+<div class="q">
+<div class="qt">某系统采用多级队列调度算法，设有两个队列：<br>• 高优先级队列Q1：时间片轮转(RR)，时间片长度为2<br>• 低优先级队列Q2：先来先服务(FCFS)<br>调度规则：新进程首先进入Q1；进程在Q1用完一个时间片未完成则移入Q2；仅当Q1为空时才调度Q2；进程一旦开始执行不会被打断，除非时间片用完。</div>
+<table>
+<tr><th>进程</th><th>到达时间</th><th>执行时间</th></tr>
+<tr><td>P1</td><td>0</td><td>8</td></tr>
+<tr><td>P2</td><td>1</td><td>4</td></tr>
+<tr><td>P3</td><td>2</td><td>5</td></tr>
+<tr><td>P4</td><td>3</td><td>2</td></tr>
+</table>
+<p class="hint">1. 画出调度时序图；2. 计算各进程完成时间与周转时间；3. 求平均周转时间</p>
+</div>
+<div id="s7steps"></div>
+</div>
+
+<div class="sec" id="s8">
+<h2>八、进程同步与互斥（本题共11分，第1题4分，第2题7分）</h2>
+<div class="q">
+<div class="qt">1. 多个线程共享变量x（初值为0），互斥信号量mutex初值为1，伪代码如下。请分析代码是否保证了互斥访问？x的取值是否可能大于1？并给出解释。<br><br>2. 设计屏障原语Barrier(int threadID)，实现N个线程汇合功能。要求：除信号量外不允许使用任何共享变量，仅用PV操作实现。请定义信号量并给出伪代码。</div>
+<div class="code">P(mutex);<br>if (x == 0) {<br>&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);<br>&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);<br>&nbsp;&nbsp;&nbsp;&nbsp;x++;<br>}<br>V(mutex);</div>
+</div>
+<div id="s8steps"></div>
+</div>
+
+<div class="sec" id="s9">
+<h2>九、文件系统（本题共9分，每小题3分）</h2>
+<div class="q">
+<div class="qt">文件系统有三种典型逻辑结构：连续文件、链接文件、索引文件。针对以下三类需求，分别推荐最适合的文件结构并解释原因。<br>1. 性能主要取决于大文件的连续访问；<br>2. 性能主要取决于大文件的随机访问；<br>3. 核心目标是提高磁盘空间利用率。</div>
+</div>
+<div id="s9steps"></div>
+</div>
+
+</div>
+
+<script>
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+
+// ====================== 一、判断题 ======================
+var tf = [
+{q:"1. 多道程序最早是为了解决早期单用户批处理系统CPU资源的浪费问题而提出的。",a:true,e:"✅ <b>正确</b>。多道程序设计通过让多个程序交替占用CPU，解决了I/O期间CPU空闲的问题，显著提升CPU利用率。"},
+{q:"2. 宏内核操作系统的内核功能模块之间共享地址空间，能减少上下文切换开销。",a:true,e:"✅ <b>正确</b>。宏内核所有模块运行在同一地址空间，模块间直接函数调用，无需上下文切换；微内核才需要消息传递与模式切换。"},
+{q:"3. 系统调用陷入与外部中断的处理流程完全相同，是操作系统获得CPU控制权的关键机制之一。",a:false,e:"❌ <b>错误</b>。系统调用是同步主动触发，中断是异步被动触发；保存上下文、处理流程存在差异，并非完全相同。"},
+{q:"4. 中级调度器通过将作业从主存调出到外部存储从而优化系统的内存使用和整体性能。",a:true,e:"✅ <b>正确</b>。中级调度（对换调度）将挂起进程换出到外存，腾出内存空间给活跃进程，提升内存利用率。"},
+{q:"5. 调用exec()系统调用会用新程序替换当前进程地址空间，导致页表被替换，同时也会修改进程ID(PID)。",a:false,e:"❌ <b>错误</b>。exec仅替换地址空间与页表，不创建新进程，PID保持不变；fork才会产生新PID。"},
+{q:"6. 第二次机会算法选择最近有引用的页面作为被淘汰页面。",a:false,e:"❌ <b>错误</b>。第二次机会算法淘汰<b>最近未被引用</b>的页面；有引用位的页面会获得第二次机会，移到队尾。"},
+{q:"7. 反置页表为每个进程的每个虚拟页保留一个条目。",a:false,e:"❌ <b>错误</b>。反置页表按物理页框建立条目，每个物理页对应一项；传统页表才是每个虚拟页对应一项。"},
+{q:"8. EXT2/EXT3中，同一文件的多个硬链接共享相同inode号，删除任意一个不影响数据完整性；软链接是独立文件对象。",a:true,e:"✅ <b>正确</b>。硬链接指向同一inode，仅增减引用计数；软链接是独立文件，存储目标路径。"},
+{q:"9. 文件系统挂载时，内核将该文件系统的超级块信息加载到内存中。",a:true,e:"✅ <b>正确</b>。挂载时读取超级块，获取文件系统元数据（块大小、inode数量等），是挂载的核心步骤。"},
+{q:"10. 如果内核级线程在执行系统调用时被阻塞，会阻塞与该进程相关的所有线程。",a:false,e:"❌ <b>错误</b>。内核级线程独立调度，一个线程阻塞不会影响同进程其他线程；用户级线程才会导致整个进程阻塞。"}
+];
+
+var tfbox = document.getElementById('tfbox');
+for(var i=0;i<tf.length;i++){
+    var d = document.createElement('div');d.className='q';
+    d.innerHTML='<div class="qt">'+tf[i].q+'</div><div class="tf"><button onclick="jtf('+i+',true,this)">✔ 对</button><button onclick="jtf('+i+',false,this)">✘ 错</button></div><div class="exp" id="tfe'+i+'">'+tf[i].e+'</div>';
+    tfbox.appendChild(d);
+}
+function jtf(i,c,btn){
+    btn.classList.add(tf[i].a===c?'right':'wrong');
+    document.getElementById('tfe'+i).classList.add('show');
+}
+
+// ====================== 二、单项选择题 ======================
+var mc = [
+{q:"1. 以下说法正确的是：",o:["A. 两个不同进程对应的页表中可能包含内容相同的页表项","B. 虚拟地址空间总是大于物理地址空间","C. 页式内存管理下，页面尺寸越小越有利于消除外碎片，提高内存使用效率","D. 段式内存管理下，不同分段尺寸不同，可以消除外碎片"],a:0,
+e:["A 正确（答案）：共享库、共享内存会使不同进程的页表项指向同一物理页，内容相同。","B 错误：物理内存可以大于虚拟地址空间。","C 错误：分页本身无外碎片；页面过小会导致页表开销剧增，内存效率下降。","D 错误：段式管理必然产生外部碎片，无法消除。"]},
+{q:"2. 关于多级页表，下列说法错误的是：",o:["A. 能够减少页表占用内存的大小","B. 级数越多，平均访问内存的时间越长","C. 有效的页表项中都会存储页框号","D. 使用二级页表的平均访存性能优于一级页表"],a:3,
+e:["A 正确：仅为已使用的虚拟地址分配二级页表，节省内存。","B 正确：每增加一级页表就多一次内存访问，延迟上升。","C 正确：有效页表项的核心就是物理页框号。","D 错误（答案）：二级页表需多访问一次内存，访存性能弱于一级页表。"]},
+{q:"3. 关于页表项结构的下列说法中，正确的是：",o:["A. 操作系统把该页从物理内存调出时，会对有效位置位","B. 硬件写入一个页面时，将该页的修改位置为0","C. 页表项可用于实现页面到页框的映射","D. 页表项会保存对应页面的外存地址"],a:2,
+e:["A 错误：调出页面时有效位应清0。","B 错误：页面被写入时修改位置1。","C 正确（答案）：页表项的核心功能就是虚拟页号到物理页框号的映射。","D 错误：外存地址由操作系统单独维护，不在页表项中。"]},
+{q:"4. 关于文件系统，下面说法错误的是",o:["A. 目录也是一种文件","B. 连续文件不利于文件的动态修改","C. 串联文件随机访问效率较低","D. 索引文件结构能支持大文件存储，但小文件存取效率较低"],a:3,
+e:["A 正确：目录是特殊的目录文件。","B 正确：连续文件扩容需要连续空闲空间，不利于动态增长。","C 正确：串联文件需遍历链表，随机访问效率低。","D 错误（答案）：索引文件通过直接块访问小文件，存取效率与连续文件接近，并不低；空间开销略大但时间效率高。"]},
+{q:"5. 以下说法正确的是：",o:["A. 进程上下文切换过程一定会陷入内核","B. 陷入内核一定会导致进程切换","C. 正在执行的程序不可以主动放弃CPU","D. 系统调用一定会导致进程上下文切换"],a:0,
+e:["A 正确（答案）：进程上下文切换是内核特权操作，必须在内核态完成。","B 错误：系统调用陷入内核后通常直接返回，不发生进程切换。","C 错误：进程可通过阻塞、sleep等主动放弃CPU。","D 错误：多数系统调用执行完直接返回，不触发进程切换。"]},
+{q:"6. 关于程序的局部性原理，错误的是：",o:["A. 局部性原理包括时间局部性和空间局部性","B. 进程调度的有效运转依赖程序的局部性原理","C. 程序中的循环结构会导致程序的时间局部性","D. 主存-辅存机制的有效运转依赖程序的局部性原理"],a:1,
+e:["A 正确：局部性分为时间、空间两类。","B 错误（答案）：进程调度与局部性原理无关；虚拟存储、Cache才依赖局部性。","C 正确：循环反复执行同一段代码，体现时间局部性。","D 正确：虚拟存储（主存-辅存层次）依靠局部性保证命中率。"]},
+{q:"7. 关于死锁，错误的是：",o:["A. 通讯死锁和资源死锁都属于死锁","B. 死锁预防主要通过破坏死锁产生的四个必要条件之一","C. 死锁避免是处理死锁的静态措施","D. 银行家算法在运行前需要知道进程所需资源最大值"],a:2,
+e:["A 正确：死锁分为资源死锁、通信死锁等多种类型。","B 正确：死锁预防通过破坏四个必要条件从根源避免死锁。","C 错误（答案）：死锁避免是动态措施，运行时实时检查安全状态。","D 正确：银行家算法需要预知每个进程的最大资源需求。"]},
+{q:"8. 关于IPC，错误的是：",o:["A. 共享内存比信号的信息承载量要大","B. 消息传递是最快的IPC形式","C. 套接字不仅可用于不同机器之间的进程通讯，也可用于本机的两进程通讯","D. 消息传递在安全性上要优于共享内存"],a:1,
+e:["A 正确：信号仅传递简单通知，共享内存可传输大量数据。","B 错误（答案）：共享内存无需数据拷贝，是最快的IPC方式。","C 正确：Unix域套接字可实现本机进程通信。","D 正确：消息传递由内核中转，安全性高于直接共享内存。"]},
+{q:"9. 关于RAID错误的是：",o:["A. 条带化是提升磁盘访问性能的有效手段","B. RAID4和RAID5都可以容忍一块磁盘故障","C. 分布的冗余校验是为了避免奇偶校验磁盘成为瓶颈","D. RAID 6与RAID5的冗余盘数量相同"],a:3,
+e:["A 正确：条带化并行读写，显著提升吞吐。","B 正确：两者均为单奇偶校验，容错1块磁盘。","C 正确：RAID5分布式校验解决了RAID4校验盘瓶颈。","D 错误（答案）：RAID5容错1块，RAID6容错2块，冗余数量不同。"]},
+{q:"10. 关于I/O软件错误的是：",o:["A. 设置网卡的寄存器在驱动层","B. I/O格式化技术属于用户层","C. 缓冲机制属于设备无关软件层","D. 检查用户是否允许使用设备在用户层"],a:3,
+e:["A 正确：硬件寄存器操作由设备驱动程序完成。","B 正确：数据格式化、编码转换通常在用户层库函数实现。","C 正确：通用缓冲管理属于设备无关软件层。","D 错误（答案）：权限检查在内核态的设备无关软件层完成，不在用户层。"]}
+];
+
+var mcbox = document.getElementById('mcbox');
+for(var k=0;k<mc.length;k++){
+    var dm = document.createElement('div');dm.className='q';
+    var opts='';
+    for(var j=0;j<mc[k].o.length;j++){opts+='<button class="opt" onclick="jmc('+k+','+j+',this)">'+mc[k].o[j]+'</button>';}
+    dm.innerHTML='<div class="qt">'+mc[k].q+'</div>'+opts+'<div class="exp" id="mce'+k+'"></div>';
+    mcbox.appendChild(dm);
+}
+function jmc(i,j,btn){
+    var m=mc[i];var correct=(j===m.a);
+    btn.classList.add(correct?'right':'wrong');
+    if(!correct&&m.a>=0){btn.parentElement.querySelectorAll('.opt')[m.a].classList.add('right');}
+    var e=document.getElementById('mce'+i);
+    var html='';for(var x=0;x<m.e.length;x++){html+='• '+m.e[x]+'<br>';}
+    if(m.a>=0){html+='<b>正确答案：'+'ABCD'[m.a]+'</b>';}
+    e.innerHTML=html;e.classList.add('show');
+}
+
+// ====================== 三、填空题 ======================
+var fb = [
+{q:"1. 页面序列1,2,…,n连续循环3次，分配n-1个页框，初始为空。FIFO算法产生______次缺页；OPT算法产生______次缺页。",ans:["3n","n+2"],e:"<b>FIFO：3n 次</b>。循环序列下FIFO每个页面都会被置换，三轮共3n次缺页。<br><b>OPT：n+2 次</b>。首轮n次冷启动缺页，后续两轮每轮仅1次缺页。"},
+{q:"2. RAID-5系统至少需要______块磁盘构建，最多可容忍______块磁盘故障。",ans:["3","1"],e:"<b>答案：3、1</b>。RAID5采用分布式奇偶校验，至少3块磁盘，允许任意1块磁盘损坏不丢失数据。"},
+{q:"3. 操作系统进程状态模型中，进程从运行态转换到就绪态的条件是______。",ans:["时间片用完","时间片到"],e:"<b>答案：时间片用完（或有更高优先级进程就绪）</b>。时间片耗尽是运行→就绪的典型触发条件。"},
+{q:"4. 物理盘块4KB，1TB硬盘采用位示图管理空闲块，需占用______MB存储空间。",ans:["32"],e:"<b>答案：32</b>。总块数=1TB/4KB=268435456，每块1bit，共33554432字节=32MB。"},
+{q:"5. C语言中未初始化全局变量运行时在______段分配存储空间。",ans:["bss","BSS"],e:"<b>答案：bss</b>。未初始化全局变量与静态变量存放在BSS段，程序加载时自动清零。"},
+{q:"6. 实时系统是一种______起着主导作用的系统，必须在______内做出反应。",ans:["时间","截止时间"],e:"<b>答案：时间、截止时间</b>。实时系统以时间约束为核心，必须在规定时限内响应外部事件。"},
+{q:"7. 二进制程序在两个不同操作系统上可直接运行，则两个系统是______兼容的。",ans:["二进制","ABI"],e:"<b>答案：二进制（ABI）</b>。二进制兼容保证可执行文件无需修改即可跨系统运行。"}
+];
+
+var fbbox = document.getElementById('fbbox');
+for(var f=0;f<fb.length;f++){
+    var df = document.createElement('div');df.className='q';
+    df.innerHTML='<div class="qt">'+fb[f].q+'</div><div class="blank"><input id="fbi'+f+'" placeholder="多个答案用逗号分隔"><button onclick="jfb('+f+')">检查</button><span class="bres" id="fbr'+f+'"></span></div><div class="exp" id="fbe'+f+'">'+fb[f].e+'</div>';
+    fbbox.appendChild(df);
+}
+function jfb(i){
+    var v=document.getElementById('fbi'+i).value.trim().toLowerCase();
+    var ok=false;
+    for(var a=0;a<fb[i].ans.length;a++){
+        if(v.indexOf(fb[i].ans[a].toLowerCase())>=0){ok=true;break;}
+    }
+    var r=document.getElementById('fbr'+i);
+    r.innerHTML=ok?'<span class="ok">✔ 正确!</span>':'<span class="no">✘ 参考答案：'+fb[i].ans.join('、')+'</span>';
+    document.getElementById('fbe'+i).classList.add('show');
+}
+
+// ====================== 通用大题分步渲染函数 ======================
+function buildSteps(containerId,steps){
+    var box=document.getElementById(containerId);
+    for(var i=0;i<steps.length;i++){
+        (function(s){
+            var btn=document.createElement('button');btn.className='step';btn.textContent='👉 点击揭晓 '+s.t;
+            var c=document.createElement('div');c.className='stepc';c.innerHTML=s.c;
+            btn.onclick=function(){
+                c.classList.toggle('show');
+                btn.textContent=c.classList.contains('show')?'🔽 收起 '+s.t:'👉 点击揭晓 '+s.t;
+            };
+            box.appendChild(btn);box.appendChild(c);
+        })(steps[i]);
+    }
+}
+
+// ====================== 四、死锁问题 ======================
+buildSteps('s4steps',[
+{t:"第1题：求不死锁的最小设备数m",c:"死锁临界条件：每个进程占有「最大需求-1」台设备，此时所有进程均无法推进，处于死锁边缘。<br>各进程需求1,2,…,n，对应占有0,1,2,…,n-1台设备。<br>总占有设备数 = 0+1+2+…+(n-1) = n(n-1)/2<br>在此基础上增加1台设备，必然有一个进程可凑齐需求并完成，释放所有设备打破死锁。<br><b>答案：m = n(n-1)/2 + 1</b>"},
+{t:"第2题：步骤1 计算各进程Need",c:"Need = 最大需求 − 已分配<br>P0: CPU=3, 内存=8<br>P1: CPU=5, 内存=1<br>P2: CPU=3, 内存=5<br>P3: CPU=6, 内存=1<br>P4: CPU=8, 内存=3<br>可用资源 Available = (4, 6)"},
+{t:"第2题：步骤2 寻找安全序列",c:"第一轮遍历：P2的Need=(3,5) ≤ 可用(4,6)，可执行。<br>P2完成后释放资源：可用 = (4+1, 6+15) = (5, 21)<br>第二轮：P0 Need=(3,8) ≤ (5,21)，执行后可用=(7,23)<br>第三轮：P1 Need=(5,1) ≤ (7,23)，执行后可用=(8,29)<br>第四轮：P3 Need=(6,1) ≤ (8,29)，执行后可用=(12,36)<br>第五轮：P4 Need=(8,3) ≤ (12,36)，执行完成。<br><b>系统处于安全状态，安全序列：P2 → P0 → P1 → P3 → P4</b>"}
+]);
+
+// ====================== 五、内存管理 ======================
+buildSteps('s5steps',[
+{t:"(1) 页内偏移位数",c:"页面大小 = 8192 B = 2^13 B<br>页内偏移占 <b>13 位</b>（第0位~第12位）"},
+{t:"(2) 有效虚拟地址长度与地址空间",c:"每页可存放页表项数 = 8KB / 8B = 1024 = 2^10<br>每级页表索引占 10 位，共4级页表。<br>有效虚拟地址总位数 = 4×10 + 13 = <b>53 位</b><br>有效地址空间大小 = 2^53 字节"},
+{t:"(3) 虚拟地址结构",c:"从高位到低位：<br>• 一级页目录索引：第52位 ~ 第43位（10位）<br>• 二级页表索引：第42位 ~ 第33位（10位）<br>• 三级页表索引：第32位 ~ 第23位（10位）<br>• 四级页表索引：第22位 ~ 第13位（10位）<br>• 页内偏移：第12位 ~ 第0位（13位）"},
+{t:"(4) 计算页目录表项物理地址",c:"取虚拟地址高10位作为一级索引：将地址右移43位，取低10位得到索引值。<br>页表项占8字节，偏移量 = 索引 × 8<br>一级页表基址 = 0x4000<br><b>页目录表项物理地址 = 0x4000 + 索引 × 8</b>"}
+]);
+
+// ====================== 六、磁盘管理 ======================
+buildSteps('s6steps',[
+{t:"步骤1：计算旋转延迟与传输时间",c:"转速 7500 rpm → 转一圈时间 = 60000 / 7500 = 8 ms<br>平均旋转延迟 = 半圈 = 8 / 2 = <b>4 ms</b><br>每磁道32KB，单块4KB，传输时间 = (4KB/32KB) × 8ms = <b>1 ms</b>"},
+{t:"步骤2：计算总平均访问时间",c:"文件平均大小4KB，恰好占用1个数据块。<br>平均访问时间 = 寻道时间 + 平均旋转延迟 + 传输时间<br>= 10 + 4 + 1 = <b>15 ms</b>"}
+]);
+
+// ====================== 七、进程调度 ======================
+buildSteps('s7steps',[
+{t:"步骤1：调度时序图（时间线）",c:"0~2：Q1调度P1，时间片用完，P1剩余6，移入Q2<br>2~4：Q1调度P2，时间片用完，P2剩余2，移入Q2<br>4~6：Q1调度P3，时间片用完，P3剩余3，移入Q2<br>6~8：Q1调度P4，执行完成<br>8~14：Q1为空，Q2 FCFS调度P1，执行完成<br>14~16：Q2调度P2，执行完成<br>16~19：Q2调度P3，执行完成"},
+{t:"步骤2：各进程完成时间与周转时间",c:"P1：完成14，周转 = 14-0 = 14<br>P2：完成16，周转 = 16-1 = 15<br>P3：完成19，周转 = 19-2 = 17<br>P4：完成 8，周转 = 8-3 = 5"},
+{t:"步骤3：平均周转时间",c:"总周转时间 = 14+15+17+5 = 51<br>平均周转时间 = 51 / 4 = <b>12.75</b>"}
+]);
+
+// ====================== 八、进程同步 ======================
+buildSteps('s8steps',[
+{t:"第1题：代码分析结论",c:"<b>不能保证互斥访问，x可能大于1。</b><br>原因：判断x==0后先执行V(mutex)释放锁，再P(mutex)重新加锁。两个线程可同时通过x==0判断，随后都执行x++，最终x=2，突破互斥。"},
+{t:"第2题：屏障原语 信号量定义",c:"<div class='code'>// N个线程对应N个信号量，初始均为0<br>semaphore s[N] = {0, 0, ..., 0};</div>"},
+{t:"第2题：Barrier函数实现",c:"<div class='code'>void Barrier(int threadID) {<br>&nbsp;&nbsp;&nbsp;&nbsp;// 通知其他所有线程：我已到达<br>&nbsp;&nbsp;&nbsp;&nbsp;for(int i=0; i&lt;N; i++) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(i != threadID) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(s[i]);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;// 等待其他所有线程到达<br>&nbsp;&nbsp;&nbsp;&nbsp;for(int i=0; i&lt;N-1; i++) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(s[threadID]);<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</div>"},
+{t:"第2题：原理说明",c:"每个线程到达屏障后，向其他N-1个线程各发一个V信号通知自己已到；同时对自身信号量执行N-1次P操作，等待所有其他线程到达。<br>当全部线程都执行完V操作后，每个线程的信号量都会累计N-1个资源，全部通过屏障继续执行，无需任何共享计数变量。"}
+]);
+
+// ====================== 九、文件系统 ======================
+buildSteps('s9steps',[
+{t:"1. 大文件连续访问：连续文件",c:"推荐<b>连续文件</b>。<br>原因：文件数据连续存储，顺序访问时无需额外寻址，磁盘寻道次数最少，顺序读写带宽最高，最适合大文件连续访问场景。"},
+{t:"2. 大文件随机访问：索引文件",c:"推荐<b>索引文件</b>。<br>原因：通过索引表可直接定位任意数据块的物理地址，随机访问时间复杂度为O(1)，支持高效随机读写，是大文件随机访问的最优结构。"},
+{t:"3. 提高磁盘空间利用率：链接文件",c:"推荐<b>链接文件</b>。<br>原因：链接文件采用离散块存储，无需连续空闲空间，可充分利用磁盘碎片，外部碎片极少，磁盘空间利用率最高。"}
+]);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+name: Course pack request
+description: Propose adding a new course or improving an existing course pack.
+title: "[Course Pack] "
+labels: ["course-pack"]
+body:
+  - type: input
+    id: course
+    attributes:
+      label: Course name
+      placeholder: "计算机网络"
+    validations:
+      required: true
+  - type: textarea
+    id: exam
+    attributes:
+      label: Exam shape
+      description: Describe question types, open/closed book rules, and high-value topics.
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Available resources
+      description: List past papers, notes, PPTs, summaries, or exercises.
+  - type: textarea
+    id: first_pack
+    attributes:
+      label: Suggested first 3 resources
+      description: What should become the first course island / resource library entries?
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Maintenance checks
+      options:
+        - label: I can help identify source material or exam scope.
+        - label: I can help review answers and explanations.
+        - label: I understand new resources need `resource_catalog` and `resource_quality` entries.

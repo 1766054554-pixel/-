@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散 Day7 最终速查：定义、范式、语义、证明一页上场</title>
+  <style>
+    :root {
+      --bg: #f6f8f8;
+      --ink: #18212a;
+      --muted: #677684;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6f7 0, rgba(246,248,248,0) 320px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+      letter-spacing: 0;
+    }
+    main { max-width: 1160px; margin: 0 auto; padding: 28px 18px 58px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: nowrap;
+    }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .focus {
+      border-radius: 6px;
+      background: #fff3bf;
+      box-shadow: inset 0 -2px 0 rgba(147,107,18,.24);
+      padding: 1px 5px;
+      font-weight: 840;
+      color: #60440a;
+    }
+    .hl { color: var(--red); font-weight: 840; }
+    .key { color: var(--blue); font-weight: 840; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .first-step { border-left-color: var(--blue); background: #eef7fc; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .purplebox { border-left-color: var(--purple); background: #f8f5ff; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    ul, ol { margin: 8px 0 0 22px; padding: 0; }
+    li { margin: 4px 0; }
+    .mini-svg {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .mini-svg svg { display: block; width: 100%; min-width: 850px; height: auto; }
+    .formula {
+      display: block;
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px 12px;
+      margin: 8px 0;
+      color: var(--blue);
+      font-family: "Times New Roman", "STIX Two Text", "Cambria Math", serif;
+      font-size: 18px;
+      line-height: 1.55;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .formula small {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--muted);
+      font-size: 14px;
+      margin-left: 8px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 108px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .checklist label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 9px 10px;
+      margin: 8px 0;
+    }
+    .checklist label.done {
+      border-color: #a7d8bf;
+      background: #eef9f3;
+    }
+    .gate-status {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      color: var(--blue);
+      font-weight: 820;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .auto-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .auto-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      min-width: 0;
+    }
+    .auto-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .auto-card strong {
+      display: block;
+      color: var(--blue);
+      font-size: 24px;
+      line-height: 1.25;
+      margin: 4px 0;
+    }
+    .auto-card p { color: var(--muted); font-size: 13px; margin: 0; }
+    .auto-advice {
+      border: 1px solid #b3d2e7;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+    .auto-advice strong { color: var(--blue); }
+    .route-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .route-actions a {
+      border: 1px solid #b3d2e7;
+      border-radius: 999px;
+      background: #eef7fc;
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 820;
+      padding: 6px 11px;
+    }
+    @media (max-width: 860px) {
+      main { padding: 18px 12px 42px; }
+      .hero, .card, .drill { padding: 18px; }
+      .grid, .grid.three, .rubric, .auto-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; }
+      .formula { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>离散 Day7 最终速查：把全卷题型压成上场动作</h1>
+      <p class="muted">这页用于 6/27 晚到 6/28 考前。它不是新概念课，而是把总复习、必须背定义、2020/2022 往年题和 2024 参考卷信号压缩成“看到题先做什么”。目标很明确：前 70 分稳住，证明 30 分至少能写出规范骨架。</p>
+      <div class="strip">
+        <span class="pill hot">离散 Day7</span>
+        <span class="pill info">最终速查</span>
+        <span class="pill good">定义 + 范式 + 语义</span>
+        <span class="pill warn">证明第一句</span>
+        <span class="pill purple">6/27-6/28 使用</span>
+      </div>
+      <nav class="toc">
+        <a href="#auto">自动判断</a>
+        <a href="#use">0. 怎么用</a>
+        <a href="#paper">1. 卷面地图</a>
+        <a href="#control">2. 七类题眼</a>
+        <a href="#formula">3. 公式快背</a>
+        <a href="#first">4. 第一句生成器</a>
+        <a href="#drills">5. 混合训练</a>
+        <a href="#gate">6. 上场闸门</a>
+      </nav>
+    </section>
+
+    <section class="card" id="auto">
+      <h2>自动上场判断：现在该补盒子、刷真题，还是收口？</h2>
+      <p class="muted">这块会读取你在本机做过的离散练习进度。它不是给你压力，而是防止临考前在一堆入口里迷路：先学会分题型，再刷希冀真题，最后只回炉错题和第一句。</p>
+      <div class="auto-grid" id="autoProgress">
+        <div class="auto-card"><span>读取中</span><strong>...</strong><p>正在查看本机进度。</p></div>
+      </div>
+      <div class="auto-advice" id="autoAdvice">
+        <strong>下一步：</strong>正在生成建议。
+      </div>
+      <div class="route-actions">
+        <a href="./discrete_last36_learning_ladder.html">先学后练 Last36</a>
+        <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">希冀精练闸门</a>
+        <a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">三年真题入口</a>
+        <a href="./final_two_wrong_review.html">错题回炉</a>
+        <a href="./focus_dual_exam_game.html">小游戏暖机</a>
+      </div>
+    </section>
+
+    <section class="card" id="use">
+      <h2>0. 怎么用：不要整页硬背，按时间切包</h2>
+      <p>离散最后阶段最怕两件事：一是被证明题吓住，前面定义和范式也不看了；二是只背定义，证明题一写就空白。Day7 的策略是：<span class="focus">先拿可模板化分数，再把证明题写出第一句和关键链条</span>。</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>救火 45 分钟</strong>
+          看卷面地图、七类题眼、公式快背。每类只背“题眼 -> 第一步 -> 常见坑”。
+        </div>
+        <div class="box">
+          <strong>标准 90 分钟</strong>
+          加做混合训练前 5 题：类型判断、主范式、变量辖域、自然语言翻译、语义证明。
+        </div>
+        <div class="box">
+          <strong>冲分 150 分钟</strong>
+          做完全部混合训练，再勾上场闸门；错题回 Day5/Day6 对应页，不开新坑。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>考场心法：</strong>离散不是“全靠灵感”的数学。很多题是流程题：真值表、主范式、变量识别、前束化、Skolem 化、反例三件套、公理证明骨架。你只要先把题目放进正确盒子，分数就开始回来了。
+      </div>
+    </section>
+
+    <section class="card" id="paper">
+      <h2>1. 卷面地图：2020/2022 告诉你别只盯证明</h2>
+      <p>2020 和 2022 往年卷的结构非常接近：简答、论述、判断、范式、证明。证明题确实高分，但前面 70 分覆盖大量定义、语义、范式和翻译，短时间冲刺必须一起抓。</p>
+      <div class="mini-svg" aria-label="离散卷面分值地图">
+        <svg viewBox="0 0 1040 420" role="img">
+          <defs>
+            <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect x="50" y="40" width="180" height="90" rx="8" fill="#eef7fc" stroke="#b3d2e7"/>
+          <text x="140" y="78" text-anchor="middle" font-size="20" font-weight="800" fill="#1f5f8b">简答 20</text>
+          <text x="140" y="108" text-anchor="middle" font-size="14" fill="#677684">定义 / 变量 / 翻译</text>
+          <rect x="250" y="40" width="180" height="90" rx="8" fill="#eef9f3" stroke="#a7d8bf"/>
+          <text x="340" y="78" text-anchor="middle" font-size="20" font-weight="800" fill="#24724f">论述 20</text>
+          <text x="340" y="108" text-anchor="middle" font-size="14" fill="#677684">等值 / 语义 / 模型</text>
+          <rect x="450" y="40" width="180" height="90" rx="8" fill="#fff9e6" stroke="#dcc682"/>
+          <text x="540" y="78" text-anchor="middle" font-size="20" font-weight="800" fill="#936b12">判断 20</text>
+          <text x="540" y="108" text-anchor="middle" font-size="14" fill="#677684">反例 / 定义边界</text>
+          <rect x="650" y="40" width="140" height="90" rx="8" fill="#fff2ef" stroke="#e5b3ad"/>
+          <text x="720" y="78" text-anchor="middle" font-size="20" font-weight="800" fill="#a23b32">范式 10</text>
+          <text x="720" y="108" text-anchor="middle" font-size="14" fill="#677684">真值表保底</text>
+          <rect x="810" y="40" width="180" height="90" rx="8" fill="#f6f2ff" stroke="#c9bee8"/>
+          <text x="900" y="78" text-anchor="middle" font-size="20" font-weight="800" fill="#66519a">证明 30</text>
+          <text x="900" y="108" text-anchor="middle" font-size="14" fill="#677684">语义 / 公理</text>
+          <line x1="520" y1="145" x2="520" y2="205" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arr)"/>
+          <rect x="150" y="210" width="740" height="120" rx="8" fill="#fff" stroke="#dce3e8"/>
+          <text x="520" y="245" text-anchor="middle" font-size="21" font-weight="800" fill="#18212a">Day7 的任务：先分类，再调用模板</text>
+          <text x="520" y="282" text-anchor="middle" font-size="16" fill="#677684">定义题问“是什么” · 范式题问“怎么算” · 语义题问“哪个世界真/假” · 证明题问“第一句怎么启动”</text>
+        </svg>
+      </div>
+      <table>
+        <thead><tr><th>来源</th><th>高频信号</th><th>Day7 对应动作</th></tr></thead>
+        <tbody>
+          <tr><td>总复习 PPT</td><td>命题逻辑、谓词逻辑、公理系统三章；完全集、主范式、语义、前束/Skolem、可靠性/完备性。</td><td>按七类题眼总控，不逐章散背。</td></tr>
+          <tr><td>定义必须背</td><td>论域、解释、赋值、模型、可满足/永真/永假、逻辑推论、自由/约束变元、公理系统。</td><td>定义题用“解决什么问题 + 形式表达 + 例子”答。</td></tr>
+          <tr><td>2020/2022 真题</td><td>分值结构稳定；语义证明、量词反例、公理证明、主范式反复出现。</td><td>先拿前 70 分模板，再用 Day6 证明骨架救后 30 分。</td></tr>
+          <tr><td>2024 参考卷/第七次作业文本</td><td>客观题、填空、判断、语义计算、前束/Skolem、语义构造、公理证明。</td><td>客观题必须解释干扰项，长题只做分块调用，不整卷硬背。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="control">
+      <h2>2. 七类题眼总控：看到题，先放进盒子</h2>
+      <p>这里是 Day7 最重要的一张表。你不需要一上来想完整答案，只要先识别题型，写出第一步，大脑就不会空白。</p>
+      <table>
+        <thead><tr><th>题干信号</th><th>它到底在考什么</th><th>第一步</th><th>常见坑</th></tr></thead>
+        <tbody>
+          <tr><td>命题、合式公式、复杂度、完全集</td><td>定义边界题。</td><td>先写定义，再用最小反例排除错误选项。</td><td>把含自由变量的句子当命题；把“完全集”和“极小完全集”混掉。</td></tr>
+          <tr><td>真值表、主析取、主合取、数字电路输出</td><td>范式计算题。</td><td>先列变量顺序和真值表，结果为 1 写主析取，结果为 0 写主合取。</td><td>极小项/极大项正负号写反；漏行。</td></tr>
+          <tr><td>自由变元、约束变元、辖域、改名、代入</td><td>谓词语法题。</td><td>先画量词括号范围，再标每个变量出现是自由还是被绑定。</td><td>同名变量被内层量词遮住；代入时发生变量捕获。</td></tr>
+          <tr><td>自然语言、唯一、所有、存在、收敛、单调</td><td>谓词翻译题。</td><td>先搭骨架：所有/存在/唯一/如果则，再填谓词。</td><td>“唯一”只写存在，忘了任意两个满足者相等。</td></tr>
+          <tr><td>前束范式、无存在前束、Skolem 范式</td><td>公式加工题。</td><td>改名 -> 去箭头 -> 否定内移 -> 量词前移 -> 母式合取范式 -> Skolem 化。</td><td>Skolem 函数依赖对象写错。</td></tr>
+          <tr><td>Γ ⊨ Q、是否成立、给反例、模型/解释</td><td>语义推论题。</td><td>成立：反设前提全真结论假；不成立：写论域/解释/前提真/结论假。</td><td>反例只让结论假，却没说明前提全真。</td></tr>
+          <tr><td>Γ ⊢ Q、公理方法、MP、UG、可靠性/完备性</td><td>形式证明/元定理题。</td><td>先分清 ⊨ 和 ⊢；公理证明先看能否用演绎定理。</td><td>题目禁止演绎定理还直接套；可靠性/完备性箭头背反。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark first-step">
+        <strong>考场第一句总口诀：</strong>范式题先列真值表；语义题先说“前提全真结论假”；反例题先写“取论域 D=...，并定义 x∈D 上的谓词解释”；公理题先说“在形式系统中由公理和 MP/UG 推出”；自然语言题先搭量词骨架。
+      </div>
+    </section>
+
+    <section class="card" id="formula">
+      <h2>3. 公式快背：每条都要会读成人话</h2>
+      <p>这些不是摆着好看的符号。每一条都对应一个考试动作。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>语义推出</strong>
+          <span class="formula">Γ ⊨ Q  ⇔  每个使 Γ 全真的解释/赋值，也使 Q 真</span>
+          <p>人话：只要前提都真，结论就逃不掉。要推翻它，就找一个前提全真但结论假的世界。</p>
+        </div>
+        <div class="box">
+          <strong>可靠性与完备性</strong>
+          <span class="formula">可靠性：Γ ⊢ Q ⇒ Γ ⊨ Q</span>
+          <span class="formula">完备性：Γ ⊨ Q ⇒ Γ ⊢ Q</span>
+          <p>可靠性是不证明假东西；完备性是不漏掉真东西。</p>
+        </div>
+        <div class="box">
+          <strong>量词否定</strong>
+          <span class="formula">¬∀x P(x) ⇔ ∃x ¬P(x)</span>
+          <span class="formula">¬∃x P(x) ⇔ ∀x ¬P(x)</span>
+          <p>不是所有都对，等于至少有一个不对；不存在一个对，等于所有都不对。</p>
+        </div>
+        <div class="box">
+          <strong>两个常见不可反向分配</strong>
+          <span class="formula">∃x(Q(x)∧R(x)) ⇒ ∃xQ(x)∧∃xR(x)</span>
+          <span class="formula">∀xQ(x)∨∀xR(x) ⇒ ∀x(Q(x)∨R(x))</span>
+          <p>反向一般不成立，因为前者要求同一个对象，后者要求同一边全体成立。</p>
+        </div>
+        <div class="box">
+          <strong>主范式</strong>
+          <span class="formula">主析取范式：真值表中结果为 1 的行 → 极小项相∨</span>
+          <span class="formula">主合取范式：真值表中结果为 0 的行 → 极大项相∧</span>
+          <p>真行写“成因”，假行写“排除条件”。别把 1 行和 0 行反过来。</p>
+        </div>
+        <div class="box">
+          <strong>Skolem 依赖</strong>
+          <span class="formula">∀x ∃y P(x,y)  →  P(x, f(x))</span>
+          <span class="formula">∃y ∀x P(x,y)  →  ∀x P(x, a)</span>
+          <p>存在量词前面有哪些全称变量，它就依赖谁。没有前面的全称变量，就用常量。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="first">
+      <h2>4. 证明第一句生成器：先写能得分的开头</h2>
+      <p>离散证明题最容易卡在第一句。下面这张表专门解决“我不知道怎么开头”。</p>
+      <table>
+        <thead><tr><th>目标</th><th>第一句模板</th><th>下一步</th></tr></thead>
+        <tbody>
+          <tr><td>证明 Γ ⊨ Q</td><td>反设存在解释/赋值 v，使 Γ 中所有公式为真而 Q 为假。</td><td>逐条使用前提，推出矛盾。</td></tr>
+          <tr><td>证明 Γ ⊭ Q</td><td>取论域 <code>D=...</code>，定义每个 <code>x∈D</code> 上的谓词/命题变元取值。</td><td>验证前提全真、结论假。</td></tr>
+          <tr><td>证明 ∀xP(x)</td><td>任取 <code>a∈D</code>。</td><td>证明 P(a)，最后全称推广。</td></tr>
+          <tr><td>证明 ∃xP(x)</td><td>构造一个对象 <code>a∈D</code>。</td><td>验证 P(a) 成立。</td></tr>
+          <tr><td>证明 P→Q</td><td>若允许演绎定理，假设 P 成立，证明 Q。</td><td>若题目禁止演绎定理，改用公理链。</td></tr>
+          <tr><td>公理方法证明 Γ ⊢ Q</td><td>本题在形式系统中证明，需要列出公式序列及证据。</td><td>每一步写“前提/公理实例/MP/UG/已给定定理”。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="drills">
+      <h2>5. 混合训练：每题都先写题眼，再看答案</h2>
+      <p>下面这些题不是为了凑数量，而是覆盖 2020/2022/2024 反复出现的考试动作。</p>
+
+      <div class="drill">
+        <h3>题 1｜类型判断：矛盾式等价为什么可能是永真？</h3>
+        <p>判断公式 <code>(p∧¬p) ↔ (q∧¬q)</code> 的类型。</p>
+        <textarea data-save="d7-q1" placeholder="先写题眼：p∧¬p 和 q∧¬q 分别是什么？等价式什么时候真？"></textarea>
+        <details>
+          <summary>展开答案</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>永真式。因为 <code>p∧¬p</code> 永远为假，<code>q∧¬q</code> 也永远为假；假 ↔ 假 为真，所以整个公式在任意赋值下都为真。</p>
+            <div class="rubric"><span>迁移</span><span>不要看到矛盾式就直接说全式永假。先看它在更大公式里扮演什么角色。</span></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 2｜变量辖域：先画括号再答题</h3>
+        <p>公式 <code>∃x∀z∃w(R(w) → ∀yQ(y) ∨ P(x,z))</code> 中，变元 <code>y</code> 和 <code>x</code> 的辖域分别是什么？</p>
+        <textarea data-save="d7-q2" placeholder="先写：哪个量词绑定哪个变量？从量词后面的哪个公式开始算辖域？"></textarea>
+        <details>
+          <summary>展开答案</summary>
+          <div class="answer-block">
+            <p><strong>答案思路：</strong><code>∀y</code> 的辖域是紧跟其后的公式 <code>Q(y)</code>。最外层 <code>∃x</code> 的辖域是整个 <code>∀z∃w(...)</code> 部分，里面 <code>P(x,z)</code> 中的 x 被它绑定。</p>
+            <p><strong>注意：</strong>量词辖域不是“所有同名字母肉眼出现的地方”，而是由语法括号决定。若出现内层同名量词，内层会遮住外层。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3｜主范式：从真值表行写，不要凭感觉化简</h3>
+        <p>设三变量公式 F 在编号 1、4、7 行为真，在其他行为假。写出 F 的主析取范式和主合取范式的写法原则。</p>
+        <textarea data-save="d7-q3" placeholder="先写：哪些行进主析取？哪些行进主合取？正负号怎么定？"></textarea>
+        <details>
+          <summary>展开答案</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>主析取范式由结果为 1 的行对应极小项相∨，所以用 1、4、7 行；主合取范式由结果为 0 的行对应极大项相∧，所以用其余 0 行。</p>
+            <p><strong>符号规则：</strong>极小项描述“这一行怎么为真”，变量取 1 写原变量，取 0 写否定；极大项描述“排除这一假行”，变量取 0 写原变量，取 1 写否定。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 4｜自然语言翻译：唯一最大值点</h3>
+        <p>在自然数论域 <code>N</code> 中，用 <code>x∈N</code> 表示 x 属于自然数论域，用 <code>P(x,y): x&lt;y</code>，<code>E(x,y): x=y</code>，<code>f(x)</code> 表示函数值。翻译：“若 f 严格单调递减，则 f 有唯一一最大值点”。</p>
+        <textarea data-save="d7-q4" placeholder="先搭骨架：严格单调递减 -> 唯一最大值点。唯一要写存在 + 任意两个满足者相等。"></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <div class="answer-block">
+            <p><strong>一种可写骨架：</strong></p>
+            <span class="formula">[∀x∈N∀y∈N((P(x,y)) → f(y) &lt; f(x))] → ∃m∈N[∀x∈N(f(x) ≤ f(m)) ∧ ∀u∈N∀v∈N((Max(u)∧Max(v)) → E(u,v))]</span>
+            <p>其中 <code>Max(t)</code> 可展开为 <code>t∈N ∧ ∀x∈N(f(x) ≤ f(t))</code>。严格的一阶逻辑写法也可以把 <code>x∈N</code> 吸收到论域约定里，不必每个量词都写；但你要知道这些变量都在自然数论域里。</p>
+            <div class="rubric"><span>题眼</span><span>“唯一” = 存在一个 + 任意两个满足条件者相等。</span></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 5｜语义证明：2022 风味前提全真结论假</h3>
+        <p>证明或反驳：<code>P∧Q→R, ¬S, ¬R∨S ⊨ ¬P∨¬Q</code>。</p>
+        <textarea data-save="d7-q5" placeholder="先写第一句：反设所有前提真，结论假。结论假意味着什么？"></textarea>
+        <details>
+          <summary>展开证明</summary>
+          <div class="answer-block">
+            <p><strong>证明：</strong>反设存在赋值 v 使所有前提为真而结论 <code>¬P∨¬Q</code> 为假。结论为假说明 <code>P</code> 真且 <code>Q</code> 真，所以 <code>P∧Q</code> 真。由前提 <code>P∧Q→R</code> 得 <code>R</code> 真。又由前提 <code>¬S</code> 得 <code>S</code> 假；前提 <code>¬R∨S</code> 要为真，在 S 假时必须 <code>¬R</code> 真，即 R 假。于是 R 真且 R 假矛盾。因此不存在这样的赋值，推论成立。</p>
+            <div class="rubric"><span>得分句</span><span>“前提全真、结论假”是语义证明的启动按钮。</span></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 6｜量词反例：∀ 对 ∨ 不能反向拆</h3>
+        <p>判断 <code>∀x(Q(x)∨R(x)) ⊨ ∀xQ(x)∨∀xR(x)</code> 是否成立。若不成立，给反例。</p>
+        <textarea data-save="d7-q6" placeholder="先写反例三件套：论域、Q/R解释、左边为什么真右边为什么假。"></textarea>
+        <details>
+          <summary>展开反例</summary>
+          <div class="answer-block">
+            <p><strong>反例：</strong>取论域 <code>D={1,2}</code>，其中 <code>1∈D, 2∈D</code>。令 Q(1) 真、Q(2) 假；R(1) 假、R(2) 真。则对每个 <code>x∈D</code>，Q 或 R 至少一个真，所以 <code>∀x(Q(x)∨R(x))</code> 为真。但 Q 不是全真，R 也不是全真，所以 <code>∀xQ(x)∨∀xR(x)</code> 为假。</p>
+            <p><strong>迁移：</strong>这种题的反例套路是“每个对象都有一边真，但没有哪一边全体真”。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 7｜可靠性/完备性：别把箭头背反</h3>
+        <p>判断：若公理系统不具有可靠性，那么通过扩充公理集合，有可能使其具备可靠性。</p>
+        <textarea data-save="d7-q7" placeholder="先写：不可靠意味着已经能推出什么？扩充公理会删除旧定理吗？"></textarea>
+        <details>
+          <summary>展开答案</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>错误。不可靠意味着系统已经能证明某个语义上不成立的公式。扩充公理集合只会让可证明公式不减少，不能删除已经可证明的错误公式，所以不能靠加公理恢复可靠性。</p>
+            <p><strong>人话：</strong>一个会证明错东西的系统，不能靠“给它更多出发点”变正确。更多只会更强，不会自动更可靠。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 8｜公理证明红线：题目禁止演绎定理怎么办？</h3>
+        <p>题目要求“用公理方法证明，不可用演绎定理”。你的开头检查项应该写什么？</p>
+        <textarea data-save="d7-q8" placeholder="先写：这是 ⊢ 题，不是 ⊨ 题；每一步证据只能是什么？"></textarea>
+        <details>
+          <summary>展开答案</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>先说明这是形式系统中的推演题，要给出公式序列和证据。每一步只能来自前提、公理模式实例、已给定定理、MP 或 UG 等规则。若题目禁止演绎定理，不能把“假设前件推出后件”直接作为正式证明，只能把它当草稿骨架，再用给定公理/定理链压成形式证明。</p>
+            <p><strong>保底策略：</strong>如果正式公理链来不及完整写，至少写清目标结构、可用定理和 MP 链条，比空白强很多。</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>6. 上场闸门：勾 7/10，离散就不再是纯玄学</h2>
+      <p>勾选会保存在本机。你能自己讲出来再勾，别骗自己，考场也骗不过。</p>
+      <div id="gateStatus" class="gate-status">正在读取完成度...</div>
+      <div class="checklist">
+        <label><input type="checkbox" data-check="g1"> 我能说出 2020/2022 卷面结构，并知道前 70 分不能放弃。</label>
+        <label><input type="checkbox" data-check="g2"> 我能把题目分进七类题眼之一，并写出第一步。</label>
+        <label><input type="checkbox" data-check="g3"> 我能用真值表写主析取/主合取，知道 1 行和 0 行分别对应什么。</label>
+        <label><input type="checkbox" data-check="g4"> 我能判断自由变元、约束变元、辖域、改名和代入风险。</label>
+        <label><input type="checkbox" data-check="g5"> 我能把“所有、存在、唯一、若则”翻译成谓词逻辑骨架。</label>
+        <label><input type="checkbox" data-check="g6"> 我能默写前束/Skolem 的加工顺序，并判断 Skolem 函数依赖谁。</label>
+        <label><input type="checkbox" data-check="g7"> 我能用反例三件套说明语义推论不成立：论域、前提真、结论假。</label>
+        <label><input type="checkbox" data-check="g8"> 我能证明 2022 风味语义推论，第一句写“前提全真结论假”。</label>
+        <label><input type="checkbox" data-check="g9"> 我能用符号和人话区分可靠性与完备性。</label>
+        <label><input type="checkbox" data-check="g10"> 我知道公理证明题要看能否用演绎定理，并能写公式序列证据格式。</label>
+      </div>
+      <div class="mark">
+        <strong>下一步：</strong>少于 5 项，回 <a href="./day3_discrete_equiv_normal_predicate.html">Day3 等值/范式/谓词</a> 和 <a href="./day4_discrete_prenex_skolem_axiom.html">Day4 长题入口</a> 补工具；达到 7 项，回 <a href="./day5_discrete_2024_exam_bridge.html">Day5 2024 分块解析</a> 和 <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> 做错题回炉；达到 9 项，再做整卷限时。
+      </div>
+      <p class="muted"><a href="./index.html">回到学习舱</a> · <a href="./study_update_roadmap.html">回到更新路线</a> · <a href="./资料使用记录.md">查看资料使用记录</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-discrete-day7-final";
+    const PAPER_TOTALS = {
+      2024: { objective: 14, brief: 7 },
+      2025: { objective: 20, brief: 10 },
+      2023: { objective: 10, brief: 9 }
+    };
+
+    function readJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function valuesOf(obj) {
+      return Object.values(obj || {});
+    }
+
+    function countLast36() {
+      const data = readJSON("discrete-last36-quiz-v1", {});
+      const values = valuesOf(data);
+      const done = values.filter((item) => item && item.checked).length;
+      const wrong = values.filter((item) => item && item.checked && item.selected !== 0 && item.correct !== true).length;
+      return { done, wrong, total: 12 };
+    }
+
+    function countPrecision() {
+      const data = readJSON("discrete_hiji_precision_answers_v1", {});
+      const values = valuesOf(data);
+      const done = values.filter((item) => item && item.checked).length;
+      const wrong = values.filter((item) => item && item.checked && item.correct === false).length;
+      return { done, wrong, total: 18 };
+    }
+
+    function countPaper(year) {
+      const data = readJSON(`discrete-hiji-${year}`, {});
+      const entries = Object.entries(data || {});
+      const objectiveDone = entries.filter(([id, item]) => !id.startsWith("brief") && item && item.checked).length;
+      const objectiveWrong = entries.filter(([id, item]) => !id.startsWith("brief") && item && item.checked && item.correct === false).length;
+      const briefNotes = entries.filter(([id, item]) => id.startsWith("brief") && item && String(item.note || "").replace(/\s+/g, "").length >= 10).length;
+      return { year, objectiveDone, objectiveWrong, briefNotes, ...PAPER_TOTALS[year] };
+    }
+
+    function countDay7() {
+      const gates = Array.from({ length: 10 }, (_, i) => localStorage.getItem(`${KEY}:gate:g${i + 1}`) === "1").filter(Boolean).length;
+      const drills = Array.from({ length: 8 }, (_, i) => {
+        const text = localStorage.getItem(`${KEY}:d7-q${i + 1}`) || "";
+        return text.replace(/\s+/g, "").length >= 10;
+      }).filter(Boolean).length;
+      return { gates, drills, gateTotal: 10, drillTotal: 8 };
+    }
+
+    function countGameWrong() {
+      const data = readJSON("focus-game-last-wrong", { wrong: [] });
+      return Array.isArray(data.wrong) ? data.wrong.length : 0;
+    }
+
+    function renderAutoProgress() {
+      const box = document.getElementById("autoProgress");
+      const advice = document.getElementById("autoAdvice");
+      if (!box || !advice) return;
+      const last36 = countLast36();
+      const precision = countPrecision();
+      const papers = [countPaper(2024), countPaper(2025), countPaper(2023)];
+      const day7 = countDay7();
+      const objectiveDone = papers.reduce((sum, p) => sum + p.objectiveDone, 0);
+      const objectiveWrong = papers.reduce((sum, p) => sum + p.objectiveWrong, 0);
+      const objectiveTotal = papers.reduce((sum, p) => sum + p.objective, 0);
+      const briefNotes = papers.reduce((sum, p) => sum + p.briefNotes, 0);
+      const briefTotal = papers.reduce((sum, p) => sum + p.brief, 0);
+      const gameWrong = countGameWrong();
+
+      box.innerHTML = [
+        `<div class="auto-card"><span>先学后练盒子</span><strong>${last36.done}/${last36.total}</strong><p>错 ${last36.wrong}。这是判断你是否能先分题型。</p></div>`,
+        `<div class="auto-card"><span>希冀精练闸门</span><strong>${precision.done}/${precision.total}</strong><p>错 ${precision.wrong}。这是整卷前的第一步训练。</p></div>`,
+        `<div class="auto-card"><span>近三年真题客观</span><strong>${objectiveDone}/${objectiveTotal}</strong><p>主观骨架 ${briefNotes}/${briefTotal}；客观错 ${objectiveWrong}。</p></div>`,
+        `<div class="auto-card"><span>Day7 本页收口</span><strong>${day7.gates}/${day7.gateTotal}</strong><p>混合题已写 ${day7.drills}/${day7.drillTotal}；小游戏错题 ${gameWrong}。</p></div>`
+      ].join("");
+
+      let title = "下一步";
+      let text = "";
+      let link = "";
+      if (last36.done < 8) {
+        title = "先补题型盒子";
+        text = "先去 Last36 做到至少 8 题。你现在最需要的是看题能分进正确盒子，不急着硬开整卷。";
+        link = `<a href="./discrete_last36_learning_ladder.html">打开 Last36</a>`;
+      } else if (precision.done < 14) {
+        title = "进入希冀精练闸门";
+        text = "Last36 已经启动，可以做希冀精练闸门。目标不是做满分，而是把 2024/2025 真题信号和第一步练熟。";
+        link = `<a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">打开精练闸门</a>`;
+      } else if (precision.wrong >= 5) {
+        title = "先回炉精练错题";
+        text = "精练题错得偏多时不要急着整卷。先把错题对应到七类题眼，写出“我下次第一步做什么”。";
+        link = `<a href="./final_two_wrong_review.html">打开错题回炉</a>`;
+      } else if (papers[0].objectiveDone < 10) {
+        title = "优先做 2024 希冀卷";
+        text = "2024 是当前参考价值最高的一套。先把客观题做到 10 题以上，再挑主观题写第一句和骨架。";
+        link = `<a href="./discrete_hiji_ingest/discrete_2024_hiji_interactive.html">打开 2024 交互卷</a>`;
+      } else if (objectiveDone < 30) {
+        title = "扩展到 2025/2023 真题";
+        text = "2024 已经有底，可以继续做 2025、2023 的客观题。注意 2023 部分题源有缺公式风险，只取可靠题型信号。";
+        link = `<a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">打开三年真题入口</a>`;
+      } else if (day7.gates < 7) {
+        title = "回 Day7 收口闸门";
+        text = "真题已经碰过了，现在把本页上场闸门补到 7/10。少开新坑，多补公式、第一句和常见坑。";
+        link = `<a href="#gate">跳到上场闸门</a>`;
+      } else if (day7.drills < 5) {
+        title = "做 Day7 混合训练";
+        text = "闸门够了，接下来做本页混合训练到 5 题以上。每题只追三件事：题眼、第一步、考场句。";
+        link = `<a href="#drills">跳到混合训练</a>`;
+      } else if (objectiveWrong + gameWrong > 0) {
+        title = "错题宝箱回炉";
+        text = "现在不要再铺新内容了。把真题客观错题和小游戏错题回炉，尤其是语义反例、前束 Skolem、公理证明第一句。";
+        link = `<a href="./final_two_wrong_review.html">打开错题回炉</a>`;
+      } else {
+        title = "可以考前收口";
+        text = "进度已经足够进入收口模式：公式快背 15 分钟，第一句生成器 15 分钟，上场闸门 10 分钟，然后休息。";
+        link = `<a href="#formula">看公式快背</a><a href="#first">看第一句生成器</a>`;
+      }
+      advice.innerHTML = `<strong>${title}：</strong>${text}<div class="route-actions">${link}</div>`;
+    }
+
+    document.querySelectorAll("textarea[data-save]").forEach((box) => {
+      const key = `${KEY}:${box.dataset.save}`;
+      box.value = localStorage.getItem(key) || "";
+      box.addEventListener("input", () => {
+        localStorage.setItem(key, box.value);
+        renderAutoProgress();
+      });
+    });
+
+    const checks = Array.from(document.querySelectorAll("input[data-check]"));
+    const status = document.getElementById("gateStatus");
+    function refreshGate() {
+      const done = checks.filter((box) => box.checked).length;
+      status.textContent = `离散 Day7 闸门：${done}/${checks.length} 项已确认。${done >= 7 ? "可以进入错题回炉和限时混合题。" : "先补最卡的题型盒子，不要急着整卷硬刷。"}`;
+      checks.forEach((box) => box.closest("label").classList.toggle("done", box.checked));
+    }
+    checks.forEach((box) => {
+      const key = `${KEY}:gate:${box.dataset.check}`;
+      box.checked = localStorage.getItem(key) === "1";
+      box.addEventListener("change", () => {
+        localStorage.setItem(key, box.checked ? "1" : "0");
+        refreshGate();
+        renderAutoProgress();
+      });
+    });
+    refreshGate();
+    renderAutoProgress();
+  </script>
+</body>
+</html>

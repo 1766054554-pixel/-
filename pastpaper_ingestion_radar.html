@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>软工 & 离散多年习题吞吐雷达</title>
+  <style>
+    :root {
+      --ink: #152231;
+      --muted: #66768a;
+      --line: #d9e4ec;
+      --bg: #f3f7fa;
+      --paper: #fff;
+      --blue: #1f6f9f;
+      --green: #28754f;
+      --red: #ad3f37;
+      --amber: #a76713;
+      --violet: #5d5aa8;
+      --soft-blue: #eaf5fb;
+      --soft-green: #ecf7f0;
+      --soft-red: #fff0ee;
+      --soft-amber: #fff7e8;
+      --soft-violet: #f0f0ff;
+      --shadow: 0 16px 36px rgba(21, 34, 49, .10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(31,111,159,.10), transparent 260px),
+        linear-gradient(180deg, #f8fbfd 0%, var(--bg) 360px);
+      line-height: 1.75;
+    }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+    .hero, .card, .signal {
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    .hero { padding: 30px; margin-bottom: 18px; }
+    .card { padding: 24px; margin: 18px 0; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: clamp(29px, 4vw, 46px); }
+    h2 { font-size: 25px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 19px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); font-weight: 800; text-decoration: none; }
+    .muted { color: var(--muted); }
+    .focus {
+      font-weight: 850;
+      background: linear-gradient(transparent 58%, rgba(255, 218, 94, .60) 58%);
+      padding: 0 2px;
+    }
+    .key { color: var(--blue); font-weight: 850; }
+    .pill {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 850;
+      color: var(--muted);
+      margin: 0 8px 8px 0;
+    }
+    .pill.hot { color: var(--red); background: var(--soft-red); border-color: #f0c1bc; }
+    .pill.good { color: var(--green); background: var(--soft-green); border-color: #bde0ca; }
+    .pill.warn { color: var(--amber); background: var(--soft-amber); border-color: #ecd09c; }
+    .pill.violet { color: var(--violet); background: var(--soft-violet); border-color: #c8c6ee; }
+    .toc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .toc a { padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 15px;
+      background: #fbfdff;
+    }
+    .box strong { display: block; margin-bottom: 6px; }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 10px;
+      padding: 13px 15px;
+      background: var(--soft-blue);
+      margin: 14px 0;
+    }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; overflow: hidden; border-radius: 10px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #edf5fb; color: #234; }
+    .status { font-weight: 850; white-space: nowrap; }
+    .done { color: var(--green); }
+    .doing { color: var(--amber); }
+    .risk { color: var(--red); }
+    .signal-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .signal { padding: 15px; }
+    .signal .tag { color: var(--violet); font-size: 14px; font-weight: 850; }
+    button {
+      border: 1px solid #c6d7e3;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      margin-top: 8px;
+    }
+    button:hover { border-color: var(--blue); background: var(--soft-blue); }
+    .reveal {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f8fbfd;
+      border: 1px dashed #bfd4e2;
+    }
+    .signal.open .reveal { display: block; }
+    ul { padding-left: 20px; }
+    li { margin: 4px 0; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 18px, 1180px); padding-top: 14px; }
+      .hero, .card { padding: 16px; border-radius: 12px; }
+      .grid, .grid.three, .signal-list { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+      table { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div>
+      <span class="pill hot">多年习题吞吐</span>
+      <span class="pill good">离散 23 份文本</span>
+      <span class="pill good">软工 12 份文本/OCR</span>
+      <span class="pill warn">继续回灌中</span>
+    </div>
+    <h1>软工 & 离散多年习题吞吐雷达</h1>
+    <p class="muted">这页专门打开“我到底读了哪些题”的黑匣子。它不是新的日课讲义，而是资料吞吐与回灌控制台：<span class="focus">哪些文件已经抽成文字，哪些题型反复出现，哪些 OCR 还需要二次处理，下一步应该回灌到哪份讲义/学习舱</span>。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./source_coverage_audit.html">资料覆盖台账</a>
+      <a href="#ingest">吞吐结果</a>
+      <a href="#se">软工题眼</a>
+      <a href="#discrete">离散题眼</a>
+      <a href="#cards">惊喜抽卡</a>
+      <a href="#next">回灌路线</a>
+    </div>
+  </section>
+
+  <section class="card" id="ingest">
+    <h2>1. 本轮吞吐结果：不假装全会，但把证据立起来</h2>
+    <div class="grid">
+      <div class="box">
+        <strong>离散数学</strong>
+        已把往年真题与复习题中的 PDF/DOC/DOCX 抽成 <span class="focus">23 份文本</span>，合计约 136K 字节。主干年份覆盖 2012、2013、2014、2016、2017、2018、2019、2020、2022，以及 12-13 到 19-20 复习题/答案。
+      </div>
+      <div class="box">
+        <strong>软件工程</strong>
+        已把 docx 和图片卷抽成 <span class="focus">12 份文本/OCR</span>，合计约 25K 字节。覆盖 2020 上机、12/13/14 级题、2015/2016 图片卷、2011 图片卷和参考答案整理。
+      </div>
+    </div>
+    <div class="note warn">
+      <strong>诚实标注：</strong>OCR 不是魔法。有些图片卷文字很少或识别为空，比如软工 2011 的一张图和 2015 第二页，离散 18-19 PDF 也只有极少文字层。这些我会标成 <span class="risk status">需二次 OCR/人工核查</span>，不会拿它们冒充“已完全吃透”。
+    </div>
+    <table>
+      <thead><tr><th>科目</th><th>已抽取的高价值来源</th><th>本轮可确认的考试信号</th><th>剩余风险</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>软工</td>
+          <td>2020 上机；12/13/14 级；2016 图片卷；期末试题及部分 PPT；朱辉参考答案；2011/2015 图片卷 OCR。</td>
+          <td>UML 图题、用例事件流、include/extend、等价类、白盒覆盖、库存/选课/上机安排/在线审稿/预订系统案例。</td>
+          <td><span class="status doing">2011/2015 图片卷需二次处理</span>，但已确认测试设计和图题方向。</td>
+        </tr>
+        <tr>
+          <td>离散</td>
+          <td>2012-2022 多年真题与复习题；2017/2018/2019 暑期答案；2020 答案；2024 参考卷已在前页承接。</td>
+          <td>卷面结构高度稳定：简答/论述/判断/范式/证明；证明题反复考语义、公理、归结、反例、量词等价。</td>
+          <td><span class="status doing">18-19 文本层异常需重抽</span>；更老卷会继续按题型补边角。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="se">
+    <h2>2. 软工：多年题眼已经很清楚</h2>
+    <p>软工不是只画图，也不是只背概念。老题反复让你<span class="focus">把一个业务材料拆成需求、图、事件流、测试设计和答题思路</span>。现在正式通知又确认单选、多选、判断、简答、综合题，所以后续学习舱要把客观题边界和综合题建模一起抓。</p>
+    <div class="grid three">
+      <div class="box"><strong>2020 上机</strong>实验上机安排系统：类图 20、用例图 20、顺序图 20，另有 Git、Flask/后端、软件测试等选择题信号。</div>
+      <div class="box"><strong>12 级选课题</strong>选课管理系统用例图、课程注册事件流、用户名等价类测试。题眼：系统边界、参与者、异常流、有效/无效等价类。</div>
+      <div class="box"><strong>14 级库存题</strong>库存管理系统：A 卷用例图+类图，B 卷状态图+顺序图；另有白盒覆盖和电话号码等价类。</div>
+      <div class="box"><strong>2016 图片卷</strong>在线会议审稿、营地/小木屋预订系统。题眼：识别参与者/用例/类图元素，按材料修补图。</div>
+      <div class="box"><strong>期末题/PPT整理</strong>include/extend、事件流、状态图、活动图、顺序图、类图、边界/控制/实体对象。</div>
+      <div class="box"><strong>参考答案整理</strong>用例描述表、事件流、测试用例表、用例图/类图/状态图/顺序图答题思路。</div>
+    </div>
+    <div class="note good">
+      <strong>软工后续回灌原则：</strong>不要再问“为什么开卷不能带 PDF”这种题了。客观题训练概念边界；综合题训练 <span class="focus">材料切分 -> 图类型判断 -> 图元素检查 -> 测试设计</span>。
+    </div>
+  </section>
+
+  <section class="card" id="discrete">
+    <h2>3. 离散：卷面很稳定，证明题要练骨架</h2>
+    <p>离散看起来吓人，但多年卷面有规律：<span class="focus">前 70 分通常靠定义、语义、范式、反例和题型识别；后 30 分靠证明第一句和证据链</span>。所以我们不该 Day1 硬刷整卷，但后期必须把这些老卷题眼做成证明训练和定义闪卡。</p>
+    <div class="grid three">
+      <div class="box"><strong>稳定卷面</strong>2016、2019、2020、2022 多次出现：简答 20、论述 20、判断 15-20、范式 10-12、证明 25-40。</div>
+      <div class="box"><strong>简答高频</strong>联结词完备集、命题/谓词合式公式定义、谓词公理系统、可靠性与完备性、前束/Skolem。</div>
+      <div class="box"><strong>论述高频</strong>演绎定理、永真/可满足/永假关系、语义定义、关系与函数、单射/满射/双射。</div>
+      <div class="box"><strong>判断高频</strong>量词分配式是否成立、存在/全称顺序、Γ 是否可满足、自由/约束变元、用反例说明不成立。</div>
+      <div class="box"><strong>范式高频</strong>主析取/主合取范式、前束范式、Skolem 依赖、真值表到范式、公式等值变换。</div>
+      <div class="box"><strong>证明高频</strong>语义证明、公理证明、归结法、偏序最大元唯一、双射复合仍双射。第一句必须会写。</div>
+    </div>
+    <div class="note warn">
+      <strong>离散后续回灌原则：</strong>证明题不追“玄学灵感”，追 <span class="focus">目标识别 -> 可用定义/定理 -> 第一行怎么写 -> 证据如何标注</span>。尤其公理证明要注意“不可用演绎定理”的扣分提示。
+    </div>
+  </section>
+
+  <section class="card" id="cards">
+    <h2>4. 惊喜抽卡：抽一张，立刻知道该回哪页</h2>
+    <p>这不是正式小测，是我给你做的“题眼雷达卡”。点开后看：题眼、第一步、回灌位置。越临考越适合用它叫醒脑子。</p>
+    <div class="signal-list" id="signalList"></div>
+  </section>
+
+  <section class="card" id="next">
+    <h2>5. 下一步回灌路线</h2>
+    <table>
+      <thead><tr><th>优先级</th><th>回灌内容</th><th>进入哪里</th><th>为什么值钱</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="status done">高</span></td>
+          <td>软工客观题：过程模型、测试方法、include/extend、故障/错误/失效、需求/设计/测试边界。</td>
+          <td><a href="./day5_se_official_types_closure.html">软工 Day5</a>、<a href="./se_official_final_interactive.html">软工综合卷</a></td>
+          <td>正式通知已有单选/多选/判断，老题也有测试和工具边角。</td>
+        </tr>
+        <tr>
+          <td><span class="status done">高</span></td>
+          <td>软工综合题：选课、库存、上机安排、在线审稿、预订系统五类材料拆图。</td>
+          <td><a href="./day6_se_final_codearts_rehearsal.html#triage">软工 Day6</a></td>
+          <td>综合题最容易一看材料就乱，必须练材料分层和图类型判断。</td>
+        </tr>
+        <tr>
+          <td><span class="status done">高</span></td>
+          <td>离散定义/论述题：完备集、合式公式、公理系统、可靠性/完备性、演绎定理。</td>
+          <td><a href="./day7_discrete_final_recall.html">离散 Day7</a></td>
+          <td>多年反复出现，适合做成低成本拿分闪卡。</td>
+        </tr>
+        <tr>
+          <td><span class="status done">高</span></td>
+          <td>离散证明骨架：量词反例、语义证明、公理证明、归结法、偏序/函数证明。</td>
+          <td><a href="./day6_discrete_proof_sprint.html">离散 Day6</a>、<a href="./discrete_final_mixed_interactive.html">离散混合卷</a></td>
+          <td>证明题难，但第一句和证据链可训练，能拿过程分。</td>
+        </tr>
+        <tr>
+          <td><span class="status doing">继续</span></td>
+          <td>二次 OCR：软工 2011/2015 图片卷、离散 18-19 异常文本。</td>
+          <td>资料覆盖台账</td>
+          <td>防止遗漏图片卷里的特殊问法。</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note good">
+      <strong>给你加油：</strong>你现在不是“没学过所以完蛋”，你是在把每科都压成可以调用的按钮。慢一点没关系，按钮一个个点亮就行。今天能把一个题眼从“完全陌生”变成“我知道第一步”，就是很实在的涨分。
+    </div>
+  </section>
+</main>
+
+<script>
+  const cards = [
+    {
+      tag: "软工 / 用例图",
+      q: "材料说“学生、教师、管理员分别使用系统完成查询、安排、发布”。",
+      a: "先画系统边界和参与者，再把功能写成动宾短语。不要把数据库、页面、服务当外部参与者。回灌：Day5 客观题 + Day6 综合题分流。"
+    },
+    {
+      tag: "软工 / include vs extend",
+      q: "题干说某用例执行前必须先登录。",
+      a: "这是 include 倾向：基础用例包含一个必做子用例。箭头方向要按课程/工具约定检查，重点是“必做”而不是“可选扩展”。"
+    },
+    {
+      tag: "软工 / 等价类",
+      q: "用户名 8-12 位，必须由字母和数字组成，不能纯字母或纯数字。",
+      a: "先拆条件：长度、字符集、混合性。有效类满足全部条件；无效类每次破坏一个条件，别重复造无效类。"
+    },
+    {
+      tag: "软工 / 顺序图",
+      q: "学生查询课程实验安排。",
+      a: "先选场景，再列生命线：学生、查询界面、查询服务/控制、安排数据/数据库。箭头按时间从上到下，别只画一条“学生-系统”。"
+    },
+    {
+      tag: "软工 / 状态图",
+      q: "库存、订单、稿件、预订申请有状态变化。",
+      a: "状态图只画一个对象生命周期。先选对象，再找状态：草稿/已提交/审稿中/通过/拒绝，或申请/批准/使用/结束。"
+    },
+    {
+      tag: "软工 / 白盒覆盖",
+      q: "题目要求分支覆盖或判定覆盖。",
+      a: "核心是让每个判断的真/假分支至少走一次。写测试用例时要给输入、路径/分支、预期结果。"
+    },
+    {
+      tag: "离散 / 可靠性完备性",
+      q: "使用符号 ├ 和 ╞ 解释可靠性与完备性。",
+      a: "可靠性：能证出来的一定语义成立，Γ├Q => Γ╞Q。完备性：语义成立的一定能证出来，Γ╞Q => Γ├Q。箭头方向是高频扣分点。"
+    },
+    {
+      tag: "离散 / 量词反例",
+      q: "∀x(Q(x)∨R(x)) 是否推出 ∀xQ(x)∨∀xR(x)？",
+      a: "通常不成立。造两元素论域：一个对象只满足 Q，另一个只满足 R。左边每个对象至少满足一个，但右边两个全称都失败。"
+    },
+    {
+      tag: "离散 / 前束范式",
+      q: "要求把谓词公式化为前束范式。",
+      a: "先消去蕴含/等价，否定内推，变量改名防冲突，再把量词移到前面。不要一上来乱搬量词。"
+    },
+    {
+      tag: "离散 / 主范式",
+      q: "根据真值表写主析取范式和主合取范式。",
+      a: "主析取看真值为 1 的行，写极小项相或；主合取看真值为 0 的行，写极大项相与。先表再式，别凭感觉变形。"
+    },
+    {
+      tag: "离散 / 公理证明",
+      q: "题目注明不可用演绎定理。",
+      a: "每一步必须标证据：公理、前提、MP、GEN 或已证定理。不能直接“由演绎定理得”，否则按比例扣分。"
+    },
+    {
+      tag: "离散 / 归结法",
+      q: "用归结法证明 A,B |= C。",
+      a: "先把 A∧B∧¬C 化为子句集，再反复归结推出空子句。归结题不是写自然语言证明，而是写子句变换链。"
+    }
+  ];
+
+  const list = document.getElementById("signalList");
+  cards.forEach((card, i) => {
+    const el = document.createElement("article");
+    el.className = "signal";
+    el.innerHTML = `
+      <div class="tag">${i + 1}. ${card.tag}</div>
+      <h3>${card.q}</h3>
+      <button type="button">展开题眼和第一步</button>
+      <div class="reveal">${card.a}</div>
+    `;
+    el.querySelector("button").addEventListener("click", () => el.classList.toggle("open"));
+    list.appendChild(el);
+  });
+</script>
+</body>
+</html>

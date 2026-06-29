@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Day7 老师总纲终局闭环：最后一课怎么变成考场答案</title>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 310px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.26; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .focus {
+      border-radius: 6px;
+      background: #fff3bf;
+      box-shadow: inset 0 -2px 0 rgba(147,107,18,.24);
+      padding: 1px 5px;
+      font-weight: 840;
+      color: #60440a;
+    }
+    .hl { color: var(--red); font-weight: 840; }
+    .bluekey { color: var(--blue); font-weight: 840; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula-cell .display-eq, .math-card .display-eq {
+      font-size: 16px !important;
+      white-space: normal;
+    }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 820px; height: auto; display: block; }
+    .source-shot {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      min-width: 0;
+    }
+    .source-shot img {
+      width: 100%;
+      max-height: 330px;
+      object-fit: contain;
+      display: block;
+      background: #fff;
+    }
+    .caption { color: var(--muted); font-size: 13px; margin-top: 7px; }
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .mini {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .mini div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+    .mini strong { display: block; color: var(--blue); margin-bottom: 4px; }
+    .protocol {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .protocol-card {
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      min-width: 0;
+    }
+    .protocol-card:nth-child(2) { border-top-color: var(--green); }
+    .protocol-card:nth-child(3) { border-top-color: var(--yellow); }
+    .protocol-card:nth-child(4) { border-top-color: var(--red); }
+    .protocol-card strong {
+      display: block;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .check-item {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 9px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px;
+    }
+    .check-item input {
+      width: 20px;
+      height: 20px;
+      margin-top: 4px;
+      accent-color: var(--green);
+    }
+    .check-item strong { color: var(--blue); }
+    .check-item.done {
+      border-color: #a7d8bf;
+      background: #f3faf6;
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .mini, .rubric, .protocol, .check-grid { grid-template-columns: 1fr; }
+      .diagram svg { min-width: 640px; }
+      h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="strip">
+        <span class="pill hot">6.22 晚 / 6.23 早使用</span>
+        <span class="pill good">Day7 正课闭环</span>
+        <span class="pill warn">不塞进 Day2</span>
+      </div>
+      <h1>AI Day7 老师总纲终局闭环：最后一课怎么变成考场答案</h1>
+      <p class="muted">这页不是新的 AI 大地图，也不是让你现在就多开一条线。它只在数据管理技术考完后、AI 考前最后一晚使用：把第 14 讲课程总结和最后一节课老师口头提醒压成“出题方向 -> 应答动作 -> 题卡”。</p>
+      <div class="toc">
+        <a href="#when">0. 什么时候看</a>
+        <a href="#protocol">0.8 70分钟流程</a>
+        <a href="#types">0.9 五类题型</a>
+        <a href="#scope">0.5 老师总纲原图</a>
+        <a href="#signals">1. 老师提醒</a>
+        <a href="#route">2. 五条主线</a>
+        <a href="#formulas">3. 必会动作</a>
+        <a href="#drills">4. 终局题卡</a>
+        <a href="#gate">5. 考前闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="when">
+      <h2>0. 什么时候看：它是终局压缩，不是今天新任务</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>今天 6.18 不强行看</strong>
+          你现在正在吃 Day2 标准包，AI 只要把模型故事线、机器学习题卡、必要的神经网络题卡读顺。Day3 启动可以慢，不为了赶进度牺牲吸收。
+        </div>
+        <div class="box">
+          <strong>6.22 数据库考完后看</strong>
+          当晚不再从头学 AI，而是用本页核对：机器学习、深度学习、生成式 AI、强化学习、搜索/场景题有没有都能写第一句。
+        </div>
+        <div class="box">
+          <strong>6.23 考前早上复刷</strong>
+          只看本页的“必会动作表”和“终局题卡错题”，不再打开一堆总纲、Tips、讲次覆盖页。
+        </div>
+        <div class="box">
+          <strong>和前面讲义的关系</strong>
+          Day2/Day3/Day4/Day5 负责学会；本页负责考前叫醒。不会的点回对应讲义补，已经会的点只刷题眼和第一句。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>资料说明：</strong>最后一节课转写有口误，我按课程语义归并。尤其“基础学习”应理解为“机器学习”，“转机/选机”多处对应“卷积”，“乔汉学习”对应“强化学习”。本页依据老师明确反复强调的<span class="focus">范围、题型和作答要求</span>，不把转写噪声当新考点。
+      </div>
+    </section>
+
+    <section class="card" id="protocol">
+      <h2>0.8 最后一晚怎么用：70 分钟终局流程</h2>
+      <p>这页不是从头学 AI，而是把已经学过的东西压成考场可调用能力。你按下面四段走，像过安检一样逐项通过；卡住就回对应 Day 页，不在这里重新开大课。</p>
+      <div class="protocol">
+        <div class="protocol-card">
+          <strong>0-15 分钟：看范围</strong>
+          只看第14讲四张目标图和本页“五条主线”。把重点分成：机器学习、深度学习、生成式 AI、强化学习。
+        </div>
+        <div class="protocol-card">
+          <strong>15-35 分钟：背动作</strong>
+          看“必会动作表”。每个公式只背三件事：它解决什么、第一步怎么写、最容易错在哪里。
+        </div>
+        <div class="protocol-card">
+          <strong>35-65 分钟：做题卡</strong>
+          做 8 道终局题卡。要求先写 2-4 句，不许直接看答案；答案只用来修正你的第一句话。
+        </div>
+        <div class="protocol-card">
+          <strong>65-70 分钟：勾闸门</strong>
+          看最后“考前闸门”。不稳的只回对应一页补，不再打开所有资料乱翻。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>救火版 25 分钟：</strong>如果数据库考完很累，只做三件事：看第14讲原图 5 分钟、背必会动作表 10 分钟、做题 1/3/6/8 四道代表题 10 分钟。你不需要完美，但要让脑子重新接上线。
+      </div>
+    </section>
+
+    <section class="card" id="types">
+      <h2>0.9 AI 正式五类题型雷达：先认卷面，再调知识</h2>
+      <p>AI 最容易让人崩的原因不是“一个模型都没听过”，而是题目把模型、公式、曲线、表格和场景揉在一起，你不知道它到底要你做什么。正式题型已经确定为 <span class="focus">选择、填空、计算、简答、综合</span>，并且 <span class="focus">无需计算器</span>。这说明卷子更看重你能不能识别题型、解释公式、做小步骤和写清模型逻辑。</p>
+      <table>
+        <thead><tr><th>题型</th><th>卷面样子</th><th>考场第一动作</th><th>你要训练到什么程度</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>选择/填空</td>
+            <td>问某模型属于哪类、哪个说法正确、哪个性质最匹配。</td>
+            <td>先分家族：监督/无监督/强化，回归/分类，判别/生成，再判断关键词。</td>
+            <td>能把 SVM、LDA、决策树、AdaBoost、CNN、Transformer、VAE、GAN、Diffusion、Q-learning 放到正确抽屉里。</td>
+          </tr>
+          <tr>
+            <td>计算题</td>
+            <td>给小表格、小矩阵、混淆矩阵、Q 表或简单损失函数。</td>
+            <td>先写公式量：总熵、加权子熵、卷积窗口乘加、TP/FP/FN、当前 Q 和下一状态最大 Q。</td>
+            <td>不用追复杂数值，重点是步骤顺序不能乱；数字简单时要能稳稳算完。</td>
+          </tr>
+          <tr>
+            <td>简答题</td>
+            <td>解释模型原理、为什么这样设计、优缺点、适用场景。</td>
+            <td>按四句写：它解决什么 -> 怎么做 -> 好在哪里 -> 局限或适用场景。</td>
+            <td>每个高频模型至少会写一段“不是口号”的答案，例如 BP 要说链式法则和梯度，GAN 要说生成器/判别器对抗。</td>
+          </tr>
+          <tr>
+            <td>综合题</td>
+            <td>给一个任务场景，再混入曲线、表格、模型选择或改进建议。</td>
+            <td>先拆四层：任务层看要预测什么，模型层看用什么，证据层看曲线/指标，建议层写改进。</td>
+            <td>不会整题空掉；即使某个公式忘了，也能先拿任务分析、模型原理、指标解释和建议分。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>和 Day5 的关系：</strong>Day5 负责练“题眼闯关”和“混合题拆法”；本节只负责把正式卷面问法压成入口。你做题前先看这里 2 分钟，再去 Day5 或本页题卡练。
+      </div>
+    </section>
+
+    <section class="card" id="scope">
+      <h2>0.5 第14讲原图核对：老师到底划了哪些范围</h2>
+      <p>这四张图是第 14 讲课程总结里的目标页。它们决定 AI 复习的主线：<span class="focus">机器学习要求最硬，深度学习重 CNN/自注意力/训练策略，生成式 AI 重概念比较，强化学习重状态动作奖励与 V/Q/Bellman/Q-learning。</span></p>
+      <div class="grid">
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai14-ml-goals-014.png" alt="第14讲机器学习课程目标" />
+          <div class="caption"><strong>机器学习：</strong>熟练掌握基本概念、线性回归/逻辑回归、最小二乘/梯度下降、决策树；LDA/SVM/集成学习了解核心思想。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai14-dl-goals-056.png" alt="第14讲深度学习课程目标" />
+          <div class="caption"><strong>深度学习：</strong>CNN 和自注意力要求会基本原理和计算；训练策略要会判断欠拟合、优化问题、过拟合。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai14-gen-goals-090.png" alt="第14讲生成式人工智能课程目标" />
+          <div class="caption"><strong>生成式 AI：</strong>PCA/AE/VAE/Diffusion/GAN 重点是核心思想和比较，不要求大推导。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai14-rl-goals-109.png" alt="第14讲强化学习课程目标" />
+          <div class="caption"><strong>强化学习：</strong>概念多，重点是状态、动作、奖励、策略、V/Q、Bellman、策略评估/优化。</div>
+        </div>
+      </div>
+      <div class="mark">
+        <strong>怎么用这四张图：</strong>你不需要逐字背 PPT。你要把每张图转成考场动作：机器学习会写公式和步骤；深度学习会解释结构和小计算；生成式 AI 会比较模型；强化学习会把场景翻译成 MDP/RL 语言。
+      </div>
+    </section>
+
+    <section class="card" id="signals">
+      <h2>1. 老师最后一课到底透露了什么</h2>
+      <p>你不用把转写逐字背下来，真正有考试价值的是这些信号：</p>
+      <table>
+        <thead><tr><th>老师信号</th><th>翻译成复习动作</th><th>对应页</th></tr></thead>
+        <tbody>
+          <tr><td>第 14 讲/课程总结是复习纲要，直接按这个目录复习。</td><td>AI 不能只刷参考题前半；<span class="bluekey">机器学习、深度学习、生成式 AI、强化学习</span>都要有最低可答能力。</td><td>Day3、Day4、Day5 + 本页</td></tr>
+          <tr><td>作业里的问答题基本就是大题类型，不会原题照搬，但题型很像。</td><td>不要只做选择题。每个模型至少会写<span class="focus">定义、原理、为什么、优缺点/适用场景</span>。</td><td>Day3 题卡、Day5 混合小测</td></tr>
+          <tr><td>线性回归、最小二乘、梯度下降、正则化、权重影响要会解释甚至推。</td><td>公式不是背字符串，要会说 X/Y/w/R/λ 在干什么，为什么正则项必须约束参数。</td><td>Day3 + 本页题卡 1-2</td></tr>
+          <tr><td>决策树计算要掌握，可能考信息熵、信息增益/增益率和建树步骤。</td><td>看到表格题，第一行写<span class="focus">总熵 -> 按属性加权子熵 -> 信息增益</span>。</td><td>Day3 + 本页题卡 3</td></tr>
+          <tr><td>卷积和自注意力需要会算，Transformer 建议掌握。</td><td>CNN 至少会滑动窗口乘加；Attention 至少会解释 Q/K/V、相关性权重和 V 加权汇总。</td><td>深度/生成桥接 + 本页题卡 5-6</td></tr>
+          <tr><td>生成式 AI 不要求推导计算，但要理解 PCA、AE、VAE、Diffusion、GAN 的核心思想。</td><td>生成模型题多是简答/比较，重在区分<span class="focus">重构、可采样隐空间、加噪去噪、判别器</span>。</td><td>Day4、Day5 + 本页题卡 7</td></tr>
+          <tr><td>强化学习难，概念多，Bellman/Q-learning/机器人迷宫类题要会。</td><td>先翻译场景为<span class="focus">状态、动作、奖励、策略</span>，再写 V/Q/Bellman/Q-learning 或搜索。</td><td>Day4 + 本页题卡 8</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>一句话总策略：</strong>AI 考试不是大型计算，而是<span class="focus">小计算 + 公式解释 + 模型比较 + 场景翻译</span>。你要练的是看到题干先写第一句，不能在名词堆里发呆。
+      </div>
+      <h3>1.5 参考习题信号雷达：看到这些词，第一步这样写</h3>
+      <table>
+        <thead><tr><th>参考题信号</th><th>不要这样想</th><th>考场第一步</th></tr></thead>
+        <tbody>
+          <tr><td>SVM 分类边界 / 支持向量</td><td>“离边界近就是难样本，所以随便圈几个点。”</td><td>先写：SVM 选择最大间隔超平面，真正决定边界的是贴在间隔边界上的支持向量。</td></tr>
+          <tr><td>信息增益率 / 构建决策树</td><td>“信息增益越大永远越好。”</td><td>先写：总熵 -> 属性划分后加权子熵 -> 信息增益；若属性取值很多，再说明增益率修正分支过多偏好。</td></tr>
+          <tr><td>BP 描述正误辨析</td><td>“BP 就是神经网络训练，写这句就够了。”</td><td>先写：BP 根据输出误差，用链式法则从后往前计算各层参数梯度，再用优化方法更新权重。</td></tr>
+          <tr><td>训练误差 / 测试误差曲线</td><td>“测试差就一定只写过拟合。”</td><td>先看训练损失是否也高：两边高偏欠拟合/优化不足；训练低测试高才是典型过拟合。</td></tr>
+          <tr><td>GAN 训练 / 生成器判别器</td><td>“GAN 就是生成图片。”</td><td>先写：生成器试图造出逼真样本，判别器区分真伪，二者对抗训练；再补训练不稳定/模式崩塌。</td></tr>
+          <tr><td>Q-learning / Sarsa</td><td>“都更新 Q 表，公式差不多。”</td><td>先写：Q-learning 用下一状态最大 Q，是 off-policy；Sarsa 用实际采取的下一动作，是 on-policy。</td></tr>
+          <tr><td>探索与利用</td><td>“选最大回报就行。”</td><td>先写：利用选择当前最优动作，探索尝试未知动作；epsilon-greedy 用小概率探索避免陷入局部最优。</td></tr>
+          <tr><td>MDP / 机器人网格</td><td>“直接画路径。”</td><td>先翻译四件套：状态是格子/局面，动作是移动方向，奖励是到达或碰壁反馈，策略是在状态下选动作的规则。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="route">
+      <h2>2. 五条主线：考前脑子里只保留这张路由</h2>
+      <div class="diagram" aria-label="AI 考前五条主线路由">
+        <svg viewBox="0 0 940 320" role="img">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L9,3 L0,6 Z" fill="#6d7c87"></path>
+            </marker>
+          </defs>
+          <rect x="28" y="122" width="150" height="76" rx="8" fill="#eef7fc" stroke="#b9d6e8"/>
+          <text x="103" y="153" text-anchor="middle" font-size="18" font-weight="700" fill="#1f5f8b">题干</text>
+          <text x="103" y="179" text-anchor="middle" font-size="14" fill="#4b5a66">先看输出和训练信号</text>
+          <line x1="178" y1="160" x2="240" y2="160" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="250" y="32" width="152" height="62" rx="8" fill="#f3faf6" stroke="#add8bf"/>
+          <text x="326" y="58" text-anchor="middle" font-size="16" font-weight="700" fill="#24724f">有标签</text>
+          <text x="326" y="80" text-anchor="middle" font-size="13" fill="#4b5a66">回归/分类/指标</text>
+          <rect x="250" y="106" width="152" height="62" rx="8" fill="#fff9e6" stroke="#dcc682"/>
+          <text x="326" y="132" text-anchor="middle" font-size="16" font-weight="700" fill="#936b12">表格划分</text>
+          <text x="326" y="154" text-anchor="middle" font-size="13" fill="#4b5a66">树/Boosting</text>
+          <rect x="250" y="180" width="152" height="62" rx="8" fill="#f6f2ff" stroke="#c9bee8"/>
+          <text x="326" y="206" text-anchor="middle" font-size="16" font-weight="700" fill="#66519a">图像/文本</text>
+          <text x="326" y="228" text-anchor="middle" font-size="13" fill="#4b5a66">CNN/Attention</text>
+          <rect x="250" y="254" width="152" height="48" rx="8" fill="#fff2ef" stroke="#e5b3ad"/>
+          <text x="326" y="283" text-anchor="middle" font-size="16" font-weight="700" fill="#a23b32">奖励决策</text>
+          <line x1="402" y1="63" x2="470" y2="63" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="402" y1="137" x2="470" y2="137" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="402" y1="211" x2="470" y2="211" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="402" y1="278" x2="470" y2="278" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="482" y="32" width="180" height="62" rx="8" fill="#fff" stroke="#dce3e8"/>
+          <text x="572" y="57" text-anchor="middle" font-size="15" font-weight="700" fill="#18212a">线性/SVM/指标</text>
+          <text x="572" y="80" text-anchor="middle" font-size="13" fill="#4b5a66">损失、泛化、正则</text>
+          <rect x="482" y="106" width="180" height="62" rx="8" fill="#fff" stroke="#dce3e8"/>
+          <text x="572" y="131" text-anchor="middle" font-size="15" font-weight="700" fill="#18212a">决策树/AdaBoost</text>
+          <text x="572" y="154" text-anchor="middle" font-size="13" fill="#4b5a66">熵、增益、权重</text>
+          <rect x="482" y="180" width="180" height="62" rx="8" fill="#fff" stroke="#dce3e8"/>
+          <text x="572" y="205" text-anchor="middle" font-size="15" font-weight="700" fill="#18212a">CNN/Transformer</text>
+          <text x="572" y="228" text-anchor="middle" font-size="13" fill="#4b5a66">卷积、Q/K/V</text>
+          <rect x="482" y="254" width="180" height="48" rx="8" fill="#fff" stroke="#dce3e8"/>
+          <text x="572" y="283" text-anchor="middle" font-size="15" font-weight="700" fill="#18212a">RL/搜索</text>
+          <line x1="662" y1="63" x2="726" y2="92" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="662" y1="137" x2="726" y2="132" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="662" y1="211" x2="726" y2="172" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="662" y1="278" x2="726" y2="212" stroke="#6d7c87" stroke-width="2" marker-end="url(#arrow)"/>
+          <rect x="738" y="76" width="170" height="168" rx="8" fill="#eef7fc" stroke="#b9d6e8"/>
+          <text x="823" y="112" text-anchor="middle" font-size="17" font-weight="700" fill="#1f5f8b">答案结构</text>
+          <text x="823" y="144" text-anchor="middle" font-size="13" fill="#4b5a66">定义</text>
+          <text x="823" y="168" text-anchor="middle" font-size="13" fill="#4b5a66">原理/公式</text>
+          <text x="823" y="192" text-anchor="middle" font-size="13" fill="#4b5a66">步骤/比较</text>
+          <text x="823" y="216" text-anchor="middle" font-size="13" fill="#4b5a66">坑点/结论</text>
+        </svg>
+      </div>
+      <div class="mini">
+        <div><strong>有标签</strong>输出数字是回归；输出类别是分类；训练好测试差是泛化题。</div>
+        <div><strong>表格划分</strong>熵、信息增益、基尼、样本权重，先列步骤再算小数。</div>
+        <div><strong>图像/文本</strong>CNN 看局部，Transformer 看全局相关性，RNN/LSTM 看序列记忆。</div>
+        <div><strong>奖励决策</strong>状态、动作、奖励、策略、V/Q，先翻译场景再写公式。</div>
+      </div>
+    </section>
+
+    <section class="card" id="formulas">
+      <h2>3. 必会动作表：不是背公式，是知道第一步</h2>
+      <table>
+        <thead><tr><th>考点</th><th>第一步</th><th>可读公式/关键词</th><th>常见坑</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>线性回归最小二乘</td>
+            <td>先写损失函数，再对参数求导令 0。</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">L</span>(<span class="mi">w</span>) = (<span class="mb">Y</span> − <span class="mb">X</span><span class="mi">w</span>)<sup>T</sup>(<span class="mb">Y</span> − <span class="mb">X</span><span class="mi">w</span>)</span></td>
+            <td>只背闭式解，不会解释 X、Y、w，也不会说这是连续值预测。</td>
+          </tr>
+          <tr>
+            <td>加权最小二乘</td>
+            <td>先说明 R 是样本权重矩阵，权重大表示该样本误差惩罚更大。</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">w</span><sup>*</sup> = (<span class="mb">X</span><sup>T</sup><span class="mb">R</span><span class="mb">X</span>)<sup>−1</sup><span class="mb">X</span><sup>T</sup><span class="mb">R</span><span class="mb">Y</span></span></td>
+            <td>把 R 说成正则项；R 是样本权重，正则项通常约束 w。</td>
+          </tr>
+          <tr>
+            <td>正则化</td>
+            <td>先写“在经验风险外惩罚模型复杂度”，再说它必须和参数有关。</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">J</span>(<span class="mi">w</span>) = <span class="mi">L</span>(<span class="mi">w</span>) + λ‖<span class="mi">w</span>‖<sup>2</sup></span></td>
+            <td>正则项若与 w 无关，就约束不了模型；若方向写反，可能鼓励参数变大。</td>
+          </tr>
+          <tr>
+            <td>决策树信息增益</td>
+            <td>先算总熵，再算按属性划分后的加权子熵。</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">Gain</span>(<span class="mi">A</span>) = <span class="mi">H</span>(<span class="mi">D</span>) − <span class="mi">H</span>(<span class="mi">D</span>|<span class="mi">A</span>)</span></td>
+            <td>方向写反，或者只选分支多的属性，不考虑增益率/过拟合风险。</td>
+          </tr>
+          <tr>
+            <td>卷积计算</td>
+            <td>窗口对齐，逐项相乘，再求和；stride/padding 先看清。</td>
+            <td>卷积核像一把小刷子扫图像局部区域，提取边缘、纹理、局部形状。</td>
+            <td>把卷积看成普通矩阵乘法；漏掉窗口滑动位置。</td>
+          </tr>
+          <tr>
+            <td>自注意力</td>
+            <td>先解释 Q/K/V，再说 QK 算相关性，softmax 成权重，对 V 加权求和。</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">Attention</span>(<span class="mb">Q</span>,<span class="mb">K</span>,<span class="mb">V</span>) = <span class="mi">softmax</span>(<span class="mb">Q</span><span class="mb">K</span><sup>T</sup>/√<span class="mi">d</span><sub>k</sub>)<span class="mb">V</span></span></td>
+            <td>把 Q/K/V 和强化学习的 Q 表混；不说明 V 才是被汇总的内容。</td>
+          </tr>
+          <tr>
+            <td>Q-learning</td>
+            <td>先找下一状态最大 Q，形成目标，再让旧 Q 向目标靠近。</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">Q</span>(<span class="mi">s</span>,<span class="mi">a</span>) ← <span class="mi">Q</span>(<span class="mi">s</span>,<span class="mi">a</span>) + α[<span class="mi">r</span> + γ max <span class="mi">Q</span>(<span class="mi">s′</span>,<span class="mi">a′</span>) − <span class="mi">Q</span>(<span class="mi">s</span>,<span class="mi">a</span>)]</span></td>
+            <td>更新整张表；或者把 Sarsa 的实际下一动作和 Q-learning 的 max 混掉。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="drills">
+      <h2>4. 终局题卡：按老师提醒练“会写答案”</h2>
+
+      <article class="drill">
+        <h3>题 1：正则化不是背 λ</h3>
+        <p><strong>题目：</strong>为什么正则化项应该约束模型参数？如果正则项与 w 无关，或者错误地鼓励参数变大，会产生什么问题？</p>
+        <textarea data-key="ai7-q1" placeholder="先写：目的 -> 为什么约束 w -> 与 w 无关为什么没用 -> 方向写反会怎样。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答法：</strong>正则化的目的是在经验风险之外加入模型复杂度惩罚，限制模型为了拟合训练集噪声而变得过于复杂。线性模型里真正决定函数形状的是参数 w 和 b，所以正则项应当约束这些参数。若正则项与 w 无关，它对参数求导为 0 或只提供常数，优化时不会推动模型选择更简单的参数，因此起不到约束作用。若正则项方向写反，等于鼓励参数变大，可能加剧过拟合，与正则化目标相反。</p>
+            <div class="rubric"><span>得分点</span><span>目的：防过拟合；对象：参数 w/b；机制：复杂度惩罚；反例：与参数无关无约束，方向反会鼓励复杂。</span></div>
+            <div class="rubric"><span>迁移</span><span>老师最后课反复提醒“正则化到底约束什么”。考场不要只写“加 L2”，要说明为什么它能影响模型选择。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 2：线性回归推导骨架</h3>
+        <p><strong>题目：</strong>给出最小二乘损失，说明如何求最优 w，并解释为什么样本权重 R 会改变模型拟合重点。</p>
+        <div class="math-card">
+          <span class="display-eq"><span class="mi">L</span>(<span class="mi">w</span>) = (<span class="mb">Y</span> − <span class="mb">X</span><span class="mi">w</span>)<sup>T</sup>(<span class="mb">Y</span> − <span class="mb">X</span><span class="mi">w</span>)</span>
+        </div>
+        <textarea data-key="ai7-q2" placeholder="先写：展开/求导/令 0/解 w；再解释 R 是样本权重。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>推导骨架：</strong>最小二乘希望让预测 Xw 与真实 Y 的平方误差最小。对 w 求导可得 -2X<sup>T</sup>(Y-Xw)，令导数为 0，得到 X<sup>T</sup>Xw = X<sup>T</sup>Y；若 X<sup>T</sup>X 可逆，则 w* = (X<sup>T</sup>X)<sup>-1</sup>X<sup>T</sup>Y。考试通常不要求你写很长推导，但要能说出“损失 -> 求导 -> 令零 -> 解参数”的链条。</p>
+            <p><strong>权重 R：</strong>加权最小二乘把不同样本的重要性放进损失中。某样本权重大，则它的残差对总损失影响更大，模型会更努力拟合这些样本。注意 R 不是正则项；R 权衡样本，正则项约束模型复杂度。</p>
+            <div class="rubric"><span>常见坑</span><span>只背闭式解但不会解释“为什么对 w 求导”，或者把 R 写成特征矩阵。X 是特征矩阵，Y 是标签，w 是参数，R 是样本权重。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 3：决策树小计算第一步</h3>
+        <p><strong>题目：</strong>某二分类数据集总熵 H(D)=1。按属性 A 划分后的加权子熵为 0.4，按属性 B 划分后的加权子熵为 0.7。若用信息增益选择划分属性，应选哪个？为什么？</p>
+        <textarea data-key="ai7-q3" placeholder="先写公式 Gain = H(D)-H(D|A)，再算。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>计算：</strong>Gain(A)=1-0.4=0.6，Gain(B)=1-0.7=0.3，因此选择属性 A。信息增益越大，说明按该属性划分后类别不确定性下降越多，节点更“纯”。</p>
+            <div class="rubric"><span>题眼</span><span>熵、信息增益、属性选择、ID3、划分后混乱程度下降。</span></div>
+            <div class="rubric"><span>迁移</span><span>如果题目换成信息增益率，记得它是为缓解“分支很多的属性容易占便宜”的问题。老师说决策树计算要会，数值通常不会逼你用计算器，第一步方向最重要。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 4：训练策略曲线题</h3>
+        <p><strong>题目：</strong>模型 A 训练损失和验证损失都高；模型 B 训练损失低、验证损失高；模型 C 把网络从 20 层加到 56 层后训练损失反而没有更低。分别可能是什么问题？如何改？</p>
+        <textarea data-key="ai7-q4" placeholder="按 A/B/C 分三段，不要所有情况都写“加正则”。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>A：</strong>训练损失和验证损失都高，说明模型连训练集都学不好，可能是欠拟合或特征/模型能力不足。可增加模型容量、改进特征、训练更久，或减弱过强正则化。</p>
+            <p><strong>B：</strong>训练损失低但验证损失高，是典型过拟合。模型对训练集拟合太紧，泛化差。可用正则化、早停、数据增强、增加数据、降低模型复杂度、dropout 等。</p>
+            <p><strong>C：</strong>更深网络训练损失没有更低，老师最后课强调这更像优化问题，不是单纯欠拟合。可考虑更好的优化器、学习率策略、归一化、残差连接、初始化等。</p>
+            <div class="rubric"><span>关键</span><span>验证损失高不一定永远等于“加正则”。先看训练损失是否也高，再判断欠拟合、过拟合还是优化问题。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 5：卷积真的会算</h3>
+        <p><strong>题目：</strong>输入局部窗口为 [[1,2],[3,4]]，卷积核为 [[1,0],[0,-1]]，该位置卷积输出是多少？卷积核在图像里主要起什么作用？</p>
+        <textarea data-key="ai7-q5" placeholder="先逐项相乘再求和，然后解释局部特征提取。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>计算：</strong>1×1 + 2×0 + 3×0 + 4×(-1) = -3。卷积计算就是窗口和卷积核逐项相乘再求和。</p>
+            <p><strong>作用：</strong>卷积核像一把小刷子在图像上滑动，提取局部空间特征，例如边缘、纹理、局部形状。CNN 之所以适合图像，是因为图像的重要信息常常以局部区域形式出现，且同一种局部特征可在不同位置重复出现。</p>
+            <div class="rubric"><span>常见坑</span><span>不要只写“CNN 用于图像”。老师明确提醒卷积需要自己算一算，考场若给小矩阵，第一步就是窗口乘加。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 6：自注意力不是背 QKV</h3>
+        <p><strong>题目：</strong>解释自注意力中 Q、K、V 的直观含义，并说明 Transformer 为什么适合处理文本序列。</p>
+        <textarea data-key="ai7-q6" placeholder="先写 Q 查什么，K 可被匹配的索引，V 真正汇总的内容。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答法：</strong>Q 可以理解为当前位置“想查什么”，K 是每个位置提供的“可匹配索引”，V 是真正要被汇总的内容。自注意力先用 Q 和 K 计算当前位置与其它位置的相关性，再通过 softmax 变成权重，最后对 V 加权求和来更新表示。</p>
+            <p><strong>为什么适合文本：</strong>文本中的词需要根据上下文理解含义，自注意力能让任意位置之间直接建立联系，不像 RNN 那样只能逐步传递信息，因此更适合长距离依赖，也更容易并行训练。Transformer block 中 attention 负责信息交流，后面的全连接层负责进一步加工每个 token 的表示。</p>
+            <div class="rubric"><span>迁移</span><span>BERT 偏理解，常用 mask 预测；GPT 偏生成，按前文预测下一个 token。AI Agent 则是在大语言模型外加记忆、任务管理和工具调用能力。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 7：生成模型四兄弟比较</h3>
+        <p><strong>题目：</strong>比较 AE、VAE、Diffusion、GAN。要求写出各自核心思想，并说明为什么 VAE/Diffusion 更接近生成。</p>
+        <textarea data-key="ai7-q7" placeholder="按 AE/VAE/Diffusion/GAN 四行写：核心思想 + 训练目标 + 坑点。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>AE：</strong>自编码器用编码器把输入压缩为隐表示，再用解码器重构输入，训练目标是最小化重构误差。它更像特征学习/降维工具，随机采样生成能力较弱。</p>
+            <p><strong>VAE：</strong>变分自编码器让编码器输出隐变量分布而不是固定点，并通过重构损失与分布约束训练，使隐空间连续、可采样，因此可以从隐空间采样后解码生成新样本。</p>
+            <p><strong>Diffusion：</strong>扩散模型前向逐步加噪，反向训练网络预测噪声或去噪，从噪声一步步恢复样本。它把生成拆成多步，训练较稳定，生成质量高，但采样较慢。</p>
+            <p><strong>GAN：</strong>生成器负责造样本，判别器负责判断真假，二者对抗训练，直到判别器难以区分真实和生成样本。优点是生成清晰，缺点是训练不稳定、可能模式崩塌。</p>
+            <div class="rubric"><span>题眼</span><span>重构 -> AE；分布/采样/KL -> VAE；加噪/去噪/预测噪声 -> Diffusion；生成器/判别器 -> GAN。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 8：强化学习场景翻译</h3>
+        <p><strong>题目：</strong>机器人在迷宫中从起点走到终点，每一步可上下左右移动，撞墙得 -1，到终点得 +10。请写出强化学习建模中的状态、动作、奖励、策略，并说明 Q-learning 更新时第一步看什么。</p>
+        <textarea data-key="ai7-q8" placeholder="先把场景翻译成 S/A/R/pi，再写 Q-learning 目标。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer-block">
+            <p><strong>场景翻译：</strong>状态 s 可以是机器人当前所在格子或迷宫局面；动作 a 是上、下、左、右；奖励 r 是撞墙 -1、到达终点 +10，也可设计普通移动小惩罚；策略 π 是在某个状态下选择动作的规则。</p>
+            <p><strong>Q-learning 第一步：</strong>先找下一状态 s′ 中所有可选动作的最大 Q 值，构造目标 r + γ max Q(s′,a′)，再用学习率 α 让当前 Q(s,a) 往这个目标靠近。Q-learning 是离策略，因为更新时看的是下一状态最大 Q，而不是实际采样到的下一动作。</p>
+            <div class="rubric"><span>迁移</span><span>如果题目把机器人迷宫说成搜索问题，也可以写 BFS/DFS/A*；如果强调状态、动作、奖励、策略，就切强化学习。</span></div>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>5. 考前闸门：勾不住就回对应页补</h2>
+      <table>
+        <thead><tr><th>闸门</th><th>能做到的样子</th><th>卡住回哪页</th></tr></thead>
+        <tbody>
+          <tr><td>机器学习</td><td>会解释线性回归、逻辑回归、LDA、SVM、决策树、AdaBoost 的题眼和第一句。</td><td><a href="./day3_ai_formula_model_closure.html">Day3 公式模型闭环</a></td></tr>
+          <tr><td>小计算</td><td>会做信息增益、卷积乘加、Precision/Recall、Q-learning 一步更新。</td><td><a href="./day5_ai_exam_sprint_mixed.html">Day5 混合小测</a></td></tr>
+          <tr><td>深度学习</td><td>会解释 BP、CNN、RNN/LSTM、Transformer、自注意力和训练策略曲线。</td><td><a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a></td></tr>
+          <tr><td>生成式 AI</td><td>会比较 PCA、AE、VAE、Diffusion、GAN，不要求推导但要能说为什么。</td><td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/强化</a></td></tr>
+          <tr><td>强化学习</td><td>会翻译状态、动作、奖励、策略、V/Q、Bellman、Q-learning/Sarsa。</td><td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/强化</a></td></tr>
+        </tbody>
+      </table>
+      <h3>5.5 终局勾选：不是看过，是能上场</h3>
+      <div class="check-grid">
+        <label class="check-item">
+          <input type="checkbox" data-check="ml" />
+          <span><strong>机器学习章</strong><br>能把线性回归、逻辑回归、SVM、决策树、AdaBoost 各写一句第一反应。</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" data-check="formula" />
+          <span><strong>公式章</strong><br>能解释 X/Y/w/R/λ、Q/K/V、Q(s,a) 这些符号，不会把同字母跨章节混掉。</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" data-check="calc" />
+          <span><strong>小计算章</strong><br>能做信息增益、卷积乘加、Precision/Recall、Q-learning 一步更新。</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" data-check="deep" />
+          <span><strong>深度学习章</strong><br>能解释 BP、CNN、RNN/LSTM、Attention/Transformer 和训练曲线诊断。</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" data-check="gen" />
+          <span><strong>生成模型章</strong><br>能按重构、隐变量分布、加噪去噪、对抗训练区分 AE/VAE/Diffusion/GAN。</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" data-check="rl" />
+          <span><strong>强化学习章</strong><br>能把场景翻译成状态、动作、奖励、策略，并区分 Q-learning 与 Sarsa。</span>
+        </label>
+      </div>
+      <div class="mark" id="checkStatus">终局勾选读取中。</div>
+      <div class="mark">
+        <strong>最后一晚的标准：</strong>不是所有内容都背到完美，而是每类题看到题眼能写第一句、能列步骤、能解释为什么。AI 没有稳定往年题时，这种“老师总纲 + 参考习题题型 + 小计算动作”的闭环最值钱。
+      </div>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day5_ai_exam_sprint_mixed.html">回 AI Day5 混合小测</a> · <a href="./full_final_schedule_0616_0630.html">回全程计划</a></p>
+    </section>
+  </main>
+  <script>
+    const NOTE_KEY = "buaa-finals-ai-day7-notes";
+    const CHECK_KEY = "buaa-finals-ai-day7-checks";
+    const notes = JSON.parse(localStorage.getItem(NOTE_KEY) || "{}");
+    const checks = JSON.parse(localStorage.getItem(CHECK_KEY) || "{}");
+
+    document.querySelectorAll("textarea[data-key]").forEach(area => {
+      const key = area.dataset.key;
+      area.value = notes[key] || "";
+      area.addEventListener("input", () => {
+        notes[key] = area.value;
+        localStorage.setItem(NOTE_KEY, JSON.stringify(notes));
+      });
+    });
+
+    function renderChecks() {
+      const boxes = [...document.querySelectorAll("input[data-check]")];
+      const done = boxes.filter(box => checks[box.dataset.check]).length;
+      boxes.forEach(box => {
+        const card = box.closest(".check-item");
+        box.checked = !!checks[box.dataset.check];
+        if (card) card.classList.toggle("done", box.checked);
+      });
+      const status = document.getElementById("checkStatus");
+      if (status) {
+        const total = boxes.length;
+        const text = done === total
+          ? "6/6 通关。今晚别再乱开新资料，开始限时回忆和错题回炉。"
+          : `已通关 ${done}/${total}。优先补没勾上的能力，不要平均用力。`;
+        status.innerHTML = `<strong>Day7 终局进度：</strong>${text}`;
+      }
+    }
+
+    document.querySelectorAll("input[data-check]").forEach(box => {
+      box.addEventListener("change", () => {
+        checks[box.dataset.check] = box.checked;
+        localStorage.setItem(CHECK_KEY, JSON.stringify(checks));
+        renderChecks();
+      });
+    });
+    renderChecks();
+  </script>
+</body>
+</html>

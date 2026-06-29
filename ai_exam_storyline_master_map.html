@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 考试总纲与模型故事线：从名词到会做题</title>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 285px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1220px; margin: 0 auto; padding: 28px 18px 58px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 5px 0; }
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      resize: vertical;
+      border: 1px solid #cdddeb;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      line-height: 1.65;
+      background: #fbfdfe;
+      color: var(--ink);
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 800; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 10px 0 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .muted { color: var(--muted); }
+    .hero, .card, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .question { box-shadow: 0 8px 20px rgba(24,33,42,.05); }
+    .strip, .toc, .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .purplebox { border-left-color: var(--purple); background: #f7f4ff; }
+    .key {
+      display: inline;
+      border-radius: 5px;
+      background: linear-gradient(180deg, rgba(255,249,230,0) 48%, #fff1a8 48%);
+      color: #10202d;
+      font-weight: 760;
+      padding: 0 2px;
+    }
+    .diagram, .source-shot {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 12px 0;
+      overflow: auto;
+    }
+    .diagram svg { width: 100%; min-width: 820px; height: auto; display: block; }
+    .source-shot img {
+      display: block;
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      background: #fff;
+    }
+    .caption { color: var(--muted); font-size: 13px; margin-top: 7px; }
+    .road {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .road > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+    }
+    .road .label {
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+    }
+    .answer {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 920px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .road { grid-template-columns: 1fr; }
+      .toc a, .links a, .pill { white-space: normal; }
+      .diagram svg { min-width: 720px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>AI 考试总纲与模型故事线：从名词到会做题</h1>
+      <p class="muted">这页不占 Day 编号，也不是让你今天多学一大包。它是 AI 的导航总屏：当 LDA、SVM、AdaBoost、BP、LSTM、Transformer、GAN、Q-learning 一起出现时，用这页把它们重新放回“问题 -> 模型 -> 训练信号 -> 公式 -> 考法”的主线里。</p>
+      <div class="strip">
+        <span class="pill hot">使用时机：Day2 后迷路就看</span>
+        <span class="pill info">主依据：参考习题 + 理论/复习 PDF + PPT 主线</span>
+        <span class="pill good">目标：会分流、会解释、会做小计算</span>
+        <span class="pill warn">不替代 Day2-Day5 正课</span>
+      </div>
+      <div class="toc">
+        <a href="./index.html">回学习舱</a>
+        <a href="./exam_coverage_control_board.html#ai">AI 覆盖雷达</a>
+        <a href="#route">0. 使用路线</a>
+        <a href="#families">0.5 方法谱系</a>
+        <a href="#story">1. 总故事线</a>
+        <a href="#outline">2. 考试大纲</a>
+        <a href="#formulas">3. 公式动作表</a>
+        <a href="#terms">4. 新词词典</a>
+        <a href="#router">5. 题型路由</a>
+        <a href="#practice">6. 综合训练</a>
+        <a href="#sources">7. 来源核对</a>
+      </div>
+      <div class="mark warnbox">
+        <strong>一句话定位：</strong>Day2 负责第一次学懂，Day3 负责公式和模型闭环，Day4 负责无监督/强化学习，Day5 负责混合小测；本页负责把这些页串成一张地图，防止“看过很多但题干一换就断线”。
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 这页怎么配合 Day2-Day5 用</h2>
+      <div class="road">
+        <div class="label">现在 Day2</div>
+        <div>先读 0.5 方法谱系，再读 1-2 节和“新词词典”里你卡住的词。目标不是背完整 AI，而是知道每个方法在解决什么问题。正式做题仍然回 <a href="./day2_ai_model_storyline.html">Day2 模型故事线</a> 和 <a href="./day2_ai_reference_ml_cards.html">机器学习题卡</a>。</div>
+        <div class="label">Day3</div>
+        <div>重点看公式动作表：线性回归、逻辑回归、信息增益、Precision/Recall、Attention、Q-learning。不要只抄公式，必须能说“每个符号是什么、公式在干什么”。</div>
+        <div class="label">Day4-Day5</div>
+        <div>看深度/生成/强化学习的路由：CNN、RNN/LSTM、Transformer、GAN、K-means、PCA、Q-learning。然后做 <a href="./day5_ai_exam_sprint_mixed.html">AI 混合小测</a>，检查题干切换能力。</div>
+        <div class="label">考前早上</div>
+        <div>只看 2、3、5 节：考试大纲、公式动作表、题型路由。不要再开新模型，只做错题回炉和参考习题变式。</div>
+      </div>
+    </section>
+
+    <section class="card" id="families">
+      <h2>0.5 参考习题前置补课：五种 AI 方法谱系先认人</h2>
+      <p>你在 Day1 参考习题里碰到“符号主义的逻辑推理、问题求解的探寻搜索、数据驱动的机器学习、行为主义的强化学习、博弈对抗的决策智能”会懵，是正常的，因为它们不是一个个孤立名词，而是 AI 发展里五条常见路线。先把它们当成五种“解题性格”来认。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>符号主义：像写严谨证明</strong>
+          核心是<span class="key">知识表示 + 逻辑推理</span>。人把规则、事实、关系写成符号，机器按规则推出结论。题眼常是“知识库、规则、谓词逻辑、推理、专家系统、可解释”。优点是清楚可解释；缺点是规则很难写全，开放世界容易脆。
+        </div>
+        <div class="box">
+          <strong>问题求解/搜索：像在迷宫找路</strong>
+          核心是<span class="key">状态空间 + 操作 + 路径</span>。从初始状态出发，通过动作一步步到目标。题眼常是“状态、节点、路径、启发式、A*、蒙特卡洛树搜索”。它不是先训练模型，而是在可能行动里找更好的走法。
+        </div>
+        <div class="box">
+          <strong>机器学习：像从样本里归纳规律</strong>
+          核心是<span class="key">数据 + 模型 + 损失/指标</span>。给样本和反馈，模型自动调参数。题眼常是“训练集、特征、标签、回归、分类、聚类、过拟合、泛化”。监督学习靠标签，无监督学习靠结构，深度学习是其中一类多层表示学习方法。
+        </div>
+        <div class="box">
+          <strong>行为主义/强化学习：像打游戏学策略</strong>
+          核心是<span class="key">状态 + 动作 + 奖励 + 策略</span>。没有每一步标准答案，环境只给奖励，智能体要最大化长期回报。题眼常是“MDP、reward、policy、value、Q-learning、探索利用”。它和监督学习最大区别是反馈可能延迟、只告诉得分。
+        </div>
+        <div class="box">
+          <strong>博弈对抗/决策智能：像和对手下棋</strong>
+          核心是<span class="key">多方策略 + 对抗 + 搜索/学习结合</span>。AlphaGo 这类题常把深度学习、强化学习、蒙特卡洛树搜索放在一起。题眼常是“对弈、竞争、生成器/判别器、极小极大、MCTS、策略”。如果题目问 AlphaGo，不要只答“神经网络”，要说学习 + 搜索 + 决策。
+        </div>
+        <div class="box">
+          <strong>考场怎么用这张谱系</strong>
+          看到题干先问：它是在<span class="key">按规则推理</span>、<span class="key">找路径</span>、<span class="key">从数据学模型</span>、<span class="key">靠奖励学策略</span>，还是<span class="key">多方对抗决策</span>？这一步能帮你排掉很多看似高级但不对应题眼的选项。
+        </div>
+      </div>
+      <div class="mark">
+        <strong>把选择题扩成简答题：</strong>如果题目问“比较几类 AI 方法”，你可以按“核心思想、典型题眼、优点、局限、代表例子”五列答。比如符号主义可解释但规则难完备；机器学习适合从数据中学习但依赖数据和泛化；强化学习适合序贯决策但探索成本高。
+      </div>
+      <div class="question">
+        <h3>小练一下：AlphaGo 应该怎么归类？</h3>
+        <p>如果题目问 AlphaGo 体现了哪些 AI 方法，不要只写一个词。先自己写 2-3 个关键词。</p>
+        <textarea data-save="ai-family-alphago" placeholder="先写：深度学习？强化学习？搜索？为什么不是单纯符号逻辑推理？"></textarea>
+        <details>
+          <summary>展开参考答案</summary>
+          <div class="answer">
+            <p>AlphaGo 综合使用了深度神经网络、强化学习和蒙特卡洛树搜索。神经网络用于评估局面和选择动作，强化学习通过自我对弈改进策略，蒙特卡洛树搜索在巨大搜索空间中进行更有效的决策。它不是主要依赖手写规则库逐步逻辑推理。</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="story">
+      <h2>1. 总故事线：AI 不是单词表，是六种问题的工具箱</h2>
+      <p>你看到一个 AI 题，先别问“这是哪个英文缩写”。先问：<span class="key">输入是什么</span>、<span class="key">输出是什么</span>、<span class="key">答案靠什么信号变好</span>。这三问会把大部分题分到正确模型家族。</p>
+      <div class="diagram" aria-label="AI 模型家族总故事线">
+        <svg viewBox="0 0 1120 520" role="img">
+          <rect width="1120" height="520" fill="#fbfdfe"/>
+          <defs>
+            <marker id="arrow-ai-master" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/>
+            </marker>
+          </defs>
+          <g font-family="sans-serif" fill="#18212a">
+            <text x="44" y="42" font-size="24" font-weight="800" fill="#1f5f8b">从题干到模型：先看问题形状，再选工具</text>
+            <rect x="46" y="78" width="165" height="74" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="72" y="108" font-size="18" font-weight="800">要找路径/状态</text>
+            <text x="66" y="134" font-size="14" fill="#687581">搜索、启发式、A*</text>
+
+            <rect x="268" y="78" width="165" height="74" rx="8" fill="#fff" stroke="#dce3e8"/>
+            <text x="306" y="108" font-size="18" font-weight="800">有标签预测</text>
+            <text x="286" y="134" font-size="14" fill="#687581">回归、分类、SVM、树</text>
+
+            <rect x="490" y="78" width="165" height="74" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="526" y="108" font-size="18" font-weight="800">没有标签分组</text>
+            <text x="508" y="134" font-size="14" fill="#687581">K-means、PCA、EM</text>
+
+            <rect x="712" y="78" width="165" height="74" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="744" y="108" font-size="18" font-weight="800">复杂数据结构</text>
+            <text x="736" y="134" font-size="14" fill="#687581">CNN、RNN、Transformer</text>
+
+            <rect x="934" y="78" width="145" height="74" rx="8" fill="#f7f4ff" stroke="#66519a"/>
+            <text x="972" y="108" font-size="18" font-weight="800">靠奖励决策</text>
+            <text x="956" y="134" font-size="14" fill="#687581">MDP、Q-learning</text>
+
+            <path d="M128 166 C128 220 170 244 244 244" fill="none" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#arrow-ai-master)"/>
+            <path d="M350 166 L350 232" fill="none" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#arrow-ai-master)"/>
+            <path d="M572 166 L572 232" fill="none" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#arrow-ai-master)"/>
+            <path d="M794 166 L794 232" fill="none" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#arrow-ai-master)"/>
+            <path d="M1006 166 C1006 222 960 244 886 244" fill="none" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#arrow-ai-master)"/>
+
+            <rect x="244" y="242" width="642" height="126" rx="10" fill="#ffffff" stroke="#dce3e8"/>
+            <text x="284" y="278" font-size="19" font-weight="800" fill="#1f5f8b">考试真正问的不是“背定义”，而是四件事</text>
+            <text x="284" y="314" font-size="16">1. 题干信号：看到什么词想到什么模型？</text>
+            <text x="284" y="342" font-size="16">2. 训练信号：损失、纯度、间隔、奖励、重构误差从哪来？</text>
+            <text x="284" y="370" font-size="16">3. 公式含义：每个符号是什么，公式在优化什么？</text>
+            <text x="284" y="398" font-size="16">4. 答题模板：简答题第一句和小计算第一步是什么？</text>
+
+            <rect x="46" y="420" width="1033" height="58" rx="8" fill="#fff2ef" stroke="#e5b3ad"/>
+            <text x="72" y="456" font-size="17" font-weight="800" fill="#a23b32">口诀：先问输入和输出，再问训练信号；最后才背模型名字。名字只是标签，机制才是分数。</text>
+          </g>
+        </svg>
+      </div>
+      <div class="grid three">
+        <div class="box"><strong>经典机器学习</strong>更常考小计算和概念辨析：信息增益、SVM 最大间隔、AdaBoost 权重、Precision/Recall。</div>
+        <div class="box"><strong>深度学习</strong>更常考结构和原因：CNN 为什么适合图像，LSTM 为什么缓解长期依赖，Transformer 为什么能并行看全局。</div>
+        <div class="box"><strong>强化学习</strong>更常考状态、动作、奖励、价值函数和 Q-learning 一步更新。</div>
+      </div>
+    </section>
+
+    <section class="card" id="outline">
+      <h2>2. AI 考试大纲：每块到底要掌握到什么程度</h2>
+      <table>
+        <thead>
+          <tr><th>板块</th><th>为什么学</th><th>高频考法</th><th>你要会说/会算</th><th>对应页面</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AI 基础与学习范式</td>
+            <td>这是所有模型的入口。先分清有标签、无标签、靠奖励，否则后面全会串台。</td>
+            <td>选择/填空/简答：监督学习、无监督学习、强化学习区别；训练集/验证集/测试集；过拟合。</td>
+            <td>看到题干能先判断任务类型；能解释样本、特征、标签、模型、参数、损失。</td>
+            <td><a href="./day1_ai_se_visual.html">Day1 AI 从零</a></td>
+          </tr>
+          <tr>
+            <td>线性/逻辑回归、LDA、SVM、决策树、AdaBoost</td>
+            <td>这是参考习题里最像期末小计算和模型比较的区域。</td>
+            <td>计算题：MSE、信息增益、SVM 间隔、AdaBoost 权重；简答题：各模型适用场景和优缺点。</td>
+            <td>会把题干翻译成输入/输出/目标函数；能写模型一句话和第一步计算。</td>
+            <td><a href="./day2_ai_model_storyline.html">Day2 故事线</a>、<a href="./day2_ai_reference_ml_cards.html">ML 题卡</a></td>
+          </tr>
+          <tr>
+            <td>神经网络、BP、RNN/LSTM</td>
+            <td>它把“手写特征 + 简单模型”推进到“多层表示学习”，也是参考习题后半的重点。</td>
+            <td>选择/简答：BP 作用、梯度下降、sigmoid 梯度消失、LSTM 门控、长期依赖。</td>
+            <td>会讲前向传播、损失、反向传播、更新参数；能解释 LSTM 用门控制记忆。</td>
+            <td><a href="./day2_ai_reference_nn_cards.html">NN 题卡</a></td>
+          </tr>
+          <tr>
+            <td>CNN、ViT、Attention、Transformer、BERT/GPT</td>
+            <td>它们解释“图片/文本/序列”为什么要用特定结构，PPT 和课程总结都把它们放在主线里。</td>
+            <td>填空/简答/综合：卷积核、池化、残差、Q/K/V、缩放点积注意力、BERT 与 GPT 区别。</td>
+            <td>会说 CNN 抓局部，Transformer 用注意力看全局，BERT 偏理解，GPT 偏生成。</td>
+            <td><a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>、<a href="./day3_ai_formula_model_closure.html">公式闭环</a></td>
+          </tr>
+          <tr>
+            <td>无监督学习与生成模型</td>
+            <td>无监督是“没有标签也要发现结构”，生成模型是“学习数据分布再造样本”。</td>
+            <td>选择/简答：K-means、PCA、EM、AE/VAE/GAN/Diffusion 的目的和区别。</td>
+            <td>能说 K-means 聚类、PCA 降维、GAN 对抗、VAE 约束潜变量、Diffusion 去噪生成。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 后半</a>、<a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a></td>
+          </tr>
+          <tr>
+            <td>强化学习</td>
+            <td>它不是从标签学习答案，而是在状态中采取动作，通过奖励学策略。</td>
+            <td>填空/计算/简答：MDP、状态/动作/奖励/策略、V/Q、Q-learning 一步更新、探索利用。</td>
+            <td>能写 Q-learning 更新式并代数算一步；能解释 model-free、off-policy、epsilon-greedy。</td>
+            <td><a href="./day4_ai_unsupervised_rl_closure.html">Day4 后半</a></td>
+          </tr>
+          <tr>
+            <td>信号处理基础</td>
+            <td>如果老师确认覆盖，它可能以公式速查或小判断出现；现在先低成本保底。</td>
+            <td>填空/判断：能量/功率、单位冲激、LTI、卷积、傅里叶关键词。</td>
+            <td>会用关键词定位公式，不在 AI 主线没稳时深挖。</td>
+            <td>主页信号处理模块</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>核心优先级：</strong>参考习题相关的经典机器学习、神经网络、无监督/强化学习优先；CNN/Transformer/生成模型补到“会识别、会比较、会写简答”；信号处理先保速查，等确认范围再加厚。
+      </div>
+    </section>
+
+    <section class="card" id="formulas">
+      <h2>3. 公式动作表：公式不是装饰，它说明模型怎样变好</h2>
+      <p>你不要把公式当成“要背的一串符号”。每个公式都按四步读：<span class="key">它属于哪个任务</span>，<span class="key">输入输出是什么</span>，<span class="key">它在优化什么</span>，<span class="key">题目会怎么让你用</span>。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>线性回归 / MSE</strong>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="var">L</span>(<span class="mb">w</span>)
+              <span class="op">=</span>
+              (<span class="mb">Y</span><span class="op">−</span><span class="mb">Xw</span>)<sup>T</sup>(<span class="mb">Y</span><span class="op">−</span><span class="mb">Xw</span>)
+              <span class="op">=</span>
+              <span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+              <span class="var">e</span><sub>i</sub><sup>2</sup>
+            </div>
+            <p class="math-note">动作：让预测值 Xw 和真实值 Y 的平方误差最小。题目给连续值预测时优先想到它。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>逻辑回归 / 二分类概率</strong>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="var">p</span>(<span class="var">y</span><span class="op">=</span>1<span class="op">|</span><span class="mb">x</span>)
+              <span class="op">=</span>
+              <span class="frac"><span>1</span><span>1 + <span class="var">e</span><sup>−(<span class="mb">w</span><sup>T</sup><span class="mb">x</span> + <span class="var">b</span>)</sup></span></span>
+            </div>
+            <p class="math-note">动作：把线性打分压到 0-1 概率。题目出现“是否/正负类/概率输出”时想到它。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>决策树 / 信息增益</strong>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="func">Gain</span>(<span class="var">D</span>, <span class="var">A</span>)
+              <span class="op">=</span>
+              <span class="var">H</span>(<span class="var">D</span>)
+              <span class="op">−</span>
+              <span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot">v</span></span>
+              <span class="frac"><span>|<span class="var">D</span><sub>v</sub>|</span><span>|<span class="var">D</span>|</span></span>
+              <span class="var">H</span>(<span class="var">D</span><sub>v</sub>)
+            </div>
+            <p class="math-note">动作：选择能让类别最“变纯”的划分属性。小计算题通常要先算划分前熵，再算划分后加权熵。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>AdaBoost / 弱分类器权重</strong>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="var">α</span><sub>t</sub>
+              <span class="op">=</span>
+              <span class="frac"><span>1</span><span>2</span></span>
+              <span class="func">ln</span>
+              <span class="frac"><span>1 − <span class="var">ε</span><sub>t</sub></span><span><span class="var">ε</span><sub>t</sub></span></span>
+            </div>
+            <p class="math-note">动作：错误率越小的弱分类器话语权越大；下一轮提高错分样本权重，让模型盯住难样本。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>Attention / 缩放点积注意力</strong>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="func">Attention</span>(<span class="mb">Q</span>,<span class="mb">K</span>,<span class="mb">V</span>)
+              <span class="op">=</span>
+              <span class="func">softmax</span>
+              <span class="bracket">(</span>
+              <span class="frac"><span><span class="mb">QK</span><sup>T</sup></span><span><span class="sqrt">√<span class="radicand"><span class="var">d</span><sub>k</sub></span></span></span></span>
+              <span class="bracket">)</span>
+              <span class="mb">V</span>
+            </div>
+            <p class="math-note">动作：Q 和 K 算相关，softmax 变权重，再加权汇总 V；除以 √d_k 是为了数值稳定。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>Q-learning / 一步更新</strong>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="var">Q</span>(<span class="var">s</span>,<span class="var">a</span>)
+              <span class="op">←</span>
+              <span class="var">Q</span>(<span class="var">s</span>,<span class="var">a</span>)
+              <span class="op">+</span>
+              <span class="var">α</span>
+              <span class="bracket">[</span>
+              <span class="var">r</span> + <span class="var">γ</span><span class="func">max</span><sub>a′</sub><span class="var">Q</span>(<span class="var">s′</span>,<span class="var">a′</span>)
+              <span class="op">−</span>
+              <span class="var">Q</span>(<span class="var">s</span>,<span class="var">a</span>)
+              <span class="bracket">]</span>
+            </div>
+            <p class="math-note">动作：旧估计向“即时奖励 + 下一状态最好价值”靠近。小计算题先找旧 Q、r、γ、下一状态 maxQ。</p>
+          </div>
+        </div>
+      </div>
+      <div class="mark danger">
+        <strong>考场误区：</strong>公式题不要只把公式默出来。简答题里至少写一句“这个公式的目标是什么”；计算题里先列“已知量 -> 代入位置 -> 结果”。
+      </div>
+    </section>
+
+    <section class="card" id="terms">
+      <h2>4. 新词词典：每个词都按“问题、机制、考法”记</h2>
+      <table>
+        <thead>
+          <tr><th>词</th><th>它解决什么问题</th><th>机制/特征</th><th>考试第一句话</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>LDA</td><td>分类时希望同类更聚、异类更分。</td><td>找投影方向，使类内散度小、类间散度大。</td><td>“LDA 是监督分类/降维方法，核心是最大化类间差异、最小化类内差异。”</td></tr>
+          <tr><td>SVM</td><td>分类边界不只要分开，还要离两边样本尽量远。</td><td>最大间隔；支持向量决定边界；可用核处理非线性。</td><td>“SVM 寻找最大间隔超平面，支持向量是离边界最近、决定分类面的样本。”</td></tr>
+          <tr><td>决策树</td><td>用一串“问问题”的方式分类。</td><td>根据信息增益/基尼等指标选划分属性。</td><td>“决策树每次选择最能降低不确定性的属性，形成可解释的分类规则。”</td></tr>
+          <tr><td>AdaBoost</td><td>把很多弱分类器组合成强分类器。</td><td>错分样本下一轮权重升高；错误率低的弱分类器权重大。</td><td>“AdaBoost 通过重加权训练弱分类器，逐轮关注难样本，最终加权投票。”</td></tr>
+          <tr><td>BP</td><td>神经网络参数很多，需要知道每个权重该怎么改。</td><td>前向算预测和损失，反向用链式法则传播梯度。</td><td>“BP 是反向传播算法，用误差梯度从输出层向前更新网络参数。”</td></tr>
+          <tr><td>LSTM</td><td>普通 RNN 容易忘远处信息。</td><td>输入门、遗忘门、输出门控制长期记忆单元。</td><td>“LSTM 通过门控机制缓解梯度消失，适合长期依赖序列。”</td></tr>
+          <tr><td>CNN</td><td>图片有局部空间结构，不能把像素完全打散。</td><td>卷积共享参数抓局部特征，池化降采样和增强鲁棒性。</td><td>“CNN 利用局部连接和权值共享提取图像空间特征。”</td></tr>
+          <tr><td>Transformer</td><td>长序列需要全局依赖，RNN 顺序计算慢。</td><td>Self-Attention 让每个 token 直接关注其他 token，可并行。</td><td>“Transformer 的核心是自注意力，用 Q/K/V 建模序列中任意位置的相关性。”</td></tr>
+          <tr><td>GAN</td><td>想生成看起来真实的新样本。</td><td>生成器造假，判别器辨真伪，二者对抗训练。</td><td>“GAN 由生成器和判别器组成，通过对抗训练学习数据分布。”</td></tr>
+          <tr><td>K-means</td><td>无标签数据想自动分组。</td><td>交替分配样本到最近中心、更新中心。</td><td>“K-means 通过迭代更新簇中心，使簇内平方误差减小。”</td></tr>
+          <tr><td>PCA</td><td>特征维度太高，想保留主要信息。</td><td>找方差最大的主方向进行投影。</td><td>“PCA 是无监督降维方法，选择最大方差方向保留主要信息。”</td></tr>
+          <tr><td>Q-learning</td><td>智能体不知道环境模型，也想学每个动作长期好不好。</td><td>用奖励和下一状态最大 Q 值更新当前 Q 值。</td><td>“Q-learning 是 model-free、off-policy 的强化学习方法，学习状态-动作价值函数。”</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="router">
+      <h2>5. 题型路由：看到题干，第一反应应该是什么</h2>
+      <table>
+        <thead><tr><th>题干信号</th><th>先想到</th><th>第一步</th><th>别误判成</th></tr></thead>
+        <tbody>
+          <tr><td>给连续数值标签，问预测误差/最小二乘</td><td>线性回归</td><td>写预测 ŷ = Xw，损失是平方误差。</td><td>逻辑回归，因为它输出概率类别。</td></tr>
+          <tr><td>给类别样本，问哪个属性最适合划分</td><td>决策树/信息增益</td><td>先算整体熵，再算每个属性划分后的加权熵。</td><td>SVM，因为 SVM 问间隔和支持向量。</td></tr>
+          <tr><td>给弱分类器错误率和样本权重</td><td>AdaBoost</td><td>先算加权错误率 ε，再算 α 或更新错分样本权重。</td><td>普通准确率题，因为 AdaBoost 关心加权错误率。</td></tr>
+          <tr><td>图片、卷积核、池化、特征图</td><td>CNN</td><td>解释局部连接、权值共享、池化降采样。</td><td>Transformer，除非题干说 patch/self-attention。</td></tr>
+          <tr><td>Q/K/V、softmax、长距离依赖、并行</td><td>Transformer/Attention</td><td>把 Q/K/V 解释成查询、索引、内容。</td><td>普通 RNN，因为 RNN 是顺序递推。</td></tr>
+          <tr><td>生成器、判别器、真假样本</td><td>GAN</td><td>先说明二者对抗：G 造假，D 辨真伪。</td><td>VAE，因为 VAE 更强调潜变量和重构/KL。</td></tr>
+          <tr><td>无标签分组、簇中心、距离最近</td><td>K-means</td><td>先分配样本到最近中心，再更新中心。</td><td>PCA，因为 PCA 是降维不是聚类。</td></tr>
+          <tr><td>状态、动作、奖励、策略、Q 表</td><td>强化学习/Q-learning</td><td>列 s、a、r、s′、maxQ，再代入更新式。</td><td>监督学习，因为这里没有标准标签 y。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="practice">
+      <h2>6. 综合训练：先写题眼，再看答案</h2>
+      <div class="question">
+        <h3>1. 模型分流题</h3>
+        <p>题干：给定一组带标签的病人数据，每个样本有年龄、血压、化验指标，标签为是否患某病。老师问“如果还希望知道哪些特征最能区分患病和未患病，可以考虑哪些模型或指标？”</p>
+        <textarea placeholder="先写：这是哪类任务？可以想到哪些模型/指标？为什么？"></textarea>
+        <details>
+          <summary>展开参考答案与迁移</summary>
+          <div class="answer">
+            <p><strong>题眼：</strong>带标签 + 是否患病 = 监督学习二分类。想知道哪些特征能区分类别，可以想到决策树的信息增益/基尼，或 LDA 的类间/类内分离思想；若重点是分类边界稳健，也可提 SVM 最大间隔。</p>
+            <p><strong>标准答法：</strong>这是监督二分类任务。若要求可解释地选择特征，可用决策树，根据熵或信息增益选择能最大降低类别不确定性的特征；若强调投影后类别分离，可用 LDA，使类间距离大、类内距离小。</p>
+            <p><strong>别误判：</strong>不要写 K-means，因为题干已有标签；不要直接写 GAN，因为不是生成新病人样本。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>2. 公式解释题</h3>
+        <p>题干：解释 Attention(Q,K,V)=softmax(QK<sup>T</sup>/√d<sub>k</sub>)V 中 Q、K、V 和 √d<sub>k</sub> 的作用。</p>
+        <textarea placeholder="先写人话：Q/K/V 分别像什么？为什么要除以 sqrt(d_k)？"></textarea>
+        <details>
+          <summary>展开参考答案与迁移</summary>
+          <div class="answer">
+            <p><strong>题眼：</strong>Q/K/V + softmax + √d<sub>k</sub> = Transformer 注意力公式解释。</p>
+            <p><strong>标准答法：</strong>Q 是查询，表示当前位置想找什么；K 是键，像每个位置提供的索引；V 是值，表示实际要被汇总的内容。QK<sup>T</sup> 得到相关性分数，softmax 把分数变成权重，再用权重加权汇总 V。除以 √d<sub>k</sub> 是缩放，防止维度大时点积过大，softmax 过尖、训练不稳定。</p>
+            <p><strong>迁移：</strong>如果问 BERT/GPT，先说它们都基于 Transformer；BERT 偏双向理解，GPT 偏自回归生成。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>3. 小计算入口题</h3>
+        <p>题干：Q(s,a)=2，学习率 α=0.5，折扣 γ=0.9，执行动作后得到奖励 r=4，下一状态最大 Q 值为 6。求一次 Q-learning 更新后的 Q(s,a)。</p>
+        <textarea placeholder="先列旧 Q、r、gamma、下一状态 maxQ，再代入。"></textarea>
+        <details>
+          <summary>展开参考答案与迁移</summary>
+          <div class="answer">
+            <p><strong>第一步：</strong>写目标值 target = r + γ maxQ(s′,a′) = 4 + 0.9 × 6 = 9.4。</p>
+            <p><strong>第二步：</strong>更新 Q = 旧 Q + α(target − 旧 Q) = 2 + 0.5 × (9.4 − 2) = 5.7。</p>
+            <p><strong>常见坑：</strong>不要把下一状态所有 Q 值相加；Q-learning 用下一状态最大 Q 值。也不要忘记旧 Q 不是直接被 target 替代，而是按学习率靠近 target。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>4. 深度学习比较题</h3>
+        <p>题干：为什么图像分类常用 CNN，而机器翻译、文本生成常用 Transformer？</p>
+        <textarea placeholder="先写：输入数据形状不同，模型结构为什么匹配。"></textarea>
+        <details>
+          <summary>展开参考答案与迁移</summary>
+          <div class="answer">
+            <p><strong>标准答法：</strong>图像具有局部空间结构，相邻像素组合成边缘、纹理、局部形状，CNN 的卷积核能通过局部连接和权值共享高效提取局部特征，池化还能降低维度并增强平移鲁棒性。文本序列需要建模远距离词之间的依赖，Transformer 用自注意力让每个 token 直接关注其他 token，能捕捉长距离关系，并且比 RNN 更容易并行训练。</p>
+            <p><strong>迁移：</strong>如果问 ViT，就说它把图像切成 patch，当成 token 再用 Transformer 处理；不是说 CNN 失效，而是换了处理图像的建模路线。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>5. 生成模型辨析题</h3>
+        <p>题干：简述 AE、VAE、GAN、Diffusion 在“生成样本”这件事上的差别。</p>
+        <textarea placeholder="先写每个模型的关键词：重构、潜变量分布、对抗、去噪。"></textarea>
+        <details>
+          <summary>展开参考答案与迁移</summary>
+          <div class="answer">
+            <p><strong>答题骨架：</strong>AE 主要学习编码和解码，通过重构误差把输入压缩再还原，偏表示学习；VAE 在 AE 基础上给潜变量加入概率分布约束，常有重构项和 KL 项，因此能从潜空间采样生成；GAN 由生成器和判别器对抗训练，生成器学习造出能骗过判别器的样本；Diffusion 通过逐步加噪再学习反向去噪，从噪声一步步生成样本。</p>
+            <p><strong>考试短句：</strong>AE 重构，VAE 概率潜空间，GAN 对抗，Diffusion 去噪生成。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>6. 参考习题风格综合题</h3>
+        <p>题干：训练集误差很低，测试集误差很高。另一个模型训练集和测试集误差都很高。分别是什么问题？可以怎么处理？</p>
+        <textarea placeholder="先写：过拟合还是欠拟合？分别怎么救。"></textarea>
+        <details>
+          <summary>展开参考答案与迁移</summary>
+          <div class="answer">
+            <p><strong>第一种：</strong>训练集误差低、测试集误差高是过拟合，说明模型记住了训练数据细节但泛化差。可用正则化、早停、数据增强、减少模型复杂度、交叉验证调参等方法。</p>
+            <p><strong>第二种：</strong>训练集和测试集误差都高是欠拟合，说明模型表达能力不足或训练不充分。可增加特征、提高模型复杂度、训练更充分、减少过强正则化。</p>
+            <p><strong>迁移：</strong>如果题干问训练/验证/测试集，记住验证集用于调参，测试集只用于最终评估，不能用测试集反复调参。</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="sources">
+      <h2>7. 来源核对：这页不是凭空编的</h2>
+      <p>这页把已有资料中的分散点重新组织成路线图。截图只用于核对来源，不要求你现在背图。</p>
+      <div class="grid">
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai-ref-p6.png" alt="人工智能参考习题第 6 页局部来源" />
+          <div class="caption">参考习题机器学习/神经网络交界：AdaBoost、BP、梯度下降、sigmoid 等题眼。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai-ref-p9.png" alt="人工智能参考习题第 9 页局部来源" />
+          <div class="caption">参考习题后半：无监督学习、聚类、PCA、EM 等题眼。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai-transformer-p4.png" alt="Transformer PPT 页" />
+          <div class="caption">Transformer/BERT/GPT PPT 线索：后半深度学习和生成式 AI 需要故事线。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai-rl-value-p5.png" alt="强化学习 PPT 页" />
+          <div class="caption">强化学习 PPT 线索：状态、动作、奖励、价值函数、Q-learning。</div>
+        </div>
+      </div>
+      <div class="links">
+        <a href="./day2_ai_model_storyline.html">Day2 模型故事线</a>
+        <a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a>
+        <a href="./day4_ai_unsupervised_rl_closure.html">Day4 无监督/强化</a>
+        <a href="./ai_deep_generation_exam_bridge.html">深度/生成桥接</a>
+        <a href="./day5_ai_exam_sprint_mixed.html">Day5 混合小测</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

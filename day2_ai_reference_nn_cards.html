@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 参考习题神经网络题卡</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .question { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .options {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .options li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px 12px;
+    }
+    .options[data-answer] li {
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    }
+    .options[data-answer] li:hover {
+      border-color: #9bc4dd;
+      background: #f0f8fc;
+      transform: translateY(-1px);
+    }
+    .options[data-answer] li.correct {
+      border-color: #9fd0b2;
+      background: #eef9f3;
+      color: var(--green);
+      font-weight: 800;
+    }
+    .options[data-answer] li.wrong {
+      border-color: #e1aaa2;
+      background: #fff3f1;
+      color: var(--red);
+      font-weight: 800;
+    }
+    .choice-feedback {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #f7fbfe;
+      padding: 9px 11px;
+      margin: 8px 0;
+      color: var(--muted);
+    }
+    textarea {
+      width: 100%;
+      min-height: 108px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .focus {
+      background: linear-gradient(180deg, rgba(255, 244, 189, 0) 58%, rgba(255, 231, 129, .72) 58%);
+      font-weight: 760;
+      padding: 0 2px;
+    }
+    .micro-example {
+      border: 1px solid #cfe1ec;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+    .micro-example strong { color: var(--blue); }
+    .story-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .story-flow div {
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      min-width: 0;
+    }
+    .story-flow strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .formula-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .math-card {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      min-width: 0;
+    }
+    .math-card .display-eq {
+      font-size: 16px !important;
+      white-space: normal;
+      overflow-x: auto;
+    }
+    .math-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .quick-drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    .quick-drill strong { color: var(--blue); }
+    .code {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      margin: 10px 0;
+      line-height: 1.62;
+    }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 620px; height: auto; display: block; }
+    .source-img {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 10px;
+    }
+    .source-img img { display: block; width: 100%; height: auto; }
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+    }
+    .small { font-size: 13px; color: var(--muted); }
+    @media (max-width: 860px) {
+      .grid, .grid.three, .story-flow, .formula-row { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+      .diagram svg { min-width: 520px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>AI 参考习题神经网络题卡</h1>
+      <p class="muted">对应《人工智能参考习题》扫描页第 6-8 页。这里的目标不是把深度学习学成研究生课，而是让你在期末题里能识别 BP、梯度下降、sigmoid、前馈网络、LSTM、GAN、XOR 和编码器-解码器的题眼，并能写出标准解释。</p>
+      <div class="strip">
+        <span class="pill hot">参考习题第 6-8 页</span>
+        <span class="pill info">神经网络与深度学习</span>
+        <span class="pill good">先补词，再做题</span>
+        <span class="pill warn">公式只抓考试骨架</span>
+      </div>
+      <div class="toc">
+        <a href="#prep">0. 术语地基</a>
+        <a href="#story">0.5 故事线</a>
+        <a href="#choice">1. 选择题 1-7</a>
+        <a href="#xor">2. XOR 与初始化</a>
+        <a href="#seq">3. 编码器-解码器/LSTM</a>
+        <a href="#source">4. 原页核对</a>
+      </div>
+      <div class="mark warnbox">
+        <strong>如果 BP、LSTM、GAN 看起来像一串陌生缩写：</strong>先回 <a href="./day2_ai_model_storyline.html">Day2 AI 模型故事线</a> 的神经网络主线。这里的题卡负责把参考习题拆成题眼、答案和解析，不把整节课重复讲一遍。
+      </div>
+    </section>
+
+    <section class="card" id="prep">
+      <h2>0. 术语地基：先知道这些词在干什么</h2>
+      <p>神经网络题很容易看起来像一堆英文缩写。其实期末常考的不是复杂推导，而是“这个方法解决什么问题、为什么这个选项错、公式里的量代表什么”。</p>
+      <table>
+        <thead><tr><th>词</th><th>从零解释</th><th>考试题眼</th></tr></thead>
+        <tbody>
+          <tr><td>前向传播</td><td>输入从第一层一路算到输出，得到预测值。</td><td>input -> hidden -> output，预测。</td></tr>
+          <tr><td>损失函数</td><td>衡量预测和真实答案差多少。训练就是想让损失变小。</td><td>loss、error、cross entropy、MSE。</td></tr>
+          <tr><td>反向传播 BP</td><td>把输出层误差沿网络反向传回去，计算各参数该怎么改。</td><td>误差反传、链式法则、可微、更新权重。</td></tr>
+          <tr><td>梯度下降</td><td>沿着让损失下降最快的方向一点点更新参数。</td><td>迭代、学习率、全量/随机/小批量。</td></tr>
+          <tr><td>sigmoid</td><td>把数压到 0 到 1 之间。输入特别大或特别小时，梯度接近 0。</td><td>饱和、梯度消失、二分类概率。</td></tr>
+          <tr><td>前馈神经网络</td><td>信息只向前流动，没有循环连接。多层和激活函数让它能表示非线性映射。</td><td>端到端、非线性、隐藏层。</td></tr>
+          <tr><td>LSTM</td><td>一种改进 RNN 的网络，用门控结构保留或忘记信息，缓解长序列梯度消失。</td><td>遗忘门、输入门、输出门、长期依赖。</td></tr>
+          <tr><td>GAN</td><td>生成器造数据，判别器判断真假，两者对抗训练。</td><td>generator、discriminator、交替训练、模式崩塌。</td></tr>
+        </tbody>
+      </table>
+      <div class="diagram" aria-label="神经网络训练流程图">
+        <svg viewBox="0 0 850 250" role="img">
+          <rect x="0" y="0" width="850" height="250" fill="#fbfdfe"/>
+          <rect x="40" y="88" width="110" height="58" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+          <text x="75" y="123" fill="#18212a" font-size="18">输入</text>
+          <rect x="225" y="70" width="130" height="94" rx="8" fill="#fff" stroke="#dce3e8"/>
+          <text x="250" y="108" fill="#18212a" font-size="17">隐藏层</text>
+          <text x="245" y="134" fill="#687581" font-size="14">权重 + 激活</text>
+          <rect x="430" y="88" width="120" height="58" rx="8" fill="#eef9f3" stroke="#24724f"/>
+          <text x="468" y="123" fill="#18212a" font-size="18">输出</text>
+          <rect x="625" y="88" width="150" height="58" rx="8" fill="#fff9e6" stroke="#936b12"/>
+          <text x="660" y="123" fill="#18212a" font-size="18">损失函数</text>
+          <path d="M150 117 L225 117" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"/>
+          <path d="M355 117 L430 117" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"/>
+          <path d="M550 117 L625 117" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"/>
+          <path d="M625 165 C520 228 310 228 225 165" fill="none" stroke="#a23b32" stroke-width="3" marker-end="url(#arrow-red)"/>
+          <text x="346" y="220" fill="#a23b32" font-size="16">反向传播：把误差传回去，更新参数</text>
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#1f5f8b"/></marker>
+            <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#a23b32"/></marker>
+          </defs>
+        </svg>
+      </div>
+      <div class="micro-example">
+        <strong>BP 题先这样想：</strong>
+        你可以把神经网络当成很多旋钮。前向传播是转完旋钮得到预测，损失函数告诉你“错了多少”；BP 的作用是沿着网络反方向追责，算出<span class="focus">每个旋钮应该往哪边拧、拧多少</span>。所以选项里如果说神经元可以包含不可导映射，就要警惕：不可导会让梯度链条断掉，BP 没法正常传。
+      </div>
+      <div class="micro-example">
+        <strong>GAN 题先这样想：</strong>
+        生成器像“造样本的人”，判别器像“验真假的人”。训练不是一个人单独变强，而是两者对抗：生成器努力骗过判别器，判别器努力识破生成器。看到“损失很小但生成质量差”，不要机械说“训练好了”，要想到<span class="focus">判别器过拟合、梯度信号变差或生成器没有真的学到完整分布</span>。
+      </div>
+    </section>
+
+    <section class="card" id="story">
+      <h2>0.5 神经网络这页的故事线：三个问题串起来</h2>
+      <p>这页的参考习题看起来很散：BP、sigmoid、LSTM、GAN、XOR、编码器-解码器都挤在一起。其实它们都在回答同一件事：<span class="focus">机器怎样用一堆可调参数，学出一个能处理复杂输入的函数</span>。</p>
+      <div class="story-flow">
+        <div>
+          <strong>问题 1：模型怎么表示复杂函数？</strong>
+          单层线性模型只能画一条直线或超平面。前馈网络通过“线性变换 + 非线性激活 + 多层组合”，把简单边界拼成复杂边界，所以能解决 XOR 这类非线性问题。
+        </div>
+        <div>
+          <strong>问题 2：参数怎么学出来？</strong>
+          前向传播负责算预测，损失函数负责打分，BP 负责追责每个参数，梯度下降负责按梯度更新。你可以把它记成：<span class="focus">算答案 -> 算错多少 -> 算谁负责 -> 改旋钮</span>。
+        </div>
+        <div>
+          <strong>问题 3：序列和生成怎么处理？</strong>
+          RNN/LSTM 处理前后顺序，编码器-解码器把一个序列变成另一个序列，GAN 处理“造出像真的样本”。这些不是新世界，是神经网络换了任务形态。
+        </div>
+      </div>
+
+      <div class="diagram" aria-label="神经网络从函数到训练到任务的路线图">
+        <svg viewBox="0 0 930 270" role="img">
+          <defs>
+            <marker id="arrow-story" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect x="0" y="0" width="930" height="270" fill="#fbfdfe"></rect>
+          <rect x="38" y="82" width="150" height="82" rx="8" fill="#eef7fc" stroke="#1f5f8b"></rect>
+          <text x="113" y="113" text-anchor="middle" font-size="17" font-weight="700" fill="#1f5f8b">输入 x</text>
+          <text x="113" y="140" text-anchor="middle" font-size="13" fill="#4b5a66">图像/文本/表格</text>
+          <line x1="188" y1="123" x2="242" y2="123" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-story)"></line>
+          <rect x="242" y="54" width="190" height="138" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="337" y="84" text-anchor="middle" font-size="17" font-weight="700" fill="#18212a">神经网络 f(x;θ)</text>
+          <text x="337" y="113" text-anchor="middle" font-size="13" fill="#4b5a66">线性变换</text>
+          <text x="337" y="138" text-anchor="middle" font-size="13" fill="#4b5a66">非线性激活</text>
+          <text x="337" y="163" text-anchor="middle" font-size="13" fill="#4b5a66">多层组合</text>
+          <line x1="432" y1="123" x2="486" y2="123" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-story)"></line>
+          <rect x="486" y="82" width="150" height="82" rx="8" fill="#eef9f3" stroke="#24724f"></rect>
+          <text x="561" y="113" text-anchor="middle" font-size="17" font-weight="700" fill="#24724f">预测 ŷ</text>
+          <text x="561" y="140" text-anchor="middle" font-size="13" fill="#4b5a66">类别/概率/下个词</text>
+          <line x1="636" y1="123" x2="690" y2="123" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-story)"></line>
+          <rect x="690" y="82" width="170" height="82" rx="8" fill="#fff9e6" stroke="#936b12"></rect>
+          <text x="775" y="113" text-anchor="middle" font-size="17" font-weight="700" fill="#936b12">损失 L</text>
+          <text x="775" y="140" text-anchor="middle" font-size="13" fill="#4b5a66">预测和真实差多少</text>
+          <path d="M775 168 C720 230 385 238 337 195" fill="none" stroke="#a23b32" stroke-width="3" marker-end="url(#arrow-story)"></path>
+          <text x="537" y="232" text-anchor="middle" font-size="15" fill="#a23b32">BP + 梯度下降：把错归因到参数 θ，再更新</text>
+        </svg>
+      </div>
+
+      <h3>四个公式只背“动作”，不背成代码</h3>
+      <div class="formula-row">
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="mi">σ</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span><span class="op">=</span><span class="frac"><span>1</span><span>1<span class="op">+</span><span class="mi">e</span><sup>−z</sup></span></span>
+          </div>
+          <div class="math-note">sigmoid 把任意实数压成 0-1 概率。两端太平，导数接近 0，容易梯度消失。</div>
+        </div>
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="mi">L</span><span class="op">=</span><span class="op">−</span><span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot">t</span></span><span class="func">log</span><span class="mi">p</span><sub>t</sub><span class="op">(</span><span class="mi">y</span><sub>t</sub><span class="op">)</span>
+          </div>
+          <div class="math-note">序列解码的交叉熵：每一步都希望真实目标词的概率更高，然后把各步损失加起来。</div>
+        </div>
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="frac"><span>∂L</span><span>∂w</span></span><span class="op">=</span><span class="frac"><span>∂L</span><span>∂a</span></span><span class="op">·</span><span class="frac"><span>∂a</span><span>∂z</span></span><span class="op">·</span><span class="frac"><span>∂z</span><span>∂w</span></span>
+          </div>
+          <div class="math-note">BP 的核心就是链式法则。不可导映射会让这条“追责链”断掉。</div>
+        </div>
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="mi">c</span><sub>t</sub><span class="op">=</span><span class="mi">f</span><sub>t</sub><span class="op">⊙</span><span class="mi">c</span><sub>t−1</sub><span class="op">+</span><span class="mi">i</span><sub>t</sub><span class="op">⊙</span><span class="mi">ĉ</span><sub>t</sub>
+          </div>
+          <div class="math-note">LSTM 细胞状态：遗忘门控制旧记忆，输入门控制新内容。它给长期信息一条更稳的通道。</div>
+        </div>
+      </div>
+
+      <div class="quick-drill">
+        <strong>当场小练 1：</strong>
+        看到“每个神经元可以包含不可偏导映射函数”，你先想到哪个关键词？为什么它是错的？
+        <details>
+          <summary>展开解析</summary>
+          <div class="answer-block">
+            <p>关键词是 <span class="focus">BP 和链式法则</span>。BP 要从损失函数一路向前面的参数传梯度，若中间映射不可导，就无法正常计算梯度，参数也不知道该怎么更新。所以这类说法通常是错的。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="quick-drill">
+        <strong>当场小练 2：</strong>
+        看到“所有隐藏层神经元初始化为相同值”，你先想到什么后果？
+        <details>
+          <summary>展开解析</summary>
+          <div class="answer-block">
+            <p>想到 <span class="focus">对称性没有被打破</span>。同一层神经元参数一样，前向输出一样，反向梯度也一样，后面仍会一起更新成一样，多个神经元等于重复劳动，网络容量被浪费。</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="choice">
+      <h2>1. 选择题 1-7：每题先写题眼，不靠猜</h2>
+
+      <article class="question">
+        <h3>题 1：BP 描述不正确的是哪一项？</h3>
+        <p>下面对误差反向传播 error back propagation, BP 描述不正确的是？</p>
+        <ul class="options" data-answer="D">
+          <li>A. BP 算法是一种将输出层误差反向传播给隐藏层进行参数更新的方法</li>
+          <li>B. BP 算法将误差从后向前传递，获得各层单元所产生误差，进而依据这个误差来让各层单元修正参数</li>
+          <li>C. 对前馈神经网络而言，BP 算法可调整相邻层神经元之间的连接权重大小</li>
+          <li>D. 在 BP 算法中，每个神经元单元可包含不可偏导的映射函数</li>
+        </ul>
+        <textarea data-note="nn-q1" placeholder="先写：BP 为什么要求可微？不可偏导会卡在哪里？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：D。</strong></p>
+            <p><strong>题眼：</strong>BP 依赖链式法则计算梯度。要反向传播误差，就必须能对每一层的映射函数求导或至少有可用的梯度近似。</p>
+            <p><strong>A/B/C 为什么对：</strong>它们都在说同一件事：输出层误差从后往前传，算出各层参数对损失的影响，然后更新权重。</p>
+            <p><strong>考试句式：</strong>BP 的基础是梯度和链式法则，因此网络中的激活函数通常需要可导或分段可导；不可偏导映射会阻碍梯度计算。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 2：梯度下降和随机梯度下降</h3>
+        <p>以下关于梯度下降和随机梯度下降的说法，哪一项正确？</p>
+        <div class="code">i. 为了最小化损失函数，通常使用循环迭代的方式不断更新模型参数。
+ii. 在每次迭代中，随机梯度下降需要计算训练集所有样本的误差和。
+iii. 在每次迭代中，梯度下降使用所有数据或者部分训练数据，用于更新模型参数。</div>
+        <ul class="options" data-answer="A">
+          <li>A. i</li>
+          <li>B. ii</li>
+          <li>C. iii</li>
+          <li>D. i, ii</li>
+          <li>E. ii, iii</li>
+          <li>F. i, ii, iii</li>
+        </ul>
+        <textarea data-note="nn-q2" placeholder="先写：SGD 每次用全体样本吗？为什么 i 是基本训练流程？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：A。</strong></p>
+            <p><strong>i 正确：</strong>梯度下降类方法都是反复迭代更新参数，让损失逐步降低。</p>
+            <p><strong>ii 错误：</strong>随机梯度下降 SGD 每次通常只用一个样本或小批量样本估计梯度，不需要每次计算全体样本误差和。每次都算全体样本更接近批量梯度下降。</p>
+            <p><strong>iii 为什么不作为本题正确项：</strong>若把“梯度下降”广义理解为批量/小批量/随机一族，iii 有一定合理性；但这道题在区分梯度下降和随机梯度下降，按常规教材口径，普通梯度下降使用全量数据，随机梯度下降使用随机样本或小批量。因此本题最稳选 i。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 3：sigmoid 激活函数</h3>
+        <p>关于 sigmoid 激活函数，下列描述正确的是？</p>
+        <ul class="options" data-answer="D">
+          <li>A. 它是凸函数，凸函数无法解决非凸问题</li>
+          <li>B. 它可以有负值</li>
+          <li>C. 它无法配合交叉熵损失函数使用</li>
+          <li>D. 当输入值过大或者过小时，梯度趋近于 0，容易造成梯度消失问题</li>
+        </ul>
+        <textarea data-note="nn-q3" placeholder="先写：sigmoid 输出范围是什么？什么时候斜率接近 0？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：D。</strong></p>
+            <p><strong>从零理解：</strong>sigmoid 会把任意实数压到 0 和 1 之间。输入很大时输出接近 1，输入很小时输出接近 0，这两头曲线很平，导数接近 0。</p>
+            <p><strong>为什么这会出问题：</strong>梯度接近 0，参数几乎不更新。网络层数一深，前面的层更难学到东西，这就是梯度消失。</p>
+            <p><strong>为什么 B 错：</strong>sigmoid 输出在 (0,1)，不会是负数。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 4：前馈神经网络描述不正确的是哪项？</h3>
+        <p>下面对前馈神经网络这种深度学习方法描述不正确的是？</p>
+        <ul class="options" data-answer="D">
+          <li>A. 是一种端到端学习的方法</li>
+          <li>B. 是一种监督学习的方法</li>
+          <li>C. 实现了非线性映射</li>
+          <li>D. 隐藏层数目大小对学习性能影响不大</li>
+        </ul>
+        <textarea data-note="nn-q4" placeholder="先写：隐藏层为什么重要？多层和激活函数带来什么能力？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：D。</strong></p>
+            <p><strong>题眼：</strong>前馈神经网络的表达能力和隐藏层结构密切相关。隐藏层数、每层神经元数、激活函数都会影响模型能表示什么函数、是否容易训练、是否过拟合。</p>
+            <p><strong>A 为什么通常对：</strong>端到端表示从输入直接学到输出，不需要人为拆很多中间规则。</p>
+            <p><strong>B 的口径：</strong>前馈网络常用于有标签的分类/回归，所以在本课程题目语境里通常按监督学习理解。</p>
+            <p><strong>C 为什么对：</strong>如果只有线性层叠加，整体仍是线性；加入非线性激活后，网络才能表示复杂非线性关系。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 5：LSTM 描述</h3>
+        <p>图 6.21 展示了 LSTM 的结构。下列描述正确的是？</p>
+        <ul class="options" data-answer="B">
+          <li>A. 如果当前输入为 0 向量，则当前隐藏状态一定等于上一时刻隐藏状态。</li>
+          <li>B. 如果遗忘门 f_t 非常小或者为 0，则误差不会被反向传播到较早的时间节点</li>
+          <li>C. f_t、i_t 和 o_t 的输出是非负数</li>
+          <li>D. f_t、i_t 和 o_t 的输出可以被看作概率分布，其输出为非负数且和为 1</li>
+        </ul>
+        <textarea data-note="nn-q5" placeholder="先写：遗忘门接近 0 时，上一时刻信息还能传过来吗？门控输出是概率分布吗？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：B。</strong></p>
+            <p><strong>题眼：</strong>LSTM 用遗忘门控制上一时刻信息保留多少。若遗忘门接近 0，上一时刻信息和梯度通道会被压掉，误差很难继续传到更早时间点。</p>
+            <p><strong>C 的说明：</strong>门控通常由 sigmoid 输出，元素在 0 到 1 之间，所以“非负”这句话本身也成立。但单选题更可能考“遗忘门如何影响梯度传播”，因此 B 是更贴近题意的标准答案。</p>
+            <p><strong>D 为什么错：</strong>门控向量不是 softmax 概率分布。每个元素可在 0 到 1 之间独立开关，不要求所有元素加起来等于 1。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 6：GAN 训练</h3>
+        <p>关于生成对抗网络 GAN 的训练，以下说法正确的是？</p>
+        <ul class="options" data-answer="C">
+          <li>A. 为了加速训练，通常采用交替训练一轮判别器和多轮生成器的方法</li>
+          <li>B. 当生成器能产生足以以假乱真的数据，即 D(G(z)) 输出稳定接近 1 时，训练就完成了</li>
+          <li>C. 目标函数需要在训练初期提供足够梯度，使生成器更快开始产生能够混淆判别器的数据</li>
+          <li>D. 生成对抗网络经过足够长时间训练后可以确保收敛到全局最优</li>
+        </ul>
+        <textarea data-note="nn-q6" placeholder="先写：GAN 谁和谁对抗？为什么不能保证全局最优？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：C。</strong></p>
+            <p><strong>题眼：</strong>GAN 训练容易不稳定。若判别器太强，生成器可能拿不到有效梯度，所以目标函数和训练技巧要让生成器在早期也能收到有用学习信号。</p>
+            <p><strong>A 为什么不稳：</strong>GAN 常交替训练生成器和判别器，但具体是一轮还是多轮没有固定“通常必须”的答案，不是最稳说法。</p>
+            <p><strong>B 为什么不严谨：</strong>D(G(z)) 接近 1 只说明判别器被生成器骗过，不能单独说明整体训练稳定完成。GAN 还可能模式崩塌。</p>
+            <p><strong>D 为什么错：</strong>GAN 的优化是非凸对抗优化，不能保证训练足够久就收敛到全局最优。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 7：GAN 损失小但生成质量差</h3>
+        <p>训练 GAN 时，发现损失函数的值很小，但生成器产生的数据质量并不高，这可能是因为？</p>
+        <ul class="options" data-answer="B">
+          <li>A. 判别器欠拟合</li>
+          <li>B. 判别器过拟合</li>
+          <li>C. 生成器欠拟合</li>
+          <li>D. 生成器过拟合</li>
+        </ul>
+        <textarea data-note="nn-q7" placeholder="先写：判别器过拟合会让生成器得到什么样的训练信号？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：B。</strong></p>
+            <p><strong>从零解释：</strong>判别器如果过拟合训练数据，可能在训练集上表现很好、损失看起来很小，但它给生成器的反馈不再代表真实数据分布。生成器就可能学到偏的方向，生成质量仍然差。</p>
+            <p><strong>考试句式：</strong>GAN 中判别器和生成器需要保持相对平衡。判别器过强或过拟合会导致生成器梯度不稳定或缺乏有效指导，出现损失值与生成质量不一致。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="xor">
+      <h2>2. XOR、前馈网络和初始化：简答题常考</h2>
+      <article class="question">
+        <h3>题 8：深度学习和传统机器学习有什么区别？</h3>
+        <textarea data-note="nn-q8" placeholder="先写：传统机器学习更多依赖什么？深度学习多层网络自动学什么？"></textarea>
+        <details>
+          <summary>看参考答案</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：</strong>传统机器学习通常更依赖人工设计特征，再把特征交给分类器或回归模型；深度学习通过多层神经网络从原始数据或低级特征中逐层学习表示，能自动学习更抽象的特征。</p>
+            <p><strong>补一句更完整：</strong>深度学习通常需要更多数据和计算资源，模型可解释性较弱，但在图像、语音、自然语言等复杂感知任务中表现突出。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 9：单层感知机为什么不能模拟 XOR？请设计一个前馈网络</h3>
+        <p>XOR 异或：两个输入不同输出 1，相同输出 0。</p>
+        <textarea data-note="nn-q9" placeholder="先写：XOR 的四个点能不能被一条直线分开？两层网络怎么把 OR 和 AND 组合起来？"></textarea>
+        <details>
+          <summary>看解析和一个可背模板</summary>
+          <div class="answer-block">
+            <p><strong>为什么单层感知机不行：</strong>单层感知机只能表示线性分类边界。XOR 的正负样本在二维平面上不是线性可分的，无法用一条直线分开。</p>
+            <p><strong>一个两层网络模板：</strong>用两个隐藏神经元先做 OR 和 AND，再用输出层做 “OR 且不是 AND”。</p>
+            <div class="formula-row">
+              <div class="math-card">
+                <div class="display-eq"><span class="mi">h</span><sub>1</sub><span class="op">=</span><span class="func">step</span><span class="op">(</span><span class="mi">x</span><sub>1</sub><span class="op">+</span><span class="mi">x</span><sub>2</sub><span class="op">−</span><span class="num">0.5</span><span class="op">)</span></div>
+                <div class="math-note">OR：至少一个输入为 1 时激活。</div>
+              </div>
+              <div class="math-card">
+                <div class="display-eq"><span class="mi">h</span><sub>2</sub><span class="op">=</span><span class="func">step</span><span class="op">(</span><span class="mi">x</span><sub>1</sub><span class="op">+</span><span class="mi">x</span><sub>2</sub><span class="op">−</span><span class="num">1.5</span><span class="op">)</span></div>
+                <div class="math-note">AND：两个输入都为 1 时激活。</div>
+              </div>
+              <div class="math-card">
+                <div class="display-eq"><span class="mi">y</span><span class="op">=</span><span class="func">step</span><span class="op">(</span><span class="mi">h</span><sub>1</sub><span class="op">−</span><span class="mi">h</span><sub>2</sub><span class="op">−</span><span class="num">0.5</span><span class="op">)</span></div>
+                <div class="math-note">XOR：有一个输入为 1，但不是两个都为 1。</div>
+              </div>
+            </div>
+            <p><strong>考试句式：</strong>加入隐藏层和非线性激活函数后，前馈神经网络可以组合多个线性边界，从而表示 XOR 这类非线性可分函数。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 10：所有参数能否初始化为 0？</h3>
+        <p>在前馈神经网络中，所有参数能否初始化为 0？如果不能，能否全部初始化为其他相同值？为什么？</p>
+        <textarea data-note="nn-q10" placeholder="先写：如果隐藏层神经元参数完全相同，它们会不会学出不同功能？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>一般不能全部初始化为 0，也不能全部初始化为相同值。</p>
+            <p><strong>原因：</strong>如果同一层神经元初始参数完全相同，它们前向输出相同，反向传播得到的梯度也相同，后续更新仍然相同。这样多个神经元会一直学成同一个东西，网络等于浪费了容量。</p>
+            <p><strong>关键词：</strong>对称性破缺。随机小值初始化的目的就是打破神经元之间的对称性，让它们学习不同特征。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="seq">
+      <h2>3. 编码器-解码器与 LSTM：把序列题讲成人话</h2>
+      <p>第 7-8 页出现机器翻译的编码器-解码器框架。你可以把它想成两段：编码器读源语言，把信息压成上下文表示；解码器一步步生成目标语言词。</p>
+      <div class="diagram" aria-label="编码器解码器示意图">
+        <svg viewBox="0 0 900 260" role="img">
+          <rect x="0" y="0" width="900" height="260" fill="#fbfdfe"/>
+          <text x="42" y="38" fill="#1f5f8b" font-size="20">编码器：读源语言</text>
+          <text x="555" y="38" fill="#24724f" font-size="20">解码器：生成目标语言</text>
+          <g fill="#eef7fc" stroke="#1f5f8b">
+            <rect x="60" y="86" width="86" height="48" rx="8"/>
+            <rect x="175" y="86" width="86" height="48" rx="8"/>
+            <rect x="290" y="86" width="86" height="48" rx="8"/>
+          </g>
+          <text x="86" y="116" font-size="16">RNN</text><text x="201" y="116" font-size="16">RNN</text><text x="316" y="116" font-size="16">RNN</text>
+          <g fill="#eef9f3" stroke="#24724f">
+            <rect x="520" y="86" width="86" height="48" rx="8"/>
+            <rect x="635" y="86" width="86" height="48" rx="8"/>
+            <rect x="750" y="86" width="86" height="48" rx="8"/>
+          </g>
+          <text x="546" y="116" font-size="16">RNN</text><text x="661" y="116" font-size="16">RNN</text><text x="776" y="116" font-size="16">RNN</text>
+          <text x="75" y="180" fill="#687581" font-size="15">x1</text><text x="190" y="180" fill="#687581" font-size="15">x2</text><text x="305" y="180" fill="#687581" font-size="15">xn</text>
+          <text x="535" y="180" fill="#687581" font-size="15">BOS</text><text x="650" y="180" fill="#687581" font-size="15">w1</text><text x="765" y="180" fill="#687581" font-size="15">w2...</text>
+          <path d="M146 110 L175 110 M261 110 L290 110 M376 110 L500 110 M606 110 L635 110 M721 110 L750 110" stroke="#687581" stroke-width="3"/>
+          <path d="M560 82 L560 55 M675 82 L675 55 M790 82 L790 55" stroke="#24724f" stroke-width="2"/>
+          <text x="545" y="52" fill="#24724f" font-size="15">y1</text><text x="660" y="52" fill="#24724f" font-size="15">y2</text><text x="775" y="52" fill="#24724f" font-size="15">EOS</text>
+        </svg>
+      </div>
+
+      <article class="question">
+        <h3>题 11：编码器-解码器损失函数和词向量梯度</h3>
+        <p>机器翻译中，解码器每一步输出目标语言词的概率分布。若目标词表大小为 V，y 为真实 one-hot 向量，预测为 p，请写出解码器常用损失函数，并说明怎样更新词向量。</p>
+        <textarea data-note="nn-q11" placeholder="先写：分类问题常用什么损失？每个时间步的损失要不要加起来？"></textarea>
+        <details>
+          <summary>看参考答案和解释</summary>
+          <div class="answer-block">
+            <p><strong>损失函数：</strong>序列生成通常把每个时间步的交叉熵加起来：</p>
+            <div class="math-card">
+              <div class="display-eq">
+                <span class="mi">L</span><span class="op">=</span><span class="op">−</span><span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot">t</span></span><span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot">v</span></span><span class="mi">y</span><sub>t,v</sub><span class="func">log</span><span class="mi">p</span><sub>t,v</sub>
+              </div>
+              <div class="math-note">等价读法：每一步只关心真实目标词的预测概率，概率越高，损失越小。</div>
+            </div>
+            <p><strong>从零解释：</strong>每一步解码器都在做一个“从词表里选下一个词”的多分类问题。真实词的预测概率越高，损失越小。</p>
+            <p><strong>梯度骨架：</strong>若 softmax 输入 logits 为 z，交叉熵对 logits 的梯度是：</p>
+            <div class="math-card">
+              <div class="display-eq"><span class="frac"><span>∂L</span><span>∂z<sub>t</sub></span></span><span class="op">=</span><span class="mi">p</span><sub>t</sub><span class="op">−</span><span class="mi">y</span><sub>t</sub></div>
+              <div class="math-note">记法：预测概率减真实 one-hot。后续词向量梯度继续靠链式法则传回去。</div>
+            </div>
+            <p>考试若不要求完整推导，写出交叉熵和“预测概率 - 真实 one-hot”这个核心梯度就很稳。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 12：为什么 LSTM 能缓解 RNN 梯度消失？</h3>
+        <p>参考习题给出 RNN 反向传播中会出现很多小于 1 的导数连乘，导致梯度趋近 0。请用人话解释 LSTM 为什么能缓解这个问题。</p>
+        <textarea data-note="nn-q12" placeholder="先写：普通 RNN 为什么会连乘很多小数？LSTM 的遗忘门/细胞状态提供了什么通道？"></textarea>
+        <details>
+          <summary>看标准解释</summary>
+          <div class="answer-block">
+            <p><strong>普通 RNN 的问题：</strong>长序列反向传播时，梯度要跨很多时间步传回去。每跨一步都会乘上一些导数项，如果这些项大多小于 1，连乘很多次后就接近 0，前面时间步几乎收不到学习信号。</p>
+            <p><strong>LSTM 的做法：</strong>LSTM 引入细胞状态和门控机制。遗忘门决定保留多少旧信息，输入门决定写入多少新信息，输出门决定输出多少状态。</p>
+            <p><strong>关键句：</strong>当遗忘门接近 1 时，细胞状态可以较稳定地沿时间传递，梯度也能沿这条通道传得更远；当遗忘门接近 0 时，模型主动忘记无用历史。门控结构让模型能选择性保留长期信息，从而缓解梯度消失。</p>
+            <p><strong>考试写法：</strong>LSTM 不是魔法消灭所有梯度问题，而是通过加性细胞状态和门控通道减少长时间连乘小导数带来的梯度衰减。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="source">
+      <h2>4. 原页核对：截图只用来确认来源</h2>
+      <p>平时先看上面的题卡。只有当你要核对原题图、选项或公式时，再展开扫描页。</p>
+      <details>
+        <summary>展开参考习题第 6 页：BP、梯度下降、sigmoid 开头</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p6.png" alt="人工智能参考习题第 6 页">
+          <div class="caption">第 6 页：BP、梯度下降、sigmoid、习题 6 开头。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开参考习题第 7 页：前馈网络、LSTM、GAN、XOR、编码器题开头</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p7.png" alt="人工智能参考习题第 7 页">
+          <div class="caption">第 7 页：sigmoid 续项、前馈网络、LSTM、GAN、XOR、初始化、编码器-解码器题。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开参考习题第 8 页：编码器图和 LSTM 梯度消失证明</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p8.png" alt="人工智能参考习题第 8 页">
+          <div class="caption">第 8 页：机器翻译编码器-解码器图、LSTM 梯度消失解释。</div>
+        </div>
+      </details>
+      <p><a href="./day2_ai_reference_ml_cards.html">回机器学习题卡</a> · <a href="./day1_ai_reference_bridge.html">回 AI 参考习题第 1 页桥接</a> · <a href="./index.html">回学习舱</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-finals-ai-reference-nn-notes-v1";
+    let savedNotes = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+    const choiceKey = "buaa-finals-ai-reference-nn-choice-v1";
+    let savedChoices = {};
+    try {
+      savedChoices = JSON.parse(localStorage.getItem(choiceKey)) || {};
+    } catch {
+      savedChoices = {};
+    }
+    function optionLetter(text) {
+      const match = text.trim().match(/^([A-Z])\s*[.．、]/);
+      return match ? match[1] : text.trim().slice(0, 1);
+    }
+    function renderChoice(ul, picked) {
+      const answer = ul.dataset.answer;
+      ul.querySelectorAll("li").forEach(li => {
+        const letter = optionLetter(li.textContent);
+        li.classList.toggle("correct", Boolean(picked) && letter === answer);
+        li.classList.toggle("wrong", Boolean(picked) && letter === picked && picked !== answer);
+      });
+      let feedback = ul.nextElementSibling;
+      if (!feedback || !feedback.classList.contains("choice-feedback")) {
+        feedback = document.createElement("div");
+        feedback.className = "choice-feedback";
+        ul.insertAdjacentElement("afterend", feedback);
+      }
+      if (!picked) {
+        feedback.textContent = "先写题眼，再点一个选项校验。点完会自动打开详细解析。";
+        return;
+      }
+      feedback.innerHTML = picked === answer
+        ? `<strong>选 ${picked} 对。</strong> 现在展开解析，确认你不是靠猜，而是能说出题眼。`
+        : `<strong>选 ${picked} 还不稳，正确是 ${answer}。</strong> 先别急，下面解析会讲为什么。`;
+      const details = ul.closest(".question")?.querySelector("details");
+      if (details) details.open = true;
+    }
+    document.querySelectorAll(".options[data-answer]").forEach((ul, index) => {
+      const id = `nn-choice-${index}`;
+      renderChoice(ul, savedChoices[id]);
+      ul.querySelectorAll("li").forEach(li => {
+        li.setAttribute("role", "button");
+        li.setAttribute("tabindex", "0");
+        const choose = () => {
+          savedChoices[id] = optionLetter(li.textContent);
+          localStorage.setItem(choiceKey, JSON.stringify(savedChoices));
+          renderChoice(ul, savedChoices[id]);
+        };
+        li.addEventListener("click", choose);
+        li.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            choose();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

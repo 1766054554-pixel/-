@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据库 Day3 考前闭环：范式事务 ER 限时调用</title>
+  <style>
+    :root {
+      --bg: #f4f7f8;
+      --ink: #18212a;
+      --muted: #667481;
+      --panel: #ffffff;
+      --line: #d9e2e7;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --soft-blue: #eef7fc;
+      --soft-green: #eef9f3;
+      --soft-yellow: #fff9e6;
+      --soft-red: #fff2ef;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf4f6 0, rgba(244,247,248,0) 300px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill, .strip-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      min-height: 28px;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: var(--soft-red); }
+    .good { color: var(--green); border-color: #a7d8bf; background: var(--soft-green); }
+    .warn { color: var(--yellow); border-color: #dcc682; background: var(--soft-yellow); }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .memory {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 10px;
+      align-items: stretch;
+      margin: 10px 0;
+    }
+    .memory .key {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-weight: 800;
+      padding: 11px;
+    }
+    .memory .body {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 11px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.58;
+      margin: 10px 0;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    .timer {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    button {
+      border: 1px solid #b8d5e6;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      padding: 7px 11px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    button:hover { background: var(--soft-blue); }
+    .clock {
+      min-width: 72px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #fbfdfe;
+      font-weight: 800;
+      color: var(--red);
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .rubric {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .mini-board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .mini-board div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px;
+      text-align: center;
+      font-weight: 760;
+    }
+    .diagram {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .diagram svg { display: block; width: 100%; height: auto; }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .mini-board { grid-template-columns: 1fr; }
+      .memory, .rubric { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>数据库 Day3 考前闭环：范式事务 ER 限时调用</h1>
+      <p class="muted">这页不是替代 Day3 深学讲义，而是把已经学过的内容压成考场动作。你要练到：看到题干信号，10 秒内知道从哪条模板开始写。</p>
+      <div class="strip">
+        <span class="pill hot">数据管理技术 6/22</span>
+        <span class="pill good">范式 / 事务 / 恢复 / ER</span>
+        <span class="pill warn">速记 + 限时题卡</span>
+        <span class="pill purple">先闭眼复述，再看答案</span>
+      </div>
+      <div class="toc">
+        <a href="#use">0. 怎么用</a>
+        <a href="#rapid">1. 10 秒分流</a>
+        <a href="#templates">2. 得分模板</a>
+        <a href="#mistakes">3. 常见错因</a>
+        <a href="#timed">4. 限时题卡</a>
+        <a href="#oral">5. 闭眼复述</a>
+      </div>
+    </section>
+
+    <section class="card" id="use">
+      <h2>0. 怎么用这页</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>第一遍：慢速调用</strong>
+          看每个模板，自己补一句“为什么这么做”。如果讲不出来，回到 <a href="./day3_database_fd_tx_er.html">Day3 深学讲义</a>。
+        </div>
+        <div class="box">
+          <strong>第二遍：限时写骨架</strong>
+          每题先按计时写 5-8 分钟，只写题眼、步骤和关键结论，不追求长篇。
+        </div>
+        <div class="box">
+          <strong>第三遍：评分点对照</strong>
+          展开答案后不要只看对错，要圈出自己漏掉的评分点，写进错题复述框。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>过关标准：</strong>不是“我看答案觉得懂”，而是你能在不看页面时讲出：候选键怎么求、BCNF 怎么拆、冲突边怎么画、Undo/Redo 怎么分、ER 图怎么起手。
+      </div>
+    </section>
+
+    <section class="card" id="rapid">
+      <h2>1. 10 秒分流：题干一出现，你先做什么</h2>
+      <table>
+        <thead><tr><th>题干出现</th><th>立刻归类</th><th>第一笔写什么</th><th>别急着做什么</th></tr></thead>
+        <tbody>
+          <tr><td>R(A,B,C,D,E), F={...}, 候选键</td><td>函数依赖</td><td>写“先找不在右部的属性，再求闭包”。</td><td>别凭感觉猜键。</td></tr>
+          <tr><td>最高范式、3NF、BCNF、分解</td><td>规范化</td><td>先列候选键/主属性，再逐条检查 X->Y。</td><td>别直接背“左边不是键就拆”，3NF 还要看右边是否主属性。</td></tr>
+          <tr><td>r1(A), w2(A), serializable</td><td>并发调度</td><td>写“不同事务、同一数据项、至少一个写才冲突”。</td><td>别把所有先后顺序都画边。</td></tr>
+          <tr><td>lock/unlock, 2PL</td><td>锁协议</td><td>找每个事务第一次 unlock。</td><td>别只数有没有 lock，要看释放后是否又加锁。</td></tr>
+          <tr><td>crash, log, checkpoint, commit</td><td>恢复</td><td>先按崩溃时提交状态分 Undo/Redo。</td><td>别一上来乱代旧值新值。</td></tr>
+          <tr><td>业务描述、医生患者、订单商品</td><td>ER 图</td><td>圈实体、属性、联系、基数。</td><td>别直接画框，容易漏 M:N 中间表。</td></tr>
+        </tbody>
+      </table>
+      <p class="formula">一句话总控：R/F 算闭包；范式查依赖；调度找冲突；锁题找首次释放；恢复分提交状态；ER 圈实体联系。</p>
+    </section>
+
+    <section class="card" id="templates">
+      <h2>2. 五套得分模板：考场照这个骨架写</h2>
+
+      <div class="strip-card">
+        <h3>模板 A：候选键与闭包</h3>
+        <div class="memory">
+          <div class="key">写作顺序</div>
+          <div class="body">1. 找右部没出现的属性，它们通常必须在候选键中。<br>2. 从这些属性出发补 1 个或几个属性，求 X+。<br>3. X+ 包含全部属性则是超码。<br>4. 删除任一属性都不能推出全部属性，才是候选键。</div>
+        </div>
+        <div class="formula">标准句：因为 A、E 不出现在任何依赖右部，不能由其他属性推出，所以候选键必须包含 A、E。计算 AEC+ / AED+ 均为 ABCDE，且满足最小性，因此候选键为 AEC、AED。</div>
+      </div>
+
+      <div class="strip-card">
+        <h3>模板 B：3NF / BCNF 判断</h3>
+        <div class="memory">
+          <div class="key">3NF</div>
+          <div class="body">对每条非平凡依赖 X -> A，若 X 是超码，或 A 是主属性，则不违反 3NF。主属性就是出现在某个候选键里的属性。</div>
+        </div>
+        <div class="memory">
+          <div class="key">BCNF</div>
+          <div class="body">对每条非平凡依赖 X -> Y，X 必须是超码。只要有一条左边不是超码，就不满足 BCNF。</div>
+        </div>
+        <div class="mark danger"><strong>最容易丢分：</strong>BCNF 比 3NF 严。3NF 可能因为右边是主属性而放过，BCNF 不放过。</div>
+      </div>
+
+      <div class="strip-card">
+        <h3>模板 C：BCNF 分解</h3>
+        <div class="formula">若 X -> Y 违反 BCNF：
+R1 = X ∪ Y
+R2 = R - (Y - X)
+然后分别检查 R1、R2，直到每个关系都满足 BCNF。</div>
+        <p>考场写法要带原因：不是“我把表拆成这样”，而是“因为某条依赖违反 BCNF，所以按这条依赖分解”。</p>
+      </div>
+
+      <div class="strip-card">
+        <h3>模板 D：冲突可串行化和 2PL</h3>
+        <div class="grid">
+          <div class="box">
+            <strong>冲突边</strong>
+            不同事务 + 同一数据项 + 至少一个写。谁先出现，就从谁指向后出现的事务。
+          </div>
+          <div class="box">
+            <strong>可串行化</strong>
+            画优先图。无环则冲突可串行化；有环则不可冲突串行化。
+          </div>
+          <div class="box">
+            <strong>2PL</strong>
+            第一次 unlock 后不能再 lock 新数据项。
+          </div>
+          <div class="box">
+            <strong>严格 2PL</strong>
+            写锁通常保持到 commit/abort，可避免级联回滚。
+          </div>
+        </div>
+      </div>
+
+      <div class="strip-card">
+        <h3>模板 E：恢复与 ER 图</h3>
+        <div class="grid">
+          <div class="box">
+            <strong>Undo/Redo</strong>
+            未提交事务 Undo，已提交但可能未落盘的事务 Redo 或确认。Undo 用旧值，Redo 用新值。
+          </div>
+          <div class="box">
+            <strong>ER 图</strong>
+            实体是要长期记录的对象；属性是对象信息；联系是对象之间的动作或关系；基数写 1:1、1:N、M:N。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="mistakes">
+      <h2>3. 常见错因：你考场最可能掉的分</h2>
+      <table>
+        <thead><tr><th>错法</th><th>为什么危险</th><th>修正动作</th></tr></thead>
+        <tbody>
+          <tr><td>候选键只写答案，不写闭包</td><td>老师看不出你会推导，步骤分没了。</td><td>至少写 2 个闭包：AEC+、AED+。</td></tr>
+          <tr><td>把“超码”和“候选键”混用</td><td>超码可多属性冗余，候选键必须最小。</td><td>先证明能推出全部，再证明去掉任一属性不行。</td></tr>
+          <tr><td>BCNF 分解没有说明由哪条依赖触发</td><td>像随便拆表，容易不给过程分。</td><td>每一步写“因 X->Y 且 X 非超码，故分解”。</td></tr>
+          <tr><td>冲突图把不同数据项也画边</td><td>图里会多出假环，结论错误。</td><td>逐项检查 A、B、C，不同数据项跳过。</td></tr>
+          <tr><td>2PL 只看锁是否成对释放</td><td>2PL 的核心不是成对，而是释放后不能再申请。</td><td>圈第一次 unlock，往右扫有没有 lock。</td></tr>
+          <tr><td>恢复题先算数值</td><td>没分 Undo/Redo，后面数值容易全错。</td><td>先列 Undo 集合和 Redo 集合。</td></tr>
+          <tr><td>ER 图漏联系属性和 M:N 中间关系</td><td>数据库设计题常靠这些拉开分差。</td><td>看到“记录、订单、选课、包含”优先考虑实体化联系。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="timed">
+      <h2>4. 限时题卡：先写，再展开</h2>
+      <p class="muted">点击开始只是给你压力感；真正重要的是先写骨架，别边看答案边觉得“我会”。</p>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 1：候选键和 BCNF 连环题</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>设 R(A,B,C,D,E)，F={AB->C, C->D, D->B, E->A}。求一个候选键，并判断 R 是否满足 BCNF。</p>
+        <textarea data-note="closure-q1" placeholder="先写：哪些属性不在依赖右边？从哪个组合开始求闭包？BCNF 逐条看什么？"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>右部出现 C、D、B、A，只有 E 不在右部，所以候选键必须包含 E。</span></div>
+          <div class="rubric"><span>3 分</span><span>E+：E->A，得到 EA；还不能推出 B/C/D。尝试 EB+：有 E、B、A；AB->C 得 C；C->D 得 D，所以 EB+=ABCDE。EC+：E->A，C->D，D->B，再有 AB->C，也能推出全部。ED+：E->A，D->B，AB->C，也能推出全部。候选键可写 EB、EC、ED。</span></div>
+          <div class="rubric"><span>2 分</span><span>BCNF 判断要逐条看左部是否超码。AB+ 可推出 C、D，但不能推出 E，所以 AB 不是超码，AB->C 违反 BCNF。C、D、E 的左部也分别检查；只要已有一条违反，就可判定不满足 BCNF。</span></div>
+          <div class="answer-block">
+            <p><strong>迁移提醒：</strong>这题故意不是 2023A 原题，训练你别背 AEC/AED。第一反应仍然是“找不在右部的属性 + 求闭包”。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 2：BCNF 分解写过程</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>设 R(A,B,C,D)，F={A->B, B->C, C->D}。给出一个 BCNF 分解。</p>
+        <textarea data-note="closure-q2" placeholder="先写：候选键是什么？哪条依赖违反 BCNF？按哪条先拆？"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>A+ = ABCD，所以 A 是候选键。B+ = BCD，不含 A；C+ = CD，不含 A/B；因此 B、C 不是超码。</span></div>
+          <div class="rubric"><span>3 分</span><span>B->C 违反 BCNF，C->D 也违反。也可以先用 A->B 分解，但 A 是原关系的键，A->B 不违反 BCNF，通常不作为必须拆的触发依赖。</span></div>
+          <div class="rubric"><span>3 分</span><span>稳妥分解路径：先按 C->D 得 R1(C,D)、R2(A,B,C)。R1 中 C 是键，满足 BCNF。R2 中仍有 A->B、B->C；A 是 R2 的键，但 B 不是超码，所以 B->C 违反 BCNF。再按 B->C 分解 R2，得到 R21(B,C)、R22(A,B)。最终可写 {CD, BC, AB}。</span></div>
+          <div class="answer-block">
+            <p><strong>高分提醒：</strong>BCNF 分解答案不唯一，但每一步必须能解释“当前关系里哪条依赖仍成立且违反 BCNF”。如果不确定投影依赖，考试先选择直观、能保留依赖的链式分解。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="6">
+        <h3>题 3：冲突优先图</h3>
+        <div class="timer"><button type="button" class="start">开始 6 分钟</button><span class="clock">06:00</span></div>
+        <p>调度 S：r1(X), w2(X), r2(Y), w3(Y), w1(Y), r3(X)。写冲突边并判断是否冲突可串行化。</p>
+        <textarea data-note="closure-q3" placeholder="按 X、Y 分别找冲突。谁先出现就从谁指向谁。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>3 分</span><span>X 上：r1(X) 与 w2(X) 冲突，T1->T2；w2(X) 与 r3(X) 冲突，T2->T3。</span></div>
+          <div class="rubric"><span>3 分</span><span>Y 上：r2(Y) 与 w3(Y) 冲突，T2->T3；r2(Y) 与 w1(Y) 冲突，T2->T1；w3(Y) 与 w1(Y) 冲突，T3->T1。</span></div>
+          <div class="rubric"><span>2 分</span><span>图中有 T1->T2->T1 的环，也有 T1->T2->T3->T1，因此不可冲突串行化。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="5">
+        <h3>题 4：2PL 和严格 2PL</h3>
+        <div class="timer"><button type="button" class="start">开始 5 分钟</button><span class="clock">05:00</span></div>
+        <p>T1: lock-X(A), write(A), lock-S(B), read(B), unlock(B), unlock(A), commit。判断是否满足 2PL 与严格 2PL。</p>
+        <textarea data-note="closure-q4" placeholder="先圈第一次 unlock。之后还有没有 lock？写锁 A 是否持有到 commit？"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>3 分</span><span>第一次释放是 unlock(B)，之后没有再申请新锁，所以满足 2PL。</span></div>
+          <div class="rubric"><span>3 分</span><span>写锁 A 在 commit 前被 unlock(A) 释放，若严格 2PL 要求写锁保持到 commit/abort，则不满足严格 2PL。</span></div>
+          <div class="answer-block">
+            <p><strong>关键区别：</strong>2PL 看“释放后是否又加锁”；严格 2PL 看“写锁是否持有到事务结束”。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="6">
+        <h3>题 5：恢复分类</h3>
+        <div class="timer"><button type="button" class="start">开始 6 分钟</button><span class="clock">06:00</span></div>
+        <p>日志顺序：&lt;T1 start&gt;, &lt;T1, A, 10, 20&gt;, &lt;T2 start&gt;, &lt;T2, B, 5, 8&gt;, &lt;T1 commit&gt;, checkpoint, &lt;T3 start&gt;, &lt;T3, C, 7, 9&gt;, crash。崩溃恢复时 Undo/Redo 怎么分？</p>
+        <textarea data-note="closure-q5" placeholder="先写崩溃时哪些事务已 commit，哪些未 commit。再写旧值/新值怎么用。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>3 分</span><span>T1 已 commit，属于 Redo 或确认集合；T2 没有 commit，若检查点时仍未提交且修改可能存在，需要 Undo；T3 start 后未 commit，需要 Undo。</span></div>
+          <div class="rubric"><span>2 分</span><span>Undo 使用旧值：T2 把 B 恢复为 5，T3 把 C 恢复为 7。</span></div>
+          <div class="rubric"><span>2 分</span><span>Redo 使用新值：T1 把 A 确认为 20。若题目说明 checkpoint 已把 T1 持久化，可写 Redo 或确认无需操作，但必须说明原因。</span></div>
+          <div class="answer-block">
+            <p><strong>考试稳妥写法：</strong>先列集合，再谈值。集合写错，后面数值通常全崩。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 6：ER 图到关系模式</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>图书馆系统：读者可借阅多本图书，每本图书可被不同读者多次借阅。每次借阅记录借阅日期、归还日期。请给出实体、联系、基数，并写出关系模式起稿。</p>
+        <textarea data-note="closure-q6" placeholder="先圈实体：读者、图书、借阅记录。再判断 M:N 是否要中间关系。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>实体：读者、图书。借阅可作为联系，也可实体化为借阅记录，因为它有借阅日期、归还日期等属性。</span></div>
+          <div class="rubric"><span>2 分</span><span>基数：读者与图书是 M:N；一次借阅记录对应一个读者和一本图书。</span></div>
+          <div class="rubric"><span>3 分</span><span>关系模式：读者(读者号, 姓名, ...)，图书(图书号, 书名, ...)，借阅(读者号, 图书号, 借阅日期, 归还日期, ...)。若同一读者可多次借同一本书，借阅主键应包含借阅日期或单独借阅编号。</span></div>
+          <div class="answer-block">
+            <p><strong>高分提醒：</strong>只写“读者-图书 M:N”还不够。联系有自己的属性时，必须把联系转成关系表。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="oral">
+      <h2>5. 闭眼复述：这才是真的会</h2>
+      <p>下面这 5 句话，如果你能不看页面说出来，数据库 Day3 后半就基本进入可调用状态。</p>
+      <div class="mini-board">
+        <div>候选键：右部缺谁</div>
+        <div>BCNF：左边超码</div>
+        <div>调度：冲突三条件</div>
+        <div>恢复：提交状态</div>
+      </div>
+      <textarea data-note="oral" placeholder="闭眼写：1. 候选键四步；2. BCNF 判断与分解；3. 冲突图；4. 2PL/严格 2PL；5. Undo/Redo；6. ER 转关系。"></textarea>
+      <details>
+        <summary>复述标准答案</summary>
+        <div class="answer-block">
+          <p>候选键：先找不在依赖右部的属性，它们通常必须保留；再补属性求闭包，能推出全部是超码，删任一属性不行才是候选键。</p>
+          <p>BCNF：每条非平凡依赖 X->Y 都要求 X 是超码；若违反，用 R1=X∪Y、R2=R-(Y-X) 分解，并继续检查。</p>
+          <p>冲突图：只有不同事务、同一数据项、至少一个写才冲突；先出现的事务指向后出现的事务；图无环才冲突可串行化。</p>
+          <p>2PL：第一次 unlock 后不能再申请新锁；严格 2PL 通常要求写锁持有到 commit/abort。</p>
+          <p>恢复：崩溃时未提交事务 Undo，用旧值；已提交事务 Redo 或确认，用新值。</p>
+          <p>ER：实体是要记录的对象，联系是对象之间的关系，联系有属性或 M:N 时通常转成独立关系表。</p>
+        </div>
+      </details>
+      <p><a href="./day4_database_full_exam_closure.html">进入数据库 Day4 全卷闭环</a> · <a href="./day3_database_fd_tx_er.html">回 Day3 深学讲义</a> · <a href="./index.html">回期末陪跑学习舱</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-db-day3-closure-notes";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const id = area.dataset.note;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+
+    const timers = new Map();
+    document.querySelectorAll(".drill").forEach((card, index) => {
+      const button = card.querySelector(".start");
+      const clock = card.querySelector(".clock");
+      const minutes = Number(card.dataset.minutes || "5");
+      let total = minutes * 60;
+      const render = () => {
+        const m = String(Math.floor(total / 60)).padStart(2, "0");
+        const s = String(total % 60).padStart(2, "0");
+        clock.textContent = `${m}:${s}`;
+      };
+      button.addEventListener("click", () => {
+        if (timers.has(index)) {
+          clearInterval(timers.get(index));
+          timers.delete(index);
+          total = minutes * 60;
+          render();
+          button.textContent = `开始 ${minutes} 分钟`;
+          return;
+        }
+        button.textContent = "重置计时";
+        render();
+        const id = setInterval(() => {
+          total -= 1;
+          if (total <= 0) {
+            total = 0;
+            render();
+            clearInterval(id);
+            timers.delete(index);
+            button.textContent = `重新开始 ${minutes} 分钟`;
+            clock.textContent = "到点";
+            return;
+          }
+          render();
+        }, 1000);
+        timers.set(index, id);
+      });
+      render();
+    });
+  </script>
+</body>
+</html>

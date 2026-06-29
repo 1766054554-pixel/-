@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Starlight Study Island icon">
+  <defs>
+    <linearGradient id="bg" x1="64" y1="64" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe4ef"/>
+      <stop offset=".46" stop-color="#e7f7ff"/>
+      <stop offset="1" stop-color="#fff0c8"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="96" y1="316" x2="416" y2="440" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9fdacb"/>
+      <stop offset="1" stop-color="#9bc9ec"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="398" cy="112" r="20" fill="#fff" opacity=".88"/>
+  <circle cx="118" cy="148" r="12" fill="#fff" opacity=".82"/>
+  <path d="M82 386c56-42 116-54 180-36 48 14 92 11 168-30v102H82z" fill="url(#sea)" opacity=".92"/>
+  <path d="M256 88l38 76 84 12-61 59 14 84-75-40-75 40 14-84-61-59 84-12z" fill="#ffd76f" stroke="#6b5a92" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M177 358c46-38 112-42 160-8" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" opacity=".72"/>
+  <circle cx="200" cy="282" r="18" fill="#ffc2d8"/>
+  <circle cx="314" cy="282" r="18" fill="#a9dfd2"/>
+</svg>

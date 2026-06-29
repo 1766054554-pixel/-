@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>课程包生成器 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛课程包生成器：为开源贡献者生成课程清单和资源清单数据片段。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .90);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(246, 185, 207, .40), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 76% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.94) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .20) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.74);
+      color: #4f4777;
+      font-weight: 850;
+    }
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks,
+    .actions,
+    .tag-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .navlinks { justify-content: flex-end; }
+    .btn,
+    .navlinks a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+    }
+    .btn:hover,
+    .navlinks a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .field-card,
+    .metric,
+    .output-card {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .hero-main {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 90% 12%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+    .metric {
+      padding: 18px;
+      display: grid;
+      gap: 4px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .metric strong {
+      font-size: 34px;
+      line-height: 1.1;
+      color: #2f5c84;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 10ch;
+      margin: 18px 0 10px;
+      font-size: clamp(50px, 7vw, 88px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 76ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions { margin-top: 22px; }
+    section { padding: 22px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-head p { max-width: 72ch; }
+    .builder-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 430px;
+      gap: 16px;
+      align-items: start;
+    }
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .field-card {
+      padding: 16px;
+    }
+    .field-card.full { grid-column: 1 / -1; }
+    label {
+      display: grid;
+      gap: 6px;
+      color: #56657e;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    input,
+    textarea,
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.76);
+      color: var(--ink);
+      outline: none;
+    }
+    textarea {
+      min-height: 104px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(126, 101, 176, .48);
+      box-shadow: 0 0 0 4px rgba(201, 185, 244, .24);
+    }
+    .resource-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+      margin-top: 12px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      border-radius: 8px;
+      background: rgba(255,255,255,.54);
+    }
+    .resource-row label:nth-child(3),
+    .resource-row label:nth-child(4),
+    .resource-row label:nth-child(5) {
+      grid-column: 1 / -1;
+    }
+    .output-stack {
+      position: sticky;
+      top: 86px;
+      display: grid;
+      gap: 12px;
+    }
+    .output-card { padding: 16px; }
+    pre {
+      max-height: 280px;
+      overflow: auto;
+      margin: 10px 0 0;
+      padding: 12px;
+      border: 1px solid rgba(104, 122, 154, .20);
+      border-radius: 8px;
+      background: rgba(255,255,255,.78);
+      color: #30384d;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      background: rgba(255,255,255,.70);
+      color: #56657e;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .checklist {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+    }
+    .checklist li {
+      padding-left: 4px;
+    }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 30;
+      max-width: min(420px, calc(100% - 36px));
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.82);
+      background: rgba(255,255,255,.92);
+      color: #493d6c;
+      box-shadow: var(--shadow);
+      font-weight: 850;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .footer {
+      margin-top: 32px;
+      padding: 28px 0 38px;
+      color: var(--muted);
+      border-top: 1px solid rgba(104, 122, 154, .18);
+    }
+    @media (max-width: 980px) {
+      .hero,
+      .builder-grid,
+      .field-grid,
+      .resource-row {
+        grid-template-columns: 1fr;
+      }
+      .field-card.full,
+      .resource-row label:nth-child(n) { grid-column: auto; }
+      .output-stack { position: static; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1180px); }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .navlinks { justify-content: flex-start; }
+      h1 { font-size: 46px; }
+      .actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="维护导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M32 8l5.6 13.6L52 24.4 40.8 34l3.6 14.4L32 40.8 19.6 48.4 23.2 34 12 24.4l14.4-2.8L32 8z" fill="#f7df8b" stroke="#6d618c" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M18 50c8 6 20 6 28 0" stroke="#9fdacb" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        星光学习岛
+      </a>
+      <div class="navlinks">
+        <a href="./release_status.html">发布检查台</a>
+        <a href="./quality_board.html">质量看板</a>
+        <a href="./docs/course_pack_spec.md">课程包规范</a>
+        <a href="./CONTRIBUTING.md">贡献指南</a>
+        <a href="./index.html">学生首页</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <article class="panel hero-main">
+        <div>
+          <span class="eyebrow">Course Pack Builder</span>
+          <h1>课程包生成器</h1>
+          <p class="lead">
+            给开源维护者用的小工具：按表单整理一门新课，自动生成<span class="key">课程岛配置</span>和<span class="key">资源库配置</span>片段。
+            它不会直接修改文件，先生成、再人工校对、最后提交。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="#builder">开始填写</a>
+            <button class="btn mint" type="button" id="loadExample">填入示例</button>
+            <button class="btn" type="button" id="clearDraft">清空草稿</button>
+          </div>
+        </div>
+        <p class="lead">目标不是让贡献者随便堆页面，而是把“考试形态、主入口、必做资源、补洞资源”先结构化。</p>
+      </article>
+      <aside class="hero-side">
+        <article class="metric">
+          <span>生成片段</span>
+          <strong>2</strong>
+          <p>一段放进课程清单，一段放进资源库。</p>
+        </article>
+        <article class="metric">
+          <span>资源行</span>
+          <strong>3</strong>
+          <p>默认覆盖主入口、补洞和收口。</p>
+        </article>
+        <article class="metric">
+          <span>草稿保存</span>
+          <strong>本机</strong>
+          <p>写入 localStorage，可由存档室导出。</p>
+        </article>
+      </aside>
+    </section>
+
+    <section class="wrap" id="builder">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">配置表单</span>
+          <h2>先把课程讲清楚。</h2>
+        </div>
+        <p>字段对应 `data/starlight_manifest.js` 和 `data/resource_catalog.js`。生成后仍然需要人工检查题目质量和资料来源。</p>
+      </div>
+
+      <div class="builder-grid">
+        <form class="field-grid" id="builderForm">
+          <section class="field-card">
+            <label>课程 ID
+              <input name="courseId" placeholder="computer-network" required>
+            </label>
+          </section>
+          <section class="field-card">
+            <label>课程名称
+              <input name="title" placeholder="计算机网络" required>
+            </label>
+          </section>
+          <section class="field-card">
+            <label>状态短语
+              <input name="status" placeholder="协议 / 子网 / 路由">
+            </label>
+          </section>
+          <section class="field-card">
+            <label>主入口按钮
+              <input name="button" placeholder="做网络综合卷">
+            </label>
+          </section>
+          <section class="field-card">
+            <label>主入口链接
+              <input name="href" placeholder="./network_final_interactive.html">
+            </label>
+          </section>
+          <section class="field-card">
+            <label>图标
+              <select name="icon">
+                <option value="paper">paper</option>
+                <option value="db">db</option>
+                <option value="ai">ai</option>
+                <option value="se">se</option>
+                <option value="ladder">ladder</option>
+                <option value="os">os</option>
+                <option value="book">book</option>
+                <option value="rocket">rocket</option>
+              </select>
+            </label>
+          </section>
+          <section class="field-card full">
+            <label>课程描述
+              <textarea name="description" placeholder="用一句话说明这门课怎么复习、核心资源是什么。"></textarea>
+            </label>
+          </section>
+          <section class="field-card full">
+            <label>考试形态
+              <textarea name="examMode" placeholder="闭卷理工题：选择、计算、简答和综合题。"></textarea>
+            </label>
+          </section>
+          <section class="field-card">
+            <label>学习动作
+              <textarea name="studyActions" placeholder="先做真题卷&#10;错题回到公式/定义&#10;最后看速查"></textarea>
+            </label>
+          </section>
+          <section class="field-card">
+            <label>资源标签
+              <textarea name="resourceTags" placeholder="真题&#10;公式&#10;变式训练&#10;速查"></textarea>
+            </label>
+          </section>
+          <section class="field-card full">
+            <h3>资源库条目</h3>
+            <p>建议至少 3 个：一个必做主入口、一个补洞训练、一个考前收口或错题回炉。</p>
+            <div id="resourceRows"></div>
+          </section>
+        </form>
+
+        <aside class="output-stack">
+          <section class="output-card">
+            <div class="tag-row">
+              <span class="pill">输出 1</span>
+              <button class="btn" type="button" data-copy="courseOutput">复制课程片段</button>
+            </div>
+            <h3>课程清单片段</h3>
+            <p>放入 `data/starlight_manifest.js` 的 `courses` 数组。</p>
+            <pre id="courseOutput"></pre>
+          </section>
+          <section class="output-card">
+            <div class="tag-row">
+              <span class="pill">输出 2</span>
+              <button class="btn" type="button" data-copy="resourceOutput">复制资源片段</button>
+            </div>
+            <h3>资源库片段</h3>
+            <p>放入 `data/resource_catalog.js`。</p>
+            <pre id="resourceOutput"></pre>
+          </section>
+          <section class="output-card">
+            <h3>提交前检查</h3>
+            <ul class="checklist" id="qualityChecklist"></ul>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p><strong>课程包生成器</strong> 是维护侧工具。学生正式学习仍从 <a href="./start_here.html">新手上岛向导</a>、<a href="./practice_lab.html">真题训练台</a> 和 <a href="./dashboard.html">继续学习仪表盘</a> 进入。</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const DRAFT_KEY = "starlight-course-pack-draft-v1";
+      const resourceDefaults = [
+        { type: "交互卷", stage: "题型校准", priority: "必做", suffix: "paper", title: "交互综合卷", tags: "真题,交互,题型" },
+        { type: "专项训练", stage: "补洞", priority: "推荐", suffix: "drill", title: "专项补洞训练", tags: "补洞,变式,题眼" },
+        { type: "速查包", stage: "考前收口", priority: "推荐", suffix: "sprint", title: "考前收口速查", tags: "速查,回炉,考前" }
+      ];
+      const example = {
+        courseId: "computer-network",
+        title: "计算机网络",
+        status: "协议 / 子网 / 路由",
+        button: "做网络综合卷",
+        href: "./network_final_interactive.html",
+        icon: "paper",
+        description: "从协议分层、子网划分、路由算法到典型计算题，保留综合卷和补洞训练。",
+        examMode: "闭卷理工题：选择、填空、计算、简答和综合题。",
+        studyActions: "先做综合卷\n错题回到协议/子网/路由\n最后看考前速查",
+        resourceTags: "综合卷\n子网划分\n路由算法\n协议分层",
+        resources: [
+          { type: "交互卷", stage: "题型校准", priority: "必做", title: "计算机网络综合交互卷", href: "./network_final_interactive.html", description: "用完整卷面校准协议、子网、路由和综合题的考试样子。", tags: "综合卷,协议,子网" },
+          { type: "专项训练", stage: "补洞", priority: "推荐", title: "子网与路由专项训练", href: "./network_subnet_route_drill.html", description: "专门练子网划分、最长前缀匹配和路由表计算。", tags: "子网,路由,计算" },
+          { type: "速查包", stage: "考前收口", priority: "推荐", title: "网络考前速查", href: "./network_final_sprint.html", description: "把协议层次、常见公式和易错点压成考前回看清单。", tags: "速查,公式,易错" }
+        ]
+      };
+
+      const $ = selector => document.querySelector(selector);
+
+      function escapeHtml(text) {
+        return String(text ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function lines(text) {
+        return String(text || "")
+          .split(/\n|,/)
+          .map(item => item.trim())
+          .filter(Boolean);
+      }
+
+      function slug(text) {
+        return String(text || "course")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9-]+/g, "-")
+          .replace(/^-+|-+$/g, "") || "course";
+      }
+
+      function renderResourceRows() {
+        $("#resourceRows").innerHTML = resourceDefaults.map((item, index) => `
+          <div class="resource-row" data-resource-row="${index}">
+            <label>类型
+              <select name="resourceType${index}">
+                ${["交互卷", "真题卷", "真题包", "深学讲义", "专项训练", "变式题", "闸门题", "背诵舱", "开卷包", "闪卡", "速查包", "错题本"].map(type => `<option value="${type}" ${type === item.type ? "selected" : ""}>${type}</option>`).join("")}
+              </select>
+            </label>
+            <label>优先级
+              <select name="resourcePriority${index}">
+                ${["必做", "推荐"].map(priority => `<option value="${priority}" ${priority === item.priority ? "selected" : ""}>${priority}</option>`).join("")}
+              </select>
+            </label>
+            <label>阶段
+              <input name="resourceStage${index}" value="${escapeHtml(item.stage)}">
+            </label>
+            <label>标题
+              <input name="resourceTitle${index}" placeholder="${escapeHtml(item.title)}">
+            </label>
+            <label>链接
+              <input name="resourceHref${index}" placeholder="./${escapeHtml(item.suffix)}.html">
+            </label>
+            <label>描述
+              <textarea name="resourceDescription${index}" placeholder="说明这个资源解决什么考试动作。"></textarea>
+            </label>
+            <label>标签，用逗号分隔
+              <input name="resourceTags${index}" value="${escapeHtml(item.tags)}">
+            </label>
+          </div>
+        `).join("");
+      }
+
+      function formData() {
+        const form = new FormData($("#builderForm"));
+        const data = Object.fromEntries(form.entries());
+        data.courseIdRaw = String(data.courseId || "").trim();
+        data.courseId = slug(data.courseId);
+        data.resources = resourceDefaults.map((_, index) => ({
+          type: data[`resourceType${index}`],
+          stage: data[`resourceStage${index}`],
+          priority: data[`resourcePriority${index}`],
+          title: data[`resourceTitle${index}`],
+          href: data[`resourceHref${index}`],
+          description: data[`resourceDescription${index}`],
+          tags: data[`resourceTags${index}`]
+        }));
+        return data;
+      }
+
+      function courseSnippet(data) {
+        const title = data.title || "新课程";
+        const href = data.href || data.resources[0]?.href || `./${data.courseId}_interactive.html`;
+        const actions = lines(data.studyActions).slice(0, 3);
+        const tags = lines(data.resourceTags).slice(0, 4);
+        const resources = data.resources
+          .filter(item => item.title && item.href)
+          .slice(1, 4)
+          .map(item => ({ label: item.title.replace(title, "").trim() || item.type, href: item.href }));
+        return JSON.stringify({
+          id: data.courseId || "new-course",
+          title,
+          status: data.status || "待校准",
+          description: data.description || "请补充这门课的复习定位和核心资源。",
+          href,
+          button: data.button || "打开主入口",
+          icon: data.icon || "paper",
+          style: "",
+          examMode: data.examMode || "请补充考试形态。",
+          studyActions: actions.length ? actions : ["先做主入口", "错题回到补洞资源", "最后看收口资源"],
+          resourceTags: tags.length ? tags : ["真题", "补洞", "速查"],
+          secondary: resources
+        }, null, 2);
+      }
+
+      function resourceSnippet(data) {
+        const courseId = data.courseId || "new-course";
+        const rows = data.resources
+          .filter(item => item.title || item.href || item.description)
+          .map((item, index) => ({
+            id: `${courseId}-${index + 1}`,
+            courseId,
+            type: item.type || "专项训练",
+            stage: item.stage || "补洞",
+            priority: item.priority || "推荐",
+            title: item.title || `${data.title || "新课程"}资源 ${index + 1}`,
+            description: item.description || "请补充资源解决的考试动作。",
+            href: item.href || `./${courseId}_${index + 1}.html`,
+            tags: lines(item.tags).slice(0, 5)
+          }));
+        return JSON.stringify(rows, null, 2);
+      }
+
+      function checklist(data) {
+        const rows = data.resources.filter(item => item.title && item.href);
+        const hasRequired = rows.some(item => item.priority === "必做");
+        const items = [
+          [Boolean(data.courseIdRaw && data.title), "课程 ID 和课程名称已填写"],
+          [Boolean(data.examMode && data.examMode.length >= 12), "考试形态写清楚：闭卷/开卷、题型、核心动作"],
+          [Boolean(lines(data.studyActions).length >= 3), "至少 3 个学习动作"],
+          [Boolean(rows.length >= 3), "至少 3 个资源入口"],
+          [hasRequired, "至少 1 个必做资源"],
+          [rows.every(item => item.description && item.description.length >= 18), "每个资源都有说明它训练什么能力"],
+          [Boolean(lines(data.resourceTags).length >= 3), "至少 3 个资源标签"],
+          [false, "人工校对资料来源，并更新 docs/source_notes.md"]
+        ];
+        $("#qualityChecklist").innerHTML = items.map(([ok, text]) => `<li>${ok ? "已满足" : "待补"}：${escapeHtml(text)}</li>`).join("");
+      }
+
+      function saveDraft(data) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+      }
+
+      function fill(data) {
+        const form = $("#builderForm");
+        for (const [key, value] of Object.entries(data || {})) {
+          if (key === "resources") continue;
+          const field = form.elements[key];
+          if (field) field.value = value;
+        }
+        (data.resources || []).forEach((item, index) => {
+          for (const [key, value] of Object.entries(item)) {
+            const field = form.elements[`resource${key[0].toUpperCase()}${key.slice(1)}${index}`];
+            if (field) field.value = value;
+          }
+        });
+      }
+
+      function renderOutputs() {
+        const data = formData();
+        saveDraft(data);
+        $("#courseOutput").textContent = courseSnippet(data);
+        $("#resourceOutput").textContent = resourceSnippet(data);
+        checklist(data);
+      }
+
+      function restore() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+          if (saved) fill(saved);
+        } catch {
+          return;
+        }
+      }
+
+      function toast(message) {
+        const node = $("#toast");
+        node.textContent = message;
+        node.classList.add("show");
+        clearTimeout(node._timer);
+        node._timer = setTimeout(() => node.classList.remove("show"), 2200);
+      }
+
+      renderResourceRows();
+      restore();
+      renderOutputs();
+
+      $("#builderForm").addEventListener("input", renderOutputs);
+      $("#builderForm").addEventListener("change", renderOutputs);
+      $("#loadExample").addEventListener("click", () => {
+        fill(example);
+        renderOutputs();
+        toast("示例已填入，可以直接改成你的课程。");
+      });
+      $("#clearDraft").addEventListener("click", () => {
+        localStorage.removeItem(DRAFT_KEY);
+        $("#builderForm").reset();
+        renderResourceRows();
+        renderOutputs();
+        toast("草稿已清空。");
+      });
+      document.addEventListener("click", async event => {
+        const button = event.target.closest("[data-copy]");
+        if (!button) return;
+        const text = document.getElementById(button.dataset.copy)?.textContent || "";
+        try {
+          await navigator.clipboard.writeText(text);
+          toast("已复制到剪贴板。");
+        } catch {
+          toast("复制失败，可以手动选中代码。");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

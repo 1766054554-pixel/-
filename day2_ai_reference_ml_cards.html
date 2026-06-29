@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 参考习题机器学习题卡</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .question { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .options {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .options li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px 12px;
+    }
+    .options[data-answer] li {
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    }
+    .options[data-answer] li:hover {
+      border-color: #9bc4dd;
+      background: #f0f8fc;
+      transform: translateY(-1px);
+    }
+    .options[data-answer] li.correct {
+      border-color: #9fd0b2;
+      background: #eef9f3;
+      color: var(--green);
+      font-weight: 800;
+    }
+    .options[data-answer] li.wrong {
+      border-color: #e1aaa2;
+      background: #fff3f1;
+      color: var(--red);
+      font-weight: 800;
+    }
+    .choice-feedback {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #f7fbfe;
+      padding: 9px 11px;
+      margin: 8px 0;
+      color: var(--muted);
+    }
+    textarea {
+      width: 100%;
+      min-height: 108px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .focus {
+      background: linear-gradient(180deg, rgba(255, 244, 189, 0) 58%, rgba(255, 231, 129, .72) 58%);
+      font-weight: 760;
+      padding: 0 2px;
+    }
+    .micro-example {
+      border: 1px solid #cfe1ec;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+    .micro-example strong { color: var(--blue); }
+    .coach-note {
+      border: 1px solid #d8e8dc;
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: #f3faf6;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+    .coach-note strong { color: var(--green); }
+    .quest-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .quest-map div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      min-width: 0;
+    }
+    .quest-map strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .stamp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stamp-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px;
+    }
+    .stamp-item.done {
+      border-color: #a7d8bf;
+      background: #f1faf5;
+    }
+    .stamp-item input { margin-top: 5px; }
+    .stamp-item strong { display: block; color: var(--blue); }
+    .stamp-count {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px 12px;
+      margin-top: 12px;
+      color: var(--blue);
+      font-weight: 760;
+    }
+    .code {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      margin: 10px 0;
+      line-height: 1.62;
+    }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 560px; height: auto; display: block; }
+    .source-img {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 10px;
+    }
+    .source-img img { display: block; width: 100%; height: auto; }
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+    }
+    .small { font-size: 13px; color: var(--muted); }
+    @media (max-width: 860px) {
+      .grid, .grid.three, .quest-map, .stamp-grid { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+      .diagram svg { min-width: 500px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>AI 参考习题机器学习题卡</h1>
+      <p class="muted">对应《人工智能参考习题》扫描页第 3-5 页，也就是习题 4 的机器学习部分。这里不直接刷图：先补术语，再逐题写题眼、答案和理由，最后看解析。源题选项保持原顺序，用来贴近资料；训练时请先写理由，别猜位置。</p>
+      <div class="strip">
+        <span class="pill hot">参考习题第 3-5 页</span>
+        <span class="pill info">机器学习基础</span>
+        <span class="pill good">选择 + 看图 + 简答</span>
+        <span class="pill warn">先补概念再做题</span>
+      </div>
+      <div class="toc">
+        <a href="#prep">0. 术语地基</a>
+        <a href="#gameplan">0.5 闯关地图</a>
+        <a href="#choice">1. 选择题 1-7</a>
+        <a href="#svm">2. SVM 图题</a>
+        <a href="#l2">3. L2 正则化</a>
+        <a href="#tree">4. 决策树表格题</a>
+        <a href="#boost">5. AdaBoost 手算</a>
+        <a href="#stamp">6. 通关盖章</a>
+        <a href="#source">7. 原页核对</a>
+      </div>
+      <div class="mark warnbox">
+        <strong>如果一上来觉得名词太散：</strong>先看 <a href="./day2_ai_model_storyline.html">Day2 AI 模型故事线</a>。这张题卡负责逐题训练参考习题，不重复长讲解；故事线负责把 LDA、熵、SVM、AdaBoost 和 BP 放进同一条考试路线。
+      </div>
+    </section>
+
+    <section class="card" id="gameplan">
+      <h2>0.5 这张题卡怎么玩：把自己当成考场里的“题眼侦察员”</h2>
+      <p>机器学习这几页最容易让人心烦：LDA、SVM、熵、正则化、决策树、AdaBoost 一起出现，看着像一桌没切开的知识大餐。别急，我们把它切成四口吃。每一口都按<span class="focus">人话解释 -> 题眼 -> 小例题 -> 变式</span>走，你不是在背名词，你是在训练考场反射。</p>
+      <div class="quest-map">
+        <div>
+          <strong>第 1 关：小题翻译官</strong>
+          选择题先不看选项位置。看到 LDA 就翻译成“类间远、类内近”；看到熵就翻译成“混乱程度”；看到监督学习就找“标签”。
+        </div>
+        <div>
+          <strong>第 2 关：边界画线师</strong>
+          SVM 图题先找两类点中最靠近边界的样本。支持向量不是所有点，而是撑住最大间隔的关键点。
+        </div>
+        <div>
+          <strong>第 3 关：正则刹车手</strong>
+          L2 正则化不是神秘项，它是在告诉模型：参数别长太野。惩罚必须作用在 w 上，lambda 要大于 0。
+        </div>
+        <div>
+          <strong>第 4 关：表格推理师</strong>
+          决策树看熵怎么下降；AdaBoost 看错分样本的权重怎么变。一个问“怎么分得更纯”，一个问“下一轮更重视谁”。
+        </div>
+      </div>
+      <div class="coach-note">
+        <strong>老师在旁边提醒你：</strong>你现在不需要把每个算法讲成论文。期末要的是：看到题干能说“这题在问什么”，能写第一步，能解释为什么不是相邻概念。能做到这三件事，很多题就从“陌生”变成“有路可走”了。
+      </div>
+    </section>
+
+    <section class="card" id="prep">
+      <h2>0. 做题前必须先有的术语地基</h2>
+      <p>如果你对这些词没感觉，做选择题就会变成“看哪个眼熟”。先把下面这张表读一遍，再做题。</p>
+      <table>
+        <thead><tr><th>词</th><th>从零解释</th><th>考试题眼</th></tr></thead>
+        <tbody>
+          <tr><td>线性判别分析 LDA</td><td>想找一条投影方向，让不同类别投影后尽量分开，同一类别投影后尽量聚拢。</td><td>类间方差大、类内方差小、最大化二者比值。</td></tr>
+          <tr><td>熵 entropy</td><td>衡量混乱程度或不确定性。一个集合越杂，熵越高；越纯，熵越低。</td><td>决策树、信息增益、纯度。</td></tr>
+          <tr><td>样本空间组合数</td><td>如果属性取值彼此独立地组合，所有可能样本数就是各属性取值数相乘，再乘类别标签可能数。</td><td>“所有可能样本”“每个属性有几种取值”。</td></tr>
+          <tr><td>SVM</td><td>支持向量机是判别模型，核心目标是找最大间隔分类边界。离边界最近的点叫支持向量。</td><td>判别模型、最大化分类间隔、支持向量。</td></tr>
+          <tr><td>监督学习</td><td>训练数据带标准答案标签。分类和回归通常是监督学习；聚类通常不是。</td><td>标签、分类、回归、决策树、朴素贝叶斯。</td></tr>
+          <tr><td>AdaBoost</td><td>一轮轮训练弱分类器。上一轮被错分的样本，下一轮权重会变大，让模型更关注它们。</td><td>样本权重、弱分类器、错分样本权重增加。</td></tr>
+          <tr><td>信息增益</td><td>决策树选属性时，看这个属性能把数据变得更纯多少。熵下降越多，信息增益越大。</td><td>根结点、选择第一个属性、熵、纯度。</td></tr>
+          <tr><td>泛化与过拟合</td><td>训练误差低不等于考试好。模型太复杂时训练误差继续下降，但测试误差可能上升。</td><td>训练误差、测试误差、模型复杂度、数据量。</td></tr>
+          <tr><td>L2 正则化</td><td>在损失函数里惩罚权重大小，限制模型不要把参数调得太夸张，从而缓解过拟合。</td><td><code>lambda w^T w</code>、lambda 大于 0、惩罚权重。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>今天的做题规矩：</strong>每道选择题先写“题眼 + 排除理由”。源题有些答案位置会重复，这正好训练你不要靠选项位置猜。
+      </div>
+      <div class="micro-example">
+        <strong>先看一个完整例子，再做下面的题：</strong>
+        题干说“划分后 high entropy”，不要先找哪个选项眼熟。第一步把 high entropy 翻译成<span class="focus">“划分后还很混，类别不纯”</span>；第二步回到决策树目标：好属性应该让熵下降、纯度上升；第三步排除“纯度高/有用”这类反向说法。所以这类题不是背 entropy 的英文，而是练“混乱程度 -> 决策树选属性”的反应链。
+      </div>
+      <div class="micro-example">
+        <strong>AdaBoost 题的零基础入口：</strong>
+        一看到“第 t 轮错分样本的惩罚增加”，先别想复杂公式。把 AdaBoost 当成错题本：<span class="focus">上一轮被弱分类器分错的样本，下一轮权重变大</span>，因为系统希望新弱分类器重点照顾这些难样本。真正手算时再进入“加权错误率 -> 分类器权重 -> 样本权重更新 -> 加权投票”四步。
+      </div>
+    </section>
+
+    <section class="card" id="choice">
+      <h2>1. 选择题 1-7：先做小题，把概念打牢</h2>
+
+      <article class="question">
+        <h3>题 1：LDA 的目标</h3>
+        <p>判断：线性区别分析是在最大化类间方差和类内方差的比值。</p>
+        <ul class="options" data-answer="A"><li>A. 正确</li><li>B. 错误</li></ul>
+        <textarea data-note="ml-q1" placeholder="先写：LDA 想让类间怎样、类内怎样？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：A。</strong></p>
+            <p><strong>题眼：</strong>LDA 的核心是“类间尽量分开，类内尽量集中”。数学上常写成最大化类间散度和类内散度的比值。</p>
+            <p><strong>从零理解：</strong>如果把所有样本投影到一条线上，好分类的投影应该是：同类点挤在一起，不同类点隔得远。类间方差大、类内方差小，就是这个直觉的公式化。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 2：决策树里的高熵</h3>
+        <p>在决策树建立过程中，使用一个属性对某个结点对应的数据集合划分后，结果具有高信息熵 high entropy。对于结果的描述，最贴切的是？</p>
+        <ul class="options" data-answer="B">
+          <li>A. 纯度高</li>
+          <li>B. 纯度低</li>
+          <li>C. 有用</li>
+          <li>D. 无用</li>
+          <li>E. 以上描述都不贴切</li>
+        </ul>
+        <textarea data-note="ml-q2" placeholder="先写：熵高意味着更整齐还是更混乱？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>题眼：</strong>熵衡量不确定性。高熵就是类别混杂，不纯；低熵才是纯度高。</p>
+            <p><strong>为什么不是 D：</strong>“高熵”说明这次划分结果还不纯，但不能直接说这个属性完全无用。考试问“最贴切描述”，纯度低比无用更准确。</p>
+            <p><strong>迁移：</strong>决策树选择属性时，通常希望划分后熵下降多，也就是信息增益大。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 3：所有可能样本数</h3>
+        <p>在一个监督学习任务中，每个数据样本有 4 个属性和 1 个类别标签。每种属性分别有 3、2、2、2 种可能取值，类别标签有 3 种不同取值。问可能有多少种不同样本？</p>
+        <ul class="options" data-answer="F">
+          <li>A. 3</li><li>B. 6</li><li>C. 12</li><li>D. 24</li><li>E. 48</li><li>F. 72</li>
+        </ul>
+        <textarea data-note="ml-q3" placeholder="先写乘法式子，不要直接猜。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：F。</strong></p>
+            <p><strong>计算：</strong><code>3 * 2 * 2 * 2 * 3 = 72</code>。</p>
+            <p><strong>为什么要乘类别标签：</strong>题目问的是“样本”，这里样本包括属性取值和类别标签。前四个属性组合有 <code>3 * 2 * 2 * 2 = 24</code> 种，每种属性组合又可以配 3 种类别标签，所以是 72。</p>
+            <p><strong>常见坑：</strong>如果题目只问“输入特征向量有多少种”，才是 24；它这里明确把类别标签也算进样本。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 4：SVM 的一句话定义</h3>
+        <p>关于支持向量机，哪一种选择能正确填充：支持向量机是一种 ____ 模型，其目标是 ____ 分类间隔。</p>
+        <ul class="options" data-answer="C">
+          <li>A. 生成，最大化</li>
+          <li>B. 生成，最小化</li>
+          <li>C. 判别，最大化</li>
+          <li>D. 判别，最小化</li>
+        </ul>
+        <textarea data-note="ml-q4" placeholder="先写：SVM 是直接找边界，还是建模数据怎么生成？间隔要大还是小？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：C。</strong></p>
+            <p><strong>判别模型：</strong>它直接学习分类边界，关心怎么把两类分开。和生成模型不同，它不优先描述“数据是怎么生成的”。</p>
+            <p><strong>最大化间隔：</strong>SVM 希望分界线不仅能分开训练样本，还要离两边最近点尽量远。这样边界更稳，不容易被一点点噪声改变。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 5：哪个不是监督学习</h3>
+        <p>以下哪种方法不属于监督学习方法？</p>
+        <ul class="options" data-answer="A">
+          <li>A. 聚类</li>
+          <li>B. 决策树</li>
+          <li>C. 线性回归</li>
+          <li>D. 朴素贝叶斯</li>
+          <li>E. 支持向量机</li>
+          <li>F. 以上都不属于监督学习方法</li>
+        </ul>
+        <textarea data-note="ml-q5" placeholder="先写：监督学习的判断信号是什么？哪个方法没有标签也能做？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：A。</strong></p>
+            <p><strong>题眼：</strong>监督学习依赖标签。决策树、线性回归、朴素贝叶斯、SVM 都常用于带标签的分类或回归任务。聚类通常是在没有标签时找数据内部结构，属于无监督学习。</p>
+            <p><strong>别被名字骗：</strong>“线性回归”虽然输出连续值，不是分类，但它仍然用真实数值标签训练，所以是监督学习。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 6：AdaBoost 权重增加</h3>
+        <p>在 AdaBoosting 的迭代中，从第 t 轮到第 t+1 轮，某个被错误分类样本的惩罚增加了，可能因为该样本？</p>
+        <ul class="options" data-answer="A">
+          <li>A. 被第 t 轮训练的弱分类器错误分类</li>
+          <li>B. 被第 t 轮后的集成分类器错误分类</li>
+          <li>C. 被到第 t 轮为止训练的大多数弱分类器错误分类</li>
+          <li>D. B 和 C 都正确</li>
+          <li>E. A、B 和 C 都正确</li>
+        </ul>
+        <textarea data-note="ml-q6" placeholder="先写：AdaBoost 每轮根据谁的错分来更新样本权重？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：A。</strong></p>
+            <p><strong>题眼：</strong>AdaBoost 每一轮会训练一个弱分类器，然后提高这一轮被该弱分类器错分样本的权重。下一轮模型就会更重视这些难样本。</p>
+            <p><strong>为什么不是 B/C：</strong>样本权重更新是按当前轮弱分类器的表现做的，不是等到看整个强分类器最后是否错，也不是按“大多数弱分类器是否错”来直接更新。</p>
+            <p><strong>记忆句：</strong>这一轮错过的题，下一轮加大权重重点练。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 7：训练误差和测试误差曲线</h3>
+        <p>数据集 A 有 100KB 数据，数据集 B 有 10KB 数据，二者来自同样真实分布，并按 9:1 划分训练集和测试集。随着模型复杂度增加，哪幅图最合理？</p>
+        <textarea data-note="ml-q7" placeholder="先写：A/B 谁数据更多？谁测试误差通常更低？谁训练误差可能更低？模型复杂度太高时测试误差会怎样？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：A 图。</strong></p>
+            <p><strong>核心判断 1：</strong>模型复杂度增加时，训练误差一般下降；测试误差常先降后升，因为复杂到一定程度会过拟合。</p>
+            <p><strong>核心判断 2：</strong>A 数据量更大，测试集表现通常更稳、更好，所以 A.Test 应低于 B.Test。</p>
+            <p><strong>核心判断 3：</strong>B 训练数据更少，更容易被复杂模型“记住”，所以 B.Train 往往低于 A.Train。</p>
+            <p><strong>因此：</strong>最合理的是 A 图：B.Test 高于 A.Test，B.Train 低于 A.Train，训练误差随复杂度下降，测试误差呈 U 型或后期上升。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>1.5 先停 30 秒：你刚刚其实已经拿到四把钥匙</h2>
+      <p>如果前面七道选择题做得有点晕，正常。它们本来就是把几个模型放在一起“晃你一下”。现在先把收获收束成四句话：</p>
+      <div class="grid">
+        <div class="box"><strong>LDA 钥匙</strong>题干只要说<span class="focus">类间远、类内近、投影方向</span>，先想到 LDA。</div>
+        <div class="box"><strong>SVM 钥匙</strong>题干只要说<span class="focus">最大间隔、支持向量、分类边界</span>，先想到 SVM。</div>
+        <div class="box"><strong>树的钥匙</strong>题干只要说<span class="focus">熵、纯度、信息增益、选属性</span>，先想到决策树。</div>
+        <div class="box"><strong>Boosting 钥匙</strong>题干只要说<span class="focus">弱分类器、错分样本、权重增加</span>，先想到 AdaBoost。</div>
+      </div>
+      <div class="coach-note">
+        <strong>夸你一句：</strong>能把这些题眼分开，已经不是“完全没学过”的状态了。你正在从“看见名词发懵”升级到“看见题干会分流”。这一步非常值钱，后面的图题和大题都靠它起步。
+      </div>
+    </section>
+
+    <section class="card" id="svm">
+      <h2>2. SVM 图题：先会读图，再谈画线</h2>
+      <p>参考习题第 4 页的图 4.14 给了两类点：方块是一类，三角形是一类。题目要求画出 SVM 分类边界、标支持向量、求训练错误率、判断移除哪些样本会改变边界。</p>
+      <div class="diagram" aria-label="SVM 支持向量概念图">
+        <svg viewBox="0 0 760 330" role="img">
+          <rect x="0" y="0" width="760" height="330" fill="#fbfdfe"/>
+          <line x1="80" y1="250" x2="700" y2="90" stroke="#1f5f8b" stroke-width="4"/>
+          <line x1="110" y1="285" x2="730" y2="125" stroke="#9bc5df" stroke-width="2" stroke-dasharray="8 7"/>
+          <line x1="50" y1="215" x2="670" y2="55" stroke="#9bc5df" stroke-width="2" stroke-dasharray="8 7"/>
+          <text x="525" y="72" fill="#1f5f8b" font-size="18">最大间隔分类边界</text>
+          <text x="570" y="128" fill="#687581" font-size="15">间隔边界</text>
+          <rect x="120" y="250" width="34" height="34" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="130" y="274" font-size="18">A</text>
+          <rect x="245" y="238" width="34" height="34" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="255" y="262" font-size="18">B</text>
+          <rect x="370" y="225" width="34" height="34" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="380" y="249" font-size="18">C</text>
+          <rect x="505" y="212" width="34" height="34" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="515" y="236" font-size="18">D</text>
+          <polygon points="250,70 220,125 280,125" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="242" y="111" font-size="18">H</text>
+          <polygon points="420,125 390,180 450,180" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="412" y="166" font-size="18">G</text>
+          <polygon points="570,105 540,160 600,160" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="562" y="146" font-size="18">E</text>
+          <polygon points="520,35 490,90 550,90" fill="#ffffff" stroke="#18212a" stroke-width="2"/><text x="512" y="76" font-size="18">F</text>
+          <circle cx="387" cy="242" r="30" fill="none" stroke="#24724f" stroke-width="3"/>
+          <circle cx="522" cy="229" r="30" fill="none" stroke="#24724f" stroke-width="3"/>
+          <circle cx="420" cy="153" r="34" fill="none" stroke="#24724f" stroke-width="3"/>
+          <circle cx="570" cy="133" r="34" fill="none" stroke="#24724f" stroke-width="3"/>
+          <text x="44" y="310" fill="#687581" font-size="14">示意图：支持向量就是离边界最近、卡住间隔的点。以 PDF 原图为准手画。</text>
+        </svg>
+      </div>
+      <article class="question">
+        <h3>题 8：SVM 图题作答模板</h3>
+        <p>根据图 4.14 回答：画出 SVM 分类边界并圈出支持向量；该分类边界下训练错误率是多少；移除哪些样本可能让边界改变？</p>
+        <textarea data-note="ml-q8" placeholder="先写：边界大致放在哪里？支持向量是哪两侧最近的点？有没有点分错？移除什么点才会改变最大间隔？"></textarea>
+        <details>
+          <summary>看作答思路和参考解析</summary>
+          <div class="answer-block">
+            <p><strong>第一步：画线。</strong>分类边界要放在方块类和三角类之间，尽量让两侧最近样本到线的距离相等并且最大。不是随便画一条能分开的线，而是最大间隔线。</p>
+            <p><strong>第二步：圈支持向量。</strong>支持向量是离分界线最近、真正“撑住”间隔的样本。按原图位置，通常应圈靠近分界线的下方方块点和上方三角点，也就是 C/D 与 G/E 附近这些边界点；远离边界的 A、B、F、H 一般不是支持向量。</p>
+            <p><strong>第三步：训练错误率。</strong>如果你画出的最大间隔线能把所有方块和三角分开，则训练错误率为 0。错误率计算公式是 <code>错分样本数 / 总样本数</code>。</p>
+            <p><strong>第四步：移除谁会改变边界。</strong>移除支持向量可能改变分类边界；移除远离边界的非支持向量通常不改变边界。答题时要把“支持向量决定边界”这句话写出来。</p>
+            <p><strong>小心：</strong>这里的关键不是记住某个字母，而是会判断：哪几个点离边界最近，哪些点一拿走最大间隔会变。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="l2">
+      <h2>3. L2 正则化：这题是理解题，不是算术题</h2>
+      <p>参考习题第 4-5 页给出加入 L2 正则化后的线性回归损失函数：</p>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">L</span><span class="op">(</span><span class="mb">w</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="op">(</span><span class="mb">Y</span><span class="op">−</span><span class="mb">X</span><span class="mb">w</span><span class="op">)</span><sup>⊤</sup>
+          <span class="op">(</span><span class="mb">Y</span><span class="op">−</span><span class="mb">X</span><span class="mb">w</span><span class="op">)</span>
+          <span class="op">+</span><span class="mi">λ</span><span class="mb">w</span><sup>⊤</sup><span class="mb">w</span>
+          <span class="op">,</span><span class="mi">λ</span><span class="op">&gt;</span>0
+        </div>
+      </div>
+      <p>从零理解：前半段是拟合误差，表示预测和真实值差多少；后半段是参数惩罚，表示权重 w 不要太大。lambda 控制惩罚力度。</p>
+      <article class="question">
+        <h3>题 9.1：如果把 L2 项误写成 lambda Y^T Y</h3>
+        <p>假设 L2 标准化项被误写为 <code>lambda Y^T Y</code>，请解释为什么该项起不到标准化作用。</p>
+        <textarea data-note="ml-q9a" placeholder="先写：训练时我们要调整的是谁？Y 是参数吗？这一项会不会随着 w 改变？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案要点：</strong><code>Y^T Y</code> 只和真实标签 Y 有关，不和模型参数 w 有关。训练时优化的是 w，如果一个惩罚项不随着 w 改变，它对 w 的选择没有约束作用。</p>
+            <p><strong>更考试化地写：</strong><code>lambda Y^T Y</code> 对 w 的梯度为 0，只是给损失函数加了一个常数，不能惩罚模型参数大小，因此不能起到 L2 正则化作用。</p>
+            <p><strong>关键句：</strong>正则化要惩罚参数，不是惩罚标签。</p>
+          </div>
+        </details>
+      </article>
+      <article class="question">
+        <h3>题 9.2：如果 lambda 小于 0</h3>
+        <p>假设 L2 正则化项形式正确，但 <code>lambda &lt; 0</code>，请解释为什么该项起不到标准化作用。</p>
+        <textarea data-note="ml-q9b" placeholder="先写：lambda 大于 0 时是惩罚大权重；小于 0 时会鼓励还是惩罚大权重？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案要点：</strong>L2 正则化需要 <code>lambda &gt; 0</code>，这样权重越大，损失越大，模型才会倾向于选择较小权重。若 <code>lambda &lt; 0</code>，权重越大反而让目标函数变小，这会鼓励参数变大。</p>
+            <p><strong>更严谨地说：</strong>负的 L2 项可能使优化问题不稳定，甚至目标函数向负无穷发展，不能限制模型复杂度，也无法缓解过拟合。</p>
+            <p><strong>记忆句：</strong>L2 是刹车，lambda 小于 0 就变成油门。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="tree">
+      <h2>4. 决策树表格题：从熵到第一层，再到完整树</h2>
+      <p>参考习题第 5 页第 10 题给了一张很小的表，让你根据“信息增益率”选择属性构建决策树。扫描图里只有两个属性和一个标签，我们先按最常见的信息增益手算。信息增益率只是在信息增益基础上再除以属性自身分裂信息；这张表里核心结论仍然很好看清。</p>
+      <table>
+        <thead><tr><th>序号</th><th>是否通过考试</th><th>是否认真复习</th><th>是否经常发挥</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>是</td><td>是</td><td>否</td></tr>
+          <tr><td>2</td><td>是</td><td>是</td><td>是</td></tr>
+          <tr><td>3</td><td>是</td><td>是</td><td>否</td></tr>
+          <tr><td>4</td><td>是</td><td>是</td><td>是</td></tr>
+          <tr><td>5</td><td>是</td><td>是</td><td>否</td></tr>
+          <tr><td>6</td><td>是</td><td>否</td><td>是</td></tr>
+          <tr><td>7</td><td>否</td><td>否</td><td>否</td></tr>
+          <tr><td>8</td><td>否</td><td>否</td><td>是</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>先把题翻译成人话：</strong>目标是预测“是否通过考试”。可用属性有“是否认真复习”和“是否经常发挥”。决策树第一层要选一个最能把通过/不通过分开的属性。
+      </div>
+      <article class="question">
+        <h3>题 10.1：选择第一个属性，构建深度为 1 的决策树</h3>
+        <p>请根据表格选择根结点属性，并写出深度为 1 的决策树。</p>
+        <textarea data-note="ml-q10a" placeholder="先写：总共有几个通过/不通过？按“认真复习”分后纯不纯？按“经常发挥”分后纯不纯？"></textarea>
+        <details>
+          <summary>看手算过程和答案</summary>
+          <div class="answer-block">
+            <p><strong>总数据：</strong>8 个样本，6 个“通过”，2 个“不通过”。原始熵约为 <span class="display-eq" style="display:inline; font-size:1.05em !important; padding:0; white-space:normal;"><span class="mi">H</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span><span class="op">=</span>0.811</span>。</p>
+            <p><strong>按“是否认真复习”分：</strong></p>
+            <div class="code">认真复习=是：5 个样本，全是通过，熵 = 0
+认真复习=否：3 个样本，1 个通过、2 个不通过，熵约 = 0.918
+加权熵 = 5/8*0 + 3/8*0.918 = 0.344
+信息增益 = 0.811 - 0.344 = 0.467</div>
+            <p><strong>按“是否经常发挥”分：</strong></p>
+            <div class="code">经常发挥=是：4 个样本，3 个通过、1 个不通过，熵约 = 0.811
+经常发挥=否：4 个样本，3 个通过、1 个不通过，熵约 = 0.811
+加权熵 = 0.811
+信息增益 = 0</div>
+            <p><strong>结论：</strong>第一层应选“是否认真复习”。因为它能立刻把“认真复习=是”的 5 个样本完全分纯。</p>
+            <div class="code">根结点：是否认真复习？
+  是 -> 预测：通过考试
+  否 -> 还不能完全判断，需要继续分裂</div>
+            <p><strong>从零理解：</strong>决策树不是玄学，它每次都问：“用哪个问题能最快把数据分干净？”这张表里，“认真复习”显然比“经常发挥”更有用。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 10.2：构建完整决策树，并判断是否和训练数据一致</h3>
+        <p>继续根据表格构建完整决策树。回答：这个决策树的决策结果是否能和训练数据完全一致？为什么？</p>
+        <textarea data-note="ml-q10b" placeholder="先写：认真复习=否 后还剩哪些样本？再按“经常发挥”分，是否还有冲突样本？"></textarea>
+        <details>
+          <summary>看完整解析</summary>
+          <div class="answer-block">
+            <p><strong>第一层：</strong>仍然是“是否认真复习”。如果认真复习=是，5 条样本全是通过，所以直接判“通过”。</p>
+            <p><strong>认真复习=否 的分支：</strong>剩下 3 条样本：</p>
+            <div class="code">序号 6：通过=是，认真复习=否，经常发挥=是
+序号 7：通过=否，认真复习=否，经常发挥=否
+序号 8：通过=否，认真复习=否，经常发挥=是</div>
+            <p>继续用“是否经常发挥”分：</p>
+            <div class="code">经常发挥=否 -> 只有序号 7 -> 预测不通过
+经常发挥=是 -> 序号 6 是通过，序号 8 是不通过 -> 冲突</div>
+            <p><strong>答案：</strong>完整树不能和训练数据完全一致，因为序号 6 和序号 8 在两个可用属性上完全相同：认真复习=否、经常发挥=是，但标签一个是通过、一个是不通过。只靠这两个属性，任何决策树都无法同时区分它们。</p>
+            <p><strong>考试句式：</strong>由于存在属性取值完全相同但类别标签不同的样本，训练集本身在给定属性空间下不可完全一致分类，因此决策树无法完全拟合所有训练样本，只能在冲突叶结点采用多数类或其他规则。</p>
+            <p><strong>这一题真正想考：</strong>决策树不是万能背答案。它依赖属性是否足够区分类别；如果特征缺失、数据噪声或标签矛盾，就会出现不可分叶子。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="boost">
+      <h2>5. AdaBoost 综合题：把一轮轮权重算清楚</h2>
+      <p>参考习题第 5-6 页第 11 题给出“是否出去玩”的数据，要求用 AdaBoost 训练强分类器。这个题的难点不是公式多，而是你要知道每一轮做什么。</p>
+      <table>
+        <thead><tr><th>序号</th><th>出去玩 y</th><th>天气</th><th>同伴</th><th>零花钱</th><th>特殊节日</th><th>心情指数</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>是</td><td>好</td><td>无</td><td>多</td><td>是</td><td>5</td></tr>
+          <tr><td>2</td><td>是</td><td>一般</td><td>有</td><td>多</td><td>是</td><td>5</td></tr>
+          <tr><td>3</td><td>是</td><td>一般</td><td>有</td><td>少</td><td>否</td><td>1</td></tr>
+          <tr><td>4</td><td>是</td><td>一般</td><td>有</td><td>少</td><td>否</td><td>3</td></tr>
+          <tr><td>5</td><td>是</td><td>一般</td><td>有</td><td>少</td><td>否</td><td>5</td></tr>
+          <tr><td>6</td><td>是</td><td>好</td><td>无</td><td>多</td><td>是</td><td>5</td></tr>
+          <tr><td>7</td><td>是</td><td>好</td><td>无</td><td>多</td><td>是</td><td>5</td></tr>
+          <tr><td>8</td><td>否</td><td>一般</td><td>无</td><td>多</td><td>是</td><td>1</td></tr>
+          <tr><td>9</td><td>否</td><td>一般</td><td>有</td><td>少</td><td>否</td><td>1</td></tr>
+          <tr><td>10</td><td>否</td><td>一般</td><td>无</td><td>少</td><td>否</td><td>5</td></tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>本讲义采用的弱分类器口径：</strong>每个弱分类器只看一个属性，并选择该属性下加权错误率最低的简单规则。比如心情指数用题干提示的两侧规则：心情指数 &gt; 2 判“出去玩”，心情指数 &lt; 4 判“不出去玩”。如果老师限定的弱分类器候选集合不同，后续轮次可能换一个并列分类器，但计算方法完全相同。
+      </div>
+      <article class="question">
+        <h3>题 11.1：第一轮选择哪个弱分类器？权重是多少？</h3>
+        <p>初始每个样本权重相同。第一轮 AdaBoost 会选择哪个弱分类器？第一轮前后每个样本权重是多少？</p>
+        <textarea data-note="ml-q11a" placeholder="先写：初始权重是多少？心情指数规则错分哪几个样本？错误率是多少？"></textarea>
+        <details>
+          <summary>看第一轮完整手算</summary>
+          <div class="answer-block">
+            <p><strong>初始权重：</strong>10 个样本，所以每个样本权重都是 <code>0.1</code>。</p>
+            <p><strong>第一轮弱分类器：</strong>用心情指数做规则：</p>
+            <div class="code">h1(x): 心情指数 > 2 -> 出去玩
+       心情指数 < 4 -> 不出去玩</div>
+            <p>这个规则会错分样本 3 和样本 10：样本 3 实际出去玩但心情指数 1；样本 10 实际不出去玩但心情指数 5。</p>
+            <div class="code">错误率 e1 = 2/10 = 0.2
+分类器权重 alpha1 = 1/2 * ln((1-e1)/e1)
+                 = 1/2 * ln(4)
+                 ≈ 0.693</div>
+            <p><strong>更新权重：</strong>错分样本权重变大，正确样本权重变小，并归一化。更新后：</p>
+            <table>
+              <thead><tr><th>样本</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+              <tbody><tr><td>第一轮后权重</td><td>0.0625</td><td>0.0625</td><td>0.25</td><td>0.0625</td><td>0.0625</td><td>0.0625</td><td>0.0625</td><td>0.0625</td><td>0.0625</td><td>0.25</td></tr></tbody>
+            </table>
+            <p><strong>从零理解：</strong>样本 3 和 10 被第一轮错分，所以它们下一轮更贵。第二轮分类器会更努力照顾这两个样本。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 11.2：第二轮选择哪个弱分类器？分类器权重是多少？</h3>
+        <p>在第一轮更新权重后，继续选择第二个弱分类器，并计算它的分类器权重。</p>
+        <textarea data-note="ml-q11b" placeholder="先写：样本 3 和 10 权重变大后，哪个属性能更好修正它们？第二轮错分权重总和是多少？"></textarea>
+        <details>
+          <summary>看第二轮完整手算</summary>
+          <div class="answer-block">
+            <p><strong>一种合理选择：</strong>选择“是否有同伴”作为第二轮弱分类器：</p>
+            <div class="code">h2(x): 有同伴 -> 出去玩
+       无同伴 -> 不出去玩</div>
+            <p>在第一轮后的权重下，这个规则错分样本 1、6、7、9。它们权重都是 0.0625，所以：</p>
+            <div class="code">错误率 e2 = 0.0625 * 4 = 0.25
+alpha2 = 1/2 * ln((1-e2)/e2)
+       = 1/2 * ln(3)
+       ≈ 0.549</div>
+            <p><strong>第二轮后权重：</strong>错分的 1、6、7、9 权重上升；正确的样本权重下降。</p>
+            <table>
+              <thead><tr><th>样本</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+              <tbody><tr><td>第二轮后权重</td><td>0.1250</td><td>0.0417</td><td>0.1667</td><td>0.0417</td><td>0.0417</td><td>0.1250</td><td>0.1250</td><td>0.0417</td><td>0.1250</td><td>0.1667</td></tr></tbody>
+            </table>
+            <p><strong>为什么不是继续用 h1：</strong>第一轮后，h1 错分的样本 3 和 10 权重已经很高，再用 h1 错误率会变成 0.5，无法提供有效提升。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 11.3：三轮后的强分类器表达式</h3>
+        <p>继续第三轮后，写出强分类器表达式。每个弱分类器可用字母替代。</p>
+        <textarea data-note="ml-q11c" placeholder="先写：强分类器不是简单投票，而是按 alpha 加权投票。表达式长什么样？"></textarea>
+        <details>
+          <summary>看第三轮示例和表达式</summary>
+          <div class="answer-block">
+            <p><strong>第三轮示例：</strong>在第二轮权重下，“天气”“零花钱”“特殊节日”等规则可能出现相同或接近的最小加权错误率。若采用天气规则作为第三个弱分类器：</p>
+            <div class="code">h3(x): 天气=好 -> 出去玩
+       天气=一般 -> 不出去玩</div>
+            <p>此时加权错误率约为 <span class="display-eq" style="display:inline; font-size:1.05em !important; padding:0; white-space:normal;"><span class="mi">e</span><sub>3</sub><span class="op">=</span>0.2917</span>，所以：</p>
+            <div class="math-card">
+              <div class="display-eq">
+                <span class="mi">α</span><sub>3</sub>
+                <span class="op">=</span>
+                <span class="frac"><span>1</span><span>2</span></span>
+                <span class="func">ln</span>
+                <span class="op">(</span>
+                <span class="frac"><span>1<span class="op">−</span><span class="mi">e</span><sub>3</sub></span><span><span class="mi">e</span><sub>3</sub></span></span>
+                <span class="op">)</span>
+                <span class="op">≈</span>0.444
+              </div>
+            </div>
+            <p><strong>三轮强分类器表达式：</strong></p>
+            <div class="math-card">
+              <div class="display-eq">
+                <span class="mi">H</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+                <span class="op">=</span>
+                <span class="func">sign</span><span class="op">(</span>
+                0.693<span class="mi">h</span><sub>1</sub><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+                <span class="op">+</span>0.549<span class="mi">h</span><sub>2</sub><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+                <span class="op">+</span>0.444<span class="mi">h</span><sub>3</sub><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+                <span class="op">)</span>
+              </div>
+            </div>
+            <p>其中可以约定“出去玩”为 +1，“不出去玩”为 -1。最后把每个弱分类器的判断乘以自己的权重，相加后看符号。</p>
+            <p><strong>考试更稳写法：</strong>如果题目没有强制第三轮具体候选规则，你可以写：第三轮选择当前权重下加权错误率最小的弱分类器 <code>h3</code>，其权重为 <code>alpha3=1/2 ln((1-e3)/e3)</code>，强分类器为 <code>H(x)=sign(alpha1 h1(x)+alpha2 h2(x)+alpha3 h3(x))</code>。再把你算出的 h3 和 alpha3 代入。</p>
+            <p><strong>这一题真正想考：</strong>AdaBoost 的流程：初始等权重 -> 选错误率最小的弱分类器 -> 算 alpha -> 提高错分样本权重 -> 重复 -> 加权投票。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="stamp">
+      <h2>6. 通关盖章：做到这些，这页就真的被你吃下去了</h2>
+      <p>别用“我看完了”骗自己，也别用“我还没全会”吓自己。下面 6 个章，只要先拿到 4 个，你就可以进入下一页；拿到 6 个，就说明机器学习参考题卡已经有 B+ 到 A- 的底子。</p>
+      <div class="stamp-grid">
+        <label class="stamp-item">
+          <input type="checkbox" data-stamp="lda">
+          <span><strong>LDA 章</strong>我能用“类间远、类内近、找投影方向”解释 LDA，并能排除 SVM/AdaBoost/K-means。</span>
+        </label>
+        <label class="stamp-item">
+          <input type="checkbox" data-stamp="entropy">
+          <span><strong>熵和树章</strong>我知道熵高就是混，决策树选属性看划分后是否更纯。</span>
+        </label>
+        <label class="stamp-item">
+          <input type="checkbox" data-stamp="svm">
+          <span><strong>SVM 图题章</strong>我能先找支持向量，再判断训练错误率和移除哪些点会改变边界。</span>
+        </label>
+        <label class="stamp-item">
+          <input type="checkbox" data-stamp="l2">
+          <span><strong>L2 正则章</strong>我能解释正则项为什么必须惩罚 w，为什么 lambda 不能小于 0。</span>
+        </label>
+        <label class="stamp-item">
+          <input type="checkbox" data-stamp="tree">
+          <span><strong>决策树表格章</strong>我能按“总熵 -> 条件熵 -> 信息增益”写第一步，并能解释冲突样本。</span>
+        </label>
+        <label class="stamp-item">
+          <input type="checkbox" data-stamp="boost">
+          <span><strong>AdaBoost 章</strong>我能按“加权错误率 -> alpha -> 更新权重 -> 加权投票”讲完整流程。</span>
+        </label>
+      </div>
+      <div class="stamp-count" id="stampCount">通关进度读取中。</div>
+      <div class="coach-note">
+        <strong>给努力吸收的你：</strong>这页很硬，但它也最值钱。你每勾一个章，都是把“考试会怎么问”变成自己的反应。慢一点没关系，稳稳拿下才香。
+      </div>
+    </section>
+
+    <section class="card" id="source">
+      <h2>7. 原页核对：只作为来源，不作为主要学习方式</h2>
+      <p>下面是扫描页原图。平时先看题卡；如果怀疑题干、图像位置或选项，再展开核对。</p>
+      <details>
+        <summary>展开参考习题第 3 页：选择题 1-8 开头</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p3.png" alt="人工智能参考习题第 3 页">
+          <div class="caption">第 3 页：习题 4 选择题和图题开头。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开参考习题第 4 页：误差曲线和 SVM 图</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p4.png" alt="人工智能参考习题第 4 页">
+          <div class="caption">第 4 页：图 4.13 误差曲线、图 4.14 SVM 样本分布、L2 公式题。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开参考习题第 5 页：L2 续题、决策树/AdaBoost 后续</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p5.png" alt="人工智能参考习题第 5 页">
+          <div class="caption">第 5 页：L2 续题、决策树表格题、AdaBoost 数据表。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开参考习题第 6 页：AdaBoost 续题、LDA 证明、习题 6 开头</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p6.png" alt="人工智能参考习题第 6 页">
+          <div class="caption">第 6 页：AdaBoost 续问，LDA 决策边界证明，神经网络习题开头。</div>
+        </div>
+      </details>
+      <div class="mark">
+        <strong>下一步：</strong>第 6-8 页的 BP、梯度下降、sigmoid、LSTM、GAN、XOR 和编码器-解码器已经拆成 <a href="./day2_ai_reference_nn_cards.html">AI 参考习题神经网络题卡</a>。
+      </div>
+      <p><a href="./day2_ai_reference_nn_cards.html">继续做神经网络题卡</a> · <a href="./day1_ai_reference_bridge.html">回 AI 参考习题第 1 页桥接</a> · <a href="./day1_ai_se_visual.html">回 AI 从零深学讲义</a> · <a href="./index.html">回学习舱</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-finals-ai-reference-ml-notes-v1";
+    const stampKey = "buaa-finals-ai-reference-ml-stamps-v1";
+    let savedNotes = {};
+    let savedStamps = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    try {
+      savedStamps = JSON.parse(localStorage.getItem(stampKey)) || {};
+    } catch {
+      savedStamps = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+    const choiceKey = "buaa-finals-ai-reference-ml-choice-v1";
+    let savedChoices = {};
+    try {
+      savedChoices = JSON.parse(localStorage.getItem(choiceKey)) || {};
+    } catch {
+      savedChoices = {};
+    }
+    function optionLetter(text) {
+      const match = text.trim().match(/^([A-Z])\s*[.．、]/);
+      return match ? match[1] : text.trim().slice(0, 1);
+    }
+    function renderChoice(ul, picked) {
+      const answer = ul.dataset.answer;
+      ul.querySelectorAll("li").forEach(li => {
+        const letter = optionLetter(li.textContent);
+        li.classList.toggle("correct", Boolean(picked) && letter === answer);
+        li.classList.toggle("wrong", Boolean(picked) && letter === picked && picked !== answer);
+      });
+      let feedback = ul.nextElementSibling;
+      if (!feedback || !feedback.classList.contains("choice-feedback")) {
+        feedback = document.createElement("div");
+        feedback.className = "choice-feedback";
+        ul.insertAdjacentElement("afterend", feedback);
+      }
+      if (!picked) {
+        feedback.textContent = "先写题眼，再点一个选项校验。点完会自动打开详细解析。";
+        return;
+      }
+      feedback.innerHTML = picked === answer
+        ? `<strong>选 ${picked} 对。</strong> 现在展开解析，确认你不是靠猜，而是能说出题眼。`
+        : `<strong>选 ${picked} 还不稳，正确是 ${answer}。</strong> 先别急，下面解析会讲为什么。`;
+      const details = ul.closest(".question")?.querySelector("details");
+      if (details) details.open = true;
+    }
+    document.querySelectorAll(".options[data-answer]").forEach((ul, index) => {
+      const id = `ml-choice-${index}`;
+      renderChoice(ul, savedChoices[id]);
+      ul.querySelectorAll("li").forEach(li => {
+        li.setAttribute("role", "button");
+        li.setAttribute("tabindex", "0");
+        const choose = () => {
+          savedChoices[id] = optionLetter(li.textContent);
+          localStorage.setItem(choiceKey, JSON.stringify(savedChoices));
+          renderChoice(ul, savedChoices[id]);
+        };
+        li.addEventListener("click", choose);
+        li.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            choose();
+          }
+        });
+      });
+    });
+    function renderStampCount() {
+      const checks = [...document.querySelectorAll("[data-stamp]")];
+      const done = checks.filter(item => item.checked).length;
+      const box = document.getElementById("stampCount");
+      if (!box) return;
+      const message = done >= 6
+        ? "6/6 全部盖章。漂亮，这页已经从“看过”变成“能调用”了。"
+        : done >= 4
+          ? `${done}/6 已盖章。可以进入下一页，错的章隔天回炉。`
+          : `${done}/6 已盖章。先不急，优先补 LDA/SVM/熵/AdaBoost 四个核心章。`;
+      box.textContent = message;
+      checks.forEach(item => item.closest(".stamp-item").classList.toggle("done", item.checked));
+    }
+    document.querySelectorAll("[data-stamp]").forEach(item => {
+      item.checked = Boolean(savedStamps[item.dataset.stamp]);
+      item.addEventListener("change", () => {
+        savedStamps[item.dataset.stamp] = item.checked;
+        localStorage.setItem(stampKey, JSON.stringify(savedStamps));
+        renderStampCount();
+      });
+    });
+    renderStampCount();
+  </script>
+</body>
+</html>

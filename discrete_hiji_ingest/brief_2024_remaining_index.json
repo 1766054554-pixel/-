@@ -1,0 +1,55 @@
+{
+  "extractedAt": "2026-06-24T03:16:29.595Z",
+  "todoCount": 7,
+  "results": [
+    {
+      "ok": true,
+      "label": "2249_brief_01_语义计算题1",
+      "textLength": 317,
+      "imageCount": 1,
+      "navError": null
+    },
+    {
+      "ok": true,
+      "label": "2249_brief_02_语义计算题2",
+      "textLength": 966,
+      "imageCount": 1,
+      "navError": null
+    },
+    {
+      "ok": true,
+      "label": "2249_brief_03_语义计算题3",
+      "textLength": 507,
+      "imageCount": 1,
+      "navError": null
+    },
+    {
+      "ok": true,
+      "label": "2249_brief_04_语义计算题4",
+      "textLength": 319,
+      "imageCount": 1,
+      "navError": null
+    },
+    {
+      "ok": true,
+      "label": "2249_brief_05_语义证明题5",
+      "textLength": 1317,
+      "imageCount": 1,
+      "navError": null
+    },
+    {
+      "ok": true,
+      "label": "2249_brief_06_公理证明题1",
+      "textLength": 319,
+      "imageCount": 1,
+      "navError": null
+    },
+    {
+      "ok": true,
+      "label": "2249_brief_07_公理证明题2",
+      "textLength": 713,
+      "imageCount": 1,
+      "navError": null
+    }
+  ]
+}

@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>北航期末考试重点总地图</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245, 247, 248, 0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .strip, .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong {
+      display: block;
+      color: var(--blue);
+      margin-bottom: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      margin: 10px 0 14px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .date {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      min-height: 118px;
+    }
+    .date b { display: block; color: var(--red); margin-bottom: 6px; }
+    .date span { display: block; color: var(--muted); font-size: 13px; }
+    .subject {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+    .subject-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #f9fbfc;
+    }
+    .subject-head h3 { margin: 0; }
+    .subject-body { padding: 14px 16px 16px; }
+    .cols {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1fr;
+      gap: 12px;
+    }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    .mark {
+      border-left: 4px solid var(--green);
+      border-radius: 6px;
+      background: #f3faf6;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .path {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .path-row {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+    .path-row > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px;
+    }
+    .path-row .label {
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+    }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px;
+    }
+    .links a {
+      display: inline-flex;
+      border: 1px solid #b3d2e7;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #f4faff;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      margin-top: 12px;
+    }
+    @media (max-width: 960px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .grid.four, .cols, .timeline { grid-template-columns: 1fr; }
+      .path-row { grid-template-columns: 1fr; }
+      .subject-head { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>北航期末考试重点总地图</h1>
+      <p class="muted">这页不是新的 Day 讲义，也不是 tips。它是复习导航：告诉你考试时间、每科主线、资料依据、什么时候用哪份讲义、什么时候进真题和考前闭环。</p>
+      <div class="strip">
+        <span class="pill hot">目标：85+</span>
+        <span class="pill info">正式 Day 只放主线学习</span>
+        <span class="pill good">Tips 只做卡点补课</span>
+        <span class="pill warn">按考试时间滚动</span>
+      </div>
+      <div class="toc">
+        <a href="#how">怎么用</a>
+        <a href="#calendar">考试日历</a>
+        <a href="./exam_coverage_control_board.html">考点覆盖控制板</a>
+        <a href="./full_final_schedule_0616_0630.html">全程每日计划</a>
+        <a href="./day2_master_route.html">Day2 总路线</a>
+        <a href="#sources">资料依据</a>
+        <a href="#subjects">各科重点</a>
+        <a href="#route">正式路线</a>
+        <a href="#gates">掌握闸门</a>
+        <a href="#next">后续生产</a>
+      </div>
+    </section>
+
+    <section class="card" id="how">
+      <h2>0. 怎么用这张总地图</h2>
+      <div class="grid four">
+        <div class="box">
+          <strong>每天开始前看 1 分钟</strong>
+          只确认今天主攻哪科、插针哪两科、今天能不能进入下一阶段。
+        </div>
+        <div class="box">
+          <strong>学新知识看 Day</strong>
+          <code>dayN_*</code> 是正式主线。它负责当天新知识、题型推进、考前闭环。
+        </div>
+        <div class="box">
+          <strong>卡住再看 Tips</strong>
+          <code>tips_*</code> 是补课页。公式读不懂、模型分不清、证明动作断了，再打开。
+        </div>
+        <div class="box">
+          <strong>考前只看闭环</strong>
+          临考不再乱翻大讲义，只看速查、错题、真题桥接和闸门清单。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>命名硬规则：</strong>以后不会再把“怎么看公式、模型图解、符号读法”塞进 Day6 这种正式编号。Day 编号只用于主线学习和考前训练；辅助材料统一放在 Tips 区。
+      </div>
+      <div class="links">
+        <a href="./full_final_schedule_0616_0630.html">打开 6.16-6.30 全程每日计划</a>
+        <a href="./day2_master_route.html">打开 Day2 总路线</a>
+      </div>
+    </section>
+
+    <section class="card" id="calendar">
+      <h2>1. 考试日历与战场顺序</h2>
+      <p>你不是平均复习六门课，而是按考试压力滚动：先保数据库，再抢 AI 和软工，离散提前预热后集中突破，文科低成本不拖后腿。</p>
+      <div class="timeline">
+        <div class="date"><b>6.22</b>数据管理技术<span>最近、资料多、题型硬。SQL/范式/事务/ER 必须先成型。</span></div>
+        <div class="date"><b>6.23</b>人工智能<span>参考习题价值高。公式、模型对比、小计算、简答要可调用。</span></div>
+        <div class="date"><b>6.25</b>软工<span>开卷但不能乱翻。画图、索引、测试/设计模板是核心。</span></div>
+        <div class="date"><b>6.26</b>军理<span>低成本关键词和往年题，不抢理工科主时间。</span></div>
+        <div class="date"><b>6.28</b>离散<span>证明难，必须早打底。后期做往年题和证明骨架迁移。</span></div>
+        <div class="date"><b>6.30</b>马原<span>纸质开卷，目标是索引、框架、材料题定位。</span></div>
+      </div>
+      <svg viewBox="0 0 1120 210" role="img" aria-label="复习阶段图">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f5f8b"></path>
+          </marker>
+        </defs>
+        <text x="32" y="34" fill="#18212a" font-size="18" font-weight="800">复习从“看过”变成“可调用”的四段路</text>
+        <line x1="90" y1="104" x2="1010" y2="104" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+        <g>
+          <circle cx="140" cy="104" r="32" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"></circle>
+          <text x="140" y="99" text-anchor="middle" fill="#1f5f8b" font-size="15" font-weight="800">从零</text>
+          <text x="140" y="119" text-anchor="middle" fill="#1f5f8b" font-size="15" font-weight="800">听懂</text>
+          <text x="72" y="165" fill="#687581" font-size="14">术语、人话、例子</text>
+        </g>
+        <g>
+          <circle cx="380" cy="104" r="32" fill="#f3faf6" stroke="#24724f" stroke-width="2"></circle>
+          <text x="380" y="99" text-anchor="middle" fill="#24724f" font-size="15" font-weight="800">题型</text>
+          <text x="380" y="119" text-anchor="middle" fill="#24724f" font-size="15" font-weight="800">加厚</text>
+          <text x="306" y="165" fill="#687581" font-size="14">标准题、变式、陷阱</text>
+        </g>
+        <g>
+          <circle cx="620" cy="104" r="32" fill="#fff9e6" stroke="#936b12" stroke-width="2"></circle>
+          <text x="620" y="99" text-anchor="middle" fill="#936b12" font-size="15" font-weight="800">真题</text>
+          <text x="620" y="119" text-anchor="middle" fill="#936b12" font-size="15" font-weight="800">桥接</text>
+          <text x="548" y="165" fill="#687581" font-size="14">题眼、第一步、扣分点</text>
+        </g>
+        <g>
+          <circle cx="860" cy="104" r="32" fill="#fff2ef" stroke="#a23b32" stroke-width="2"></circle>
+          <text x="860" y="99" text-anchor="middle" fill="#a23b32" font-size="15" font-weight="800">考前</text>
+          <text x="860" y="119" text-anchor="middle" fill="#a23b32" font-size="15" font-weight="800">闭环</text>
+          <text x="792" y="165" fill="#687581" font-size="14">速查、限时、错题回炉</text>
+        </g>
+      </svg>
+    </section>
+
+    <section class="card" id="sources">
+      <h2>2. 资料依据：哪些材料优先级最高</h2>
+      <table>
+        <thead><tr><th>科目</th><th>优先资料</th><th>使用策略</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>数据库</td>
+            <td>学长/课程期末复习 PDF、期末复习大题、数据库系统概论与习题解析、数据管理技术笔记、往年 SQL/大题。</td>
+            <td>先用讲义打概念，再用真题风味题练 SQL、关系代数、范式、事务、恢复、ER。数据库有往年题，必须重真题。</td>
+          </tr>
+          <tr>
+            <td>AI</td>
+            <td>人工智能参考习题 PDF、人工智能 PPT/复习 PDF/笔记、理论与实验文档。</td>
+            <td>参考习题可能直接影响题型。不能整页截图丢给你，要拆成逐题题卡：先答、再看解析、再做变式。AI 覆盖缺口和后续补洞见 <a href="./exam_coverage_control_board.html#ai">AI 细化雷达</a>。</td>
+          </tr>
+          <tr>
+            <td>软工</td>
+            <td>2026-软工十讲-合集-杨任宇、画图相关资料、2020 上机/画图题、实验材料，后续等课程群发布题型。</td>
+            <td>现在先做画图、开卷索引、测试/设计基本模板。群里公布题型后，立刻重排软工权重。</td>
+          </tr>
+          <tr>
+            <td>离散</td>
+            <td>离散定义必须背、离散1 笔记、教材和答案、2024 期末参考卷、其他往年题。</td>
+            <td>2024 参考卷价值高，但不能 Day1 直接硬刷。先补命题、谓词、范式、证明骨架，再分块分析真题。</td>
+          </tr>
+          <tr>
+            <td>军理/马原</td>
+            <td>军理考前知识梳理、军理重点整理、马原开卷资料。</td>
+            <td>低成本：关键词、定位页、材料题框架。目标是不拖理工科主线。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="subjects">
+      <h2>3. 各科重点地图：学什么、怎么考、先后顺序</h2>
+
+      <article class="subject">
+        <div class="subject-head">
+          <h3>数据管理技术：最近的硬仗，先把可得分题型吃稳</h3>
+          <span class="pill hot">6.22</span>
+        </div>
+        <div class="subject-body">
+          <div class="cols">
+            <div class="box">
+              <strong>必拿分</strong>
+              <ul>
+                <li>SQL 基本查询：条件、排序、聚合、分组、HAVING。</li>
+                <li>连接与嵌套：自连接、外连接、IN/EXISTS、全部/不存在。</li>
+                <li>关系代数：选择、投影、连接、除法风味题。</li>
+                <li>ER 图到关系模型：实体、联系、键、外键。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>冲分题</strong>
+              <ul>
+                <li>函数依赖、闭包、候选码、范式判断。</li>
+                <li>BCNF/3NF 分解和无损连接、保持依赖。</li>
+                <li>事务调度、冲突可串行化、两段锁。</li>
+                <li>恢复：Undo/Redo、日志、检查点。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>学习顺序</strong>
+              先 SQL，再连接嵌套，再范式事务 ER，最后混合卷面切换。现在不要只看定义，要练“题干一出现，我第一步写什么”。
+              <div class="links">
+                <a href="./day1_database_sql.html">Day1 SQL</a>
+                <a href="./day2_database_sql_join_nested.html">Day2 连接嵌套</a>
+                <a href="./day3_database_fd_tx_er.html">Day3 大题后半</a>
+                <a href="./day5_database_exam_sprint.html">考前速查</a>
+                <a href="./day6_database_final_rehearsal.html">最后排雷</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="subject">
+        <div class="subject-head">
+          <h3>人工智能：公式、模型比较、参考习题是主线</h3>
+          <span class="pill hot">6.23</span>
+        </div>
+        <div class="subject-body">
+          <div class="cols">
+            <div class="box">
+              <strong>必拿分</strong>
+              <ul>
+                <li>题型语言：选择、填空、计算、简答、综合题。</li>
+                <li>样本、特征、标签、模型、参数、损失、训练、泛化。</li>
+                <li>线性回归/分类、SVM、决策树、集成、评价指标。</li>
+                <li>神经网络、CNN、RNN/LSTM、Attention/Transformer 的用途差异。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>冲分题</strong>
+              <ul>
+                <li>信息增益、Precision/Recall/F1、Q-learning 小计算。</li>
+                <li>K-means、PCA、EM、强化学习的题眼和步骤。</li>
+                <li>模型优缺点和适用场景比较。</li>
+                <li>参考习题中多选/判断的边界条件。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>学习顺序</strong>
+              Day 主线负责从零到公式闭环；AI 总纲负责把模型家族、公式、小计算和考法串起来；老师最后一课只沉淀到 Day7 终局闭环，不再散开成新地图；Tips 只在模型图像和题干分流卡住时补。公式以后都用可读展示，不用代码感字符串硬背。
+              <div class="links">
+                <a href="./day1_ai_se_visual.html">Day1 从零</a>
+                <a href="./ai_exam_storyline_master_map.html">AI 考试总纲</a>
+                <a href="./day3_ai_formula_model_closure.html">Day3 公式闭环</a>
+                <a href="./day5_ai_exam_sprint_mixed.html">Day5 混合小测</a>
+                <a href="./day7_ai_teacher_summary_final.html">Day7 老师总纲</a>
+                <a href="./tips_ai_visual_model_masterclass.html">Tips 图解模型</a>
+                <a href="./tips_ai_model_gate_practice.html">Tips 模型闯关</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="subject">
+        <div class="subject-head">
+          <h3>软工：开卷不是翻书比赛，画图和模板才是分数</h3>
+          <span class="pill info">6.25</span>
+        </div>
+        <div class="subject-body">
+          <div class="cols">
+            <div class="box">
+              <strong>必拿分</strong>
+              <ul>
+                <li>需求分析：用例、参与者、系统边界、include/extend。</li>
+                <li>设计建模：类图、顺序图、状态图、活动图。</li>
+                <li>操作合约：前置条件、后置条件、对象创建、属性变化、关联变化。</li>
+                <li>测试：等价类、边界值、白盒覆盖、测试用例。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>不确定但要留口</strong>
+              <ul>
+                <li>Git、前后端、后端接口、实验上机相关内容只作为综合题背景候选，正式主线先按五类题型和 UML 需求/设计建模走。</li>
+                <li>十讲中的项目过程、架构、质量保证、配置管理。</li>
+                <li>纸质开卷下的题眼边注、模板复用和 CodeArts Modeling 作图速度。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>学习顺序</strong>
+              先“四支笔”圈角色、动作、对象、状态，再学图。画图页必须让每个箭头、边界、关系都有用，不能只摆个图。
+              <div class="links">
+                <a href="./day1_se_diagram_zero.html">Day1 画图从零</a>
+                <a href="./day2_se_2020_diagram_workshop.html">Day2 2020 三图</a>
+                <a href="./day3_se_openbook_diagram_index.html">Day3 纸质开卷索引</a>
+                <a href="./day4_se_diagram_microclass.html">Day4 同题干画图</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="subject">
+        <div class="subject-head">
+          <h3>离散：证明题不是背答案，是识别目标和选择工具</h3>
+          <span class="pill info">6.28</span>
+        </div>
+        <div class="subject-body">
+          <div class="cols">
+            <div class="box">
+              <strong>必拿分</strong>
+              <ul>
+                <li>命题、联结词、真值表、等值式。</li>
+                <li>主析取范式、主合取范式、小项/大项。</li>
+                <li>谓词逻辑：量词、辖域、自由/约束变元、自然语言符号化。</li>
+                <li>语义蕴含、反例、永真/可满足/矛盾。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>冲分题</strong>
+              <ul>
+                <li>前束范式、Skolem 范式、解释构造。</li>
+                <li>公理系统证明、元定理相关证明骨架。</li>
+                <li>2024 参考卷和其他往年题的证明变式。</li>
+                <li>证明第一句和每一步理由的规范表达。</li>
+              </ul>
+            </div>
+            <div class="box">
+              <strong>学习顺序</strong>
+              Day1 只打符号地基，Day2 学证明开头，Day3 学等值和谓词，Day4 再进长题工具，Day5 分析 2024 参考卷，Day6 专门把证明起手和错题回炉练稳。
+              <div class="links">
+                <a href="./day1_discrete_logic_proof.html">Day1 基础</a>
+                <a href="./day2_discrete_proof_starter.html">Day2 证明入口</a>
+                <a href="./day4_discrete_prenex_skolem_axiom.html">Day4 长题工具</a>
+                <a href="./day5_discrete_2024_exam_bridge.html">Day5 2024 分块</a>
+                <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>
+                <a href="./tips_discrete_formula_visual_handbook.html">Tips 公式手册</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" id="route">
+      <h2>4. 正式路线：每天学什么，Tips 何时插入</h2>
+      <div class="path">
+        <div class="path-row">
+          <div class="label">Day1 起步</div>
+          <div>数据库 SQL 从零、AI 从零、软工画图从零、离散基础地图。目标是建立语言系统，不直接刷整卷。<div class="links"><a href="./day1_master_route.html">Day1 总路线</a><a href="./day1_database_sql.html">数据库</a><a href="./day1_ai_se_visual.html">AI</a><a href="./day1_se_diagram_zero.html">软工</a><a href="./day1_discrete_logic_proof.html">离散</a></div></div>
+        </div>
+        <div class="path-row">
+          <div class="label">Day2 加厚</div>
+          <div>数据库 SQL 连接嵌套、AI 模型故事线与参考习题题卡、软工 2020 三图、离散证明入口。目标是从概念进入题型，再用综合闯关确认能不能换问法调用。<div class="links"><a href="./day2_master_route.html">Day2 总路线</a><a href="./day2_database_sql_join_nested.html">数据库 Day2</a><a href="./day2_ai_model_storyline.html">AI 故事线</a><a href="./day2_ai_reference_ml_cards.html">AI ML</a><a href="./day2_ai_reference_nn_cards.html">AI NN</a><a href="./day2_se_2020_diagram_workshop.html">软工 Day2</a><a href="./day2_discrete_proof_starter.html">离散 Day2</a><a href="./day2_active_recall_arena.html">Day2 综合闯关</a></div></div>
+        </div>
+        <div class="path-row">
+          <div class="label">Day3 大题</div>
+          <div>数据库范式事务 ER、AI 公式模型闭环、软工开卷索引、离散等值/范式/谓词。目标是大题第一步和标准模板。<div class="links"><a href="./day3_master_route.html">Day3 总路线</a><a href="./day3_database_fd_tx_er.html">数据库 Day3</a><a href="./day3_database_big_four_arena.html">数据库大题闯关</a><a href="./day3_ai_formula_model_closure.html">AI Day3</a><a href="./day3_se_openbook_diagram_index.html">软工 Day3</a><a href="./day3_discrete_equiv_normal_predicate.html">离散 Day3</a></div></div>
+        </div>
+        <div class="path-row">
+          <div class="label">Day4-5 桥接</div>
+          <div>数据库全卷闭环与最后排雷、AI 无监督/强化学习、深度/生成模型补洞、混合小测和老师总纲终局闭环、软工同题干画图、离散前束/Skolem/证明、2024 分块和 Day6 证明训练。目标是换题干也能反应。<div class="links"><a href="./day4_database_full_exam_closure.html">数据库全卷</a><a href="./day6_database_final_rehearsal.html">数据库最后排雷</a><a href="./day4_ai_unsupervised_rl_closure.html">AI 无监督/强化</a><a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a><a href="./day5_ai_exam_sprint_mixed.html">AI 混合</a><a href="./day7_ai_teacher_summary_final.html">AI 老师总纲</a><a href="./day4_se_diagram_microclass.html">软工 Day4</a><a href="./day5_discrete_2024_exam_bridge.html">离散 2024</a><a href="./day6_discrete_proof_sprint.html">离散 Day6 证明</a></div></div>
+        </div>
+        <div class="path-row">
+          <div class="label">Tips 插入</div>
+          <div>只在卡点时插入：AI 模型名词串不起来，看图解；担心 PPT 覆盖漏项，查 AI 讲次覆盖地图；题干不知道切模型，做模型闯关；离散公式读不顺，看公式手册。Tips 不算新的一天。<div class="links"><a href="./ai_lecture_coverage_map.html">AI 讲次覆盖</a><a href="./tips_ai_visual_model_masterclass.html">AI 图解</a><a href="./tips_ai_model_gate_practice.html">AI 闯关</a><a href="./tips_discrete_formula_visual_handbook.html">离散公式</a></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="gates">
+      <h2>5. 掌握闸门：什么时候可以进入真题和考前闭环</h2>
+      <table>
+        <thead><tr><th>科目</th><th>B 级：可以继续推进</th><th>A 级：可以进入真题/混合题</th><th>考前闭环看什么</th></tr></thead>
+        <tbody>
+          <tr><td>数据库</td><td>能解释 SQL 逻辑顺序，能求属性闭包，能判断事务调度题眼。</td><td>能做连接/嵌套、候选码、BCNF、Undo/Redo 的变式。</td><td><a href="./day5_database_exam_sprint.html">数据库考前速查小测</a> + <a href="./day6_database_final_rehearsal.html">最后排雷半套模拟</a> + 错题回炉。</td></tr>
+          <tr><td>AI</td><td>能解释核心公式里的量，能区分模型适用场景。</td><td>能做参考习题变式、小计算、模型比较简答。</td><td><a href="./day7_ai_teacher_summary_final.html">AI 老师总纲终局闭环</a> + <a href="./day5_ai_exam_sprint_mixed.html">AI 混合小测</a> + 公式默写。</td></tr>
+          <tr><td>软工</td><td>能根据题干判断画什么图，能列出图中元素和关系。</td><td>能对同一题干画用例图、类图、顺序图、状态图并解释差异。</td><td><a href="./day3_se_openbook_diagram_index.html">软工开卷索引</a> + 画图模板。</td></tr>
+          <tr><td>离散</td><td>能把公式翻译成人话，能写出证明第一句。</td><td>能识别语义证明、反例、前束/Skolem、公理证明的骨架。</td><td><a href="./day5_discrete_2024_exam_bridge.html">离散 2024 分块解析</a> + <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> + 错题回炉。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>硬标准：</strong>“看懂答案”不算会。你必须能不看答案说出题眼、第一步、为什么这么做、错在哪里。后续题卡会继续逼这个能力。
+      </div>
+    </section>
+
+    <section class="card" id="next">
+      <h2>6. 后续生产路线：下一轮继续补什么</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>AI 错题回炉与参考习题再抽取</strong>
+          把参考习题里高频选择/填空/计算/简答拆成更像考试的题卡；新增 <a href="./ai_exam_storyline_master_map.html">AI 考试总纲与模型故事线</a>，用于串联 AI 大纲、模型家族、公式动作和题型路由；<a href="./ai_deep_generation_exam_bridge.html">AI 深度学习与生成模型考点桥接</a>用于补 CNN/ResNet/ViT/Transformer/AE/VAE/GAN/Diffusion 的故事线和题卡；<a href="./day7_ai_teacher_summary_final.html">AI Day7 老师总纲终局闭环</a>用于 6.22 晚/6.23 早把第 14 讲和最后一课压成题眼、第一句与终局题卡。
+        </div>
+        <div class="box">
+          <strong>软工考前清单和非画图题</strong>
+          补测试、设计、项目过程、Git/前后端上机可能题；等课程群公布题型后立刻重排。
+        </div>
+        <div class="box">
+          <strong>离散证明拼图与往年题桥接</strong>
+          不只看 2024，还要把其他往年题拆成目标识别、证明骨架、可背句式和扣分点。
+        </div>
+        <div class="box">
+          <strong>军理/马原低成本索引</strong>
+          做关键词、页码定位、材料题框架，保证不挤压理工科复习时间。
+        </div>
+      </div>
+      <p style="margin-top:14px"><a href="./index.html">回到期末陪跑学习舱</a> · <a href="./full_final_schedule_0616_0630.html">打开全程每日计划</a> · <a href="./day2_master_route.html">打开 Day2 总路线</a> · <a href="./study_update_roadmap.html">打开讲义与学习舱同步路线</a> · <a href="./README.md">查看使用说明</a></p>
+    </section>
+  </main>
+</body>
+</html>

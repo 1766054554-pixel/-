@@ -1,0 +1,2352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>星光海岛知识冒险记｜离散 + 马原</title>
+  <style>
+    :root {
+      --cream: #fffaf4;
+      --panel: rgba(255, 252, 248, .86);
+      --panel-strong: rgba(255, 255, 255, .94);
+      --ink: #443552;
+      --soft-ink: #786b86;
+      --line: rgba(210, 188, 224, .72);
+      --pink: #eaa4c5;
+      --mint: #94ddc5;
+      --blue: #8dccea;
+      --lavender: #b9a7ea;
+      --peach: #f3bf91;
+      --honey: #f3d77f;
+      --rose: #d76f9f;
+      --green: #42a77f;
+      --shadow: 0 22px 60px rgba(77, 54, 105, .14);
+      --soft-shadow: 0 12px 28px rgba(77, 54, 105, .09);
+      --speed: 1;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background: #fff7fb;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+      overflow-x: hidden;
+    }
+    body.theme-starry {
+      background:
+        radial-gradient(circle at 14% 10%, rgba(255, 221, 238, .86), transparent 30%),
+        radial-gradient(circle at 88% 7%, rgba(211, 233, 255, .82), transparent 32%),
+        linear-gradient(180deg, #fff3fb 0%, #edf6ff 46%, #fff9ed 100%);
+    }
+    body.theme-ocean {
+      background:
+        radial-gradient(circle at 20% 16%, rgba(185, 244, 233, .74), transparent 30%),
+        radial-gradient(circle at 82% 12%, rgba(255, 221, 238, .75), transparent 30%),
+        linear-gradient(180deg, #eaf9ff 0%, #f9f6ff 48%, #fff9ef 100%);
+    }
+    body.theme-cloud {
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255, 238, 184, .72), transparent 28%),
+        radial-gradient(circle at 72% 12%, rgba(232, 214, 255, .78), transparent 30%),
+        linear-gradient(180deg, #fff8ef 0%, #f7f2ff 44%, #eefaef 100%);
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .meteor, .bubble, .fish, .corner-spark {
+      position: absolute;
+      opacity: .62;
+      will-change: transform, opacity;
+    }
+    .meteor {
+      width: 74px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.96), rgba(255, 216, 132, .78));
+      transform: rotate(-26deg);
+      animation: meteorDrift calc(18s / var(--speed)) linear infinite;
+    }
+    .bubble {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.78);
+      background: radial-gradient(circle at 30% 28%, rgba(255,255,255,.8), rgba(255,255,255,.12));
+      animation: bubbleFloat calc(15s / var(--speed)) ease-in-out infinite;
+    }
+    .fish {
+      width: 54px;
+      height: 30px;
+      animation: fishSwim calc(28s / var(--speed)) linear infinite;
+    }
+    .corner-spark {
+      width: 10px;
+      height: 10px;
+      background: #fff3ad;
+      clip-path: polygon(50% 0, 62% 36%, 100% 50%, 62% 64%, 50% 100%, 38% 64%, 0 50%, 38% 36%);
+      animation: softTwinkle calc(3.8s / var(--speed)) ease-in-out infinite alternate;
+    }
+    @keyframes meteorDrift {
+      0% { transform: translate(0, 0) rotate(-26deg); opacity: 0; }
+      12% { opacity: .72; }
+      100% { transform: translate(-42vw, 28vh) rotate(-26deg); opacity: 0; }
+    }
+    @keyframes bubbleFloat {
+      0%, 100% { transform: translateY(0) scale(.88); opacity: .28; }
+      50% { transform: translateY(-34px) scale(1.08); opacity: .7; }
+    }
+    @keyframes fishSwim {
+      from { transform: translateX(-80px); opacity: 0; }
+      12%, 84% { opacity: .42; }
+      to { transform: translateX(calc(100vw + 90px)); opacity: 0; }
+    }
+    @keyframes softTwinkle {
+      from { transform: scale(.74) rotate(0); opacity: .22; }
+      to { transform: scale(1.08) rotate(18deg); opacity: .78; }
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 20px 0 66px;
+    }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.24; letter-spacing: 0; }
+    h1 { font-size: clamp(30px, 4.2vw, 48px); }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    a { color: #5c74c9; font-weight: 900; }
+    button, textarea { font: inherit; }
+    .hidden { display: none !important; }
+    .math {
+      font-family: "Times New Roman", "Cambria Math", "STIX Two Text", "Songti SC", serif;
+      white-space: nowrap;
+      font-size: 1.04em;
+    }
+
+    .shell {
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(255,250,255,.64));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      padding: 18px;
+      overflow: hidden;
+      animation: riseIn .55s ease both;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(320px, .94fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+    .hero-copy {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,255,255,.92), transparent 26%),
+        linear-gradient(135deg, rgba(255,248,252,.92), rgba(239,248,255,.86));
+      padding: 22px;
+      overflow: hidden;
+      min-height: 310px;
+    }
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,230,155,.55), transparent 70%);
+    }
+    .hero-art {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      min-height: 310px;
+      background: linear-gradient(160deg, rgba(248,242,255,.88), rgba(232,249,255,.88), rgba(255,246,224,.86));
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-art svg, .island-card svg, .theater-art svg { width: 100%; height: 100%; display: block; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(185, 167, 234, .58);
+      border-radius: 999px;
+      background: rgba(255,255,255,.68);
+      color: #7c67bd;
+      font-size: 13px;
+      font-weight: 950;
+      padding: 5px 11px;
+      margin-bottom: 12px;
+    }
+    .lead {
+      color: var(--soft-ink);
+      font-size: 17px;
+      max-width: 62ch;
+    }
+    .key {
+      color: #443552;
+      font-weight: 950;
+      background: linear-gradient(transparent 58%, rgba(255, 226, 143, .82) 58%);
+      padding: 0 2px;
+    }
+    .pillrow, .actions, .tiny-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      align-items: center;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      border: 1px solid rgba(185, 167, 234, .55);
+      border-radius: 999px;
+      background: rgba(255,255,255,.7);
+      color: #6d58a8;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 920;
+    }
+    .pill.mint { color: #327e68; border-color: rgba(148,221,197,.68); background: rgba(237,252,247,.74); }
+    .pill.rose { color: #a84775; border-color: rgba(234,164,197,.72); background: rgba(255,243,249,.8); }
+    .pill.honey { color: #9b6d18; border-color: rgba(243,215,127,.72); background: rgba(255,249,226,.82); }
+    .btn {
+      min-height: 42px;
+      border: 1px solid rgba(185, 167, 234, .66);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(244,238,255,.84));
+      color: #5d4a93;
+      padding: 9px 14px;
+      font-weight: 950;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: var(--soft-shadow);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 16px 32px rgba(77, 54, 105, .14); border-color: rgba(142, 118, 212, .82); }
+    .btn.primary {
+      color: #fff;
+      border-color: rgba(152, 124, 219, .9);
+      background: linear-gradient(135deg, #c6a8ea, #8dccea);
+    }
+    .btn.mint {
+      color: #fff;
+      border-color: rgba(66, 167, 127, .72);
+      background: linear-gradient(135deg, #94ddc5, #68bfa4);
+    }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .portal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .portal {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 15% 16%, rgba(255,255,255,.9), transparent 24%),
+        linear-gradient(145deg, rgba(255,255,255,.82), rgba(247,241,255,.74));
+      padding: 16px;
+      cursor: pointer;
+      min-height: 186px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .portal::after {
+      content: "";
+      position: absolute;
+      right: -48px;
+      bottom: -58px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,225,151,.58), transparent 70%);
+    }
+    .portal:hover, .portal.selected {
+      transform: translateY(-3px);
+      border-color: rgba(185, 147, 223, .95);
+      box-shadow: 0 18px 38px rgba(100, 75, 139, .13);
+    }
+    .portal.selected { background: linear-gradient(145deg, rgba(255,245,252,.92), rgba(232,248,255,.86)); }
+    .portal strong { display: block; font-size: 20px; margin-bottom: 7px; color: #6c55a9; }
+    .portal p { color: var(--soft-ink); margin: 0 0 10px; }
+    .portal .portal-svg { width: 92px; height: 70px; margin-bottom: 8px; }
+
+    .companion-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .companion-card {
+      border: 1px solid rgba(210, 188, 224, .68);
+      border-radius: 22px;
+      background: rgba(255,255,255,.6);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 9px;
+      align-items: center;
+    }
+    .companion-card svg { width: 54px; height: 54px; animation: buddySway calc(4.8s / var(--speed)) ease-in-out infinite alternate; }
+    .blink-eye {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: blink calc(5.6s / var(--speed)) ease-in-out infinite;
+    }
+    .dance-buddy {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: dance calc(.9s / var(--speed)) ease-in-out infinite alternate;
+    }
+    .companion-card strong { display: block; color: #6c55a9; }
+    .companion-card span { display: block; color: var(--soft-ink); font-size: 13px; line-height: 1.35; }
+
+    .game-shell {
+      display: grid;
+      grid-template-columns: 288px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .side-panel, .question-panel, .result-panel {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: var(--soft-shadow);
+      padding: 16px;
+      backdrop-filter: blur(14px);
+    }
+    .side-panel {
+      position: sticky;
+      top: 14px;
+    }
+    .stat-card {
+      border: 1px solid rgba(210, 188, 224, .64);
+      border-radius: 22px;
+      background: rgba(255,255,255,.58);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .big-num {
+      color: #6c55a9;
+      font-size: 34px;
+      font-weight: 980;
+      line-height: 1.1;
+    }
+    .progress-track {
+      height: 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(210, 188, 224, .8);
+      background: rgba(255,255,255,.52);
+      overflow: hidden;
+      margin: 9px 0;
+    }
+    .progress-track span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--pink), var(--lavender), var(--blue), var(--mint));
+      transition: width .35s ease;
+    }
+    .island-map {
+      min-height: 170px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(210, 188, 224, .62);
+      background: rgba(255,255,255,.5);
+      margin-top: 10px;
+    }
+    .path-dot { fill: #fff; stroke: #cdb8e0; stroke-width: 2; }
+    .path-dot.done { fill: #bdf0dc; stroke: #57b692; }
+    .path-dot.current { fill: #ffeaa5; stroke: #cf9862; filter: drop-shadow(0 0 7px rgba(255, 218, 116, .82)); }
+
+    .chapter-banner {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(210, 188, 224, .64);
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(255,255,255,.88), transparent 24%),
+        linear-gradient(135deg, rgba(255,245,252,.86), rgba(235,249,255,.8));
+      padding: 12px;
+      margin-bottom: 12px;
+      animation: riseIn .45s ease both;
+    }
+    .island-card {
+      height: 104px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(185, 167, 234, .56);
+      background: #f8f4ff;
+    }
+    .story-label {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(185, 167, 234, .5);
+      color: #7c67bd;
+      font-size: 13px;
+      font-weight: 950;
+      margin-bottom: 6px;
+    }
+    .story-title {
+      font-weight: 980;
+      font-size: 20px;
+      color: #4b3d67;
+      margin-bottom: 4px;
+    }
+    .story-text {
+      color: var(--soft-ink);
+      margin: 0;
+    }
+    .arc-card {
+      position: relative;
+      border: 1px solid rgba(210, 188, 224, .62);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255,255,255,.84), transparent 26%),
+        linear-gradient(135deg, rgba(255,250,253,.86), rgba(237,250,255,.78));
+      padding: 12px 14px 12px 44px;
+      margin: 10px 0 12px;
+      color: var(--soft-ink);
+      overflow: hidden;
+      animation: riseIn .44s ease both;
+    }
+    .arc-card::before {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 17px;
+      width: 17px;
+      height: 17px;
+      background: linear-gradient(135deg, #ffd8e8, #fff0a8, #bdf0dc);
+      clip-path: polygon(50% 0, 61% 34%, 96% 35%, 68% 56%, 79% 91%, 50% 70%, 21% 91%, 32% 56%, 4% 35%, 39% 34%);
+      filter: drop-shadow(0 4px 8px rgba(186, 150, 222, .22));
+      animation: softTwinkle calc(4.6s / var(--speed)) ease-in-out infinite alternate;
+    }
+    .arc-card strong {
+      color: #6c55a9;
+      margin-right: 6px;
+    }
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .mission-card {
+      border: 1px solid rgba(210, 188, 224, .64);
+      border-radius: 22px;
+      background: rgba(255,255,255,.58);
+      padding: 11px;
+    }
+    .mission-card span {
+      color: #9977c7;
+      font-size: 12px;
+      font-weight: 950;
+    }
+    .mission-card strong { display: block; margin: 2px 0 4px; }
+    .mission-card p { color: var(--soft-ink); font-size: 14px; margin: 0; }
+    .exam-card {
+      border: 1px solid rgba(210, 188, 224, .68);
+      border-radius: 28px;
+      background: var(--panel-strong);
+      padding: 15px;
+      margin: 12px 0;
+    }
+    .stem {
+      font-size: 21px;
+      font-weight: 960;
+      line-height: 1.45;
+      color: #3e324d;
+      margin-bottom: 10px;
+    }
+    .scenario {
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(255,246,252,.92), rgba(239,249,255,.85));
+      border: 1px solid rgba(210, 188, 224, .58);
+      padding: 11px 12px;
+      color: var(--soft-ink);
+    }
+    .choice-grid {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .choice {
+      position: relative;
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      border: 1px solid rgba(197, 181, 215, .78);
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 10% 14%, rgba(255,255,255,.9), transparent 22%),
+        linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,249,253,.82));
+      padding: 11px 13px;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 10px 22px rgba(77, 54, 105, .07);
+      overflow: hidden;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+      min-height: 112px;
+    }
+    .choice:hover { transform: translateY(-2px); border-color: rgba(186, 150, 222, .9); }
+    .choice:hover .avatar svg { animation-duration: calc(1.4s / var(--speed)); }
+    .choice.selected { border-color: rgba(139, 116, 207, .95); background: linear-gradient(135deg, rgba(249,241,255,.95), rgba(235,249,255,.92)); }
+    .choice.correct { border-color: rgba(66,167,127,.9); background: linear-gradient(135deg, rgba(236,252,246,.94), rgba(255,251,232,.88)); }
+    .choice.wrong { border-color: rgba(215,111,159,.84); background: linear-gradient(135deg, rgba(255,241,249,.94), rgba(255,249,229,.86)); }
+    .avatar {
+      width: 66px;
+      min-height: 70px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(247,240,255,.72));
+      border: 1px solid rgba(210, 188, 224, .65);
+      box-shadow: inset 0 1px rgba(255,255,255,.82), 0 8px 16px rgba(77, 54, 105, .09);
+    }
+    .avatar svg { width: 54px; height: 54px; display: block; animation: buddySway calc(3.8s / var(--speed)) ease-in-out infinite alternate; }
+    .choice small {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #7c67bd;
+      font-size: 12px;
+      font-weight: 980;
+      margin-bottom: 4px;
+    }
+    .choice small::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink), var(--lavender));
+    }
+    .choice-text { display: block; min-width: 0; }
+    .choice-cue {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      margin-top: 7px;
+      border: 1px solid rgba(210, 188, 224, .56);
+      border-radius: 999px;
+      background: rgba(255,255,255,.52);
+      color: #8a78a0;
+      font-size: 12px;
+      font-weight: 880;
+      padding: 3px 9px;
+    }
+    .choice[disabled] { cursor: default; }
+    textarea {
+      width: 100%;
+      min-height: 84px;
+      border: 1px solid rgba(210, 188, 224, .72);
+      border-radius: 22px;
+      background: rgba(255,255,255,.68);
+      color: var(--ink);
+      padding: 11px 12px;
+      resize: vertical;
+      outline: none;
+      box-shadow: inset 0 1px rgba(255,255,255,.72);
+    }
+    textarea:focus { border-color: rgba(139, 116, 207, .92); }
+
+    .feedback {
+      display: none;
+      border: 1px solid rgba(210, 188, 224, .64);
+      border-radius: 26px;
+      background: linear-gradient(135deg, rgba(239,252,247,.92), rgba(255,251,232,.85));
+      padding: 13px;
+      margin-top: 12px;
+      animation: riseIn .3s ease both;
+    }
+    .feedback.show { display: block; }
+    .feedback.wrong { background: linear-gradient(135deg, rgba(255,243,249,.94), rgba(246,240,255,.86)); }
+    .talk {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      border: 1px solid rgba(210, 188, 224, .58);
+      border-radius: 22px;
+      background: rgba(255,255,255,.58);
+      padding: 10px;
+      margin: 9px 0;
+    }
+    .talk svg { width: 58px; height: 58px; animation: buddySway calc(3.6s / var(--speed)) ease-in-out infinite alternate; }
+    .talk strong { color: #6c55a9; }
+    .explain-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .explain-grid div, .reward-box {
+      border: 1px solid rgba(210, 188, 224, .58);
+      border-radius: 20px;
+      background: rgba(255,255,255,.58);
+      padding: 10px;
+    }
+    .explain-grid strong, .reward-box strong { color: #6c55a9; }
+    .tiny { color: var(--soft-ink); font-size: 13px; }
+
+    .shelf {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .sticker {
+      border: 1px solid rgba(210, 188, 224, .62);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(244,238,255,.75));
+      color: #6c55a9;
+      font-size: 13px;
+      font-weight: 930;
+      padding: 5px 10px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(70, 54, 86, .26);
+      backdrop-filter: blur(8px);
+      z-index: 40;
+      padding: 18px;
+    }
+    .overlay.show { display: grid; }
+    .modal {
+      width: min(680px, 100%);
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255,255,255,.94), transparent 24%),
+        linear-gradient(145deg, rgba(255,249,252,.97), rgba(235,248,255,.95), rgba(255,248,224,.95));
+      box-shadow: var(--shadow);
+      padding: 18px;
+      text-align: center;
+      overflow: hidden;
+      animation: popIn .28s ease both;
+    }
+    .theater-art {
+      height: 220px;
+      border: 1px solid rgba(210, 188, 224, .58);
+      border-radius: 28px;
+      background: rgba(255,255,255,.5);
+      overflow: hidden;
+      margin: 10px 0 14px;
+    }
+    .rainbow-burst {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 35;
+      overflow: hidden;
+    }
+    .rainbow-bit {
+      position: absolute;
+      width: 86px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ffb6d6, #ffe89a, #aef0d4, #ace0ff, #d5c3ff);
+      animation: rainbowFall 1.2s ease-out forwards;
+    }
+    .spark-pop {
+      position: fixed;
+      width: 9px;
+      height: 9px;
+      pointer-events: none;
+      border-radius: 50%;
+      background: #fff2a8;
+      box-shadow: 0 0 0 4px rgba(255, 236, 161, .24);
+      animation: sparklePop .55s ease-out forwards;
+      z-index: 50;
+    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 84px;
+      transform: translateX(-50%) translateY(-12px);
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      color: #6c55a9;
+      box-shadow: var(--soft-shadow);
+      padding: 10px 16px;
+      font-weight: 950;
+      opacity: 0;
+      z-index: 60;
+      transition: opacity .22s ease, transform .22s ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(18px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes buddySway {
+      from { transform: translateY(0) rotate(-1deg); }
+      to { transform: translateY(-4px) rotate(1.5deg); }
+    }
+    @keyframes blink {
+      0%, 88%, 100% { transform: scaleY(1); }
+      92% { transform: scaleY(.12); }
+    }
+    @keyframes dance {
+      from { transform: translateY(0) rotate(-3deg); }
+      to { transform: translateY(-10px) rotate(3deg); }
+    }
+    @keyframes sparklePop {
+      from { opacity: 1; transform: translate(-50%, -50%) scale(.8); }
+      to { opacity: 0; transform: translate(-50%, -86px) scale(1.9); }
+    }
+    @keyframes rainbowFall {
+      from { opacity: .95; transform: translateY(-20px) rotate(-18deg); }
+      to { opacity: 0; transform: translateY(230px) rotate(20deg); }
+    }
+
+    @media (max-width: 940px) {
+      main { width: min(100% - 20px, 1180px); }
+      .hero, .portal-grid, .game-shell, .mission-grid, .explain-grid, .companion-row { grid-template-columns: 1fr; }
+      .side-panel { position: static; }
+      .chapter-banner { grid-template-columns: 1fr; }
+      .choice { grid-template-columns: 58px minmax(0, 1fr); }
+      .avatar { width: 56px; min-height: 60px; border-radius: 20px; }
+      .avatar svg { width: 48px; height: 48px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+  </style>
+</head>
+<body class="theme-starry">
+  <div class="ambient" id="ambient" aria-hidden="true"></div>
+  <div class="toast" id="toast">星光 +1</div>
+  <div class="rainbow-burst" id="rainbowBurst" aria-hidden="true"></div>
+
+  <main>
+    <section class="shell" id="startScreen">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">星光海岛知识冒险记</span>
+          <h1>把离散和马原，变成一小段一小段会发光的闯关。</h1>
+          <p class="lead">你来到彩虹星岛，四只软萌伙伴陪你收集<span class="key">离散数学的深海逻辑碎片</span>和<span class="key">马原的星际哲理碎片</span>。一段冒险只做 3 题，答完就庆祝，不让大脑被长卷子吓跑。</p>
+          <div class="pillrow">
+            <span class="pill rose">3 题一章</span>
+            <span class="pill mint">错题=星光记忆宝箱</span>
+            <span class="pill honey">答对解锁贴纸和背景</span>
+          </div>
+          <div class="companion-row" id="companionRow"></div>
+        </div>
+        <div class="hero-art" id="heroArt"></div>
+      </div>
+
+      <div class="tiny-stats">
+        <span class="pill" id="levelPill">海岛等级 1</span>
+        <span class="pill mint" id="starPill">星光 0</span>
+        <span class="pill rose" id="wrongPill">记忆宝箱 0</span>
+        <span class="pill honey" id="skinPill">背景 1/4</span>
+        <span class="pill" id="nextRewardPill">下一奖励：浅蓝海水面</span>
+      </div>
+
+      <h2 style="margin-top:16px;">选择传送门</h2>
+      <p class="lead" style="font-size:15px;">不是无限刷题。每局 9 题，按 3 题切成三段小冒险；第 5 关会打开短篇小剧场，让注意力喘口气再回来。</p>
+      <div class="portal-grid" id="portalGrid">
+        <button class="portal selected" data-mode="mixed">
+          <div class="portal-svg" data-portal="mixed"></div>
+          <strong>彩虹星岛混合局</strong>
+          <p>离散和马原交替出现，适合刚坐下暖机，也适合分心时把脑子牵回来。</p>
+          <span class="pill mint">推荐先玩</span>
+        </button>
+        <button class="portal" data-mode="discrete">
+          <div class="portal-svg" data-portal="discrete"></div>
+          <strong>深海逻辑海域</strong>
+          <p>集合、量词、证明、图论都藏在海底星光里，专门救离散证明题。</p>
+          <span class="pill rose">6/28 主战</span>
+        </button>
+        <button class="portal" data-mode="marx">
+          <div class="portal-svg" data-portal="marx"></div>
+          <strong>星际哲理森林</strong>
+          <p>把材料题信号变成页边书签，练马原开卷的定位和第一段表达。</p>
+          <span class="pill honey">6/30 收口</span>
+        </button>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="startBtn">登岛，开始 9 题冒险</button>
+        <a class="btn" href="./final_two_wrong_review.html">打开星光记忆宝箱</a>
+        <a class="btn" href="./discrete_last36_learning_ladder.html">深海逻辑图鉴</a>
+        <a class="btn" href="./marx_openbook_final_sprint.html">哲理森林图鉴</a>
+        <a class="btn" href="./final_two_subject_command_center.html">回最后两科作战台</a>
+      </div>
+
+      <div class="shelf" id="startShelf"></div>
+    </section>
+
+    <section class="shell hidden" id="gameScreen">
+      <div class="game-shell">
+        <aside class="side-panel">
+          <h2>星光航海仪</h2>
+          <div class="stat-card">
+            <span class="tiny">本局星光值</span>
+            <div class="big-num" id="scoreNum">0</div>
+            <div class="progress-track"><span id="progressBar"></span></div>
+            <div class="tiny" id="progressText">第 1 / 9 关</div>
+          </div>
+          <div class="stat-card">
+            <strong>当前小队</strong>
+            <p class="tiny">兔子、橘猫、小白熊、小羊会轮流守门。选项会洗牌，别靠长度猜，靠题眼走。</p>
+            <div class="shelf" id="miniBuddyShelf"></div>
+          </div>
+          <div class="stat-card">
+            <strong>星光图鉴</strong>
+            <div class="shelf" id="rewardShelfMini"></div>
+          </div>
+          <div class="island-map" id="islandMap"></div>
+        </aside>
+        <section class="question-panel" id="questionPanel"></section>
+      </div>
+    </section>
+
+    <section class="shell hidden" id="resultScreen">
+      <div class="result-panel">
+        <span class="eyebrow">本局冒险完成</span>
+        <h1 id="resultTitle">彩虹星岛亮起一小片</h1>
+        <p class="lead" id="resultText"></p>
+        <div class="shelf" id="resultRewards"></div>
+        <div class="feedback show" id="resultWrongBox"></div>
+        <div class="actions" style="margin-top:14px;">
+          <button class="btn primary" id="againBtn">再走一段小冒险</button>
+          <a class="btn primary" href="./final_two_wrong_review.html">打开星光记忆宝箱</a>
+          <a class="btn mint" href="./discrete_proof_chain_lab.html">离散证明链条</a>
+          <a class="btn" href="./marx_openbook_final_sprint.html#quiz">马原原理分流</a>
+          <a class="btn" href="./final_two_subject_command_center.html">回最后两科作战台</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-live="polite">
+    <div class="modal">
+      <span class="eyebrow" id="overlayTag">小剧场</span>
+      <h2 id="overlayTitle">彩虹流星落下来了</h2>
+      <div class="theater-art" id="overlayArt"></div>
+      <p class="lead" id="overlayText" style="font-size:16px;margin:auto;max-width:58ch;"></p>
+      <div class="actions" style="justify-content:center;margin-top:14px;">
+        <button class="btn primary" id="overlayBtn">继续冒险</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      questionsPerGame: 9,
+      chapterSize: 3,
+      animationSpeed: 0.72,
+      stateKey: "starlight-island-state-v2"
+    };
+
+    document.documentElement.style.setProperty("--speed", CONFIG.animationSpeed);
+
+    const companions = [
+      { id: "rabbit", letter: "A", name: "棉兔露露", role: "帮你圈题眼", color: "#ffd8e8" },
+      { id: "cat", letter: "B", name: "橘猫糖糖", role: "专抓假线索", color: "#ffe0b8" },
+      { id: "bear", letter: "C", name: "白熊糯糯", role: "提醒第一步", color: "#e8f4ff" },
+      { id: "lamb", letter: "D", name: "云羊泡泡", role: "收考场句", color: "#f1e9ff" }
+    ];
+
+    const banks = {
+      discrete: [
+        {
+          id: "d-semantic-entailment",
+          realm: "深海逻辑海域",
+          topic: "语义后承",
+          story: "海底灯塔亮出 Γ ⊨ Q，露露说：别急着背公理，先看有没有反例从珊瑚缝里溜走。",
+          prompt: "题目写 <span class='math'>Γ ⊨ Q</span>，要证明它成立。第一步最像哪条路？",
+          scene: "这是语义题，符号 <span class='math'>⊨</span> 在问“所有让前提真的解释里，结论会不会也真”。",
+          choices: [
+            ["反设有解释让 Γ 全真而 Q 假，再推出不可能。", "露露点头：这正是语义后承失败的唯一样子，把它堵住就赢。"],
+            ["先找一个解释让 Q 为真，再说明这个例子足够好。", "糖糖摇尾巴：一个成功例子太少啦，语义后承要管所有前提为真的解释。"],
+            ["把 Γ 和 Q 都写成主析取范式，再比较成真行。", "糯糯提醒：真值表能辅助，但这题的第一动作是抓失败形态。"],
+            ["直接列公理实例，用 MP 一步一步推出 Q。", "泡泡眨眼：那是 <span class='math'>⊢</span> 的形式证明思路，不是 <span class='math'>⊨</span> 的语义思路。"]
+          ],
+          answer: 0,
+          eye: "看到 Γ ⊨ Q，就找“前提全真、结论假”的失败形态。",
+          action: "反设失败解释存在，再把它推出矛盾。",
+          sentence: "反设存在解释 I，使 Γ 中所有公式为真而 Q 为假，下面推出矛盾。",
+          badge: "语义灯塔贝壳",
+          back: "回离散证明链条的语义后承题。"
+        },
+        {
+          id: "d-membership-subset",
+          realm: "深海逻辑海域",
+          topic: "集合符号",
+          story: "一条透明小鱼叼来两块牌子：∈ 和 ⊆。糖糖说：一个是住在岛上，一个是整座小岛被装进大岛。",
+          prompt: "若 <span class='math'>a ∈ A</span> 且 <span class='math'>A ⊆ B</span>，一定能推出什么？",
+          scene: "这里最容易把“元素属于集合”和“集合包含集合”混在一起。",
+          choices: [
+            ["A ∈ B，因为 A 已经在 B 里面。", "露露轻轻戳牌子：A 是一个集合，A⊆B 不等于 A 作为元素属于 B。"],
+            ["a ⊆ B，因为 a 已经跟着 A 进了 B。", "糖糖吐槽：a 是元素，不一定是集合；别把 ∈ 偷换成 ⊆。"],
+            ["a ∈ B，因为 A 的每个元素也都是 B 的元素。", "糯糯举小旗：对，子集的定义就是把 A 的成员全部带进 B。"],
+            ["B ∈ A，因为 B 比 A 大，所以会回到 A 里。", "泡泡晃脑袋：大小关系不是元素关系，集合题要看符号类型。"]
+          ],
+          answer: 2,
+          eye: "∈ 是元素属于集合；⊆ 是集合包含关系。",
+          action: "用子集定义：若 x∈A，则 x∈B。",
+          sentence: "由 A⊆B 的定义，任取 x∈A 都有 x∈B；令 x=a，故 a∈B。",
+          badge: "属于号小鱼",
+          back: "回离散符号视觉手册的 ∈/⊆ 对照。"
+        },
+        {
+          id: "d-quantifier-order",
+          realm: "深海逻辑海域",
+          topic: "量词换序",
+          story: "量词雾桥上有两张通行证：一张允许每个 x 带自己的 y，一张要求同一个 y 照顾所有 x。",
+          prompt: "为什么 <span class='math'>∀x∃yP(x,y)</span> 一般不能推出 <span class='math'>∃y∀xP(x,y)</span>？",
+          scene: "考试喜欢把量词顺序轻轻一换，看你是否知道见证能不能依赖前面的变量。",
+          choices: [
+            ["因为前式允许 y 随 x 变化，后式要求一个固定 y 管全部 x。", "露露拍手：这就是量词顺序的核心差别。"],
+            ["因为两个式子只差顺序，论域有限时通常可以互推。", "糖糖压低声音：有限也不能随便换，D={1,2}, P(x,y):x=y 就会翻车。"],
+            ["因为存在 y 已经出现，所以可以把它提前到最前面。", "糯糯摇头：提前会改变依赖关系，见证不能随意搬家。"],
+            ["因为只要找到一个满足 P 的二元组，就足够说明两个式子成立。", "泡泡提醒：一个二元组只照亮一个点，照不亮全体对象。"]
+          ],
+          answer: 0,
+          eye: "∀x∃y 允许 y 依赖 x；∃y∀x 要求固定 y。",
+          action: "用 D={1,2}, P(x,y):x=y 做反例。",
+          sentence: "取 D={1,2} 且 P(x,y) 表示 x=y，则前式真而后式假。",
+          badge: "量词雾桥章",
+          back: "回谓词逻辑反例骨架。"
+        },
+        {
+          id: "d-skolem",
+          realm: "深海逻辑海域",
+          topic: "Skolem 化",
+          story: "Skolem 工坊要给每个存在量词登记依赖。糯糯拿出表格：只写左边还站着的全称变量。",
+          prompt: "<span class='math'>∀x∃y∀z∃u P(x,y,z,u)</span> 做 Skolem 化，u 应替成什么？",
+          scene: "不要看到存在量词就写常元，也不要把已经被替换的存在变量塞进函数参数。",
+          choices: [
+            ["常元 c，因为 ∃u 已经保证 u 存在。", "露露摇耳朵：u 左边有全称变量，它可能随这些变量变化。"],
+            ["g(x,z)，因为 u 只依赖左侧全称变量 x 和 z。", "糖糖点亮灯泡：对，y 是前面的存在变量，已由 f(x) 处理。"],
+            ["g(x,y,z)，因为 u 前面写着 x、y、z 三个变量。", "糯糯指表格：Skolem 参数只收左侧全称变量，不收存在变量 y。"],
+            ["g(y,z)，因为 u 紧挨着 y 和 z。", "泡泡提醒：不是看谁离得近，是看左边哪些全称量词仍在管。"]
+          ],
+          answer: 1,
+          eye: "存在量词替换为依赖左侧全称变量的函数。",
+          action: "先处理 y=f(x)，再令 u=g(x,z)。",
+          sentence: "Skolem 化后可写为 ∀x∀z P(x,f(x),z,g(x,z))。",
+          badge: "Skolem 小齿轮",
+          back: "回前束与 Skolem 化讲义。"
+        },
+        {
+          id: "d-formal-proof",
+          realm: "深海逻辑海域",
+          topic: "公理推演",
+          story: "公理阶梯每一格都要盖章。泡泡说：这里不是写感觉，是给每一行找身份证。",
+          prompt: "题目要求用公理系统证明，并注明不能用演绎定理。最危险的写法是什么？",
+          scene: "形式证明题扣分常不在结论，而在你把不允许用的捷径偷偷用了。",
+          choices: [
+            ["列公理实例、前提、MP，每行都标明来源。", "露露说：这才像能交卷的阶梯，每一步都有脚印。"],
+            ["先假设前件推出后件，再直接用演绎定理收回。", "糖糖敲警钟：题目明说不能用演绎定理，这条路会塌。"],
+            ["引用题目允许的已证定理，再用 MP 接目标。", "糯糯点头：只要题目允许引用，并写清来源，这可以用。"],
+            ["在系统内用公理实例把已有结论嵌进新前件。", "泡泡说：这是系统内操作，不是偷偷借演绎定理。"]
+          ],
+          answer: 1,
+          eye: "看到“不可用演绎定理”，就必须逐行写来源。",
+          action: "每行标：前提 / 公理实例 / MP / 已给定定理。",
+          sentence: "本证明在公理系统内逐行推导，不使用演绎定理。",
+          badge: "MP 阶梯糖",
+          back: "回公理系统证明模板。"
+        },
+        {
+          id: "d-sound-complete",
+          realm: "深海逻辑海域",
+          topic: "可靠性与完全性",
+          story: "双箭头星门上刻着 ⊢ 和 ⊨。露露提醒：名字先别背，先看箭头往哪边走。",
+          prompt: "<span class='math'>Γ ⊢ Q ⇒ Γ ⊨ Q</span> 对应哪条元定理？",
+          scene: "这类题专门考方向：可证推出语义真，还是语义真推出可证。",
+          choices: [
+            ["完全性，因为所有语义真的东西都能被证明。", "糖糖挠头：完全性的方向是 Γ⊨Q ⇒ Γ⊢Q，这题反过来了。"],
+            ["可满足性，因为 Γ 有模型时 Q 也有模型。", "糯糯提醒：可满足性谈有没有模型，不是可证与语义真的方向。"],
+            ["可靠性，因为形式系统推出的结论在语义上也不会错。", "泡泡举星星：对，可靠性保证证明系统不乱说。"],
+            ["协调性，因为系统里不会同时推出 Q 和 ¬Q。", "露露摇耳朵：协调性是另一个性质，不等于这条箭头。"]
+          ],
+          answer: 2,
+          eye: "⊢ 到 ⊨ 是可靠性；⊨ 到 ⊢ 是完全性。",
+          action: "先看箭头方向，再写名字。",
+          sentence: "这是可靠性定理：若 Γ⊢Q，则 Γ⊨Q。",
+          badge: "可靠性星门",
+          back: "回可靠性/完全性方向辨析。"
+        },
+        {
+          id: "d-free-variable",
+          realm: "深海逻辑海域",
+          topic: "自由变量",
+          story: "括号花园里很多 x 长得一样，但不是每个 x 都被同一把伞罩住。糖糖说：先看量词管到哪。",
+          prompt: "公式 <span class='math'>(∀x(P(x)→Q(y))) ∧ R(x)</span> 中，哪些变量自由出现？",
+          scene: "不要因为前面有 ∀x，就把后面所有 x 都收编进它的辖域。",
+          choices: [
+            ["只有 y 自由，右边 R(x) 的 x 仍被左边 ∀x 管住。", "露露轻敲括号：左边量词管不到 ∧ 右侧的 R(x)。"],
+            ["y 自由，右边 R(x) 中的 x 也自由。", "糖糖眨眼：对，∀x 只管自己的括号内部，Q(y) 又没有 ∀y。"],
+            ["只有右边 x 自由，Q(y) 里的 y 被 ∀x 一起约束。", "糯糯抱住 y：∀x 只能约束 x，不能顺手管 y。"],
+            ["没有自由变量，因为公式里已经有一个全称量词。", "泡泡摇云朵：量词出现不等于所有变量都被约束。"]
+          ],
+          answer: 1,
+          eye: "先定辖域，再判断对应变量是否被量词约束。",
+          action: "画出 ∀x 的管辖括号，逐个检查变量。",
+          sentence: "自由出现的变量为 y，以及右侧 R(x) 中的 x。",
+          badge: "括号花园镜",
+          back: "回辖域与自由变量练习。"
+        },
+        {
+          id: "d-maximal-unique",
+          realm: "深海逻辑海域",
+          topic: "偏序最大元",
+          story: "偏序山坡上有两个闪光山顶。糯糯说：别说显然，让它们互相走到对方面前。",
+          prompt: "证明偏序集中最大元唯一。设 b₁、b₂ 都是最大元，下一句最稳是什么？",
+          scene: "唯一性证明要从“两个候选对象”推出它们相等，不能只写感觉。",
+          choices: [
+            ["由自反性直接得 b₁≤b₂ 且 b₂≤b₁。", "露露摇头：自反性只能给 b₁≤b₁、b₂≤b₂，给不了互相比较。"],
+            ["由最大元定义得 b₁≤b₂ 且 b₂≤b₁，再用反对称性。", "糖糖竖尾巴：对，这就是最大元唯一的标准骨架。"],
+            ["先证明它们都是极大元，因为极大元一定唯一。", "糯糯提醒：极大元不一定唯一，别把最大元和极大元混了。"],
+            ["构造一个没有最大元的偏序集，说明最大元不必存在。", "泡泡说：题目假设已经有两个最大元，现在要证若存在则唯一。"]
+          ],
+          answer: 1,
+          eye: "最大元定义 + 反对称性。",
+          action: "设两个最大元，推出互相 ≤，再推出相等。",
+          sentence: "由 b₂ 最大且 b₁∈B 得 b₁≤b₂；由 b₁ 最大且 b₂∈B 得 b₂≤b₁，故 b₁=b₂。",
+          badge: "反对称宝石",
+          back: "回关系与偏序证明骨架。"
+        },
+        {
+          id: "d-tautology",
+          realm: "深海逻辑海域",
+          topic: "重言式",
+          story: "真值星盘不要求你点亮所有星。泡泡说：如果要证明不是永真，一颗暗掉的星就够了。",
+          prompt: "题目问某公式是否为重言式，你怀疑不是。最快的证明策略是什么？",
+          scene: "不是所有题都要完整真值表；否定“永真”只需要一个反例赋值。",
+          choices: [
+            ["找一个赋值使公式为假，并说明这是反例。", "露露撒星光：对，一个假赋值就能推翻重言式。"],
+            ["列真值表时有一行不确定，就默认它不是重言式。", "糖糖皱眉：不确定不是证明，卷面要给明确赋值和结果。"],
+            ["证明它不是永假式，因为不是永假就不是重言式。", "糯糯提醒：不是永假只说明有真行，可能仍不是你要的结论。"],
+            ["把公式化为主析取范式，只要不为空就说明不是重言式。", "泡泡摆手：主析取不为空只说明可满足，不说明非永真。"]
+          ],
+          answer: 0,
+          eye: "重言式要求所有赋值为真；反例只要一行假。",
+          action: "写出赋值，再算出公式值为 0。",
+          sentence: "取赋值 v 使 F 的真值为 0，因此 F 不是重言式。",
+          badge: "反例星盘",
+          back: "回命题逻辑真值表与反例。"
+        },
+        {
+          id: "d-pdnf",
+          realm: "深海逻辑海域",
+          topic: "主析取范式",
+          story: "珊瑚星盘亮起 010、100、110 三行。露露说：主析取只收集成真行的小贝壳。",
+          prompt: "F 在 pqr=010、100、110 时为真。主析取范式第一步看什么？",
+          scene: "主析取看真行，每行写一个极小项；主合取才看假行。",
+          choices: [
+            ["看假行，把每行写成大项再用 ∧ 连接。", "糖糖提醒：这是主合取范式的路线，不是主析取。"],
+            ["只看出现过 1 的变量，把 p、q、r 中为 1 的变量用 ∨ 连接。", "糯糯摇头：每一行都要同时写 p、q、r，不能只挑出现的 1。"],
+            ["看真行，0 写否定、1 写原变量，行内 ∧，行间 ∨。", "泡泡鼓掌：对，010 就是 ¬p∧q∧¬r。"],
+            ["看真行，0 写原变量、1 写否定，行内 ∨，行间 ∧。", "露露眨眼：你把主析取和主合取的写法都反着拿了。"]
+          ],
+          answer: 2,
+          eye: "主析取看成真赋值；0 写否定，1 写原变量。",
+          action: "把 010、100、110 各翻成极小项，再用 ∨ 连接。",
+          sentence: "F=(¬p∧q∧¬r)∨(p∧¬q∧¬r)∨(p∧q∧¬r)。",
+          badge: "主析取珊瑚",
+          back: "回主范式速查。"
+        },
+        {
+          id: "d-substitution",
+          realm: "深海逻辑海域",
+          topic: "替换式",
+          story: "替换海螺只认完整花纹。糖糖说：长得像一半不算，必须是完整子公式。",
+          prompt: "替换式 <span class='math'>F[G/H]</span> 最容易扣分的地方是什么？",
+          scene: "它考的是公式结构，不是普通字符串搜索。",
+          choices: [
+            ["只替换最左边第一次出现的 H，后面保持不变。", "露露摇头：完整出现的位置都要按题意替换，不只第一次。"],
+            ["把所有含有 H 中字母的片段都替换掉。", "糖糖捂脸：这就是字符串替换坑，公式替换不是这样。"],
+            ["只替换完整出现的子公式 H，不替 H 的一部分。", "糯糯点头：先圈完整子公式，再替换，最稳。"],
+            ["把所有与 H 等值但字面不同的式子也替换掉。", "泡泡提醒：替换式看语法位置，不看等值变形后的相似。"]
+          ],
+          answer: 2,
+          eye: "替换完整子公式，不替相似片段。",
+          action: "先给 H 的完整出现位置画框。",
+          sentence: "仅对 H 在 F 中的完整出现作替换，得到 F[G/H]。",
+          badge: "替换海螺",
+          back: "回 2023 替换式题。"
+        },
+        {
+          id: "d-quantifier-distribution",
+          realm: "深海逻辑海域",
+          topic: "量词分配",
+          story: "两群发光小鱼分摊守门：Q 守 1 号，R 守 2 号。每个对象都有人守，但没人守全场。",
+          prompt: "为什么 <span class='math'>∀x(Q(x)∨R(x))</span> 一般不能推出 <span class='math'>∀xQ(x)∨∀xR(x)</span>？",
+          scene: "这是谓词逻辑反例常见套路：左边允许分摊覆盖，右边要求某一边覆盖全体。",
+          choices: [
+            ["取 D={1,2}，Q 只对 1 真，R 只对 2 真。", "露露点头：左边每个对象至少满足一个，右边两边都不全。"],
+            ["令 Q 和 R 都只对 1 真，则左边真右边假。", "糖糖摇头：2 既不满足 Q 也不满足 R，左边也假了。"],
+            ["把左式直接改写成右式，再说明只是括号不同。", "糯糯叹气：这正是不能随便分配全称量词的坑。"],
+            ["令 Q 与 R 是同一个谓词，因此左式和右式相似。", "泡泡提醒：同一个谓词不能制造左真右假的反例。"]
+          ],
+          answer: 0,
+          eye: "∀x(A∨B) 不等于 ∀xA∨∀xB。",
+          action: "用两元素论域做分摊覆盖反例。",
+          sentence: "令 Q(1)真 Q(2)假，R(1)假 R(2)真，则左式真而右式假。",
+          badge: "分摊小鱼",
+          back: "回谓词逻辑反例模板。"
+        },
+        {
+          id: "d-derivation-sequence",
+          realm: "深海逻辑海域",
+          topic: "推演序列",
+          story: "推演贝壳一排排发光。泡泡说：别问它漂不漂亮，先问每一行从哪里来。",
+          prompt: "判断一个公式序列是不是推演序列，最该检查什么？",
+          scene: "这类题不看“结论像不像对”，而看每一行有没有合法来源。",
+          choices: [
+            ["每一行是否都是永真式；若永真就算合法。", "露露摆手：前提可以不是永真式，推演序列看语法来源。"],
+            ["每一行是否是前提、公理实例，或由前面公式按规则得到。", "糖糖举章：对，每行都要有身份证。"],
+            ["每一行是否都含有目标公式里的同一批变元。", "糯糯摇头：变量像不等于推理合法。"],
+            ["最后一行是否为目标结论，中间过程可以省略。", "泡泡敲贝壳：证明题的分就在中间来源上。"]
+          ],
+          answer: 1,
+          eye: "推演序列看每一行来源。",
+          action: "逐行标前提/公理/MP/规则。",
+          sentence: "检查序列每一行是否为前提、公理实例或由前面行按规则推出。",
+          badge: "推演贝壳章",
+          back: "回 2024 推演序列题。"
+        },
+        {
+          id: "d-complete-set",
+          realm: "深海逻辑海域",
+          topic: "联结词完全集",
+          story: "联结词星门需要能拼出所有真值函数。露露说：极小还要试着拿走一块，看门会不会塌。",
+          prompt: "判断完全集/极小完全集时，第一反应应落在哪里？",
+          scene: "不要只数元素个数，也不要看到 ¬ 就以为万事大吉。",
+          choices: [
+            ["看集合元素多不多，越多越可能是极小完全集。", "糖糖吐槽：元素多反而常常不极小，极小要删任一元素就不完备。"],
+            ["只检查是否有 ¬，有否定就一定能表达所有联结词。", "糯糯摇头：只有否定还不够，还需要足够的组合表达能力。"],
+            ["只要有任意二元联结词，就能表达所有真值函数。", "泡泡提醒：不是每个二元联结词都功能完备。"],
+            ["看能否表达所有真值函数；若说极小，还要删元素检验。", "露露撒花：这就是完备性和极小性的两步门槛。"]
+          ],
+          answer: 3,
+          eye: "完备性看表达能力；极小性看删任一元素后是否失去完备性。",
+          action: "先证明可表达，再检验删去任一元素不再可表达。",
+          sentence: "判断完全集应回到真值函数表达能力；判断极小性还需验证任一真子集不完备。",
+          badge: "联结词星门",
+          back: "回联结词完备性题。"
+        },
+        {
+          id: "d-bijection-composition",
+          realm: "深海逻辑海域",
+          topic: "函数复合",
+          story: "三段海流 f、g、h 接成一条路。糯糯说：要证明路可靠，就分别查不撞车和能到达。",
+          prompt: "证明 <span class='math'>h∘g∘f</span> 是双射，最稳路线是什么？",
+          scene: "双射证明不要一句“复合仍双射”就完，要拆成单射和满射。",
+          choices: [
+            ["只证单射；有限集合里单射一定推出满射，所以不用写满射。", "露露提醒：除非题目条件足够，否则别偷这步；卷面最好拆两半。"],
+            ["只说 f、g、h 都双射，所以复合双射，过程可省。", "糖糖摇头：大题要过程分，最好写出单射/满射怎么来。"],
+            ["先证单射，再证满射：相等逐层推出，目标逐层找原像。", "糯糯拍爪：对，这样阅卷老师最容易给分。"],
+            ["写出存在反函数即可，不必说明反函数怎么组成。", "泡泡补充：反函数路线也行，但要写清 (h∘g∘f)⁻¹=f⁻¹∘g⁻¹∘h⁻¹。"]
+          ],
+          answer: 2,
+          eye: "双射 = 单射 + 满射。",
+          action: "单射看等值逐层消；满射任取目标逐层找原像。",
+          sentence: "先证明 h(g(f(x₁)))=h(g(f(x₂))) 可推出 x₁=x₂，再任取目标元素逐层由满射找原像。",
+          badge: "双射海流瓶",
+          back: "回函数复合证明题。"
+        },
+        {
+          id: "d-prenex",
+          realm: "深海逻辑海域",
+          topic: "前束范式",
+          story: "前束海藻要把量词排到前面。泡泡先给变量换名牌：别让同名变量互相缠住。",
+          prompt: "把谓词公式化为前束范式，最不该跳过的第一步是什么？",
+          scene: "不能一把把所有量词拖到最前面，否则可能改变变量绑定关系。",
+          choices: [
+            ["先改名，避免约束变量冲突或捕获自由变量。", "露露点头：变量名整理好，量词前移才安全。"],
+            ["先把所有量词按出现顺序搬到最前，最后再统一改名。", "糖糖摇尾：已经捕获过的变量，最后再改可能救不回来。"],
+            ["先做 Skolem 化，去掉存在量词后就自然前束。", "糯糯提醒：Skolem 化通常保持可满足性，不是普通等值前束变形。"],
+            ["先把谓词公式当命题公式写主析取范式。", "泡泡捂脸：谓词公式不能这样跳过量词结构。"]
+          ],
+          answer: 0,
+          eye: "前束化先改名防捕获。",
+          action: "改名 -> 消蕴含等价 -> 否定内移 -> 量词前移。",
+          sentence: "先对约束变量改名，避免变量冲突和自由变量被捕获，再进行量词前移。",
+          badge: "前束海藻结",
+          back: "回前束范式步骤卡。"
+        },
+        {
+          id: "d-graph-handshake",
+          realm: "深海逻辑海域",
+          topic: "图论握手定理",
+          story: "海底舞会每条彩带连着两个伙伴。糖糖说：数度数时，一条边会被两端各数一次。",
+          prompt: "无向图中所有顶点度数之和等于什么？可推出什么常见结论？",
+          scene: "这题常用来判断度数序列或奇度顶点个数。",
+          choices: [
+            ["等于 |E|；奇度顶点个数不一定有规律。", "露露摇头：每条边贡献两次度数，不是一次。"],
+            ["等于 2|E|；奇度顶点个数一定为偶数。", "糖糖转圈：对，这就是握手定理的两个最常用出口。"],
+            ["等于 |V|+|E|；奇度顶点个数由顶点数决定。", "糯糯提醒：度数和只看边的两端计数，不是 V+E。"],
+            ["等于 |V|；每个顶点平均贡献一条边。", "泡泡摆云朵：顶点可以有很多条边，不能这样平均。"]
+          ],
+          answer: 1,
+          eye: "每条无向边贡献两个度数。",
+          action: "写 ∑deg(v)=2|E|，再用奇偶性说明奇度顶点数为偶数。",
+          sentence: "由握手定理，∑v∈V deg(v)=2|E|，故奇度顶点个数为偶数。",
+          badge: "握手彩带",
+          back: "回图论度数题。"
+        }
+      ],
+      marx: [
+        {
+          id: "m-material-unity",
+          realm: "星际哲理森林",
+          topic: "世界物质统一性",
+          story: "哲理森林的星球、河流和小屋都映在同一片湖里。露露说：这题在问世界到底统一于什么。",
+          prompt: "材料强调自然界、人类社会和意识都离不开客观基础。优先写哪条原理？",
+          scene: "老师最后总结第一章重点：世界的物质统一性原理。",
+          choices: [
+            ["世界统一于物质，意识以物质为基础并反映物质。", "露露点亮湖面：这正是物质统一性，覆盖自然、社会、意识三层。"],
+            ["实践是检验真理的唯一标准，认识必须回到实践。", "糖糖提醒：这里没有强调检验认识，而是在问世界统一的根基。"],
+            ["社会意识具有相对独立性，可以反作用于社会存在。", "糯糯摇头：意识形态是第三章重点，但这题先问物质本原。"],
+            ["人民群众是历史创造者，推动社会变革和文明进步。", "泡泡说：人民群众很重要，但它不是“世界统一于什么”的答案。"]
+          ],
+          answer: 0,
+          eye: "自然界、人类社会、意识、客观基础。",
+          action: "先写世界物质统一性，再贴材料三层。",
+          sentence: "世界统一于物质，自然界是物质的，人类社会及意识也以物质实践为基础。",
+          badge: "物质湖星石",
+          back: "回马原第一章物质统一性。"
+        },
+        {
+          id: "m-practice",
+          realm: "星际哲理森林",
+          topic: "实践与认识",
+          story: "星云路标写着“从现实来，到现实去”。糖糖说：理论不是挂在天上，要回到实践里试一试。",
+          prompt: "材料强调理论来自现实问题，并要接受现实检验。优先调用什么？",
+          scene: "这是老师反复强调的实践性，不是泛泛写现实意义。",
+          choices: [
+            ["真理具有相对性，所以理论可以不断改变。", "露露提醒：发展性可补充，但材料主信号是实践检验。"],
+            ["实践是认识的基础，也是检验真理的唯一标准。", "糖糖举书签：对，来源、动力、目的、检验都接到实践。"],
+            ["人民群众创造历史，因为现实问题由群众提出。", "糯糯摇头：群众可能出现，但题眼是理论和实践的关系。"],
+            ["经济基础决定上层建筑，因为理论服务现实制度。", "泡泡提醒：制度词不明显时，别抢跑到经济基础。"]
+          ],
+          answer: 1,
+          eye: "理论、现实、检验、指导实践。",
+          action: "写实践决定认识，再写认识反作用于实践。",
+          sentence: "实践是认识的基础，认识必须回到实践中接受检验并指导新的实践。",
+          badge: "实践星云匙",
+          back: "回实践与认识四句模板。"
+        },
+        {
+          id: "m-dialectic-contradiction",
+          realm: "星际哲理森林",
+          topic: "对立统一规律",
+          story: "矛盾花廊两侧同时开花，一边写区别，一边写联系。糯糯说：别只选一边，要看它们怎么统一。",
+          prompt: "题目让分析国有企业与民营企业关系，最像哪类问法？",
+          scene: "老师说辩证法常以材料例子出现，不会只让你背三大规律。",
+          choices: [
+            ["只写主要矛盾，判断二者谁更重要即可。", "露露摇头：关系题不是单纯排第一，不能只写重要性。"],
+            ["用对立统一规律写差异、联系和统一发展。", "糖糖撒花：对，既写区别和张力，也写共同服务发展。"],
+            ["只写经济基础决定上层建筑，因为企业都属于制度安排。", "糯糯提醒：制度能补充，但题目问二者关系，先用矛盾分析。"],
+            ["只写人民群众创造历史，因为企业发展依靠劳动者。", "泡泡说：这会跑题，材料主线不是历史主体。"]
+          ],
+          answer: 1,
+          eye: "两类事物的关系、区别、联系、协调。",
+          action: "按对立面、统一面、方法论三步写。",
+          sentence: "二者既有性质和运行方式差异，又统一于社会主义市场经济和高质量发展目标之中。",
+          badge: "矛盾花签",
+          back: "回辩证法材料题框架。"
+        },
+        {
+          id: "m-quality-quantity",
+          realm: "星际哲理森林",
+          topic: "量变质变",
+          story: "云朵水壶一滴一滴浇花，忽然整片花海亮了。泡泡说：小变化攒够了，会出现新状态。",
+          prompt: "材料讲长期积累、条件成熟后实现突破，最贴近哪条规律？",
+          scene: "辩证法三大规律常通过材料词出现：积累、飞跃、突破、阶段性。",
+          choices: [
+            ["量变和质变规律，量的积累达到度会引起质变。", "露露点头：积累到突破，就是这条线。"],
+            ["否定之否定规律，任何变化都必然走三阶段。", "糖糖提醒：不是所有“变化”都自动写否定之否定。"],
+            ["价值规律，价格围绕价值上下波动。", "糯糯摇头：这里没有商品价格和交换信号。"],
+            ["社会意识反作用，因为突破来自观念更新。", "泡泡说：观念可补充，但材料核心是积累与飞跃。"]
+          ],
+          answer: 0,
+          eye: "积累、条件成熟、突破、飞跃。",
+          action: "写量变是质变必要准备，质变是量变必然结果。",
+          sentence: "量变积累到一定程度会引起质变，质变又为新的量变开辟道路。",
+          badge: "质变花露",
+          back: "回辩证法三大规律。"
+        },
+        {
+          id: "m-truth",
+          realm: "星际哲理森林",
+          topic: "真理绝对性相对性",
+          story: "真理水晶一面稳定，一面随星光慢慢长出新纹路。露露说：它不是死的，也不是随便变的。",
+          prompt: "材料说科学认识会不断发展，但不意味着真理不存在。该用什么？",
+          scene: "老师把真理绝对性和相对性、实践检验真理列为第二章重点。",
+          choices: [
+            ["真理只有相对性，所以客观真理不存在。", "糖糖摇头：这会滑向相对主义，马原不这么写。"],
+            ["真理只有绝对性，所以认识形成后不应再修正。", "糯糯提醒：这会把真理写僵，忽略认识发展。"],
+            ["真理是绝对性和相对性的统一，并在实践中发展。", "泡泡亮灯：对，既有客观内容，也受历史条件限制。"],
+            ["价值原则高于真理原则，有用即可不再检验。", "露露摆手：真理原则和价值原则要统一，不能取消实践检验。"]
+          ],
+          answer: 2,
+          eye: "科学认识发展、客观真理、实践检验。",
+          action: "反对绝对不变，也反对相对随便。",
+          sentence: "真理既具有客观内容，又随着实践和认识条件发展而不断丰富完善。",
+          badge: "真理水晶片",
+          back: "回第二章真理问题。"
+        },
+        {
+          id: "m-new-productivity",
+          realm: "星际哲理森林",
+          topic: "新质生产力",
+          story: "云梯上挂着科技创新、产业升级、高质量发展三盏灯。糖糖说：它们都指向生产力跃升。",
+          prompt: "材料出现科技创新、产业升级、新质生产力。优先写哪条主线？",
+          scene: "老师提到科技竞争和信息化问题，这类材料很可能考。",
+          choices: [
+            ["生产力发展及其对生产关系、制度环境的要求。", "露露点头：先抓生产力，再写制度适配和创新驱动。"],
+            ["价值规律，重点写新技术产品价格围绕价值波动。", "糖糖摇头：有市场词再考虑价值规律，这里主线是生产力。"],
+            ["人民群众创造历史，只写科技人才个人奋斗。", "糯糯提醒：人才重要，但不能替代生产力与制度关系主线。"],
+            ["意识形态反作用，创新文化可以直接决定生产力。", "泡泡说：文化能促进，但不能写成直接决定。"]
+          ],
+          answer: 0,
+          eye: "科技创新、产业升级、高质量发展、新质生产力。",
+          action: "生产力跃升 -> 制度/生产关系适配 -> 高质量发展。",
+          sentence: "新质生产力体现生产力的新跃升，要求以科技创新推动产业升级，并通过制度安排释放发展动力。",
+          badge: "创新云梯星",
+          back: "回新质生产力材料题。"
+        },
+        {
+          id: "m-social-consciousness",
+          realm: "星际哲理森林",
+          topic: "社会存在与社会意识",
+          story: "回声森林里，现实发出声音，观念又把声音传回现实。泡泡说：它们不是飘在空中的词。",
+          prompt: "材料讲网络舆论、意识形态斗争、价值观引导。优先调用哪组关系？",
+          scene: "老师点名意识形态作用，这类题很适合开卷论述。",
+          choices: [
+            ["实践是检验真理的标准，因为网络舆论也要检验。", "露露提醒：检验可以沾边，但材料主轴是社会意识。"],
+            ["人民群众创造历史，因为舆论参与者很多。", "糖糖摇头：有人参与不等于题眼就是群众史观。"],
+            ["社会存在决定社会意识，社会意识有相对独立性并反作用。", "糯糯举灯：对，意识形态根源于现实，也会影响现实。"],
+            ["价值规律，因为舆论会影响商品价格。", "泡泡摆手：这和材料主线差太远啦。"]
+          ],
+          answer: 2,
+          eye: "意识形态、价值观、舆论、文化引导。",
+          action: "先写决定关系，再写反作用和建设主流意识形态。",
+          sentence: "社会意识根源于社会存在，同时先进社会意识能够对社会发展起积极推动作用。",
+          badge: "回声森林贝",
+          back: "回社会存在与社会意识。"
+        },
+        {
+          id: "m-people-heroes",
+          realm: "星际哲理森林",
+          topic: "人民群众与杰出人物",
+          story: "历史舞台中央站着人民群众，聚光灯旁也有杰出人物。露露说：主角不能写错，配角也别抹掉。",
+          prompt: "材料讨论历史人物贡献和人民主体作用。怎么写才不偏？",
+          scene: "这题不能写成个人崇拜，也不能把人物作用完全删掉。",
+          choices: [
+            ["杰出人物是决定力量，人民群众主要执行他们的路线。", "糖糖摇头：这会把历史主体写反。"],
+            ["人民群众是历史创造者，杰出人物在条件和实践中发挥作用。", "糯糯点头：主次清楚，关系也完整。"],
+            ["人民群众是历史创造者，所以人物作用完全不用写。", "泡泡提醒：不能从一个极端跳到另一个极端。"],
+            ["历史规律决定一切，主体选择和个人作用只是表面现象。", "露露摆手：规律性和主体能动性要统一。"]
+          ],
+          answer: 1,
+          eye: "人民、群众、英雄、杰出人物、历史作用。",
+          action: "先定主体，再写人物作用的条件性。",
+          sentence: "人民群众是历史的创造者，杰出人物的作用必须放在一定历史条件和人民实践基础上理解。",
+          badge: "历史舞台票",
+          back: "回第三章人物作用。"
+        },
+        {
+          id: "m-commodity",
+          realm: "星际哲理森林",
+          topic: "商品二因素",
+          story: "集市小屋里，一颗星果既能吃，又能交换。糖糖说：一个回答有用，一个回答能换。",
+          prompt: "材料问商品为什么既能满足需要又能交换。优先调用哪组概念？",
+          scene: "这是劳动价值论入口题，别一上来就跳到剩余价值。",
+          choices: [
+            ["剩余价值理论，商品能交换是因为资本家获得剩余劳动。", "露露摇头：剩余价值是资本层面，这题先在商品层面。"],
+            ["价值规律，价格围绕价值上下波动。", "糖糖提醒：价格波动不是“有用且能交换”的第一解释。"],
+            ["商品二因素：使用价值和价值；背后对应劳动二重性。", "糯糯点头：使用价值答有用，价值答能按比例交换。"],
+            ["只写价值，不必区分使用价值和具体劳动。", "泡泡摆手：商品二因素就是要区分两个方面。"]
+          ],
+          answer: 2,
+          eye: "商品、满足需要、交换、使用价值、价值。",
+          action: "先区分使用价值和价值，再接劳动二重性。",
+          sentence: "商品是使用价值和价值的统一，具体劳动创造使用价值，抽象劳动形成价值。",
+          badge: "星果集市券",
+          back: "回劳动价值论。"
+        },
+        {
+          id: "m-value-law",
+          realm: "星际哲理森林",
+          topic: "价值规律",
+          story: "星果价格像小船上下浮动，但船锚在价值那里。泡泡说：别把波浪当成锚。",
+          prompt: "材料出现价格围绕价值波动、竞争和资源配置。优先写什么？",
+          scene: "价值规律常用价格、供求、竞争这些词暗示。",
+          choices: [
+            ["商品二因素，只写使用价值和价值的统一。", "露露提醒：这是入口概念，但价格围绕价值波动要写价值规律。"],
+            ["剩余价值理论，解释资本增殖和雇佣劳动。", "糖糖摇头：这里不是问资本为什么增殖。"],
+            ["供求决定价值量，所以价格会不断变动。", "糯糯敲锚：供求影响价格，不决定价值量。"],
+            ["价值规律：价值量由社会必要劳动时间决定，价格围绕价值波动。", "泡泡撒星：对，锚和波浪都写到了。"]
+          ],
+          answer: 3,
+          eye: "价格波动、价值、供求、竞争、资源配置。",
+          action: "写价值量决定，再写价格受供求影响上下波动。",
+          sentence: "价值规律要求商品价值量由社会必要劳动时间决定，价格受供求影响围绕价值上下波动。",
+          badge: "价值小船锚",
+          back: "回价值规律定位。"
+        },
+        {
+          id: "m-surplus-value",
+          realm: "星际哲理森林",
+          topic: "剩余价值",
+          story: "资本暗室里，货币不会自己长大。露露点亮生产过程：秘密藏在劳动力商品和剩余劳动里。",
+          prompt: "材料问资本为什么能增殖，或出现 G-W...P...W'-G'。核心是什么？",
+          scene: "老师最后资料专门补了剩余价值，这是闭卷/开卷都容易被问的硬点。",
+          choices: [
+            ["低买高卖造成差价，资本增殖主要发生在流通中。", "糖糖摇头：等价交换解释不了普遍增殖，秘密在生产过程。"],
+            ["机器设备独立创造新价值，劳动者只是操作机器。", "糯糯提醒：新价值来自活劳动，不是机器自己生出来。"],
+            ["购买劳动力一瞬间就得到剩余价值，生产只是展示。", "泡泡摆手：剩余价值是在使用劳动力的生产过程中创造的。"],
+            ["剩余价值来源于雇佣工人的剩余劳动。", "露露点头：劳动力能创造超过自身价值的价值，这就是秘密。"]
+          ],
+          answer: 3,
+          eye: "资本增殖、劳动力商品、剩余劳动、生产过程。",
+          action: "区分流通和生产，指出剩余价值来源。",
+          sentence: "资本增殖的秘密在于劳动力商品能够创造超过自身价值的价值，即剩余价值。",
+          badge: "剩余价值钥匙",
+          back: "回剩余价值专项。"
+        },
+        {
+          id: "m-base-superstructure",
+          realm: "星际哲理森林",
+          topic: "经济基础与上层建筑",
+          story: "制度小屋建在经济土壤上。糖糖说：地基变了，小屋也要修，但小屋也会反过来护住地基。",
+          prompt: "材料说制度改革、法律政策要适应经济发展。先定位到哪组关系？",
+          scene: "老师总结社会发展规律：生产力/生产关系，经济基础/上层建筑。",
+          choices: [
+            ["经济基础决定上层建筑，上层建筑反作用于经济基础。", "露露点头：制度、法律、政策这些词就是上层建筑信号。"],
+            ["生产力决定生产关系，只写劳动者和生产工具变化。", "糖糖提醒：生产力可关联，但法律政策更像上层建筑。"],
+            ["社会意识相对独立，政策能直接决定经济发展。", "糯糯摇头：不能把反作用写成直接决定。"],
+            ["人民群众创造历史，只写群众参与制度改革。", "泡泡说：群众可作为补充，不是这题主轴。"]
+          ],
+          answer: 0,
+          eye: "制度、法律、政策、治理、适应经济发展。",
+          action: "先写决定与反作用，再贴材料中的制度改革。",
+          sentence: "经济基础决定上层建筑，上层建筑对经济基础具有反作用，并应适应经济基础发展要求。",
+          badge: "制度小屋瓦",
+          back: "回社会发展规律。"
+        },
+        {
+          id: "m-capitalism-contradiction",
+          realm: "星际哲理森林",
+          topic: "资本主义基本矛盾",
+          story: "森林仓库堆满货物，门外却有人买不起。糯糯说：别只看现象，要挖到制度矛盾。",
+          prompt: "材料问经济危机、生产过剩或贫富分化的深层根源。优先写什么？",
+          scene: "材料题常让你从现象追到资本主义基本矛盾。",
+          choices: [
+            ["价值规律导致价格波动，所以才出现危机。", "露露摇头：价格波动不是深层制度根源。"],
+            ["资本主义基本矛盾：生产社会化和生产资料私人占有之间的矛盾。", "糖糖点灯：对，危机和分化都是它的表现。"],
+            ["福利政策不足，只要国家调节加强，基本矛盾就消失。", "糯糯提醒：调节能缓和，但不能消除基本矛盾。"],
+            ["剩余价值来源于劳动，因此不用再分析制度矛盾。", "泡泡说：剩余价值重要，但题目问危机深层根源。"]
+          ],
+          answer: 1,
+          eye: "经济危机、生产过剩、贫富分化、深层根源。",
+          action: "先点基本矛盾，再解释危机/分化是表现。",
+          sentence: "资本主义基本矛盾是生产社会化与生产资料资本主义私人占有之间的矛盾。",
+          badge: "仓库暗星",
+          back: "回资本主义基本矛盾。"
+        },
+        {
+          id: "m-nature",
+          realm: "星际哲理森林",
+          topic: "人与自然",
+          story: "绿色星河旁，泡泡给小树戴上护符：人能改造自然，也要听自然规律的声音。",
+          prompt: "材料讲生态文明、绿色发展、尊重自然规律。优先调用什么主线？",
+          scene: "这题不能只写环保口号，要把实践活动和客观规律接起来。",
+          choices: [
+            ["实践具有能动性，所以人类可以无限改造自然。", "露露摇头：能动性不能脱离客观规律。"],
+            ["人与自然是生命共同体，实践必须尊重客观规律。", "糖糖撒花：对，能动改造和尊重规律要统一。"],
+            ["只写经济增长和环境保护二者对立。", "糯糯提醒：对立统一可补充，但不能只写对立。"],
+            ["只依靠群众自觉就能完成生态治理。", "泡泡说：群众参与重要，但材料主线是人与自然关系。"]
+          ],
+          answer: 1,
+          eye: "生态文明、绿色发展、自然规律、人与自然。",
+          action: "写尊重客观规律与发挥主观能动性的统一。",
+          sentence: "人类实践活动必须尊重自然界客观规律，推动人与自然和谐共生。",
+          badge: "绿色星河叶",
+          back: "回人与自然材料题。"
+        },
+        {
+          id: "m-history-choice",
+          realm: "星际哲理森林",
+          topic: "历史规律性与主体选择",
+          story: "星岛岔路口有规律的潮汐，也有你要选择的船桨。露露说：不是宿命，也不是任性。",
+          prompt: "材料说历史发展有规律，但主体选择影响具体道路。第一段怎么开？",
+          scene: "老师提到历史规律性与主体选择性，可能用路径、选择、博弈等材料出现。",
+          choices: [
+            ["历史规律完全决定路径，主体选择只是表面现象。", "糖糖摇头：这会写成机械决定论。"],
+            ["主体选择可以脱离条件，只要意志坚定就能创造历史。", "糯糯提醒：这会夸大主观能动性。"],
+            ["历史发展具有客观规律性，主体在一定条件下能动选择。", "泡泡点灯：对，规律性和选择性要辩证统一。"],
+            ["人民群众创造历史，所以不需要讨论规律制约。", "露露摆手：群众主体作用也在一定历史条件中发生。"]
+          ],
+          answer: 2,
+          eye: "历史规律、主体选择、路径、能动性。",
+          action: "规律性 -> 条件制约 -> 主体能动选择。",
+          sentence: "历史发展既具有客观规律性，也离不开主体在一定历史条件下的能动选择。",
+          badge: "潮汐船桨",
+          back: "回历史规律性与主体选择。"
+        },
+        {
+          id: "m-socialism",
+          realm: "星际哲理森林",
+          topic: "社会主义基本原则",
+          story: "星桥一端写基本原则，一端写中国实际。糖糖说：不是二选一，是一边坚持一边发展。",
+          prompt: "社会主义基本原则与中国特色社会主义的关系，怎么写最稳？",
+          scene: "老师最后总结第六章重点提到这组关系。",
+          choices: [
+            ["中国特色社会主义是本土经验，所以可以不谈科学社会主义原则。", "露露摇头：不能把特色写成脱离基本原则。"],
+            ["中国特色社会主义只是照搬基本原则，不能强调中国实际。", "糖糖提醒：也不能把它写成抽象照搬。"],
+            ["坚持科学社会主义基本原则，并结合中国实际创新发展。", "糯糯举桥牌：对，坚持与发展统一起来。"],
+            ["社会主义建设长期性说明基本原则暂时不用坚持。", "泡泡摆手：长期性不是放弃原则的理由。"]
+          ],
+          answer: 2,
+          eye: "基本原则、中国特色、坚持与发展。",
+          action: "基本原则 -> 中国实际 -> 实践创新。",
+          sentence: "中国特色社会主义既坚持科学社会主义基本原则，又立足中国具体实际和时代条件进行实践创新。",
+          badge: "星桥原则灯",
+          back: "回社会主义部分。"
+        },
+        {
+          id: "m-communism",
+          realm: "星际哲理森林",
+          topic: "共产主义实践运动",
+          story: "未来星路不是一张挂画，而是一条正在被脚步点亮的路。泡泡说：理想也在现实实践里生长。",
+          prompt: "如何理解共产主义不仅是未来理想，更是现实运动和实践过程？",
+          scene: "老师最后一课特别提醒：不要只把它写成未来结果。",
+          choices: [
+            ["共产主义主要是未来制度图景，现实阶段只描述结果即可。", "露露摇头：老师强调的不只是远景图。"],
+            ["共产主义是个人道德愿望，与社会历史运动关系不大。", "糖糖提醒：这会把社会实践运动写窄。"],
+            ["共产主义既是远大理想，也是推进人的解放的现实实践运动。", "糯糯撒星：对，把理想、过程、实践连起来。"],
+            ["共产主义只是分配方案，重点写未来物质条件即可。", "泡泡摆手：不能缩成单纯经济分配。"]
+          ],
+          answer: 2,
+          eye: "过程、运动、实践、不只是未来理想。",
+          action: "先从静止远景改写成现实实践过程。",
+          sentence: "共产主义不是静止的远景图，而是在现实实践中不断推进人的自由全面发展的历史运动。",
+          badge: "未来星路签",
+          back: "回共产主义实践运动。"
+        },
+        {
+          id: "m-material-answer",
+          realm: "星际哲理森林",
+          topic: "材料题写法",
+          story: "开卷书页像灯塔，但灯塔不会替你走路。露露说：找得到页码，还要把材料牵到原理上。",
+          prompt: "马原开卷材料题最危险的作答方式是什么？",
+          scene: "开卷不是抄书比赛，关键是定位、组织和贴材料。",
+          choices: [
+            ["先写原理，再抓材料关键词，最后分析关系和现实意义。", "糖糖点头：这是高分路线，原理和材料要牵手。"],
+            ["大段照抄资料，不点题眼、不贴材料、不分析关系。", "糯糯敲桌：这最危险，看起来写很多，实际得分点很散。"],
+            ["把结论落到方法论或现实意义。", "泡泡说：这是好习惯，不是危险方式。"],
+            ["看到关键词先定位页边钉子。", "露露提醒：定位是开卷优势，当然要做。"]
+          ],
+          answer: 1,
+          eye: "开卷、材料题、抄书、原理-材料-分析。",
+          action: "按“原理 -> 材料 -> 分析 -> 结论”四段式写。",
+          sentence: "本题可按原理、材料、分析、结论展开，避免脱离材料空泛抄写。",
+          badge: "开卷灯塔签",
+          back: "回马原材料题四段式。"
+        }
+      ]
+    };
+
+    const state = loadState();
+    const game = {
+      mode: "mixed",
+      deck: [],
+      index: 0,
+      selected: null,
+      checked: false,
+      score: 0,
+      wrong: [],
+      rewards: [],
+      startedAt: null,
+      pendingOverlay: null
+    };
+
+    const qs = (sel) => document.querySelector(sel);
+    const qsa = (sel) => Array.from(document.querySelectorAll(sel));
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+      }[ch]));
+    }
+
+    function loadState() {
+      const fallback = { stars: 0, answered: 0, right: 0, stickers: [], skins: ["星夜海岛"], lastMode: "mixed" };
+      try {
+        return { ...fallback, ...JSON.parse(localStorage.getItem(CONFIG.stateKey) || "{}") };
+      } catch {
+        return fallback;
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(CONFIG.stateKey, JSON.stringify(state));
+    }
+
+    function levelFromStars(stars) {
+      return Math.max(1, Math.floor(stars / 60) + 1);
+    }
+
+    function unlockedSkins(stars) {
+      const skins = ["星夜海岛"];
+      if (stars >= 60) skins.push("浅蓝海水面");
+      if (stars >= 140) skins.push("彩虹薄云");
+      if (stars >= 240) skins.push("流星慢舞");
+      return skins;
+    }
+
+    function nextRewardText(stars) {
+      const rewards = [
+        { need: 60, text: "浅蓝海水面背景" },
+        { need: 140, text: "彩虹薄云背景" },
+        { need: 240, text: "流星慢舞背景" },
+        { need: 360, text: "伙伴贴纸墙加厚" }
+      ];
+      const next = rewards.find(item => stars < item.need);
+      if (!next) return "全背景已亮，继续攒贴纸";
+      return `还差 ${next.need - stars} 星光解锁 ${next.text}`;
+    }
+
+    function companionSvg(id, mood = "happy", dance = false) {
+      const cls = dance ? "dance-buddy" : "";
+      const eyeClass = "blink-eye";
+      const common = `class="${cls}"`;
+      if (id === "rabbit") {
+        return `<svg ${common} viewBox="0 0 80 80" role="img" aria-label="棉兔露露">
+          <path d="M29 31 C21 7 31 4 39 29 C44 5 56 8 49 33 C58 39 58 57 47 65 C37 72 22 68 17 56 C13 46 18 36 29 31Z" fill="#fff8f9" stroke="#735b83" stroke-width="2.4"/>
+          <path d="M31 29 C27 14 31 12 36 30" fill="#ffd8e8"/>
+          <path d="M45 31 C51 14 55 15 48 33" fill="#ffd8e8"/>
+          <g class="${eyeClass}"><circle cx="30" cy="43" r="3" fill="#3d3048"/><circle cx="47" cy="43" r="3" fill="#3d3048"/></g>
+          <path d="M36 50 q4 4 8 0" fill="none" stroke="#3d3048" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="22" cy="49" r="5" fill="#ffc4dc" opacity=".7"/><circle cx="55" cy="49" r="5" fill="#ffc4dc" opacity=".7"/>
+          <path d="M18 18 C24 12 33 13 39 20 C29 20 25 25 25 34 C18 31 14 24 18 18Z" fill="#fff0a8" opacity=".9"/>
+        </svg>`;
+      }
+      if (id === "cat") {
+        return `<svg ${common} viewBox="0 0 80 80" role="img" aria-label="橘猫糖糖">
+          <path d="M20 34 C14 17 25 18 33 31 C38 29 43 29 48 31 C56 18 67 17 60 34 C67 43 63 60 52 66 C42 72 27 70 20 60 C14 51 13 42 20 34Z" fill="#ffd9aa" stroke="#735b83" stroke-width="2.4"/>
+          <path d="M23 33 C19 24 25 24 31 33" fill="#ffb9cd"/><path d="M57 33 C61 24 55 24 49 33" fill="#ffb9cd"/>
+          <path d="M32 28 h16 M29 23 h22" stroke="#f0a35f" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+          <g class="${eyeClass}"><circle cx="31" cy="45" r="3" fill="#3d3048"/><circle cx="49" cy="45" r="3" fill="#3d3048"/></g>
+          <path d="M38 50 q2 2 4 0" fill="none" stroke="#3d3048" stroke-width="2" stroke-linecap="round"/>
+          <path d="M35 56 q5 4 10 0" fill="none" stroke="#3d3048" stroke-width="2" stroke-linecap="round"/>
+          <path d="M15 58 C23 53 31 61 38 55 C48 47 58 54 65 47" fill="none" stroke="#fff7d0" stroke-width="5" stroke-linecap="round"/>
+        </svg>`;
+      }
+      if (id === "bear") {
+        return `<svg ${common} viewBox="0 0 80 80" role="img" aria-label="白熊糯糯">
+          <circle cx="24" cy="28" r="11" fill="#eaf7ff" stroke="#735b83" stroke-width="2.3"/>
+          <circle cx="56" cy="28" r="11" fill="#eaf7ff" stroke="#735b83" stroke-width="2.3"/>
+          <path d="M17 43 C17 27 29 20 40 20 C51 20 63 27 63 43 C63 59 52 68 40 68 C28 68 17 59 17 43Z" fill="#f8fdff" stroke="#735b83" stroke-width="2.4"/>
+          <g class="${eyeClass}"><circle cx="32" cy="42" r="3" fill="#3d3048"/><circle cx="48" cy="42" r="3" fill="#3d3048"/></g>
+          <path d="M37 49 q3 3 6 0" fill="none" stroke="#3d3048" stroke-width="2" stroke-linecap="round"/>
+          <path d="M32 56 q8 5 16 0" fill="none" stroke="#3d3048" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="25" cy="50" r="5" fill="#ffd3e6" opacity=".7"/><circle cx="55" cy="50" r="5" fill="#ffd3e6" opacity=".7"/>
+          <path d="M16 18 C24 11 34 13 40 21 C47 13 58 11 65 18" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".9"/>
+        </svg>`;
+      }
+      return `<svg ${common} viewBox="0 0 80 80" role="img" aria-label="云羊泡泡">
+        <circle cx="23" cy="31" r="9" fill="#f2eaff" stroke="#735b83" stroke-width="2.1"/>
+        <circle cx="35" cy="25" r="10" fill="#f8f2ff" stroke="#735b83" stroke-width="2.1"/>
+        <circle cx="48" cy="27" r="10" fill="#f2eaff" stroke="#735b83" stroke-width="2.1"/>
+        <circle cx="58" cy="34" r="8" fill="#f8f2ff" stroke="#735b83" stroke-width="2.1"/>
+        <path d="M20 42 C21 29 31 24 42 25 C54 26 62 35 60 48 C58 62 47 70 36 67 C25 64 18 55 20 42Z" fill="#fff9ff" stroke="#735b83" stroke-width="2.4"/>
+        <g class="${eyeClass}"><circle cx="34" cy="45" r="3" fill="#3d3048"/><circle cx="50" cy="45" r="3" fill="#3d3048"/></g>
+        <path d="M39 53 q4 4 9 0" fill="none" stroke="#3d3048" stroke-width="2" stroke-linecap="round"/>
+        <path d="M18 54 q-7 7 1 12" fill="none" stroke="#735b83" stroke-width="3" stroke-linecap="round"/>
+        <path d="M62 52 q8 6 1 12" fill="none" stroke="#735b83" stroke-width="3" stroke-linecap="round"/>
+      </svg>`;
+    }
+
+    function portalSvg(type) {
+      const sea = type === "discrete";
+      const forest = type === "marx";
+      return `<svg viewBox="0 0 120 86" aria-hidden="true">
+        <defs>
+          <linearGradient id="pg-${type}" x1="0" x2="1">
+            <stop offset="0" stop-color="${sea ? "#bdefff" : forest ? "#ffe5ba" : "#ffd8e8"}"/>
+            <stop offset="1" stop-color="${sea ? "#cfc1ff" : forest ? "#c8f0d8" : "#bdefff"}"/>
+          </linearGradient>
+        </defs>
+        <rect x="5" y="7" width="110" height="70" rx="28" fill="url(#pg-${type})" opacity=".9"/>
+        <circle cx="85" cy="24" r="12" fill="#fff7bd"/>
+        <path d="M0 63 C24 47 40 72 62 57 C84 42 98 63 120 48 L120 86 L0 86Z" fill="#fff" opacity=".55"/>
+        ${sea
+          ? `<path d="M26 48 C38 35 50 57 64 44 C78 31 89 48 100 36" fill="none" stroke="#4aa8c5" stroke-width="4" stroke-linecap="round"/><text x="42" y="42" fill="#5e4c89" font-size="20" font-family="Times New Roman">∈</text><text x="70" y="56" fill="#5e4c89" font-size="18" font-family="Times New Roman">⊨</text>`
+          : forest
+            ? `<path d="M34 62 C38 39 50 31 61 20 C72 32 84 40 87 62Z" fill="#94ddc5" stroke="#6f8d78" stroke-width="2"/><path d="M54 62 V41 M46 49 h17" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`
+            : `<path d="M28 58 C42 30 78 30 92 58" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="M28 58 C42 30 78 30 92 58" fill="none" stroke="#eaa4c5" stroke-width="3" stroke-linecap="round"/>`}
+      </svg>`;
+    }
+
+    function heroSvg() {
+      return `<svg viewBox="0 0 560 360" aria-hidden="true">
+        <defs>
+          <linearGradient id="heroSea" x1="0" x2="1">
+            <stop offset="0" stop-color="#9ee9ff"/><stop offset=".5" stop-color="#d7c9ff"/><stop offset="1" stop-color="#ffd8e8"/>
+          </linearGradient>
+          <linearGradient id="heroIsland" x1="0" x2="1">
+            <stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#bdf0dc"/>
+          </linearGradient>
+        </defs>
+        <rect width="560" height="360" rx="28" fill="rgba(255,255,255,.16)"/>
+        <circle cx="456" cy="74" r="32" fill="#fff0a8" opacity=".88"/>
+        <path d="M0 245 C80 205 130 282 224 236 C312 190 364 268 560 214 L560 360 L0 360Z" fill="url(#heroSea)" opacity=".72"/>
+        <path d="M126 230 C170 165 260 160 312 232 C256 260 177 258 126 230Z" fill="url(#heroIsland)" stroke="rgba(115,91,131,.22)" stroke-width="3"/>
+        <path d="M228 205 C236 162 254 134 284 103 C318 139 336 166 342 207Z" fill="#bdf0dc" stroke="#6f8d78" stroke-width="3"/>
+        <path d="M274 207 V145 M256 169 h42" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+        <path d="M80 76 l10 20 22 3 -16 15 4 22 -20 -11 -20 11 4 -22 -16 -15 22 -3Z" fill="#fff0a8" opacity=".9"/>
+        <path d="M170 54 C176 74 188 86 208 92 C188 98 176 110 170 130 C164 110 152 98 132 92 C152 86 164 74 170 54Z" fill="#ffd8e8" opacity=".9"/>
+        <path d="M398 154 C410 136 436 138 446 158 C458 180 436 202 412 194 C391 187 386 170 398 154Z" fill="#f8f2ff" stroke="#735b83" stroke-width="2" opacity=".82"/>
+        <g transform="translate(82 194) scale(.72)">${companionSvg("rabbit", "happy", true)}</g>
+        <g transform="translate(344 205) scale(.72)">${companionSvg("cat", "happy", true)}</g>
+        <g transform="translate(170 214) scale(.72)">${companionSvg("bear", "happy", true)}</g>
+        <g transform="translate(258 215) scale(.72)">${companionSvg("lamb", "happy", true)}</g>
+        <path d="M68 286 C122 250 177 302 240 270 C310 232 370 290 486 246" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" opacity=".78"/>
+        <path d="M68 286 C122 250 177 302 240 270 C310 232 370 290 486 246" fill="none" stroke="#eaa4c5" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+      </svg>`;
+    }
+
+    function islandScene(card, step) {
+      const sea = card.realm.includes("海域");
+      return `<svg viewBox="0 0 240 132" aria-hidden="true">
+        <defs>
+          <linearGradient id="scene-${card.id}" x1="0" x2="1">
+            <stop offset="0" stop-color="${sea ? "#dff8ff" : "#fff0f6"}"/>
+            <stop offset=".55" stop-color="${sea ? "#e6e0ff" : "#fff4cf"}"/>
+            <stop offset="1" stop-color="${sea ? "#fff2d0" : "#e8f8ef"}"/>
+          </linearGradient>
+        </defs>
+        <rect width="240" height="132" rx="22" fill="url(#scene-${card.id})"/>
+        <circle cx="194" cy="31" r="18" fill="#fff2a8" opacity=".9"/>
+        <path d="M0 98 C42 71 65 115 110 91 C155 66 173 106 240 78 L240 132 L0 132Z" fill="${sea ? "#96dff2" : "#bce8c9"}" opacity=".62"/>
+        ${sea
+          ? `<path d="M34 79 C48 61 64 90 82 72 C100 54 119 78 136 62" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".82"/>
+             <text x="54" y="62" fill="#5e4c89" font-family="Times New Roman, Cambria Math, serif" font-size="23">∈</text>
+             <text x="103" y="82" fill="#5e4c89" font-family="Times New Roman, Cambria Math, serif" font-size="22">⊨</text>
+             <path d="M163 85 q13 -12 26 0 q-13 12 -26 0Z" fill="#fff" opacity=".72"/><circle cx="172" cy="84" r="2" fill="#5e4c89"/>`
+          : `<path d="M64 91 C69 66 82 48 100 29 C121 50 134 67 139 91Z" fill="#9cdfbc" stroke="#6f8d78" stroke-width="2"/>
+             <path d="M99 91 V55 M84 70 h30" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+             <path d="M158 60 C168 49 186 52 192 66 C181 66 171 72 166 86 C160 78 154 68 158 60Z" fill="#fff0a8" stroke="#8d6c9a" stroke-width="2"/>`}
+        <path d="M31 31 l5 10 11 2 -8 8 2 11 -10 -5 -10 5 2 -11 -8 -8 11 -2Z" fill="#fff" opacity=".9"/>
+        <text x="120" y="120" text-anchor="middle" fill="#6c55a9" font-size="12" font-weight="900">第 ${step} 颗星光碎片</text>
+      </svg>`;
+    }
+
+    function theaterSvg(type = "stage") {
+      return `<svg viewBox="0 0 680 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="theaterBg" x1="0" x2="1"><stop offset="0" stop-color="#fff0f8"/><stop offset=".48" stop-color="#e5f7ff"/><stop offset="1" stop-color="#fff4cc"/></linearGradient>
+        </defs>
+        <rect width="680" height="240" rx="28" fill="url(#theaterBg)"/>
+        <path d="M0 178 C90 128 150 210 248 165 C340 122 420 198 680 145 L680 240 L0 240Z" fill="#aee7f4" opacity=".58"/>
+        <path d="M94 55 C120 26 170 34 184 74 C150 73 122 88 110 120 C94 102 80 72 94 55Z" fill="#fff0a8" stroke="#8d6c9a" stroke-width="3"/>
+        <path d="M455 47 l10 21 23 4 -17 16 5 23 -21 -11 -21 11 5 -23 -17 -16 23 -4Z" fill="#ffd8e8" stroke="#8d6c9a" stroke-width="3"/>
+        <g transform="translate(120 124) scale(.72)" style="animation:dance .8s ease-in-out infinite alternate">${companionSvg("rabbit", "happy", true)}</g>
+        <g transform="translate(245 120) scale(.72)" style="animation:dance .82s ease-in-out infinite alternate-reverse">${companionSvg("cat", "happy", true)}</g>
+        <g transform="translate(370 124) scale(.72)" style="animation:dance .86s ease-in-out infinite alternate">${companionSvg("bear", "happy", true)}</g>
+        <g transform="translate(495 120) scale(.72)" style="animation:dance .84s ease-in-out infinite alternate-reverse">${companionSvg("lamb", "happy", true)}</g>
+        <path d="M78 190 C168 138 240 218 332 166 C428 112 502 190 610 142" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".78"/>
+        <path d="M78 190 C168 138 240 218 332 166 C428 112 502 190 610 142" fill="none" stroke="#eaa4c5" stroke-width="4" stroke-linecap="round"/>
+        <text x="340" y="42" text-anchor="middle" fill="#6c55a9" font-size="24" font-weight="900">${type === "theater" ? "五关小剧场开启" : "三题小冒险通关"}</text>
+      </svg>`;
+    }
+
+    function initAmbient() {
+      const box = qs("#ambient");
+      box.innerHTML = "";
+      for (let i = 0; i < 8; i++) {
+        const meteor = document.createElement("span");
+        meteor.className = "meteor";
+        meteor.style.left = `${30 + Math.random() * 78}%`;
+        meteor.style.top = `${4 + Math.random() * 48}%`;
+        meteor.style.animationDelay = `${i * 2.7}s`;
+        meteor.style.animationDuration = `${18 + Math.random() * 12}s`;
+        box.appendChild(meteor);
+      }
+      for (let i = 0; i < 18; i++) {
+        const bubble = document.createElement("span");
+        bubble.className = "bubble";
+        const size = 9 + Math.random() * 16;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.top = `${42 + Math.random() * 54}%`;
+        bubble.style.animationDelay = `${Math.random() * 8}s`;
+        box.appendChild(bubble);
+      }
+      for (let i = 0; i < 5; i++) {
+        const fish = document.createElement("span");
+        fish.className = "fish";
+        fish.style.top = `${55 + Math.random() * 35}%`;
+        fish.style.animationDelay = `${i * 5.4}s`;
+        fish.innerHTML = `<svg viewBox="0 0 70 40"><path d="M12 20 C24 6 48 8 58 20 C48 32 24 34 12 20Z" fill="rgba(255,255,255,.46)" stroke="rgba(118,104,150,.34)" stroke-width="2"/><path d="M58 20 l10 -9 v18Z" fill="rgba(255,255,255,.38)" stroke="rgba(118,104,150,.3)" stroke-width="2"/><circle cx="24" cy="18" r="2" fill="rgba(75,61,103,.55)"/></svg>`;
+        box.appendChild(fish);
+      }
+      for (let i = 0; i < 20; i++) {
+        const spark = document.createElement("span");
+        spark.className = "corner-spark";
+        spark.style.left = `${Math.random() * 100}%`;
+        spark.style.top = `${Math.random() * 92}%`;
+        spark.style.animationDelay = `${Math.random() * 4}s`;
+        box.appendChild(spark);
+      }
+    }
+
+    function rotateTheme() {
+      const skins = unlockedSkins(state.stars);
+      const themes = ["theme-starry", "theme-ocean", "theme-cloud"];
+      const theme = skins.length >= 3 ? themes[Math.floor(Date.now() / 28000) % themes.length] : themes[Math.min(skins.length - 1, 1)];
+      document.body.classList.remove(...themes);
+      document.body.classList.add(theme);
+    }
+
+    function renderStart() {
+      qs("#heroArt").innerHTML = heroSvg();
+      qsa("[data-portal]").forEach(el => el.innerHTML = portalSvg(el.dataset.portal));
+      qs("#companionRow").innerHTML = companions.map(c => `
+        <div class="companion-card">${companionSvg(c.id)}<div><strong>${c.name}</strong><span>${c.role}</span></div></div>
+      `).join("");
+      const wrong = readLastWrong().length;
+      const skins = unlockedSkins(state.stars);
+      qs("#levelPill").textContent = `海岛等级 ${levelFromStars(state.stars)}`;
+      qs("#starPill").textContent = `星光 ${state.stars}`;
+      qs("#wrongPill").textContent = `记忆宝箱 ${wrong}`;
+      qs("#skinPill").textContent = `背景 ${skins.length}/4`;
+      qs("#nextRewardPill").textContent = `下一奖励：${nextRewardText(state.stars)}`;
+      const recent = state.stickers.slice(-12);
+      qs("#startShelf").innerHTML = recent.length
+        ? recent.map(x => `<span class="sticker">${escapeHtml(x)}</span>`).join("")
+        : `<span class="sticker">第一枚贴纸正在等你</span><span class="sticker">答对题目会自动收藏</span>`;
+      qsa(".portal").forEach(btn => btn.classList.toggle("selected", btn.dataset.mode === game.mode));
+    }
+
+    function readLastWrong() {
+      try {
+        return (JSON.parse(localStorage.getItem("focus-game-last-wrong") || "{}").wrong || []);
+      } catch {
+        return [];
+      }
+    }
+
+    function shuffle(list) {
+      const arr = [...list];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function makeDeck(mode) {
+      if (mode === "discrete") return shuffle(banks.discrete).slice(0, CONFIG.questionsPerGame);
+      if (mode === "marx") return shuffle(banks.marx).slice(0, CONFIG.questionsPerGame);
+      return shuffle([
+        ...shuffle(banks.discrete).slice(0, 5),
+        ...shuffle(banks.marx).slice(0, 4)
+      ]).slice(0, CONFIG.questionsPerGame);
+    }
+
+    function prepareChoices(card) {
+      return shuffle(card.choices.map((choice, originalIndex) => ({
+        text: choice[0],
+        note: choice[1],
+        originalIndex
+      })));
+    }
+
+    function startGame() {
+      game.deck = makeDeck(game.mode).map(card => ({ ...card, displayChoices: prepareChoices(card) }));
+      game.index = 0;
+      game.selected = null;
+      game.checked = false;
+      game.score = 0;
+      game.wrong = [];
+      game.rewards = [];
+      game.startedAt = Date.now();
+      game.pendingOverlay = null;
+      state.lastMode = game.mode;
+      saveState();
+      qs("#startScreen").classList.add("hidden");
+      qs("#resultScreen").classList.add("hidden");
+      qs("#gameScreen").classList.remove("hidden");
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderQuestion() {
+      const card = game.deck[game.index];
+      const step = game.index + 1;
+      game.selected = null;
+      game.checked = false;
+      const noteKey = `island-note-${card.id}`;
+      const subjectPill = card.realm.includes("海域") ? "rose" : "honey";
+      qs("#questionPanel").innerHTML = `
+        <div class="chapter-banner">
+          <div class="island-card">${islandScene(card, step)}</div>
+          <div>
+            <span class="story-label">${card.realm} · 第 ${step} 关</span>
+            <div class="story-title">${card.topic} 星光碎片</div>
+            <p class="story-text">${card.story}</p>
+          </div>
+        </div>
+        <div class="arc-card">${stageArc(card, step)}</div>
+        <div class="pillrow">
+          <span class="pill ${subjectPill}">${card.realm}</span>
+          <span class="pill mint">第 ${step}/${game.deck.length} 关</span>
+          <span class="pill">三题一段：${Math.floor(game.index / CONFIG.chapterSize) + 1}</span>
+        </div>
+        <div class="mission-grid">
+          <div class="mission-card"><span>先圈题眼</span><strong>${card.topic}</strong><p>${card.eye}</p></div>
+          <div class="mission-card"><span>避开假门</span><strong>别被相邻概念带跑</strong><p>${antiTrap(card)}</p></div>
+          <div class="mission-card"><span>收成考场句</span><strong>答完默写一句</strong><p>${card.sentence}</p></div>
+        </div>
+        <div class="exam-card">
+          <div class="stem">${card.prompt}</div>
+          <div class="scenario">${card.scene}</div>
+        </div>
+        <div class="choice-grid">
+          ${card.displayChoices.map((choice, displayIndex) => {
+            const buddy = companions[displayIndex % companions.length];
+            return `<button class="choice" data-original="${choice.originalIndex}" data-display="${displayIndex}">
+              <span class="avatar">${companionSvg(buddy.id)}</span>
+              <span><small>${buddy.letter} · ${buddy.name}守门</small><span class="choice-text">${choice.text}</span><span class="choice-cue">${choiceCue(card, displayIndex)}</span></span>
+            </button>`;
+          }).join("")}
+        </div>
+        <textarea id="answerNote" placeholder="写一句自己的考场句或题眼：短短一句就行，比如“∀x∃y 的 y 可随 x 变”。"></textarea>
+        <div class="feedback" id="feedback"></div>
+        <div class="actions" style="margin-top:12px;">
+          <button class="btn primary" id="checkBtn" disabled>请伙伴帮我核对</button>
+          <button class="btn" id="nextBtn" disabled>${game.index === game.deck.length - 1 ? "收起本局星光" : "去下一颗星光"}</button>
+        </div>
+        <p class="tiny">提示：这里没有扣分惩罚。错题会进“星光记忆宝箱”，考前回炉时刚好救命。</p>
+      `;
+      const note = qs("#answerNote");
+      note.value = localStorage.getItem(noteKey) || "";
+      note.addEventListener("input", () => localStorage.setItem(noteKey, note.value));
+      qsa(".choice").forEach(btn => btn.addEventListener("click", (event) => selectChoice(btn, event)));
+      qs("#checkBtn").addEventListener("click", checkAnswer);
+      qs("#nextBtn").addEventListener("click", nextQuestion);
+      updateHud();
+      drawMap();
+      renderMiniShelves();
+    }
+
+    function stageArc(card, step) {
+      const stage = Math.floor((step - 1) / CONFIG.chapterSize);
+      const sea = card.realm.includes("海域");
+      const mixed = game.mode === "mixed";
+      const arcs = {
+        mixed: [
+          ["彩虹潮汐刚刚涨起", "逻辑贝壳和哲理树叶一起漂上岸。先只捡一颗题眼，不急着把整片海背完。"],
+          ["薄云把两条路接在一起", "离散练第一步，马原练原理定位。伙伴会提醒你：先判断题型，再决定下笔方式。"],
+          ["星岛灯塔开始验收", "最后三颗碎片只问能不能上场。把错题放进宝箱，把会写的句子收进小口袋。"]
+        ],
+        discrete: [
+          ["潮水送来符号路牌", "∈、⊆、∀、⊨ 都不是装饰。先认清它们问什么，证明才不会一脚踩空。"],
+          ["小鱼带你潜到证明阶梯", "这里不拼蛮力，只找第一句。反例、定义、MP、Skolem，各有自己的开门手势。"],
+          ["海底灯塔亮起验收光", "把每题压成题眼、第一动作、考场句。会迁移，比多刷十道没想明白的题更值。"]
+        ],
+        marx: [
+          ["哲理森林铺开柔软星苔", "材料里的自然、实践、矛盾和真理，会变成路边发光的小标记。先认信号。"],
+          ["星云书签飞进开卷资料", "不是抄大段定义，而是把原理牵到材料上。找到页边灯，再写自己的分析。"],
+          ["森林尽头出现答题小屋", "最后练第一段：原理一句、材料一句、关系一句。写得稳，卷面就不慌。"]
+        ]
+      };
+      const key = mixed ? "mixed" : sea ? "discrete" : "marx";
+      const [title, text] = arcs[key][Math.min(stage, 2)];
+      return `<strong>${title}</strong>${text}`;
+    }
+
+    function choiceCue(card, displayIndex) {
+      const sea = card.realm.includes("海域");
+      const cueBanks = sea ? [
+        "先看符号类型，再看句子长短。",
+        "想一秒：它在问定义、反例还是推导？",
+        "如果偷换 ∈/⊆/⊨，立刻打叉。",
+        "把这句话翻成第一步再决定。"
+      ] : [
+        "先抓材料词，不急着背大段。",
+        "看它在问原理、关系还是方法论。",
+        "若只喊口号，多半不是好答案。",
+        "想一秒：能不能贴回材料？"
+      ];
+      return cueBanks[displayIndex % cueBanks.length];
+    }
+
+    function antiTrap(card) {
+      const map = [
+        [/⊨|语义后承/, "不要用一个真例子代替“所有情况”。"],
+        [/集合符号|属于|子集/, "先看对象是元素还是集合。"],
+        [/量词/, "别让见证偷偷换位置。"],
+        [/Skolem/, "函数参数只看左侧全称变量。"],
+        [/公理|推演/, "每一行都要有来源。"],
+        [/可靠性|完全性/, "先看箭头方向，再背名字。"],
+        [/自由变量|辖域/, "先画量词管辖范围。"],
+        [/最大元|偏序/, "最大元唯一靠反对称性。"],
+        [/重言式/, "否定永真，一个假赋值就够。"],
+        [/主析取/, "主析取看真行，不看假行。"],
+        [/替换式/, "只替完整子公式。"],
+        [/图论/, "每条边贡献两个度数。"],
+        [/物质统一性/, "别跑去写实践检验。"],
+        [/实践/, "抓“来源、检验、指导”。"],
+        [/对立统一|量变质变/, "材料词决定用哪条辩证法。"],
+        [/剩余价值/, "秘密在生产过程。"],
+        [/价值规律/, "供求影响价格，不决定价值。"],
+        [/材料题/, "开卷不是整段抄书。"]
+      ];
+      const hit = map.find(([r]) => r.test(card.topic + card.prompt + card.scene));
+      return hit ? hit[1] : "先抓题干信号，再选原理。";
+    }
+
+    function selectChoice(btn, event) {
+      if (game.checked) return;
+      qsa(".choice").forEach(x => x.classList.remove("selected"));
+      btn.classList.add("selected");
+      game.selected = Number(btn.dataset.original);
+      qs("#checkBtn").disabled = false;
+      sparkle(event.clientX, event.clientY);
+    }
+
+    function checkAnswer() {
+      const card = game.deck[game.index];
+      if (game.selected === null) return;
+      game.checked = true;
+      const right = game.selected === card.answer;
+      const selectedChoice = card.choices[game.selected];
+      const correctChoice = card.choices[card.answer];
+      qsa(".choice").forEach(btn => {
+        const original = Number(btn.dataset.original);
+        btn.disabled = true;
+        btn.classList.toggle("correct", original === card.answer);
+        btn.classList.toggle("wrong", original === game.selected && original !== card.answer);
+      });
+      state.answered += 1;
+      if (right) {
+        const gain = 12 + Math.min(8, Math.floor(game.index / 3) * 2);
+        game.score += gain;
+        state.stars += gain;
+        state.right += 1;
+        addSticker(card.badge);
+        game.rewards.push(card.badge);
+        showToast(`${companions[game.index % 4].name}递来 ${card.badge}`);
+        rainbowBits(16);
+      } else {
+        game.wrong.push({
+          topic: `${card.realm}｜${card.topic}`,
+          prompt: stripHtml(card.prompt),
+          eye: card.eye,
+          action: card.action,
+          back: card.back,
+          pickedText: selectedChoice ? selectedChoice[0] : "",
+          trap: selectedChoice ? stripHtml(selectedChoice[1]) : ""
+        });
+        showToast("没关系，记忆宝箱帮你收好这颗线索");
+      }
+      saveState();
+      renderFeedback(card, right, selectedChoice, correctChoice);
+      qs("#checkBtn").disabled = true;
+      qs("#nextBtn").disabled = false;
+      updateHud();
+      renderMiniShelves();
+    }
+
+    function stripHtml(html) {
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      return div.textContent || div.innerText || "";
+    }
+
+    function addSticker(name) {
+      if (!state.stickers.includes(name)) state.stickers.push(name);
+      state.stickers = state.stickers.slice(-80);
+    }
+
+    function renderFeedback(card, right, selectedChoice, correctChoice) {
+      const buddy = companions[(game.index + (right ? 0 : 1)) % companions.length];
+      const fb = qs("#feedback");
+      fb.className = `feedback show ${right ? "" : "wrong"}`;
+      fb.innerHTML = `
+        <div class="talk">
+          ${companionSvg(buddy.id)}
+          <div>
+            <strong>${buddy.name}小声说：</strong><br>
+            ${right ? correctChoice[1] : selectedChoice[1]}
+          </div>
+        </div>
+        ${right
+          ? `<div class="reward-box"><strong>收集成功：</strong>${card.badge}<br><span class="tiny">这颗碎片会进星光图鉴。下次看到同类题，先想今天这句：${card.eye}</span></div>`
+          : `<div class="reward-box"><strong>温柔回炉：</strong>正确路线是「${correctChoice[0]}」。<br><span class="tiny">${correctChoice[1]}</span></div>`}
+        <div class="explain-grid">
+          <div><strong>题眼</strong><br>${card.eye}</div>
+          <div><strong>第一动作</strong><br>${card.action}</div>
+          <div><strong>考场句</strong><br>${card.sentence}</div>
+          <div><strong>宝箱回看</strong><br>${card.back}</div>
+        </div>
+      `;
+    }
+
+    function nextQuestion() {
+      const completed = game.index + 1;
+      if (completed >= game.deck.length) return finishGame();
+      if (completed % 5 === 0) {
+        showOverlay("theater", () => goNext(), theaterMoment(completed));
+        return;
+      }
+      if (completed % CONFIG.chapterSize === 0) {
+        showOverlay("stage", () => goNext(), chapterCelebration(completed));
+        return;
+      }
+      goNext();
+    }
+
+    function chapterCelebration(completed) {
+      const stage = completed / CONFIG.chapterSize;
+      const wrongInStage = game.wrong.filter((_, idx) => idx >= 0).length;
+      const modeName = game.mode === "discrete" ? "深海逻辑海域" : game.mode === "marx" ? "星际哲理森林" : "彩虹星岛";
+      const texts = [
+        {
+          title: "第一段小冒险通关，星砂落进掌心",
+          text: `你在 ${modeName} 站稳啦。前三题的任务不是全会，而是把题眼认出来：这一步做到了，后面才会越走越轻。`,
+          tag: "三题庆祝"
+        },
+        {
+          title: "第二段小冒险通关，流星桥铺好了",
+          text: wrongInStage ? "有几颗碎片先放进记忆宝箱也很好。糖糖说：会错不可怕，知道错在哪里，考试就少掉一个坑。" : "四位伙伴一起把桥灯点亮。你这一段没有掉进假门，可以继续用题眼带路。",
+          tag: "三题庆祝"
+        },
+        {
+          title: "第三段小冒险通关，海岛灯塔亮起来",
+          text: "这一局已经走到最后一段。现在别贪多，答完后回看宝箱，把最卡的一颗碎片讲给小伙伴听。",
+          tag: "收束庆祝"
+        }
+      ];
+      return texts[Math.min(stage - 1, texts.length - 1)];
+    }
+
+    function theaterMoment(completed) {
+      const moments = [
+        {
+          title: "五关小剧场：星光邮差送来一封信",
+          text: "信上写着：你不是在和一整本书打架，你只是把一个个小信号认出来。露露把错题折成纸船，糖糖在船尾贴了“考前再捞”。",
+          tag: "短篇小剧场"
+        },
+        {
+          title: "五关小剧场：薄荷海风吹过书页",
+          text: "糯糯把公式、原理和材料词排成三颗星。泡泡说：今天只要多亮一颗，明天的你就少慌一点点。",
+          tag: "短篇小剧场"
+        },
+        {
+          title: "五关小剧场：云朵小屋开灯了",
+          text: "四位伙伴把你刚刚答对的碎片挂上墙。墙上没有排名，只有一行小字：保持回来，就会变强。",
+          tag: "短篇小剧场"
+        }
+      ];
+      const index = (levelFromStars(state.stars) + completed + game.wrong.length) % moments.length;
+      return moments[index];
+    }
+
+    function goNext() {
+      game.index += 1;
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function finishGame() {
+      saveWrongAndHistory();
+      qs("#gameScreen").classList.add("hidden");
+      qs("#resultScreen").classList.remove("hidden");
+      const total = game.deck.length;
+      const wrong = game.wrong.length;
+      const right = total - wrong;
+      const level = levelFromStars(state.stars);
+      qs("#resultTitle").textContent = right >= 7 ? "彩虹星岛亮起一大片" : right >= 5 ? "星光小船稳稳靠岸" : "小船回港，宝箱也很有用";
+      qs("#resultText").innerHTML = `本局答对 <span class="key">${right}/${total}</span>，收集 <span class="key">${game.score}</span> 点星光。现在海岛等级 ${level}。${wrong ? "错题已经放进星光记忆宝箱，不会丢。" : "这一局没有错题，可以接一小段正式讲义或真题。"}`;
+      qs("#resultRewards").innerHTML = game.rewards.length
+        ? game.rewards.map(x => `<span class="sticker">${escapeHtml(x)}</span>`).join("")
+        : `<span class="sticker">本局主要收集了回炉线索</span>`;
+      const box = qs("#resultWrongBox");
+      if (!wrong) {
+        box.className = "feedback show";
+        box.innerHTML = `<strong>四位伙伴贴了一张满星便签：</strong><br>现在适合去做离散证明链条，或马原材料题第一段。趁脑子亮着，别浪费这波手感。`;
+      } else {
+        box.className = "feedback show wrong";
+        box.innerHTML = `<strong>星光记忆宝箱里有 ${wrong} 颗线索：</strong><br>${game.wrong.map((w, i) => `${i + 1}. ${escapeHtml(w.topic)}：${escapeHtml(w.eye)}<br><span class="tiny">回看：${escapeHtml(w.back)}</span>`).join("<br>")}`;
+      }
+      renderStart();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function saveWrongAndHistory() {
+      const lastWrong = {
+        at: new Date().toISOString(),
+        mode: game.mode,
+        wrong: game.wrong
+      };
+      localStorage.setItem("focus-game-last-wrong", JSON.stringify(lastWrong));
+      const savedRewards = JSON.parse(localStorage.getItem("focus-game-rewards") || "[]");
+      localStorage.setItem("focus-game-rewards", JSON.stringify([...savedRewards, ...game.rewards].slice(-80)));
+      const history = JSON.parse(localStorage.getItem("focus-game-history") || "[]");
+      history.push({
+        at: new Date().toISOString(),
+        mode: game.mode,
+        right: game.deck.length - game.wrong.length,
+        total: game.deck.length,
+        score: game.score
+      });
+      localStorage.setItem("focus-game-history", JSON.stringify(history.slice(-40)));
+    }
+
+    function updateHud() {
+      const pct = game.deck.length ? ((game.index + (game.checked ? 1 : 0)) / game.deck.length) * 100 : 0;
+      qs("#scoreNum").textContent = game.score;
+      qs("#progressBar").style.width = `${Math.min(100, pct)}%`;
+      qs("#progressText").textContent = `第 ${game.index + 1} / ${game.deck.length} 关`;
+    }
+
+    function renderMiniShelves() {
+      qs("#miniBuddyShelf").innerHTML = companions.map(c => `<span class="sticker">${c.name}</span>`).join("");
+      qs("#rewardShelfMini").innerHTML = game.rewards.length
+        ? game.rewards.slice(-8).map(x => `<span class="sticker">${escapeHtml(x)}</span>`).join("")
+        : `<span class="sticker">答对后解锁</span>`;
+    }
+
+    function drawMap() {
+      const total = game.deck.length || CONFIG.questionsPerGame;
+      const dots = Array.from({ length: total }, (_, i) => {
+        const x = 38 + (i % 3) * 82;
+        const y = 42 + Math.floor(i / 3) * 44;
+        const cls = i < game.index || (i === game.index && game.checked) ? "done" : (i === game.index ? "current" : "");
+        return `<circle class="path-dot ${cls}" cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="10" fill="#6c55a9" font-weight="900">${i + 1}</text>`;
+      }).join("");
+      qs("#islandMap").innerHTML = `<svg viewBox="0 0 240 170" aria-label="星光路线">
+        <path d="M38 42 C92 18 150 66 202 42 C150 70 92 58 38 86 C92 106 150 68 202 86 C150 116 92 100 38 130 C92 152 150 112 202 130" fill="none" stroke="rgba(255,255,255,.72)" stroke-width="9" stroke-linecap="round"/>
+        ${dots}
+      </svg>`;
+    }
+
+    function showOverlay(type, onContinue, content) {
+      rainbowBits(type === "stage" ? 34 : 22);
+      qs("#overlayTag").textContent = content.tag;
+      qs("#overlayTitle").textContent = content.title;
+      qs("#overlayText").textContent = content.text;
+      qs("#overlayArt").innerHTML = theaterSvg(type);
+      const overlay = qs("#overlay");
+      overlay.classList.add("show");
+      const btn = qs("#overlayBtn");
+      btn.onclick = () => {
+        overlay.classList.remove("show");
+        onContinue();
+      };
+    }
+
+    function sparkle(x, y) {
+      for (let i = 0; i < 7; i++) {
+        const s = document.createElement("span");
+        s.className = "spark-pop";
+        s.style.left = `${x + (Math.random() - .5) * 34}px`;
+        s.style.top = `${y + (Math.random() - .5) * 24}px`;
+        s.style.background = ["#fff0a8", "#ffd8e8", "#bdf0dc", "#d9ccff"][i % 4];
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 620);
+      }
+    }
+
+    function rainbowBits(count = 18) {
+      const box = qs("#rainbowBurst");
+      for (let i = 0; i < count; i++) {
+        const bit = document.createElement("span");
+        bit.className = "rainbow-bit";
+        bit.style.left = `${12 + Math.random() * 76}%`;
+        bit.style.top = `${40 + Math.random() * 120}px`;
+        bit.style.animationDelay = `${Math.random() * 180}ms`;
+        bit.style.transform = `rotate(${-28 + Math.random() * 20}deg)`;
+        box.appendChild(bit);
+        setTimeout(() => bit.remove(), 1400);
+      }
+    }
+
+    function showToast(text) {
+      const toast = qs("#toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    function bindEvents() {
+      qsa(".portal").forEach(btn => btn.addEventListener("click", () => {
+        game.mode = btn.dataset.mode;
+        renderStart();
+      }));
+      qs("#startBtn").addEventListener("click", startGame);
+      qs("#againBtn").addEventListener("click", () => {
+        qs("#resultScreen").classList.add("hidden");
+        qs("#startScreen").classList.remove("hidden");
+        renderStart();
+      });
+    }
+
+    initAmbient();
+    rotateTheme();
+    setInterval(rotateTheme, 28000);
+    game.mode = state.lastMode || "mixed";
+    bindEvents();
+    renderStart();
+  </script>
+</body>
+</html>

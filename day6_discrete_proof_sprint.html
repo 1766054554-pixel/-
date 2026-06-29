@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散 Day6 证明训练营：从第一句到可迁移骨架</title>
+  <style>
+    :root {
+      --bg: #f6f8f8;
+      --ink: #18212a;
+      --muted: #677684;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6f7 0, rgba(246,248,248,0) 320px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1160px; margin: 0 auto; padding: 28px 18px 58px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .focus {
+      border-radius: 6px;
+      background: #fff3bf;
+      box-shadow: inset 0 -2px 0 rgba(147,107,18,.24);
+      padding: 1px 5px;
+      font-weight: 840;
+      color: #60440a;
+    }
+    .hl { color: var(--red); font-weight: 840; }
+    .key { color: var(--blue); font-weight: 840; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .first-step { border-left-color: var(--blue); background: #eef7fc; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .purplebox { border-left-color: var(--purple); background: #f8f5ff; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    ul, ol { margin: 8px 0 0 22px; padding: 0; }
+    li { margin: 4px 0; }
+    .mini-svg {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .mini-svg svg { display: block; width: 100%; min-width: 850px; height: auto; }
+    textarea {
+      width: 100%;
+      min-height: 116px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 108px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .checklist label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 9px 10px;
+      margin: 8px 0;
+    }
+    .checklist label.done {
+      border-color: #a7d8bf;
+      background: #eef9f3;
+    }
+    .gate-status {
+      border-left: 4px solid var(--blue);
+      background: #eef7fc;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 12px 0;
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .rubric { grid-template-columns: 1fr; }
+      .mini-svg svg { min-width: 780px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>离散 Day6 证明训练营</h1>
+      <p class="muted">这一页不是 Day1，也不是整张卷硬刷。它放在你学完 Day1-Day5 后使用：把往年题里反复出现的证明、判断、反例和公理系统题，压成可迁移的“第一句 + 推进动作 + 扣分点”。目标很朴素：<span class="focus">考场看到证明题，先能下笔</span>。</p>
+      <div class="strip">
+        <span class="pill hot">离散数学 6/28</span>
+        <span class="pill info">Day6 正课</span>
+        <span class="pill good">证明骨架</span>
+        <span class="pill warn">2020/2022 往年题桥接</span>
+        <span class="pill purple">6.26-6.28 使用</span>
+      </div>
+      <div class="toc">
+        <a href="#when">什么时候用</a>
+        <a href="#starter">三分钟启动</a>
+        <a href="#map">证明目标路由</a>
+        <a href="#must">六类必会套路</a>
+        <a href="#traps">往年题高频坑</a>
+        <a href="#drills">题卡训练</a>
+        <a href="#wrong">错题回炉</a>
+        <a href="#gate">过关闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="when">
+      <h2>0. 这页什么时候看：别提前啃，也别考前才第一次见</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>前置地基</strong>
+          <p>你至少已经碰过 Day1 符号、Day2 证明入口、Day3 等值/范式/谓词、Day4 前束/Skolem、公理证明骨架、Day5 2024 分块。不会全熟没关系，但不能完全没见过。</p>
+        </div>
+        <div class="box">
+          <strong>这页负责什么</strong>
+          <p>不重新讲整门离散，而是训练<span class="focus">证明题第一反应</span>：看到题干先判断要证明成立、找反例、做语义反证、处理量词顺序，还是调用可靠性/完备性。</p>
+        </div>
+      </div>
+      <div class="mark first-step">
+        <strong>今天的学习姿势：</strong>每道题先写“题眼”和“第一句”，再展开答案。你不需要一开始写得完美，但必须养成一个动作：<span class="hl">不要盯着结论发呆，先判断目标类型。</span>
+      </div>
+      <p class="muted">资料依据：离散期末总复习 PDF、定义必须背 PDF、2020 春季期末、2022 春季期末，以及已做的 Day1-Day5 讲义路线。2022 卷结构里证明题 30 分，判断/论述/范式也大量考“是否成立、给理由或反例”，所以这页会把证明和反例放在主位。</p>
+    </section>
+
+    <section class="card" id="starter">
+      <h2>0.5 三分钟启动流程：完全不会时，先把题变成“可证明对象”</h2>
+      <p>你现在最怕的不是“最后一步不会”，而是题一放上来，脑子先白屏。离散证明的救命动作是：<span class="focus">不要先追完整答案，先把题目翻译成失败情形和第一句话</span>。前三分钟只做下面四步。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>1. 圈题眼符号</strong>
+          <p>看到 <code>⊨</code> 想“真假世界”；看到 <code>⊢</code> 想“公理/推理规则”；看到 <code>⇔</code> 想“左右是否同真同假”；看到 <code>∀/∃</code> 想“任取 <code>a∈D</code>/构造见证 <code>a∈D</code>”。</p>
+        </div>
+        <div class="box">
+          <strong>2. 写失败情形</strong>
+          <p>证明成立时，先想它怎么失败。例如 <code>Γ ⊨ Q</code> 的失败是“Γ 全真但 Q 假”；<code>∀xP(x)</code> 的失败是“找一个 <code>a∈D</code> 让 P(a) 假”。</p>
+        </div>
+        <div class="box">
+          <strong>3. 固定一个世界</strong>
+          <p>命题题固定一个赋值；谓词题固定一个论域和谓词解释；量词证明先固定任意对象 <code>a∈D</code> 或见证对象 <code>a∈D</code>。证明不是飘在空中写，要有“世界”。</p>
+        </div>
+        <div class="box">
+          <strong>4. 写第一句模板</strong>
+          <p>能写第一句就已经不是空白卷：反设存在赋值使前提全真结论假；任取 <code>a∈D</code>；取见证 <code>a∈D</code>；构造反例 <code>D={1,2}</code>……先下笔，再推进。</p>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>你卡住的感觉</th><th>下一步动作</th><th>不要做什么</th></tr></thead>
+        <tbody>
+          <tr><td>我不知道证什么</td><td>先判断是成立证明、反例、等价、不等价，还是公理推导。</td><td>不要直接背一段和题无关的定义。</td></tr>
+          <tr><td>反例造不出来</td><td>先让结论假，再倒推怎样让前提真；小论域优先用 {1,2}。</td><td>不要只写“显然不成立”。</td></tr>
+          <tr><td>量词顺序晕</td><td>标出哪个对象必须固定，哪个对象可以随 y 变化。</td><td>不要把 ∃x∀y 和 ∀y∃x 当成一样。</td></tr>
+          <tr><td>公理证明乱</td><td>先确认是 <code>⊢</code>，再看题目是否允许演绎定理。</td><td>不要把语义证明的“真值解释”直接当形式推导。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark first-step">
+        <strong>一分钟微练：</strong>判断 <code>∀x(P(x)→Q(x)), ∃xP(x) ⊨ ∃xQ(x)</code> 时，第一句怎么写？
+      </div>
+      <details>
+        <summary>展开微练解析</summary>
+        <div class="answer-block">
+          <p><strong>题眼：</strong>这是 <code>Γ ⊨ Q</code>，所以可以走语义证明。第一句写：假设在某个论域 <code>D</code> 和解释下，前提 <code>∀x(P(x)→Q(x))</code> 和 <code>∃xP(x)</code> 都为真。</p>
+          <p><strong>推进：</strong>由 <code>∃xP(x)</code> 真，存在对象 <code>a∈D</code> 使 P(a) 真；由 <code>∀x(P(x)→Q(x))</code> 真，P(a)→Q(a) 真；因此 Q(a) 真，于是 <code>∃xQ(x)</code> 真。这样就证明了前提全真时结论必真。</p>
+          <p><strong>这题练什么：</strong>存在量词给你一个<span class="focus">见证对象</span>，全称量词允许你把规则套到这个对象上。以后看到“所有 P 都是 Q；存在 P；所以存在 Q”，就走这条链。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" id="map">
+      <h2>1. 证明目标路由：先看题目要你做哪件事</h2>
+      <p>离散证明不是“脑子里突然冒出答案”。它更像看到路牌选路线：不同目标有不同第一句。下面这张图就是你考场上的启动器。</p>
+      <div class="mini-svg" aria-label="离散证明目标路由图">
+        <svg viewBox="0 0 1040 430" role="img">
+          <rect width="1040" height="430" fill="#ffffff"/>
+          <text x="54" y="44" font-family="sans-serif" font-size="23" font-weight="700" fill="#1f5f8b">看到证明题，先问：目标长什么样？</text>
+          <g font-family="sans-serif" font-size="15" fill="#18212a">
+            <rect x="60" y="82" width="180" height="88" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="94" y="116" font-size="18" font-weight="700">目标含 ∀</text>
+            <text x="84" y="145">第一句：任取 a∈D</text>
+            <text x="84" y="165">别取特殊值偷懒</text>
+
+            <rect x="270" y="82" width="180" height="88" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="304" y="116" font-size="18" font-weight="700">目标含 ∃</text>
+            <text x="294" y="145">第一句：构造见证</text>
+            <text x="294" y="165">给出对象并验证</text>
+
+            <rect x="480" y="82" width="180" height="88" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="514" y="116" font-size="18" font-weight="700">目标是 A → B</text>
+            <text x="504" y="145">第一句：假设 A 真</text>
+            <text x="504" y="165">然后推出 B</text>
+
+            <rect x="690" y="82" width="180" height="88" rx="12" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="724" y="116" font-size="18" font-weight="700">目标是 Γ ⊨ Q</text>
+            <text x="714" y="145">前提全真 + Q 假</text>
+            <text x="714" y="165">推出矛盾</text>
+
+            <rect x="165" y="224" width="210" height="92" rx="12" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="200" y="258" font-size="18" font-weight="700">问“是否成立”</text>
+            <text x="190" y="288">成立：给证明</text>
+            <text x="190" y="308">不成立：给反例</text>
+
+            <rect x="415" y="224" width="210" height="92" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="450" y="258" font-size="18" font-weight="700">目标是 Γ ⊢ Q</text>
+            <text x="440" y="288">公理/规则证明</text>
+            <text x="440" y="308">注意能否用演绎定理</text>
+
+            <rect x="665" y="224" width="210" height="92" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="700" y="258" font-size="18" font-weight="700">目标是等值</text>
+            <text x="690" y="288">等值变形或真值表</text>
+            <text x="690" y="308">每步写理由</text>
+
+            <path d="M150 170 C150 202 210 206 250 224" fill="none" stroke="#9fb6c6" stroke-width="2"/>
+            <path d="M360 170 C360 202 338 206 300 224" fill="none" stroke="#9fb6c6" stroke-width="2"/>
+            <path d="M570 170 C570 202 542 206 520 224" fill="none" stroke="#9fb6c6" stroke-width="2"/>
+            <path d="M780 170 C780 202 776 206 770 224" fill="none" stroke="#9fb6c6" stroke-width="2"/>
+          </g>
+          <rect x="70" y="358" width="900" height="44" rx="10" fill="#fff7f5" stroke="#e5b3ad"/>
+          <text x="94" y="386" font-family="sans-serif" font-size="16" font-weight="700" fill="#a23b32">最重要的考场句：证明成立是排除失败情形；证明不成立是构造失败情形。</text>
+        </svg>
+      </div>
+      <div class="mark">
+        <strong>人话翻译：</strong><span class="focus">证明题不是先想“答案是什么”，而是先想“失败长什么样”。</span>例如 Γ ⊨ Q 的失败就是“Γ 全真但 Q 假”；∀x P(x) 的失败就是“找一个对象让 P 假”；等价式的失败就是“找一种解释让左右真值不同”。
+      </div>
+    </section>
+
+    <section class="card" id="must">
+      <h2>2. 六类必会证明套路：把第一句背熟，再学会推进</h2>
+      <table>
+        <thead><tr><th>题干信号</th><th>零基础人话</th><th>标准第一句</th><th>推进动作</th><th>常见扣分点</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="key">∀x P(x)</span></td>
+            <td>要证明论域 <code>D</code> 里每个对象都满足 P。</td>
+            <td>任取 <code>a∈D</code>。</td>
+            <td>只用 <code>a∈D</code> 的一般性质推出 P(a)，最后由任意性得 ∀xP(x)。</td>
+            <td>只取 x=0 或某个特殊对象，不能代表全部。</td>
+          </tr>
+          <tr>
+            <td><span class="key">∃x P(x)</span></td>
+            <td>只要找到一个满足 P 的对象。</td>
+            <td>取/构造 <code>a∈D</code>。</td>
+            <td>验证 P(a) 成立。</td>
+            <td>只写“显然存在”，没有给见证对象。</td>
+          </tr>
+          <tr>
+            <td><span class="key">A → B</span></td>
+            <td>如果 A 成立，B 必须成立。</td>
+            <td>假设 A 成立。</td>
+            <td>从 A 和已知条件推出 B。</td>
+            <td>反过来假设 B，方向错。</td>
+          </tr>
+          <tr>
+            <td><span class="key">Γ ⊨ Q</span></td>
+            <td>所有前提同时为真时，结论一定真。</td>
+            <td>反设存在解释/赋值使 Γ 全真而 Q 假。</td>
+            <td>逐条利用前提，推出 Q 真或矛盾。</td>
+            <td>只证明 Q 有时为真；没处理所有前提。</td>
+          </tr>
+          <tr>
+            <td><span class="key">不成立/不等价</span></td>
+            <td>找到一个具体世界让结论失败。</td>
+            <td>构造反例：令论域 <code>D=...</code>，并定义每个 <code>x∈D</code> 上的谓词解释。</td>
+            <td>检查前提真、结论假；或左右真值不同。</td>
+            <td>只让结论假，但前提也假，这不是反例。</td>
+          </tr>
+          <tr>
+            <td><span class="key">Γ ⊢ Q</span></td>
+            <td>从公理和推理规则推出 Q。</td>
+            <td>先写目标结构，再列可用公理/定理/MP。</td>
+            <td>公理模式实例化，配合 MP 或已给定定理链。</td>
+            <td>题目禁止演绎定理时仍使用，2022 卷会按比例扣分。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>别怕形式符号：</strong><span class="hl">⊨ 看真假世界，⊢ 看证明系统。</span>⊨ 是“语义上一定推出”，常靠真值、解释、反例；⊢ 是“形式系统里能推导出来”，常靠公理模式和 MP。2020 总复习明确考可靠性/完备性，就是让你会在这两个符号之间来回翻译。
+      </div>
+    </section>
+
+    <section class="card" id="traps">
+      <h2>3. 往年题高频坑：这些不是偏题，是老师真的爱考</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>坑 1：∃ 分配到 ∧ 通常不行</strong>
+          <p>2020 题考过：∃x(Q(x)∧R(x)) 与 ∃xQ(x)∧∃xR(x) 是否等价。右边可以由不同对象分别满足 Q 和 R，左边要求同一个对象同时满足。</p>
+          <div class="math-card">
+            <span class="display-eq">∃x(Q(x) ∧ R(x))  ⇒  ∃xQ(x) ∧ ∃xR(x)，反向不一定成立</span>
+            <p class="math-note">反例：论域 <code>D={1,2}</code>，其中 <code>1∈D,2∈D</code>；Q 只在 1 真，R 只在 2 真。右边真，左边假。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>坑 2：∀ 分配到 ∨ 通常不行</strong>
+          <p>2020 题也考过：∀x(Q(x)∨R(x)) 不一定推出 ∀xQ(x)∨∀xR(x)。每个对象可以“各自有一边真”，不代表同一边对所有对象都真。</p>
+          <div class="math-card">
+            <span class="display-eq">∀x(Q(x) ∨ R(x))  ⇏  ∀xQ(x) ∨ ∀xR(x)</span>
+            <p class="math-note">反例：论域 <code>D={1,2}</code>，其中 <code>1∈D,2∈D</code>；Q(1)真 Q(2)假，R(1)假 R(2)真。每个对象都有一边真，但没有哪一边全真。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>坑 3：量词顺序决定强弱</strong>
+          <p>∃x∀yP(x,y) 比 ∀y∃xP(x,y) 更强。前者是“有一个固定 x 能照顾所有 y”，后者是“每个 y 可以分别找 x”。固定对象当然可以给每个 y 用，但反过来不一定。</p>
+          <div class="math-card">
+            <span class="display-eq">∃x∀yP(x,y)  ⊨  ∀y∃xP(x,y)</span>
+            <p class="math-note">记忆句：先存在再全称，是“一个人打全场”；先全称再存在，是“每一场可换人”。</p>
+          </div>
+        </div>
+        <div class="box">
+          <strong>坑 4：可靠性和完备性别背反</strong>
+          <p>可靠性说“能证明的都是真的”；完备性说“真的都能证明”。2020 简答直接要求用 ⊢ 和 ⊨ 解释，这是送分也可能扣分的概念题。</p>
+          <div class="math-card">
+            <span class="display-eq">可靠性：Γ ⊢ α  ⇒  Γ ⊨ α</span>
+            <span class="display-eq">完备性：Γ ⊨ α  ⇒  Γ ⊢ α</span>
+            <p class="math-note">别只背中文，必须能把箭头方向写对。</p>
+          </div>
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>背诵优先级：</strong>量词否定、约束变元换名、∀ 对 ∧ 可分配、∃ 对 ∨ 可分配、可靠性/完备性、公理 A1/A2/A3 + MP。这些来自“定义必须背”和总复习，不是我随便挑的。
+      </div>
+    </section>
+
+    <section class="card" id="drills">
+      <h2>4. 题卡训练：每题先写题眼，再看解析</h2>
+      <p>下面不是为了刷数量，而是为了把往年题常见模式练出手感。每题都先在输入框写：<span class="focus">题眼、第一句、下一步</span>。输入会自动保存在本机。</p>
+    </section>
+
+    <section class="drill">
+      <h3>题 1｜2022 语义证明：前提全真，结论假，推出矛盾</h3>
+      <p>用命题逻辑语义方法判断下面逻辑推论是否成立。若成立，给出证明；若不成立，给出反例。</p>
+      <div class="math-card">
+        <span class="display-eq">(P ∧ Q) → R，¬S，¬R ∨ S  ⊨  ¬P ∨ ¬Q</span>
+      </div>
+      <textarea data-save="d6-p1" placeholder="先写题眼和第一句：这是 Γ ⊨ Q，所以我先假设……"></textarea>
+      <details>
+        <summary>展开标准证明与丰满解析</summary>
+        <div class="answer-block">
+          <div class="rubric"><span>题眼</span><span>符号是 ⊨，所以这是语义推论题。要证明成立，最稳的方法是<span class="focus">排除失败情形</span>：假设所有前提都真，而结论假。</span></div>
+          <div class="rubric"><span>第一句</span><span>反设存在一个赋值，使 (P∧Q)→R、¬S、¬R∨S 都为真，同时 ¬P∨¬Q 为假。</span></div>
+          <ol>
+            <li>¬P∨¬Q 为假，说明 ¬P 假且 ¬Q 假，所以 P 真且 Q 真。</li>
+            <li>于是 P∧Q 真；又因为 (P∧Q)→R 为真，所以 R 必须为真。</li>
+            <li>¬S 为真，所以 S 为假。</li>
+            <li>¬R∨S 为真，而 S 已经为假，所以 ¬R 必须为真，即 R 为假。</li>
+            <li>得到 R 真且 R 假，矛盾。因此不存在前提全真结论假的赋值，推论成立。</li>
+          </ol>
+          <p><strong>为什么这题不是硬算真值表：</strong>四个变元完整真值表有 16 行，考场可以算，但证明题更希望你写出语义链条。真正拿分的句子是“前提全真、结论假”以及每一步由哪个前提推出。</p>
+          <p><strong>变式识别：</strong>只要题干是若干公式 ⊨ 某公式，且公式数量不多，都优先试这套：反设失败情形，然后逐条用前提把矛盾逼出来。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="drill">
+      <h3>题 2｜2020 反例：∃ 对 ∧ 不能随便拆</h3>
+      <p>判断下式是否成立；如果不成立，给出反例。</p>
+      <div class="math-card">
+        <span class="display-eq">∃x(Q(x) ∧ R(x))  ⇔  ∃xQ(x) ∧ ∃xR(x)</span>
+      </div>
+      <textarea data-save="d6-p2" placeholder="先写：我认为哪一边能推出哪一边？反例要让哪边真、哪边假？"></textarea>
+      <details>
+        <summary>展开反例与迁移解析</summary>
+        <div class="answer-block">
+          <p><strong>结论：</strong>不等价。左边能推出右边，但右边不能推出左边。</p>
+          <p><strong>构造反例：</strong>令论域 <code>D={1,2}</code>，其中 <code>1∈D,2∈D</code>。设 Q(1) 真、Q(2) 假；R(1) 假、R(2) 真。</p>
+          <ul>
+            <li>∃xQ(x) 为真，因为 <code>x=1∈D</code> 是见证。</li>
+            <li>∃xR(x) 为真，因为 <code>x=2∈D</code> 是见证。</li>
+            <li>所以 ∃xQ(x)∧∃xR(x) 为真。</li>
+            <li>但不存在同一个 x 同时让 Q(x) 和 R(x) 为真，所以 ∃x(Q(x)∧R(x)) 为假。</li>
+          </ul>
+          <p><strong>真正要记：</strong><span class="focus">存在量词拆到合取时，会丢失“同一个对象”的要求。</span>这类题不是背反例，而是知道要把 Q 和 R 分配给两个不同对象。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="drill">
+      <h3>题 3｜2020 反例：∀ 对 ∨ 不能随便拆</h3>
+      <p>判断下式是否成立；如果不成立，给出反例。</p>
+      <div class="math-card">
+        <span class="display-eq">∀x(Q(x) ∨ R(x))  ⊨  ∀xQ(x) ∨ ∀xR(x)</span>
+      </div>
+      <textarea data-save="d6-p3" placeholder="先写：我要让前提真、结论假。怎样让每个对象都有一边真，但没有一边全真？"></textarea>
+      <details>
+        <summary>展开反例与迁移解析</summary>
+        <div class="answer-block">
+          <p><strong>结论：</strong>不成立。</p>
+          <p><strong>反例：</strong>令论域 <code>D={1,2}</code>，其中 <code>1∈D,2∈D</code>。设 Q(1) 真、Q(2) 假；R(1) 假、R(2) 真。</p>
+          <ul>
+            <li>对 x=1，Q(1)∨R(1) 为真；对 x=2，Q(2)∨R(2) 也为真，所以 ∀x(Q(x)∨R(x)) 为真。</li>
+            <li>∀xQ(x) 为假，因为 Q(2) 假。</li>
+            <li>∀xR(x) 为假，因为 R(1) 假。</li>
+            <li>所以 ∀xQ(x)∨∀xR(x) 为假。</li>
+          </ul>
+          <p><strong>人话记忆：</strong>“每个人都有饭或水”不等于“所有人都有饭，或所有人都有水”。可能甲有饭、乙有水。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="drill">
+      <h3>题 4｜量词顺序：一个固定对象 vs 每次可换对象</h3>
+      <p>判断下面推论是否成立，并解释原因。</p>
+      <div class="math-card">
+        <span class="display-eq">∃x∀yP(x,y)  ⊨  ∀y∃xP(x,y)</span>
+      </div>
+      <textarea data-save="d6-p4" placeholder="先写：左边说有一个怎样的 x？右边允许 x 怎样变化？"></textarea>
+      <details>
+        <summary>展开证明与变式提醒</summary>
+        <div class="answer-block">
+          <p><strong>结论：</strong>成立。</p>
+          <p><strong>证明：</strong>假设 ∃x∀yP(x,y) 为真，则存在某个 <code>a∈D</code>，使得对任意 <code>y∈D</code>，P(a,y) 都成立。现在要证明 ∀y∃xP(x,y)：任取 <code>y∈D</code>，由刚才的固定对象 a 可知 P(a,y) 成立，因此对这个 y，存在 <code>x=a∈D</code> 使 P(x,y) 成立。由于 y 是任取的，所以 ∀y∃xP(x,y) 成立。</p>
+          <p><strong>变式提醒：</strong>反过来 ∀y∃xP(x,y) ⊨ ∃x∀yP(x,y) 通常不成立。因为前者允许每个 y 分别找不同的 x，后者要求同一个 x 对所有 y 都行。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="drill">
+      <h3>题 5｜2022/2020 概念题：可靠性与完备性</h3>
+      <p>用符号 ⊢ 和 ⊨ 解释公理系统的可靠性和完备性，并说明二者方向为什么不能背反。</p>
+      <textarea data-save="d6-p5" placeholder="先写：可靠性是“证明不会证明出假东西”，完备性是……"></textarea>
+      <details>
+        <summary>展开标准答案与考场写法</summary>
+        <div class="answer-block">
+          <div class="math-card">
+            <span class="display-eq">可靠性：若 Γ ⊢ α，则 Γ ⊨ α</span>
+            <span class="display-eq">完备性：若 Γ ⊨ α，则 Γ ⊢ α</span>
+          </div>
+          <p><strong>人话：</strong>可靠性保证“系统不会乱证明”：只要形式系统能推导出 α，α 在语义上就确实由 Γ 推出。完备性保证“系统够强”：只要 α 在语义上确实由 Γ 推出，形式系统也能把它证明出来。</p>
+          <p><strong>为什么方向不能反：</strong>可靠性从<span class="focus">可证明</span>走向<span class="focus">语义真</span>；完备性从<span class="focus">语义真</span>走向<span class="focus">可证明</span>。一个管“不犯错”，一个管“不漏掉”。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="drill">
+      <h3>题 6｜公理证明起手：先看题目是否禁止演绎定理</h3>
+      <p>2022 证明题明确写过：用公理方法证明，<span class="hl">不可用演绎定理</span>，使用演绎定理按比例减分。遇到这种题，你至少应该先写出什么检查项？</p>
+      <textarea data-save="d6-p6" placeholder="先写检查项：题目给了哪些可用定理？目标是 Γ ⊢ Q 还是 Γ ⊨ Q？我能不能用演绎定理？"></textarea>
+      <details>
+        <summary>展开作答框架与扣分点</summary>
+        <div class="answer-block">
+          <p><strong>第一步不是直接套自然推理。</strong>你要先写清楚：这是 Γ ⊢ Q 的形式推演题，不是 Γ ⊨ Q 的语义证明题；题目若禁止演绎定理，就不能把“假设前件推出后件”直接作为正式证明。</p>
+          <ol>
+            <li>列出前提 Γ 和目标 Q。</li>
+            <li>检查题目给的可用定理，比如传递：P→Q, Q→R ⊢ P→R；自反：⊢Q→Q；逆否类定理。</li>
+            <li>把目标拆成能用定理连接的中间箭头。</li>
+            <li>每一步标注依据：前提、已给定定理、A1/A2/A3 实例、MP。</li>
+          </ol>
+          <p><strong>考试策略：</strong>短时间内不追求每道公理证明都从零原创，但必须会识别<span class="focus">禁止演绎定理</span>这类红线。会写自然骨架也比空白强，但正式答案要尽量补依据。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="drill">
+      <h3>题 4.5｜伪证明诊断：为什么“结论假”还不够？</h3>
+      <p>同学想证明下面推论不成立，只写了：“令 Q(1) 真，R(2) 真，所以不存在同一个 x 使 Q(x) 和 R(x) 都真，结论假。”这个答案为什么不够？应该补哪三件事？</p>
+      <div class="math-card">
+        <span class="display-eq">∃xQ(x) ∧ ∃xR(x)  ⊭  ∃x(Q(x) ∧ R(x))</span>
+      </div>
+      <textarea data-save="d6-p45" placeholder="先写：反例必须说明论域、前提为什么真、结论为什么假……"></textarea>
+      <details>
+        <summary>展开诊断与标准补法</summary>
+        <div class="answer-block">
+          <p><strong>问题在哪里：</strong>反例不是只让结论假。要推翻 <code>Γ ⊨ Q</code>，必须给出一个世界，使<span class="focus">前提 Γ 全真，而结论 Q 假</span>。原答案没有完整说明论域，也没有把 R(1)、Q(2) 的真假补齐，所以“没有同一个 x”还不够严谨。</p>
+          <p><strong>标准补法：</strong>令论域 <code>D={1,2}</code>。规定 Q(1) 真、Q(2) 假；R(1) 假、R(2) 真，其中 <code>1∈D, 2∈D</code>。于是 <code>∃xQ(x)</code> 为真，见证是 <code>1∈D</code>；<code>∃xR(x)</code> 为真，见证是 <code>2∈D</code>，所以前提真。但没有对象同时满足 Q 和 R，因此 <code>∃x(Q(x)∧R(x))</code> 为假。</p>
+          <p><strong>以后看到反例题：</strong>默念三件套：<span class="focus">论域/解释是什么，前提为什么真，结论为什么假。</span>少任何一件都像把答案写到半路就收摊，考场容易扣分。</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" id="wrong">
+      <h2>5. 错题回炉：把“不会”改写成下次的启动信号</h2>
+      <p>离散错题不要只抄答案。你要把错因写成“下次看到什么就怎么做”。下面这个模板直接照填。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>错题复述模板</strong>
+          <ol>
+            <li>这题题眼是：______。</li>
+            <li>我第一次错在：把 ______ 当成 ______。</li>
+            <li>正确第一句应该是：______。</li>
+            <li>下次看到 ______，我先 ______。</li>
+          </ol>
+        </div>
+        <div class="box">
+          <strong>常见错因翻译</strong>
+          <ul>
+            <li>“我不会证明” → 我没有识别目标类型。</li>
+            <li>“反例总造不出来” → 我没写清前提真、结论假。</li>
+            <li>“量词题看不懂” → 我没区分固定对象和可变对象。</li>
+            <li>“公理证明乱” → 我没分清 ⊨ 和 ⊢，也没看能否用演绎定理。</li>
+          </ul>
+        </div>
+      </div>
+      <textarea data-save="d6-wrong" placeholder="把今天最卡的一题按模板复述一遍。明天先看这里，不要重新从头焦虑。"></textarea>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>6. Day6 过关闸门：不用全会，但必须能启动</h2>
+      <div class="checklist">
+        <label><input type="checkbox" data-check="d6-g1"> 我能看到 Γ ⊨ Q 就写出“前提全真、结论假”的反证开头。</label>
+        <label><input type="checkbox" data-check="d6-g2"> 我能完整复述 2022 语义证明题的每一步矛盾链。</label>
+        <label><input type="checkbox" data-check="d6-g3"> 我能给出 ∃ 对 ∧ 不可反向分配、∀ 对 ∨ 不可推出的两个小论域反例。</label>
+        <label><input type="checkbox" data-check="d6-g4"> 我能解释 ∃x∀yP(x,y) 为什么能推出 ∀y∃xP(x,y)，以及反向为什么不一定。</label>
+        <label><input type="checkbox" data-check="d6-g5"> 我能用符号写出可靠性和完备性，且箭头方向不反。</label>
+        <label><input type="checkbox" data-check="d6-g6"> 我知道公理证明题必须先看是否允许演绎定理。</label>
+      </div>
+      <div class="gate-status" id="checkStatus">Day6 证明闸门读取中。</div>
+      <div class="mark first-step">
+        <strong>下一步怎么接：</strong>如果 6 项勾选不到 4 项，不急着整卷限时，回 Day2/Day4 和本页题卡二刷；如果能勾 4 项以上，再回 <a href="./day5_discrete_2024_exam_bridge.html">Day5 2024 分块解析</a> 和 2022/2020 往年题做混合桥接。
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const pageKey = "discrete-day6-proof-sprint";
+    document.querySelectorAll("textarea[data-save]").forEach((el) => {
+      const key = `${pageKey}:${el.dataset.save}`;
+      el.value = localStorage.getItem(key) || "";
+      el.addEventListener("input", () => localStorage.setItem(key, el.value));
+    });
+    const checks = Array.from(document.querySelectorAll("input[data-check]"));
+    const status = document.getElementById("checkStatus");
+    function renderChecks() {
+      const done = checks.filter((el) => el.checked).length;
+      checks.forEach((el) => {
+        el.closest("label").classList.toggle("done", el.checked);
+      });
+      if (!status) return;
+      const text = done >= 4
+        ? "可以回 Day5 真题桥接做混合题，但错的题仍要回本页写第一句。"
+        : "先别急着整卷限时，优先二刷本页题卡，把第一句和反例三件套写熟。";
+      status.innerHTML = `<strong>Day6 证明闸门：</strong>${done}/${checks.length} 项已稳。${text}`;
+    }
+    checks.forEach((el) => {
+      const key = `${pageKey}:${el.dataset.check}`;
+      el.checked = localStorage.getItem(key) === "1";
+      el.addEventListener("change", () => {
+        localStorage.setItem(key, el.checked ? "1" : "0");
+        renderChecks();
+      });
+    });
+    renderChecks();
+  </script>
+</body>
+</html>

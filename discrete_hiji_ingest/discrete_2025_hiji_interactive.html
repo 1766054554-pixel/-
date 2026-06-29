@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2025 年离散期末真题交互卷</title>
+  <style>
+    :root{--bg:#f5f7f9;--ink:#172331;--muted:#667587;--panel:#fff;--line:#d8e1ea;--blue:#1f6391;--red:#a33d35;--green:#23734f;--amber:#9a6612;--soft:#eef7fc}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.78;letter-spacing:0}
+    header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5} .head{width:min(1220px,calc(100% - 28px));margin:0 auto;padding:14px 0;display:flex;gap:14px;align-items:center;justify-content:space-between}
+    h1{font-size:24px;margin:0;line-height:1.25} .sub{color:var(--muted);font-size:14px}.wrap{width:min(1220px,calc(100% - 28px));margin:18px auto 60px;display:grid;grid-template-columns:270px 1fr;gap:16px}
+    aside{position:sticky;top:82px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px}.score{font-size:28px;font-weight:900;color:var(--blue)}.small{font-size:13px;color:var(--muted)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.tab{border:1px solid var(--line);border-radius:999px;background:#fff;padding:7px 12px;font-weight:850;color:var(--blue);cursor:pointer}.tab.active{background:var(--blue);color:white}
+    .card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:14px;box-shadow:0 10px 24px rgba(23,35,49,.05)} h2{margin:0 0 10px;font-size:21px} h3{margin:0 0 8px;font-size:18px}.stem{font-size:16px}.key{font-weight:900;color:var(--red);background:linear-gradient(transparent 60%,#ffe2d8 60%)}
+    main{min-width:0}.studytext{line-height:1.86;min-width:0}.studytext p{margin:6px 0;word-break:normal;overflow-wrap:break-word}.studytext .mathline{font-family:"Times New Roman","STIX Two Text","Cambria Math","Songti SC",serif;font-size:17px;line-height:1.72;letter-spacing:0;word-break:keep-all;overflow-wrap:normal;white-space:nowrap;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;background:#f7fafb;border:1px solid #dce7ef;border-left:4px solid #8cb8d1;border-radius:8px;padding:8px 10px;margin:8px 0}.studytext .mathline sup{font-size:.72em}.studytext .tableline{font-family:"SFMono-Regular","Menlo","Consolas","PingFang SC",monospace;font-size:14px;white-space:pre;overflow-x:auto;background:#f9fbfc;border:1px solid #dce7ef;border-radius:8px;padding:7px 9px;margin:6px 0}.answer.studytext{margin-top:8px}
+    .options{display:grid;gap:8px;margin:12px 0}.opt{border:1px solid var(--line);border-radius:8px;background:#fbfdff;padding:10px 12px;text-align:left;cursor:pointer;font:inherit}.opt.selected{border-color:var(--blue);background:#eef7fc}.opt.correct{border-color:var(--green);background:#eff8f3}.opt.wrong{border-color:var(--red);background:#fff2ef}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.btn{border:1px solid #b9d6e8;background:#f4fbff;color:var(--blue);border-radius:8px;padding:8px 12px;font-weight:850;cursor:pointer}.btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+    details{border:1px solid var(--line);border-radius:8px;background:#fbfdff;padding:11px 13px;margin-top:10px}summary{cursor:pointer;color:var(--blue);font-weight:900}.answer{white-space:pre-wrap}.hint{border-left:4px solid var(--amber);background:#fff8e8;padding:10px 12px;border-radius:6px;margin-top:10px}.ok{color:var(--green);font-weight:900}.bad{color:var(--red);font-weight:900}
+    textarea,input[type=text]{width:100%;border:1px solid #cbd9e3;border-radius:8px;background:#fbfdff;padding:10px;font:inherit;line-height:1.7}textarea{min-height:130px;resize:vertical}.fillrow{display:flex;gap:8px;align-items:center;margin:10px 0}.fillrow input{max-width:360px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.imgbox{border:1px solid var(--line);border-radius:8px;background:#fff;padding:10px}.imgbox img{max-width:100%;display:block}.pill{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 8px;margin:2px;font-size:12px;color:var(--muted)}
+    @media(max-width:900px){.wrap{grid-template-columns:1fr}aside{position:static}.grid{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<header><div class="head"><div><h1>2025 年离散期末真题 · 交互练习卷</h1><div class="sub">来源：希冀 assignID=2282。目标：先完整练卷，再按错题回炉。</div></div><a class="btn" href="./discrete_hiji_pastpaper_hub.html">回三年真题首页</a></div></header>
+<div class="wrap">
+  <aside>
+    <div class="small">客观题掌握度</div><div class="score" id="score">0 / 0</div>
+    <div class="small" id="progressText">先做题，再展开解析。</div>
+    <div class="tabs"><button class="tab active" data-view="objective">客观题</button><button class="tab" data-view="brief">简答/证明</button><button class="tab" data-view="images">图片核对</button></div>
+    <p class="small"><span class="key">做法：</span>选择题先点选项，多选可多点；填空先写再核对；主观题至少写出第一步再看参考答案。</p>
+  </aside>
+  <main>
+    <section id="objective"></section>
+    <section id="brief" hidden></section>
+    <section id="images" hidden></section>
+  </main>
+</div>
+<script>
+const DATA={"year":"2025","title":"2025 年离散期末真题","assignID":"2282","objective":[{"id":"单选题-1","number":1,"type":"单选题","stem":"下列语句中，哪一个是命题？","options":[{"key":"A","text":"今天或者考试或者不考试"},{"key":"B","text":"离散考试日期定在 x 月 y 日"},{"key":"C","text":"本项是假命题"},{"key":"D","text":"预祝考试顺利！"}],"answer":"A","explain":"A 是可以判定真假的陈述句，而且形式上是“P∨¬P”。B 中 x、y 未确定；C 是自指悖论；D 是祝愿句，不是命题。","hint":"命题必须能判真/假。疑问、祈使、祝愿、变量未定或悖论句都要小心。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-2","number":2,"type":"单选题","stem":"设 P 表示“我将去打球”，Q 表示“我有时间”。命题“我将去打球，除非我没有时间”符号化为：","options":[{"key":"A","text":"P -> Q"},{"key":"B","text":"¬¬Q -> P"},{"key":"C","text":"Q ↔ P"},{"key":"D","text":"¬P ∨ ¬Q"}],"answer":"B","explain":"“A unless B”常按“如果不 B，则 A”理解。本题 B 是“我没有时间”即 ¬Q，所以“不 B”是 ¬¬Q，得到 ¬¬Q -> P，也就是 Q -> P。","hint":"unless 题先翻译成“如果不发生例外，就发生主句”。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-3","number":3,"type":"单选题","stem":"谓词逻辑中，下列哪一项不是“项”？","options":[{"key":"A","text":"个体常元"},{"key":"B","text":"个体变元"},{"key":"C","text":"Q(t1,t2,...,tn)，其中 t1,...,tn 是项，Q 是 n 元谓词"},{"key":"D","text":"f(t1,t2,...,tn)，其中 t1,...,tn 是项，f 是 n 元函词"}],"answer":"C","explain":"项是能指代对象的表达式。个体常元、个体变元、函词作用于项得到的表达式都是项；谓词 Q(t1,...,tn) 是能判真假的公式，不是项。","hint":"项像“名词”，公式像“句子”。谓词套上项以后是在说真假。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-4","number":4,"type":"单选题","stem":"公式 ¬P(x)->∃z(1∧¬R(y,z)∧Q(y)∨R(x,z)) 的复杂度为：","options":[{"key":"A","text":"3"},{"key":"B","text":"4"},{"key":"C","text":"5"},{"key":"D","text":"6"}],"answer":"D","explain":"按题目参考答案，本式复杂度为 6。做复杂度题时先看最外层蕴含，再数否定、存在量词和主要二元联结词，注意常元 1 和原子公式本身不算复杂度。","hint":"复杂度不要数变量个数，也不要把原子公式里的逗号、括号算进去。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-5","number":5,"type":"单选题","stem":"根据下面的简单析取式、简单合取式表，下列选项中错误的是：\n\nM0=¬P∨¬Q，m0=¬P∧¬Q\nM1=¬P∨Q， m1=¬P∧Q\nM2=P∨¬Q， m2=P∧¬Q\nM3=P∨Q，  m3=P∧Q","options":[{"key":"A","text":"M0∧M1∧M2∧M3 是永假式的主范式"},{"key":"B","text":"m0∨m1∨m2∨m3 是永真式的主范式"},{"key":"C","text":"M0∧M3 与 m1∨m2 是同一个命题逻辑合式公式的主范式"},{"key":"D","text":"M0∧M2 与 m1∨m3 是同一个命题逻辑合式公式的主范式"}],"answer":"D","explain":"D 错。M0∧M2 的成真赋值是 00、10；而 m1∨m3 的成真赋值是 01、11，二者不是同一个公式。C 中 M0∧M3 的成真赋值是 01、10，正好对应 m1∨m2。","hint":"主析取看成真行，主合取看成假行。遇到 M_i/m_i 对照题，直接回到赋值行，不要凭眼感。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-6","number":6,"type":"单选题","stem":"假设 Q 中不包含变量 x，则 ∀x(Q->P(x)) 等价于：","options":[{"key":"A","text":"Q -> ∃xP(x)"},{"key":"B","text":"∃x(Q∧P(x))"},{"key":"C","text":"Q -> ∀xP(x)"},{"key":"D","text":"∃x(Q∨P(x))"}],"answer":"C","explain":"因为 Q 不含 x，可把它看成与 x 无关的条件。∀x(Q->P(x)) 等价于：如果 Q 成立，则每个 x∈D 都满足 P(x)，即 Q->∀xP(x)。","hint":"变量不自由出现时，量词移出/移入要看它是否依赖该变量。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-7","number":7,"type":"单选题","stem":"设命题公式 G: ¬P -> (Q∧R)。使公式 G 取真值为 0 的 P,Q,R 赋值为：","options":[{"key":"A","text":"1,0,0"},{"key":"B","text":"0,1,0"},{"key":"C","text":"1,0,1"},{"key":"D","text":"0,1,1"}],"answer":"B","explain":"蕴含式 A->B 只有 A 真、B 假时为假。这里 A=¬P，所以 P=0；B=Q∧R 要假，选项中 P=0 且 Q∧R 为假的是 0,1,0。","hint":"蕴含为假只有一种情况：前真后假。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-8","number":8,"type":"单选题","stem":"以下命题中，哪一个不是可满足的？","options":[{"key":"A","text":"p∧¬p"},{"key":"B","text":"p∨¬p"},{"key":"C","text":"p->(q->p)"},{"key":"D","text":"p->(¬p->q)"}],"answer":"A","explain":"p∧¬p 永远为假，因此不可满足。其余选项至少存在某种赋值使公式为真。","hint":"可满足只要求存在一种赋值为真，不要求永真。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-9","number":9,"type":"单选题","stem":"以下关于范式的选项中，正确的是：","options":[{"key":"A","text":"合取范式是简单析取式的合取"},{"key":"B","text":"同一个命题逻辑合式公式的主析取范式、主合取范式一定不互为对偶式"},{"key":"C","text":"若谓词逻辑公式 R 与 R 的无 ∃ 前束范式不等值，则 ¬R 与 ¬R 的无 ∃ 前束范式等值"},{"key":"D","text":"不等值的谓词逻辑公式 S,T 可以拥有相同的前束范式"}],"answer":"A","explain":"A 正确，这是合取范式的定义：若干简单析取式的合取。其余选项涉及主范式、无 ∃ 前束范式与等值关系，不能这样直接推出。","hint":"范式题优先回定义。合取范式：析取式的合取；析取范式：合取式的析取。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"单选题-10","number":10,"type":"单选题","stem":"以下关于可判定的选项中,错误的是","options":[{"key":"A","text":"命题演算是可判定的"},{"key":"B","text":"独立的公式集合是不协调的"},{"key":"C","text":"谓词演算不是可判定的,但是半可判定的"},{"key":"D","text":"协调的公式集合是可满足的"}],"answer":"B","explain":"B 错。独立的公式集合指其中每个公式都不能由其余公式推出，它强调“互相不能推出”，并不等于“不协调”。一个集合完全可以既独立又协调。A 正确：命题演算可用真值表判定；C 正确：谓词演算一般不可判定但半可判定；D 在本课程语境下由完全性定理支撑，协调公式集可满足。","hint":"可判定题先分四个词：命题逻辑可判定；谓词逻辑半可判定；协调/可满足靠完全性连起来；独立不是矛盾。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-1","number":1,"type":"判断题","stem":"命题逻辑合式公式与其对偶式的析取，是永真式。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"错误","explain":"错误。对偶式只是把 ∧/∨、0/1 对换，不等于原公式的否定。反例：令 F=P∧Q，它的对偶式是 P∨Q，F∨F* = P∨Q；当 P=0、Q=0 时该式为 0，所以不是永真式。","hint":"对偶式不是否定式。遇到“原式与对偶式一定……”这种判断，最快用 P∧Q 或 P∨Q 试反例。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-2","number":2,"type":"判断题","stem":"若 Q* 是 Q 的对偶式，σ' 是 σ 的相反指派，则 σ(Q)=σ'(¬Q*)。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"正确","explain":"正确。这是对偶式与相反指派之间的标准性质：取对偶并在相反指派下求值，与原公式之间有对应关系。","hint":"对偶式题先记住：∧/∨互换，0/1互换，再配合相反指派。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-3","number":3,"type":"判断题","stem":"∀tQ(t) 是 ∀xQ(x) 的代入。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"错误","explain":"错误。代入要用项替换自由出现的变元；这里把约束变元 x 改成 t 并不是通常意义上的代入，且 ∀tQ(t) 中 t 被量词约束。","hint":"代入题要分清自由变元和约束变元。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-4","number":4,"type":"判断题","stem":"逻辑公理系统的完全性指的是：如果 Γ⊨Q，那么 Γ⊢Q。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"正确","explain":"正确。完全性说的是语义上必然推出的结论，在公理系统中也能被证明出来；也就是 Γ⊨Q 可以推出 Γ⊢Q。","hint":"可靠性：能证出的都语义有效。完全性：语义有效的都能证出。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-5","number":5,"type":"判断题","stem":"二元联结词一共有 16 个，故二元谓词一共有 16 个。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"错误","explain":"错误。16 个说的是二元真值联结词，因为两个命题变元只有 4 行真值表，所以共有 2^4=16 种真值函数。二元谓词是论域上的二元关系，论域大小不固定，数量不可能固定为 16。","hint":"联结词看真值表，谓词看论域上的关系。不要把命题逻辑的 16 个二元联结词套到谓词上。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-6","number":6,"type":"判断题","stem":"谓词逻辑中，没有自由变元的公式称为语句。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"正确","explain":"正确。没有自由变元的谓词逻辑公式称为闭公式，也常称为语句。它在给定结构下能直接判定真假；有自由变元的公式还依赖指派。","hint":"语句 = 没有自由变元的公式。判断自由/约束变元时先给量词画辖域。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-7","number":7,"type":"判断题","stem":"命题逻辑中，若永假公式 Q 中出现 n 个命题变元，则 Q 的析取范式有 2^n 个极小项。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"错误","explain":"错误。永假公式没有成真赋值，所以主析取范式没有极小项，通常写成 0；2^n 个极大项对应的是永假式的主合取范式。","hint":"主析取看成真行；主合取看成假行。永假式没有真行。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-8","number":8,"type":"判断题","stem":"{¬, ->} 是极小完全集。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"正确","explain":"正确。{¬, ->} 可以定义其他常用联结词，因此是完全集；去掉任一元素后不能保持完备，所以是极小完全集。","hint":"完全集题可用定义能力判断：能否生成 ¬、∨、∧ 等常用联结词。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-9","number":9,"type":"判断题","stem":"利用 UG 规则可从 Q->R 直接推演出 ∀xQ->R。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"错误","explain":"错误。UG（全称推广）不能随意塞到蕴含式左边；从 Q->R 直接推出 ∀xQ->R 需要满足系统规则和变量条件，不能把 UG 当普通等价变形。","hint":"UG 是对已证公式做全称推广，不是把任意子公式改成全称量词。","sourceState":"希冀原题 + Codex 可读整理"},{"id":"判断题-10","number":10,"type":"判断题","stem":"若 Γ 不协调，则 Γ⊢Q。","options":[{"key":"正确","text":"正确"},{"key":"错误","text":"错误"}],"answer":"正确","explain":"正确。在经典逻辑中，不协调的前提集可以推出任意公式，这也常被叫作爆炸原理。","hint":"不协调意味着能推出矛盾；有矛盾后任意结论都可推出。","sourceState":"希冀原题 + Codex 可读整理"}],"briefs":[{"id":"brief-1","number":1,"title":"2025-21","prompt":"求替换式：(P∧Q ⊕ ((P∧Q∨R)∧P∧Q))[(P∧Q)/(P->R)]。","answer":"(P->R) ⊕ (((P->R)∨R)∧P∧Q)。\n\n注意：最外层左边的 P∧Q 要替换；括号 (P∧Q∨R) 里的 P∧Q 要替换；最后的 P∧Q 不替换，因为它不是被标记/指定的同一处完整出现。","explain":"替换题的关键不是会不会代入，而是会不会“只替完整出现”。考试容易坑你把所有看起来像 P∧Q 的地方都改掉，或者把大公式里的子串硬改。先给要替换的完整子公式画框，再动笔。","rawFile":"2282_brief_01_2025-21.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-2","number":2,"title":"2025-22","prompt":"指出 z,w 的约束出现辖域；无约束出现时填“自由出现”：∃z(P(z)->∀y∃w∀x(Q(x,w)∨R(y)))。","answer":"z 的辖域：P(z)->∀y∃w∀x(Q(x,w)∨R(y))。\nw 的辖域：∀x(Q(x,w)∨R(y))。","explain":"辖域题先找量词后面紧跟的公式范围。∃z 在最外层，所以它管整个括号；∃w 出现在 ∀y 后面，它只管后面的 ∀x(Q(x,w)∨R(y))。不要把 w 的辖域误写到 ∀y 外面。","rawFile":"2282_brief_02_2025-22.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-3","number":3,"title":"2025-23","prompt":"在模型 \u003cR,σ> 下翻译自然语言（R 为论域；变量默认满足 x∈R、y∈R）：若函数 f 满足任意 x∈R、y∈R 都有 ||f(x)-f(y)|| \u003c ||x-y||，则存在唯一点 x∈R 使 f(x)=x。给定 d(x,y)=||x-y||，P(x,y) 表示 x\u003cy，E(x,y) 表示 x=y。","answer":"∀x∀y P(d(f(x),f(y)), d(x,y)) -> ∃x( E(x,f(x)) ∧ ∀y(E(y,f(y)) -> E(x,y)) )。","explain":"自然语言翻译题先拆两层：左边是“任意 x∈R,y∈R 都满足收缩条件”，所以是 ∀x∀y；右边是“存在唯一固定点 x∈R”，所以是 ∃x(自己是固定点 ∧ 任意 y∈R 若也是固定点则 y=x)。唯一性一定要写出来，不能只写存在。","rawFile":"2282_brief_03_2025-23.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-4","number":4,"title":"2025-24","prompt":"设 F0=(¬(p∧r)->q)->(p⊕r)。\n（1）按 p,q,r=000 到 111 补全 F0 真值列。\n（2）根据真值列写出主析取范式与主合取范式。","answer":"F0 真值列：1,1,0,1,1,0,1,0。\n\n成真赋值：000,001,011,100,110。\n主析取范式：\n(¬p∧¬q∧¬r) ∨ (¬p∧¬q∧r) ∨ (¬p∧q∧r) ∨ (p∧¬q∧¬r) ∨ (p∧q∧¬r)。\n\n成假赋值：010,101,111。\n主合取范式：\n(p∨¬q∨r) ∧ (¬p∨q∨¬r) ∧ (¬p∨¬q∨¬r)。","explain":"这题是 2024 真值表题的同类变式。先把最后一列算出来，再机械读范式。主析取看成真行，主合取看成假行；主合取里 0 写原变量，1 写否定，这是最容易反的地方。","rawFile":"2282_brief_04_2025-24.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-5","number":5,"title":"2025-25","prompt":"使用等值演算证明：(Q->¬(P∧Q))->((P∧Q)->R) 等价于 1。","answer":"(Q->¬(P∧Q))->((P∧Q)->R)\n⇔ ¬(¬Q∨¬(P∧Q)) ∨ (¬(P∧Q)∨R)\n⇔ (Q∧P∧Q) ∨ ¬(P∧Q) ∨ R\n⇔ (P∧Q) ∨ ¬(P∧Q) ∨ R\n⇔ 1。","explain":"这题和 2024 公理证明题2是同一个逻辑内核：如果 Q 会推出 ¬(P∧Q)，那么 P∧Q 会制造矛盾。等值演算版不需要写公理序列，目标是凑 A∨¬A。","rawFile":"2282_brief_05_2025-25.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-6","number":6,"title":"2025-26","prompt":"设 F1=∀x(∀y(P(x,y)->∃zQ(z,y))->R(x))。把 F1 化为母式为合取范式的前束范式 F2，并写出 Skolem 范式 F3。","answer":"F1\n⇔ ∀x(¬∀y(¬P(x,y)∨∃zQ(z,y)) ∨ R(x))\n⇔ ∀x(∃y(P(x,y)∧∀z¬Q(z,y)) ∨ R(x))\n⇔ ∀x∃y∀z((P(x,y)∨R(x)) ∧ (¬Q(z,y)∨R(x)))。\n\n所以：\nF2 = ∀x∃y∀z((P(x,y)∨R(x)) ∧ (¬Q(z,y)∨R(x)))。\n\nSkolem 化时，∃y 位于 ∀x 之后，所以 y 用 f(x) 替换：\nF3 = ∀x∀z((P(x,f(x))∨R(x)) ∧ (¬Q(z,f(x))∨R(x)))。","explain":"前束题的固定流程：消蕴含 -> 否定下推 -> 变量不冲突 -> 量词前移 -> 母式化成合取范式 -> Skolem。这里最关键的是 ∃y 依赖前面的 ∀x，所以 Skolem 项是 f(x)，不是常元。","rawFile":"2282_brief_06_2025-26.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-7","number":7,"title":"2025-27","prompt":"判断推论是否成立并说明理由：∃x∀yQ(x,y) ⊨ ∀y∃xQ(x,y)。","answer":"成立。\n\n设当前论域为 D。若 ∃x∀yQ(x,y) 为真，则存在某个元素 d∈D，使得对任意 y∈D 都有 Q(d,y) 为真。于是对任意 y∈D，我们都可以选择同一个 d∈D 作为存在量词里的 x，使 ∃xQ(x,y) 为真。因此 ∀y∃xQ(x,y) 为真。","explain":"这题训练量词顺序。左式说“有一个万能的 x∈D，能配所有 y∈D”；右式只说“每个 y∈D 都能找到某个 x∈D”。万能 x 当然可以给每个 y 使用，所以成立。反过来一般不成立。","rawFile":"2282_brief_07_2025-27.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-8","number":8,"title":"2025-28","prompt":"判断公式是否永真，并说明理由：¬∃x(¬P(x)∧¬Q(x)) -> ¬(∃x¬P(x)∧∃x¬Q(x))。","answer":"不是永真式。\n\n原式等值于：∀x(P(x)∨Q(x)) -> (∀xP(x)∨∀xQ(x))。\n构造反模型：令论域 D={a,b}，其中 a∈D、b∈D；P(a)=真、Q(a)=假，P(b)=假、Q(b)=真。\n则每个对象都满足 P∨Q，所以前件为真；但并非所有对象都满足 P，也并非所有对象都满足 Q，所以后件为假。故原式不是永真式。","explain":"看到“是否永真”不要只做公式化简。化简到 ∀x(P∨Q)->(∀xP∨∀xQ) 后，马上想反例：a 只满足 P，b 只满足 Q。前件每个对象至少满足一个，后件却要求全体都满足同一个。","rawFile":"2282_brief_08_2025-28.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-9","number":9,"title":"2025-29","prompt":"证明：⊢ ((¬Q->R)->(¬Q->Q)) -> ((¬R->Q)->Q)。题面给出若干 Hilbert 系统可用定理。","answer":"证明骨架：\n1. 先临时设 H1 = (¬Q->R)->(¬Q->Q)。目标变成推出 (¬R->Q)->Q。\n2. 再临时设 H2 = ¬R->Q。目标变成推出 Q。\n3. 由 H2 和题面给出的传递/反置类定理，可以推出 ¬Q->R。\n4. 由 H1 与第 3 步用 MP，得到 ¬Q->Q。\n5. 使用题面给定定理 ⊢ (¬Q->Q)->Q。\n6. 由第 4、5 步用 MP 得到 Q。\n7. 收回 H2，得到 (¬R->Q)->Q；再收回 H1，得到目标公式。\n\n卷面要点：若题目不允许直接使用演绎定理，就把“收回假设”的部分写成题面给定的蕴含定理实例和 MP；但思路仍然是先造出 ¬Q->Q，再用 (¬Q->Q)->Q 收束。","explain":"公理证明先把最外层用演绎定理拆成两个假设：H1=(¬Q->R)->(¬Q->Q)，H2=¬R->Q。由 H2 和题面定理可推出 ¬Q->R；再由 H1 得 ¬Q->Q；最后用提示定理 ⊢(¬Q->Q)->Q 收束。你要练的是“假设 -> 中间蕴含 -> MP -> 收回假设”的链条。","rawFile":"2282_brief_09_2025-29.txt","sourceState":"希冀原题 + Codex 考前整理"},{"id":"brief-10","number":10,"title":"2025-30","prompt":"证明：⊢ ∀x(P(x)->¬∀xQ(x)) -> (∀xQ(x)->¬¬∀x¬P(x))。题面给出双重否定、传递和反置相关定理。","answer":"证明骨架：\n1. 临时设 H = ∀x(P(x)->¬∀xQ(x))。\n2. 临时设 G = ∀xQ(x)。目标是推出 ¬¬∀x¬P(x)。\n3. 任取 x∈D，由 H 全称实例化得 P(x)->¬∀xQ(x)。\n4. 由 G 可得 ∀xQ(x)，而 ¬∀xQ(x) 是它的否定方向；所以若 P(x) 成立会与 G 冲突。\n5. 用题面给出的反置/双重否定相关定理，把第 3、4 步整理为 ¬P(x)。\n6. 对任意 x∈D 得 ¬P(x)，用 UG 推出 ∀x¬P(x)。\n7. 由题面定理 ⊢ Q->¬¬Q，对 Q=∀x¬P(x) 实例化，得到 ∀x¬P(x)->¬¬∀x¬P(x)。\n8. 用 MP 得 ¬¬∀x¬P(x)。\n9. 收回 G 和 H，得到目标式。\n\n考场抓手：这题不是要你发明结论，而是把“所有 Q 成立时，任意 x∈D 若满足 P(x) 就会推出矛盾，所以每个 x∈D 都不是 P”写成公理系统可检查的步骤。","explain":"先读成人话：如果所有 P(x) 都会推出“并非所有 Q”，那么一旦所有 Q 为真，就不可能存在某个 x∈D 使 P(x) 为真，所以应推出“并非并非所有 x∈D 都非 P(x)”。公理证明中第一步通常先假设两个前件，再由 ∀xQ(x) 和 P(x)->¬∀xQ(x) 得到 P(x)->矛盾，进而推出 ¬P(x)，最后全称推广并加双重否定。","rawFile":"2282_brief_10_2025-30.txt","sourceState":"希冀原题 + Codex 考前整理"}],"images":[],"sourceNote":"题干、客观题答案、部分主观题参考答案来自希冀页面；未显示参考答案的主观题由 Codex 按课程题型补写作答思路。"};
+const storeKey='discrete-hiji-'+DATA.year;
+let state=JSON.parse(localStorage.getItem(storeKey)||'{}');
+function save(){localStorage.setItem(storeKey,JSON.stringify(state));}
+function norm(s){return String(s||'').replace(/\s+/g,'').replace(/[【】]/g,'').trim();}
+function isMulti(q){return q.type.includes('多选') || q.answer.length>1 && /^[A-D]+$/.test(q.answer);}
+function renderObjective(){
+  const root=document.getElementById('objective');
+  const objNote=DATA.year==='2023'
+    ? '共 '+DATA.objective.length+' 题。2023 少数客观题的原网页公式缺失，已在题干中标注“不作为主练”；这套卷的主价值在主观证明题。'
+    : '共 '+DATA.objective.length+' 题。先训练卷面反应，再看解析；已对希冀碎公式做可读整理。';
+  root.innerHTML='<div class="card"><h2>客观题</h2><p class="small">'+objNote+'</p></div>'+DATA.objective.map((q,i)=>cardObjective(q,i)).join('');
+  updateScore();
+}
+function cardObjective(q,i){
+  const selected=state[q.id]?.selected||[];
+  const checked=state[q.id]?.checked;
+  const opts=q.options&&q.options.length?q.options.map(o=>{
+    const sel=selected.includes(o.key); let cls='opt'+(sel?' selected':'');
+    if(checked){const right=norm(q.answer).includes(norm(o.key)); if(right)cls+=' correct'; else if(sel)cls+=' wrong';}
+    return '<button class="'+cls+'" data-q="'+q.id+'" data-opt="'+o.key+'"><strong>'+o.key+'</strong>. '+escHtml(o.text)+'</button>';
+  }).join(''):'';
+  const fill=!opts?'<div class="fillrow"><input type="text" data-fill="'+q.id+'" value="'+escAttr(state[q.id]?.fill||'')+'" placeholder="先自己写答案"><button class="btn primary" data-check="'+q.id+'">核对</button></div>':'';
+  const result=checked?((state[q.id]?.correct)?'<span class="ok">答对</span>':'<span class="bad">要回炉</span>'):'';
+  return '<article class="card" id="'+q.id+'"><h3>'+q.type+' '+q.number+' '+result+'</h3><div class="stem studytext">'+formatStudyText(q.stem)+'</div><div class="options">'+opts+'</div>'+fill+'<div class="actions"><button class="btn primary" data-check="'+q.id+'">提交/核对</button><button class="btn" data-clear="'+q.id+'">重做</button></div><details><summary>展开答案、解析和题眼</summary><div class="answer studytext"><strong>正确答案：</strong>'+formatStudyText(q.answer)+'</div>'+(q.explain?'<div class="answer studytext"><strong>解析：</strong>'+formatStudyText(q.explain)+'</div>':'')+(q.hint?'<div class="hint"><strong>考场抓手：</strong>'+escHtml(q.hint)+'</div>':'')+'</details></article>';
+}
+function renderBrief(){
+  const root=document.getElementById('brief');
+  root.innerHTML='<div class="card"><h2>简答/证明题</h2><p class="small">不要一上来背答案。每题先写“题眼 + 第一动作 + 关键步骤”，再展开参考答案。</p></div>'+DATA.briefs.map(q=>'<article class="card"><h3>'+q.number+'. '+escHtml(q.title)+'</h3><span class="pill">'+escHtml(q.sourceState||'希冀文本抽取')+'</span><div class="stem studytext">'+formatStudyText(q.prompt)+'</div><textarea data-note="'+q.id+'" placeholder="先写自己的骨架：这题考什么？第一步做什么？关键定义/公式/证明套路是什么？">'+escHtml(state[q.id]?.note||'')+'</textarea><details><summary>展开参考答案和作答思路</summary>'+(q.answer?'<div class="answer studytext"><strong>参考答案：</strong>'+formatStudyText(q.answer)+'</div>':'<div class="answer"><strong>参考答案：</strong>希冀页面未显示完整答案，这里先用作答思路兜底。</div>')+'<div class="hint"><strong>思路拆解：</strong>'+escHtml(q.explain)+'</div></details></article>').join('');
+}
+function renderImages(){
+  const root=document.getElementById('images');
+  root.innerHTML='<div class="card"><h2>卷面图片核对</h2><p class="small">这里保留希冀页面抓到的图片原件，特别用于核对 2024 公式、表格、证明图。若网页文字公式显示散，优先看这里。</p></div><div class="grid">'+(DATA.images.length?DATA.images.map((img,i)=>{const src=typeof img==='string'?img:img.src; const note=typeof img==='string'?'希冀页面原始图片':(img.note||'希冀页面原始图片'); return '<div class="imgbox"><span class="pill">图片 '+(i+1)+'</span><p class="small">'+escHtml(note)+'</p><img src="'+escAttr(src)+'" alt="卷面图片 '+(i+1)+'"></div>';}).join(''):'<div class="card">本套没有额外图片资源。</div>')+'</div>';
+}
+function updateScore(){
+  let done=0, ok=0; DATA.objective.forEach(q=>{const s=state[q.id]; if(s&&s.checked){done++; if(s.correct)ok++;}});
+  document.getElementById('score').textContent=ok+' / '+DATA.objective.length;
+  document.getElementById('progressText').textContent='已核对 '+done+' 题，正确 '+ok+' 题。';
+}
+document.addEventListener('click',e=>{
+  const opt=e.target.closest('[data-opt]'); if(opt){const id=opt.dataset.q, key=opt.dataset.opt; const q=DATA.objective.find(x=>x.id===id); state[id]=state[id]||{}; let arr=state[id].selected||[]; if(isMulti(q)){arr=arr.includes(key)?arr.filter(x=>x!==key):arr.concat(key).sort();}else{arr=[key];} state[id].selected=arr; state[id].checked=false; save(); renderObjective(); return;}
+  const check=e.target.closest('[data-check]'); if(check){const id=check.dataset.check; const q=DATA.objective.find(x=>x.id===id); state[id]=state[id]||{}; const input=document.querySelector('[data-fill="'+id+'"]'); if(input) state[id].fill=input.value; const got=q.options.length?(state[id].selected||[]).join(''):state[id].fill; state[id].correct=norm(got)===norm(q.answer); state[id].checked=true; save(); renderObjective(); return;}
+  const clear=e.target.closest('[data-clear]'); if(clear){delete state[clear.dataset.clear]; save(); renderObjective(); return;}
+  const tab=e.target.closest('[data-view]'); if(tab){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); tab.classList.add('active'); ['objective','brief','images'].forEach(id=>document.getElementById(id).hidden=id!==tab.dataset.view); return;}
+});
+document.addEventListener('input',e=>{const n=e.target.closest('[data-note]'); if(n){state[n.dataset.note]=state[n.dataset.note]||{}; state[n.dataset.note].note=n.value; save();}});
+function escHtml(s){return String(s||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function escAttr(s){return escHtml(s).replace(/"/g,'&quot;');}
+function compactBrokenFormula(s){
+  return String(s||'')
+    .replace(/([A-Za-z0-9∀∃¬∧∨→↔⊢⊨⊕ΔΓPQRSxyzwfEI<>=(),.:;_{}^])\n\s*(?=[A-Za-z0-9∀∃¬∧∨→↔⊢⊨⊕ΔΓPQRSxyzwfEI<>=(),.:;_{}^])/g,'$1')
+    .replace(/\n([,，、.:;:）)])/g,'$1')
+    .replace(/([（(])\n/g,'$1');
+}
+function prettifyMath(s){
+  return escHtml(String(s||''))
+    .replace(/&lt;-&gt;/g,'↔')
+    .replace(/-&gt;/g,'→')
+    .replace(/\^I/g,'<sup>I</sup>')
+    .replace(/\^\*/g,'<sup>*</sup>')
+    .replace(/\bGamma\b/g,'Γ')
+    .replace(/\|=/g,'⊨');
+}
+function mathDensity(line){
+  const t=String(line||'').trim();
+  if(!t) return 0;
+  const symbols=(t.match(/[∀∃¬∧∨→↔⊢⊨⊕ΔΓ]|->|<->|\^I|[A-Za-z]\(|[A-Z][0-9]?\s*=|[A-Z]\d|[()]/g)||[]).length;
+  return symbols / Math.max(1,t.length);
+}
+function isTableLine(line){
+  const t=String(line||'').trim();
+  return /^([xyprq]=|[01],|[01]\s+|x=|y=)/.test(t) || /(000|001|010|011|100|101|110|111)/.test(t) || /^[-\s01A-Za-z=]+$/.test(t)&&/\s{2,}/.test(t);
+}
+function isFormulaLine(line){
+  const t=String(line||'').trim();
+  if(!t) return false;
+  if(/[。！？；：，]/.test(t) && t.length>28) return false;
+  return mathDensity(t)>0.12 || /^[A-Z]\d?\s*=/.test(t) || /^(⊢|Γ|F\d|P\^I|E\^I|f\^I)/.test(t);
+}
+function formatStudyText(s){
+  const text=compactBrokenFormula(String(s||'').replace(/\r/g,'')).trim();
+  if(!text) return '';
+  return text.split(/\n{2,}/).map(block=>{
+    const lines=block.split('\n').map(x=>x.trim()).filter(Boolean);
+    if(!lines.length) return '';
+    if(lines.length>1 && lines.every(isTableLine)) return '<div class="tableline">'+escHtml(lines.join('\n'))+'</div>';
+    return lines.map(line=>{
+      if(isTableLine(line)) return '<div class="tableline">'+escHtml(line)+'</div>';
+      if(isFormulaLine(line)) return '<div class="mathline">'+prettifyMath(line)+'</div>';
+      return '<p>'+prettifyMath(line)+'</p>';
+    }).join('');
+  }).join('');
+}
+renderObjective(); renderBrief(); renderImages();
+</script>
+</body>
+</html>

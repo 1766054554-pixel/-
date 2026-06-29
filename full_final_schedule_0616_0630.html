@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>6.16-6.30 全程每日复习计划</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245, 247, 248, 0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1220px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .strip, .toc, .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      margin: 10px 0 14px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .schedule {
+      display: grid;
+      gap: 12px;
+    }
+    .day {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      overflow: hidden;
+    }
+    .day-head {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f9fbfc;
+    }
+    .day-head b { color: var(--red); }
+    .day-body {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 12px;
+      padding: 14px;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      border-radius: 6px;
+      background: #f3faf6;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    @media (max-width: 940px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .day-body, .day-head { grid-template-columns: 1fr; }
+      .day-head { gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>6.16-6.30 全程每日复习计划</h1>
+      <p class="muted">这页回答“从今天到最后一门，每天到底推进哪几块”。它不是把每天卡死，而是给你一条主线：正常状态按标准包走，实习很累时只做核心包，状态爆棚时做加餐题卡。</p>
+      <div class="strip">
+        <span class="pill hot">6.22 数据库</span>
+        <span class="pill hot">6.23 AI</span>
+        <span class="pill info">6.25 软工</span>
+        <span class="pill warn">6.28 离散</span>
+        <span class="pill good">军理闭卷正式化</span>
+      </div>
+      <div class="toc">
+        <a href="#principles">使用原则</a>
+        <a href="#daily">每日计划</a>
+        <a href="#subject-lines">各科完整路线</a>
+        <a href="#deliverables">考前产物</a>
+      </div>
+    </section>
+
+    <section class="card" id="principles">
+      <h2>0. 使用原则：这是一条路线，不是枷锁</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>每天先做核心包</strong>
+          核心包是当天不空转的最低线。实习累了也只保它，别硬熬到效率归零。
+        </div>
+        <div class="box">
+          <strong>标准包决定主进度</strong>
+          标准包通常 3-4 小时，按它走就能覆盖考试前必须掌握的主线。
+        </div>
+        <div class="box">
+          <strong>加餐包负责冲 85+</strong>
+          加餐不是新知识堆砌，而是真题桥接、变式、错题回炉和限时输出。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>闸门原则：</strong>没有过 B 级就不整卷硬刷。B 级是“能说题眼和第一步”，A 级是“能独立做变式”。这条线防止你再次陷入“看过很多、考场不会调用”的坑。
+      </div>
+    </section>
+
+    <section class="card" id="daily">
+      <h2>1. 每日计划：6.16 到 6.30</h2>
+      <div class="schedule">
+        <article class="day">
+          <div class="day-head"><b>6.16 · Day1</b><strong>启动日：四科都点火，数据库先起步</strong><span class="pill good">已接近完成</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li>数据库 Day1 SQL 从零：表、键、SQL 顺序。</li><li>离散 Day1 基础地图：命题、量词、证明第一句。</li></ul></div>
+            <div><strong>标准包</strong><ul><li>AI Day1 从零：样本、特征、模型、损失。</li><li>软工 Day1 画图从零：四支笔拆题。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>能闭眼讲 SQL 执行顺序。</li><li>能区分 AI/软工/离散第一批题眼。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.17 · Day2</b><strong>SQL 加厚日：连接、嵌套、AI 参考题、软工三图、离散证明入口</strong><span class="pill hot">明天主界面</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day2_database_sql_join_nested.html">数据库 Day2 SQL 连接/嵌套</a>：JOIN、LEFT JOIN、自连接、IN/EXISTS。</li><li>SQL 真题手把手：emp 表四类题。</li></ul></div>
+            <div><strong>标准包</strong><ul><li><a href="./day2_ai_model_storyline.html">AI 模型故事线</a>：先把 LDA、熵、SVM、AdaBoost、BP、LSTM 串成能做题的主线；名词串不起来时查 <a href="./ai_exam_storyline_master_map.html">AI 总纲</a>，不当作必做新包。</li><li><a href="./day2_ai_reference_ml_cards.html">AI 机器学习题卡</a>：LDA、熵、SVM、AdaBoost。</li><li><a href="./day2_se_2020_diagram_workshop.html">软工 2020 三图</a>：用例图、类图、顺序图。</li><li><a href="./day2_discrete_proof_starter.html">离散证明入口</a>：语义蕴含、反例、证明开头。</li><li><a href="./day2_active_recall_arena.html">Day2 综合闯关</a>：四科题眼和第一步主动回忆。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>能解释“全部课程”为双重否定。</li><li>能写 AI 题眼，不只背选项。</li><li>离散能写 6 类证明第一句。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.18 · Day2 吸收 + Day3 启动</b><strong>数据库保温，AI 标准包优先，Day3 只开头</strong><span class="pill hot">按实际进度调整</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day2_ai_model_storyline.html">AI 模型故事线</a>：把 LDA、熵、SVM、AdaBoost、BP、LSTM 放进同一条线。</li><li><a href="./day2_ai_reference_ml_cards.html">AI 机器学习题卡</a>：先写题眼，再看选项和解析。</li><li>数据库 20 分钟保温：JOIN、LEFT JOIN、自连接、NOT EXISTS、emp 四类题闭眼复述。</li></ul></div>
+            <div><strong>标准包</strong><ul><li><a href="./day2_ai_reference_nn_cards.html">AI 神经网络题卡</a>：BP、sigmoid、LSTM、GAN 只补术语地基和典型题。</li><li><a href="./day3_ai_formula_model_closure.html">AI Day3 公式模型闭环</a>：今天只启动前半，不要求一口气完整吃完。</li><li><a href="./day2_active_recall_arena.html">Day2 综合闯关</a>：累了只做 AI + SQL 两关。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>AI 能说出每个新词解决什么问题。</li><li>数据库保持题眼不掉线，不重学一遍。</li><li>Day3 只求启动，不为了赶进度牺牲吸收。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.19 · Day3 慢速推进</b><strong>数据库大题后半 + AI 公式模型 + 软工纸质索引启动</strong><span class="pill hot">混合切换</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day4_database_full_exam_closure.html">数据库全卷闭环</a>：SQL、关系代数、范式、事务、ER 混合题型分流。</li><li>数据库错题回炉：每题写“题眼 -> 第一步”。</li></ul></div>
+            <div><strong>标准包</strong><ul><li><a href="./day3_ai_formula_model_closure.html">AI 公式模型闭环</a>：把 Day3 没吃完的线性、SVM、树、指标补上。</li><li><a href="./day3_se_openbook_diagram_index.html">软工纸质开卷索引</a>：按 6/18 正式通知整理题眼、纸质边注和 CodeArts Modeling 第一笔。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>数据库混合题能 10 秒判题型。</li><li>AI 公式符号能说人话。</li><li>软工索引有“题眼 -> 纸质位置 -> 模板”。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.20 · Day5</b><strong>数据库考前速查 + AI 混合小测 + 离散长题工具</strong><span class="pill hot">考前压缩</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day5_database_exam_sprint.html">数据库考前速查小测</a>：最后 90 分钟清单和真题风味题卡。</li><li>数据库整卷模拟半套：不求全做，求题型切换速度。</li></ul></div>
+            <div><strong>标准包</strong><ul><li><a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a>：CNN/Transformer/生成模型补洞，不抢 Day2。</li><li><a href="./day5_ai_exam_sprint_mixed.html">AI 混合小测</a>：选择、填空、小计算、简答。</li><li><a href="./day4_discrete_prenex_skolem_axiom.html">离散前束/Skolem/公理证明</a>：长题工具。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>数据库错题能复述错因。</li><li>AI 核心公式能默写含义。</li><li>离散长题知道从哪句开始。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.21 · 第 6 日</b><strong>数据库最后冲刺日：只做闭环，不再开新坑</strong><span class="pill hot">考前一天</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day6_database_final_rehearsal.html">数据库第 6 日最后排雷</a>：2023A 卷面雷达、六个题型口令、错题压缩。</li><li>错题回炉：只看曾经卡住和犹豫的题，每题写“题眼 -> 第一步”。</li></ul></div>
+            <div><strong>标准包</strong><ul><li>数据库半套限时模拟：SQL、关系代数、事务、恢复、范式、ER 各碰一题。</li><li>AI 公式 30 分钟闪卡。</li><li>离散证明第一句 20 分钟保温。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>数据库每类大题能写第一步。</li><li>不要熬夜开新资料；睡前只看清单。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.22 · Day7</b><strong>数据管理技术考试 + AI 考前切换</strong><span class="pill hot">考试日</span></div>
+          <div class="day-body">
+            <div><strong>考前</strong><ul><li>数据库只看错题和公式/模板，不再新做大题。</li><li>进考场前复述 SQL 顺序、候选码流程、事务冲突图。</li></ul></div>
+            <div><strong>考后</strong><ul><li>立刻切 AI：公式模型闭环、参考题错题。</li><li>如果 CNN/Transformer/生成模型还散，先过 <a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a>，再做混合小测。</li><li>打开 <a href="./day7_ai_teacher_summary_final.html">AI 老师总纲终局闭环</a>：先看第14讲原图核对范围，再按最后一节课提醒核对机器学习、深度学习、生成式 AI、强化学习和搜索/场景题。</li><li>AI 混合小测至少一轮。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>AI 当晚必须把核心公式和模型对比表叫醒。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.23 · Day8</b><strong>人工智能考试 + 软工主战启动</strong><span class="pill hot">考试日</span></div>
+          <div class="day-body">
+            <div><strong>AI 考前</strong><ul><li>只看公式、模型对比、参考题错题和 <a href="./day7_ai_teacher_summary_final.html">老师总纲终局闭环</a> 的第14讲范围图、题眼/第一句。</li><li>混淆矩阵、信息增益、卷积小计算、Attention Q/K/V、Q-learning 小计算再过一遍。</li></ul></div>
+            <div><strong>考后软工</strong><ul><li>软工纸质开卷索引整理：题眼写到 PPT 边注或装订笔记。</li><li>软工同题干画图微课：用例、类图、顺序、状态。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>软工能判断题干要画哪类图。</li><li>开卷索引不是电子 PDF 文件名，而是纸质材料里的题眼定位。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.24 · Day9</b><strong>软工完整冲刺：画图、测试、设计、开卷定位</strong><span class="pill info">软工考前</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li>画图模板：用例图、类图、顺序图、状态图、活动图。</li><li>纸质开卷索引：include/extend、操作合约、等价类、白盒覆盖、故障/错误/失效。</li></ul></div>
+            <div><strong>标准包</strong><ul><li><a href="./day5_se_official_types_closure.html">官方五类题型闭环</a>：单选/多选/判断抓概念边界，简答按“定义-区别-关系”，综合题按需求/概要/详细设计分流。</li><li>综合题：UML 需求分析与建模、概要设计、详细设计；Git/前后端/云平台只作为可能背景题干。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>一段题干能拆出角色、动作、对象、状态。</li><li>每张图知道元素、关系、箭头、边界。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.25 · Day10</b><strong>软工考试 + 军理闭卷启动 + 离散升温</strong><span class="pill info">考试日</span></div>
+          <div class="day-body">
+            <div><strong>软工考前</strong><ul><li>只看纸质索引、画图扣分点和五类题型分流。</li><li>不依赖电子资料；按纸质边注定位，再在 CodeArts Modeling 画图。</li></ul></div>
+            <div><strong>考后</strong><ul><li><a href="./day8_military_closed_book_sprint.html">军理闭卷背诵舱先过五章地图 + 闪卡第一轮</a>，再打开 <a href="./military_recall_gate.html">军理闭卷召回闸门</a> 背数字雷达。</li><li>离散 Day3/Day4 回炉，准备进入 2024 分块。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>军理能闭卷写出五章关键词和 10 个高频数字。</li><li>离散公式和证明骨架重新叫醒。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.26 · Day11</b><strong>军理考试 + 离散主战开始</strong><span class="pill warn">离散升温</span></div>
+          <div class="day-body">
+            <div><strong>军理</strong><ul><li>考前只看 <a href="./military_recall_gate.html">闭卷召回闸门</a>：数字雷达、30问速测、简答骨架。</li><li>考完不回头，立刻把时间还给离散。</li></ul></div>
+            <div><strong>离散核心</strong><ul><li>命题逻辑、主范式、谓词翻译复盘。</li><li>前束/Skolem/语义构造二刷。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>离散看到题能分：真值表、等值、谓词、语义、证明。</li><li>如果证明第一句还卡，先打开 <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> 的路由图。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.27 · Day12</b><strong>离散主战：2024 参考卷 + 证明骨架迁移</strong><span class="pill warn">证明日</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day5_discrete_2024_exam_bridge.html">2024 参考卷分块解析</a>：单选/判断/填空/长题。</li><li><a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>：语义证明、反例构造、量词顺序、可靠性/完备性、公理证明起手。</li></ul></div>
+            <div><strong>标准包</strong><ul><li>其他往年题题型桥接：不只押 2024。</li><li>错题回炉：把“不会证明”改写成题眼、第一句和下一步。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>能独立写 4-6 类证明骨架。</li><li>不会的题至少知道要调用什么定义/定理。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.28 · Day13</b><strong>离散考试 + 马原开卷索引启动</strong><span class="pill warn">考试日</span></div>
+          <div class="day-body">
+            <div><strong>离散考前</strong><ul><li>只看定义、公式视觉手册、<a href="./day6_discrete_proof_sprint.html">Day6 证明骨架</a>和错题。</li><li>不再钻单个偏证明。</li></ul></div>
+            <div><strong>考后马原</strong><ul><li>打开 <a href="./day8_liberal_low_cost_sprint.html#marx">马原纸质开卷关键词索引</a>。</li><li>材料题框架：原理、材料、分析、结论。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>马原资料能快速定位，不临场大海捞针。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.29 · Day14</b><strong>马原低成本高命中：索引、框架、材料题</strong><span class="pill good">文科收尾</span></div>
+          <div class="day-body">
+            <div><strong>核心包</strong><ul><li><a href="./day8_liberal_low_cost_sprint.html#marx">纸质开卷索引：概念、页码、关键词</a>。</li><li>材料题框架：先原理，再贴材料，再分析。</li></ul></div>
+            <div><strong>标准包</strong><ul><li>往年题或重点题快速定位。</li><li>常用原理短句卡片。</li></ul></div>
+            <div><strong>闸门</strong><ul><li>看到材料能判断用哪个原理。</li><li>能在资料里 30 秒找到对应位置。</li></ul></div>
+          </div>
+        </article>
+
+        <article class="day">
+          <div class="day-head"><b>6.30 · Day15</b><strong>马原考试日：只看索引和框架</strong><span class="pill good">收官</span></div>
+          <div class="day-body">
+            <div><strong>考前</strong><ul><li><a href="./day8_liberal_low_cost_sprint.html#gate">关键词索引、材料题模板、常用原理短句</a>。</li><li>不再临时扩资料。</li></ul></div>
+            <div><strong>考场策略</strong><ul><li>先定位题眼，再翻资料。</li><li>答案按“原理 -> 材料 -> 分析 -> 结论”写。</li></ul></div>
+            <div><strong>目标</strong><ul><li>文科不拖后腿，整个期末稳定收尾。</li></ul></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="card" id="subject-lines">
+      <h2>2. 每科完整路线</h2>
+      <table>
+        <thead><tr><th>科目</th><th>从零学习</th><th>题型加厚</th><th>考前闭环</th></tr></thead>
+        <tbody>
+          <tr><td>数据库</td><td>Day1 SQL 基础，Day2 连接嵌套。</td><td>Day3 范式/事务/恢复/ER，Day4 全卷混合。</td><td>Day5 速查 + <a href="./day6_database_final_rehearsal.html">Day6 最后排雷</a>，错题、半套模拟、限时混合。</td></tr>
+          <tr><td>AI</td><td>Day1 术语地基，Day2 参考题 ML/NN。</td><td>Day3 公式模型，Day4 无监督/强化学习，Day5 混合小测。</td><td>6.22 晚和 6.23 早只看 <a href="./day7_ai_teacher_summary_final.html">老师总纲终局闭环</a>、混合小测、公式和错题；用第14讲原图确认不漏范围。</td></tr>
+          <tr><td>软工</td><td>Day1 画图从零，Day2 2020 三图。</td><td>Day3 纸质开卷索引与 CodeArts 模板，Day4 同题干画图，<a href="./day5_se_official_types_closure.html">Day5 官方五类题型闭环</a> 补测试、设计、简答和客观题。</td><td>6.24-6.25 只看纸质索引、五类题型分流、模板和扣分点。</td></tr>
+          <tr><td>离散</td><td>Day1 符号地基，Day2 证明入口。</td><td>Day3 等值/谓词，Day4 前束/Skolem/公理证明，Day5 2024 分块。</td><td>6.26-6.28 证明骨架、往年题桥接、错题回炉。</td></tr>
+          <tr><td>军理/马原</td><td>军理闭卷走主动召回，马原开卷走关键词定位。</td><td><a href="./day8_military_closed_book_sprint.html">军理闭卷背诵舱</a>、<a href="./military_recall_gate.html">军理闭卷召回闸门</a>、<a href="./day8_liberal_low_cost_sprint.html">马原材料题框架</a>。</td><td>军理考前只看数字/定义/简答骨架；马原考前看索引和模板。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="deliverables">
+      <h2>3. 考前必须产出的东西</h2>
+      <div class="grid">
+        <div class="box"><strong>数据库</strong><a href="./day6_database_final_rehearsal.html">第 6 日最后排雷</a>；SQL/关系代数/范式/事务/恢复/ER 速查；错题回炉；至少半套混合题。</div>
+        <div class="box"><strong>AI</strong>公式表、模型对比表、参考习题错题、小计算模板。</div>
+        <div class="box"><strong>软工</strong>开卷索引、画图模板、测试题模板、课程群题型更新后的重排清单。</div>
+        <div class="box"><strong>离散</strong>定义表、公式视觉手册、证明骨架、2024 和其他往年题桥接错题。</div>
+      </div>
+      <p style="margin-top:14px"><a href="./index.html">回到学习舱</a> · <a href="./day2_master_route.html">打开 Day2 总路线</a> · <a href="./exam_scope_master_map.html">打开考试重点总地图</a></p>
+    </section>
+  </main>
+</body>
+</html>

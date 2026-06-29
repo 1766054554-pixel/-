@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 1 离散基础地图从零深学讲义</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .steps { counter-reset: step; display: grid; gap: 9px; margin: 10px 0; }
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px 11px 46px;
+    }
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 13px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+    }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .small { font-size: 13px; color: var(--muted); }
+    @media (max-width: 860px) {
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 1 离散基础地图从零深学讲义</h1>
+      <p class="muted">今天离散只做基础启动：命题、联结词、真值表、谓词、量词、辖域、证明题第一句。2024 参考卷很重要，但它是后期真题桥接材料，不是 Day1 一上来硬啃的东西。</p>
+      <div class="strip">
+        <span class="pill hot">离散数学 6/28</span>
+        <span class="pill info">今天同步主线 Day1</span>
+        <span class="pill good">先吸收基础板块</span>
+        <span class="pill warn">不分析整张卷</span>
+      </div>
+      <div class="toc">
+        <a href="#boundary">0. 今天边界</a>
+        <a href="#map">1. 学期地图</a>
+        <a href="#prop">2. 命题与联结词</a>
+        <a href="#truth">3. 真值表与公式状态</a>
+        <a href="#predicate">4. 谓词与量词</a>
+        <a href="#scope">5. 辖域与自由变元</a>
+        <a href="#proof">6. 证明第一句</a>
+        <a href="#practice">7. 小练</a>
+      </div>
+    </section>
+
+    <section class="card" id="boundary">
+      <h2>0. 今天边界：先铺路，不上高速</h2>
+      <p>离散难，不是因为每个知识点一开始都很深，而是它把普通语言压成符号。你现在如果直接看期末卷，会感觉每个题都像天书；这不是你笨，是因为“词典”和“读题动作”还没建立。</p>
+      <p>所以 Day1 不做整卷、不做复杂公理证明、不做完整前束范式。今天只解决三个问题：</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>我看见的符号是什么意思</strong>
+          P、Q、&not;、&and;、&or;、&rarr;、&harr;、&forall;、&exist; 先翻译成人话。
+        </div>
+        <div class="box">
+          <strong>一道基础题在考哪一层</strong>
+          命题判定、真值表、公式状态、谓词翻译、辖域识别，先分清题型。
+        </div>
+        <div class="box">
+          <strong>证明题怎么不空白</strong>
+          今天只背“目标决定第一句”：全称任取、存在构造、蕴涵假设前件。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>Day1 过关线：</strong>你能不看答案解释“命题是什么、蕴涵什么时候假、全称/存在怎么翻译、辖域怎么看、证明 A&rarr;B 第一行怎么写”。做到这些，后面才能高效刷真题。
+      </div>
+    </section>
+
+    <section class="card" id="map">
+      <h2>1. 离散学期地图：先知道每块在干什么</h2>
+      <p>离散不是一堆孤立符号。它的主线其实是：把人话变成形式语言，再判断真假，再把判断写成证明。</p>
+      <table>
+        <thead><tr><th>板块</th><th>它解决什么问题</th><th>Day1 学到哪里</th></tr></thead>
+        <tbody>
+          <tr><td>命题逻辑</td><td>整句话之间怎么用“非、并且、或者、如果、当且仅当”连接。</td><td>会算联结词真假，特别是蕴涵。</td></tr>
+          <tr><td>真值表与范式</td><td>把公式所有可能真假列出来，判断永真/永假/可满足。</td><td>今天只学状态判断；主范式后面再加厚。</td></tr>
+          <tr><td>谓词逻辑</td><td>把“所有学生”“存在一个课程”“x 喜欢 y”这种对象关系表达出来。</td><td>会读谓词、论域、全称、存在。</td></tr>
+          <tr><td>变量与辖域</td><td>判断一个量词到底管住哪些变量。</td><td>会画括号，分清自由/约束变元。</td></tr>
+          <tr><td>逻辑推论与证明</td><td>把“为什么一定成立”写成有理由的步骤。</td><td>今天只学证明目标的开头句。</td></tr>
+          <tr><td>前束/Skolem/公理证明</td><td>更形式、更考试大题化的证明和标准化处理。</td><td>今天只知道会出现，不展开。</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">这就像先看地图：你不用今天走完整个城市，但你要知道自己在哪条路上。</p>
+    </section>
+
+    <section class="card" id="prop">
+      <h2>2. 命题与联结词：先把“真假零件”装起来</h2>
+      <h3>2.1 什么是命题</h3>
+      <p>命题是有确定真假的陈述句。注意三个条件：它要是陈述句；它要能判断真假；它不能是自相矛盾到无法稳定判定的悖论。</p>
+      <div class="grid">
+        <div class="box"><strong>是命题</strong>“2 是偶数。”它是陈述句，并且真假明确，是真。</div>
+        <div class="box"><strong>不是命题</strong>“请关门。”这是祈使句，不是在陈述一个真假事实。</div>
+        <div class="box"><strong>不是命题</strong>“x 大于 5。”如果 x 没有给定，就没有确定真假。</div>
+        <div class="box"><strong>要警惕</strong>“这句话是假话。”这是悖论，不适合作为普通命题处理。</div>
+      </div>
+
+      <h3>2.2 五个最重要的联结词</h3>
+      <table>
+        <thead><tr><th>符号</th><th>读法</th><th>真假规则</th><th>记忆句</th></tr></thead>
+        <tbody>
+          <tr><td>&not;P</td><td>非 P</td><td>P 真则假，P 假则真。</td><td>翻转。</td></tr>
+          <tr><td>P&and;Q</td><td>P 且 Q</td><td>两个都真才真。</td><td>全 1 才 1。</td></tr>
+          <tr><td>P&or;Q</td><td>P 或 Q</td><td>至少一个真就真。</td><td>有 1 就 1。</td></tr>
+          <tr><td>P&rarr;Q</td><td>如果 P 那么 Q</td><td>只有 P 真 Q 假时为假。</td><td>只怕前真后假。</td></tr>
+          <tr><td>P&harr;Q</td><td>P 当且仅当 Q</td><td>两个同真同假时为真。</td><td>相同为真。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>Day1 最大坑：</strong>P&rarr;Q 不等于“P 和 Q 都真”。它只检查“P 已经发生时 Q 有没有跟上”。P 假的时候，整个蕴涵算真。
+      </div>
+    </section>
+
+    <section class="card" id="truth">
+      <h2>3. 真值表与公式状态：先会判断，不急着复杂化简</h2>
+      <p>真值表就是把所有变量的真假可能都列出来，然后逐步算公式结果。两个变量有 4 行，三个变量有 8 行。考试里很多复杂题，其实可以用真值表保底。</p>
+      <table>
+        <thead><tr><th>P</th><th>Q</th><th>P&rarr;Q</th><th>为什么</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>1</td><td>1</td><td>前件真，后件也真，没违背。</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>前件真，后件假，唯一失败。</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>前件没触发。</td></tr>
+          <tr><td>0</td><td>0</td><td>1</td><td>前件没触发。</td></tr>
+        </tbody>
+      </table>
+      <h3>3.1 公式三种状态</h3>
+      <div class="grid three">
+        <div class="box">
+          <strong>永真式</strong>
+          所有行结果都是 1。例如 P&or;&not;P。不管 P 真还是假，总有一边真。
+        </div>
+        <div class="box">
+          <strong>永假式</strong>
+          所有行结果都是 0。例如 P&and;&not;P。P 不可能同时真又假。
+        </div>
+        <div class="box">
+          <strong>可满足式</strong>
+          至少有一行结果是 1。永真式也是可满足式，但可满足式不一定永真。
+        </div>
+      </div>
+      <h3>3.2 Day1 例题：判断 P&and;Q&rarr;P</h3>
+      <p>不要急着背“这是永真式”。先用人话读：如果 P 和 Q 都真，那么 P 真。这当然永远不会错。</p>
+      <details>
+        <summary>展开真值思路</summary>
+        <p>要让 A&rarr;B 为假，必须 A 真 B 假。这里 A 是 P&and;Q，B 是 P。如果 P&and;Q 真，就说明 P 已经真了，不可能再让 P 假。所以没有反例，是永真式。</p>
+      </details>
+      <div class="mark">
+        <strong>今天只要掌握这个动作：</strong>判断蕴涵类公式时，先问“有没有可能前件真、后件假”。没有，就是永真。
+      </div>
+    </section>
+
+    <section class="card" id="predicate">
+      <h2>4. 谓词与量词：从“整句话”升级到“对象和关系”</h2>
+      <p>命题逻辑把一句话当成一个整体。谓词逻辑会拆开看：谁、有什么性质、和谁有什么关系、是所有对象还是某个对象。</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>论域</strong>
+          变量能取值的范围。例如论域是学生集合，x 就代表某个学生。
+        </div>
+        <div class="box">
+          <strong>谓词</strong>
+          表示性质或关系。Student(x) 表示 x 是学生，Like(x,y) 表示 x 喜欢 y。
+        </div>
+        <div class="box">
+          <strong>量词</strong>
+          &forall;x 是任取所有 x；&exist;x 是至少存在一个 x。
+        </div>
+      </div>
+      <h3>4.0 先补一组卷面符号：属于、子集、空集</h3>
+      <p>离散里“对象在不在某个集合里”会写成符号。你必须先认长相，否则后面看到证明题的第一行就会懵。</p>
+      <table>
+        <thead><tr><th>符号</th><th>读法</th><th>你要做的动作</th></tr></thead>
+        <tbody>
+          <tr><td><strong>a ∈ A</strong></td><td>a 属于 A；a 是 A 的元素</td><td>可以使用 A 的定义和性质处理 a。</td></tr>
+          <tr><td><strong>a ∉ A</strong></td><td>a 不属于 A</td><td>常用于反例、差集、补集。</td></tr>
+          <tr><td><strong>A ⊆ B</strong></td><td>A 是 B 的子集</td><td>证明时任取 x∈A，再推出 x∈B。</td></tr>
+          <tr><td><strong>A ⊂ B</strong></td><td>A 是 B 的真子集</td><td>先证 A⊆B，再说明 B 里有 A 没有的元素。</td></tr>
+          <tr><td><strong>∅</strong></td><td>空集</td><td>没有任何元素；注意 ∅ 和 {∅} 不一样。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>最重要的证明起手：</strong>要证明 A⊆B，第一句通常写“任取 x∈A”，目标是推出 x∈B。这个句式后面会在集合、关系、偏序证明里反复出现。
+      </div>
+      <h3>4.1 两个最重要翻译模板</h3>
+      <table>
+        <thead><tr><th>中文</th><th>公式骨架</th><th>为什么这样写</th></tr></thead>
+        <tbody>
+          <tr><td>所有 A 都是 B</td><td>&forall;x(A(x)&rarr;B(x))</td><td>任取 x，如果它是 A，就必须是 B。不是要求所有对象都是 A。</td></tr>
+          <tr><td>存在 A 是 B</td><td>&exist;x(A(x)&and;B(x))</td><td>找一个 x，同时满足 A 和 B。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>记忆：</strong>全称常配蕴涵，存在常配合取。这个不是死规矩，但初学时非常有用。
+      </div>
+      <h3>4.2 例子：所有学生都选了一门课</h3>
+      <p>设 Student(x) 表示 x 是学生，Course(y) 表示 y 是课程，Choose(x,y) 表示 x 选了 y。</p>
+      <div class="math-card">
+        <div class="display-eq">
+          ∀<span class="mi">x</span>
+          <span class="op">(</span>
+          <span class="func">Student</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+          <span class="op">→</span>
+          ∃<span class="mi">y</span>
+          <span class="op">(</span>
+          <span class="func">Course</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span>
+          <span class="op">∧</span>
+          <span class="func">Choose</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span>
+          <span class="op">)</span>
+          <span class="op">)</span>
+        </div>
+        <div class="math-note">读法：任意 x，如果 x 是学生，那么存在一门课程 y，使得 y 是课程且 x 选了 y。</div>
+      </div>
+      <p>读法：任取一个 x，如果 x 是学生，那么存在一个 y，y 是课程，并且 x 选了 y。这里 &exist;y 在 &forall;x 的里面，表示每个学生可以有自己的那门课。</p>
+    </section>
+
+    <section class="card" id="scope">
+      <h2>5. 辖域与自由变元：量词到底管到哪里</h2>
+      <p>辖域就是量词的作用范围，像程序里的作用域。你今天先掌握一个动作：遇到量词就给它后面管辖的公式画括号。</p>
+      <div class="math-card">
+        <div class="display-eq">
+          ∃<span class="mi">x</span>
+          <span class="op">(</span>
+          <span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span>
+          <span class="op">)</span>
+          <span class="op">→</span>
+          <span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+        </div>
+        <div class="math-note">读法：前面 ∃x 只管括号里的 P(x,y)，后面 Q(x) 里的 x 已经不在它的辖域里。</div>
+      </div>
+      <table>
+        <thead><tr><th>位置</th><th>变量身份</th><th>原因</th></tr></thead>
+        <tbody>
+          <tr><td>P(x,y) 里的 x</td><td>约束变元</td><td>它在 &exist;x 的括号里，被 &exist;x 管住。</td></tr>
+          <tr><td>P(x,y) 里的 y</td><td>自由变元</td><td>没有 &forall;y 或 &exist;y 管它。</td></tr>
+          <tr><td>Q(x) 里的 x</td><td>自由变元</td><td>它在 &exist;x(P(x,y)) 的括号外，已经不受前面的 &exist;x 管。</td></tr>
+        </tbody>
+      </table>
+      <h3>5.1 Day1 练习动作</h3>
+      <div class="steps">
+        <div class="step">先找每个量词：&forall;x、&exist;y。</div>
+        <div class="step">给它后面直接管辖的公式画括号。</div>
+        <div class="step">看同名变量是否落在这个括号里。</div>
+        <div class="step">落在里面就是约束；没落进去就是自由。</div>
+      </div>
+      <div class="mark">
+        <strong>为什么要学这个：</strong>后面的谓词翻译、前束范式、公理证明都会用到自由/约束变元。今天先会看，不急着做复杂代入。
+      </div>
+    </section>
+
+    <section class="card" id="proof">
+      <h2>6. 证明题第一句：不求全会，但不能空白</h2>
+      <p>Day1 只学证明题的入口。证明不是自由作文，它先看目标形状。</p>
+      <table>
+        <thead><tr><th>目标形状</th><th>第一句</th><th>你在做什么</th></tr></thead>
+        <tbody>
+          <tr><td>证明 &forall;xP(x)</td><td>任取论域中一个对象 a。</td><td>证明任意对象都满足 P。</td></tr>
+          <tr><td>证明 &exist;xP(x)</td><td>取/构造某个对象 a。</td><td>给出一个见证。</td></tr>
+          <tr><td>证明 A&rarr;B</td><td>假设 A 成立。</td><td>在 A 的条件下推出 B。</td></tr>
+          <tr><td>证明 A&harr;B</td><td>分两边证明 A&rarr;B 和 B&rarr;A。</td><td>证明同真同假。</td></tr>
+        </tbody>
+      </table>
+      <h3>6.1 例子：证明 A&and;B &rarr; A</h3>
+      <div class="steps">
+        <div class="step">目标是蕴涵，所以第一句：假设 A&and;B 成立。</div>
+        <div class="step">根据合取的含义，A&and;B 成立说明 A 成立且 B 成立。</div>
+        <div class="step">因此 A 成立。</div>
+        <div class="step">所以 A&and;B &rarr; A 成立。</div>
+      </div>
+      <p>你看，这不是灵感，是目标形状触发固定动作。后面难证明也是从这个入口长出来的。</p>
+    </section>
+
+    <section class="card" id="practice">
+      <h2>7. Day1 小练：只检查基础反应</h2>
+      <p class="muted">先写题眼和人话答案，再展开解析。今天不追求难题。</p>
+
+      <div class="question">
+        <h3>题 1：下面哪个不是命题？</h3>
+        <p>A. 北航在北京。 B. 2 是偶数。 C. 请把书打开。 D. 今天下雨或今天不下雨。</p>
+        <textarea data-note="dq1" placeholder="先写：命题的判定标准是什么？哪个选项不是陈述句？"></textarea>
+        <details>
+          <summary>展开解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>C。</p>
+            <p><strong>题眼：</strong>命题必须是有确定真假的陈述句。“请把书打开”是祈使句，不是陈述事实。</p>
+            <p><strong>容易混：</strong>D 虽然看起来像废话，但它有确定真假，而且永真，所以它是命题。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 2：P&rarr;Q 唯一为假的情况是什么？</h3>
+        <textarea data-note="dq2" placeholder="先写：前件、后件分别是什么？什么时候承诺破了？"></textarea>
+        <details>
+          <summary>展开解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>P 真且 Q 假。</p>
+            <p><strong>题眼：</strong>蕴涵只怕“前真后假”。如果 P 假，前提没触发，整个蕴涵算真。</p>
+            <p><strong>迁移：</strong>以后判断 A&rarr;B 是否永真，就找有没有 A 真 B 假的反例。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 3：把“所有学生都会编程”翻译成公式。</h3>
+        <p>设 Student(x)：x 是学生；Code(x)：x 会编程。</p>
+        <textarea data-note="dq3" placeholder="先写公式，再解释为什么不用 Student(x) ∧ Code(x)。"></textarea>
+        <details>
+          <summary>展开解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>&forall;x(Student(x)&rarr;Code(x))。</p>
+            <p><strong>题眼：</strong>“所有 A 都是 B”用全称加蕴涵。</p>
+            <p><strong>为什么不用合取：</strong>&forall;x(Student(x)&and;Code(x)) 会变成“论域里每个对象都是学生且都会编程”，太强了。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 4：证明 A&rarr;B 的第一句通常是什么？</h3>
+        <textarea data-note="dq4" placeholder="先写：目标是蕴涵，所以第一步怎么做？"></textarea>
+        <details>
+          <summary>展开解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：</strong>假设 A 成立。</p>
+            <p><strong>题眼：</strong>目标是蕴涵 A&rarr;B。证明它，就是说明只要 A 成立，就能推出 B。</p>
+            <p><strong>后续：</strong>在假设 A 的条件下，利用定义、已知条件或推理规则得到 B。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 5：用自己的话总结今天离散学了什么。</h3>
+        <textarea data-note="day1-discrete-summary" placeholder="建议格式：1. 命题是____。2. 蕴涵最容易错在____。3. 全称/存在分别像____。4. 证明题先看____。"></textarea>
+      </div>
+
+      <p><a href="./day2_discrete_proof_starter.html">下一步：离散 Day2 证明入口与基础题型</a> · <a href="./index.html">回到期末陪跑学习舱</a> · <a href="./day1_master_route.html">回到 Day1 总路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-discrete-day1-notes";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const id = area.dataset.note;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

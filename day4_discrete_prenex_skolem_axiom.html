@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散 Day4 前束 Skolem 语义构造 公理证明：2024 后半桥接</title>
+  <style>
+    :root {
+      --bg: #f6f8f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6f7 0, rgba(246,248,248,0) 320px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: inherit;
+      line-height: 1.65;
+      margin: 10px 0;
+    }
+    .math-card {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .math-card .eq {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--blue);
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-bottom: 8px;
+    }
+    .math-card ul { margin: 8px 0 0 20px; padding: 0; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .purplebox { border-left-color: var(--purple); background: #f8f5ff; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .step {
+      min-height: 86px;
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px;
+      position: relative;
+    }
+    .step b { display: block; color: var(--blue); margin-bottom: 4px; }
+    .matrix {
+      display: inline-grid;
+      grid-template-columns: 44px repeat(3, 44px);
+      border: 1px solid var(--line);
+      margin: 8px 0;
+      background: #fff;
+    }
+    .matrix span {
+      border: 1px solid var(--line);
+      text-align: center;
+      padding: 7px 5px;
+      min-height: 36px;
+    }
+    .matrix .head { background: #eef7fc; color: var(--blue); font-weight: 760; }
+    .think-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .think-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 14px;
+      min-width: 0;
+    }
+    .think-card h3 { color: var(--blue); }
+    .ladder {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .ladder div {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px;
+    }
+    .ladder strong { display: block; color: var(--green); margin-bottom: 4px; }
+    .mini-svg {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+    .mini-svg svg { width: 100%; min-width: 620px; height: auto; display: block; }
+    @media (max-width: 980px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .rubric, .flow, .think-grid, .ladder { grid-template-columns: 1fr; }
+      .mini-svg svg { min-width: 620px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>离散 Day4 前束 Skolem 语义构造 公理证明：2024 后半桥接</h1>
+      <p class="muted">这页承接 Day3，不整张刷卷，而是把 2024 参考卷后半最难、最值钱的题型拆成四个可训练模块：前束范式、Skolem 范式、语义构造、公理证明。目标不是“看懂答案”，而是你能写出第一步、第二步、关键理由。</p>
+      <div class="strip">
+        <span class="pill hot">离散数学 6/28</span>
+        <span class="pill info">Day4 桥接 2024 后半</span>
+        <span class="pill warn">证明题先学骨架</span>
+        <span class="pill good">依据 2024 参考卷 + 离散1.md</span>
+      </div>
+      <div class="toc">
+        <a href="#route">0. 使用路线</a>
+        <a href="#thinking">1. 证明脑内导航</a>
+        <a href="#prenex">2. 前束范式</a>
+        <a href="#skolem">3. Skolem 范式</a>
+        <a href="#semantic">4. 语义构造</a>
+        <a href="#axiom">5. 公理证明</a>
+        <a href="#cards">6. 题卡</a>
+        <a href="#gate">7. 闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 使用路线：今天只解决“长题怎么开头”</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>你已经有的地基</strong>
+          Day1 会读命题、谓词、量词；Day2 会写证明起手；Day3 会做等值、真值表、主范式、辖域。
+        </div>
+        <div class="box">
+          <strong>这页新增能力</strong>
+          把“公式很长”拆成固定流程：改名、去箭头、否定内移、量词前移、母式合取范式、Skolem 化。
+        </div>
+        <div class="box">
+          <strong>不追求的事</strong>
+          暂时不要求你把所有公理系统证明写到每一行都完美；先能识别证明目标，写出可得分的骨架。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>考试真实感：</strong>2024 参考卷的后半不是靠背概念救的，它在考“你会不会按规则加工公式”和“你会不会用模型语言说清楚为什么真/假”。所以今天的核心词是：流程、理由、任取、构造、分情况。
+      </div>
+    </section>
+
+    <section class="card" id="thinking">
+      <h2>1. 证明脑内导航：先识别目标，再写第一句</h2>
+      <p>离散证明题不是靠灵感硬顶。你在考场上真正要做的第一件事，是判断题目到底要你“加工公式”“构造一个模型”“证明所有模型都成立”，还是“在公理系统里推演”。这四种题的开头完全不同。</p>
+      <div class="ladder">
+        <div><strong>看动词</strong>转化、写出、证明、构造、判断，动词决定题型。</div>
+        <div><strong>看对象</strong>公式、模型、论域、解释、公理系统，名词决定工具。</div>
+        <div><strong>看量词</strong>forall 要任取，exists 要找见证，not exists 要逐个打掉。</div>
+        <div><strong>看联结词</strong>or 要假必须两边假；and 要真必须两边真；-> 假是前真后假。</div>
+      </div>
+
+      <div class="mini-svg" aria-label="离散证明题分流图">
+        <svg viewBox="0 0 920 270" role="img">
+          <defs>
+            <marker id="arrowThink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect x="35" y="96" width="150" height="70" rx="8" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+          <text x="110" y="124" text-anchor="middle" font-size="17" font-weight="700" fill="#1f5f8b">拿到证明题</text>
+          <text x="110" y="150" text-anchor="middle" font-size="13" fill="#687581">先别展开答案</text>
+          <line x1="185" y1="131" x2="255" y2="131" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowThink)"/>
+          <rect x="255" y="24" width="180" height="52" rx="8" fill="#f3faf6" stroke="#24724f"/>
+          <text x="345" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#24724f">转化/化成前束</text>
+          <rect x="255" y="88" width="180" height="52" rx="8" fill="#fff9e6" stroke="#936b12"/>
+          <text x="345" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#936b12">构造解释/模型</text>
+          <rect x="255" y="152" width="180" height="52" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+          <text x="345" y="184" text-anchor="middle" font-size="15" font-weight="700" fill="#66519a">证明永真/语义蕴含</text>
+          <rect x="255" y="216" width="180" height="42" rx="8" fill="#fff2ef" stroke="#a23b32"/>
+          <text x="345" y="243" text-anchor="middle" font-size="15" font-weight="700" fill="#a23b32">公理系统推演</text>
+          <line x1="435" y1="50" x2="540" y2="50" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowThink)"/>
+          <line x1="435" y1="114" x2="540" y2="114" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowThink)"/>
+          <line x1="435" y1="178" x2="540" y2="178" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowThink)"/>
+          <line x1="435" y1="237" x2="540" y2="237" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowThink)"/>
+          <rect x="540" y="24" width="315" height="52" rx="8" fill="#ffffff" stroke="#dce3e8"/>
+          <text x="697" y="56" text-anchor="middle" font-size="14">改名 -> 去箭头 -> 否定内移 -> 搬量词</text>
+          <rect x="540" y="88" width="315" height="52" rx="8" fill="#ffffff" stroke="#dce3e8"/>
+          <text x="697" y="120" text-anchor="middle" font-size="14">反推真假条件，再填谓词表</text>
+          <rect x="540" y="152" width="315" height="52" rx="8" fill="#ffffff" stroke="#dce3e8"/>
+          <text x="697" y="184" text-anchor="middle" font-size="14">任取结构/赋值，利用前提找见证</text>
+          <rect x="540" y="216" width="315" height="42" rx="8" fill="#ffffff" stroke="#dce3e8"/>
+          <text x="697" y="243" text-anchor="middle" font-size="14">假设前件，实例化/MP/推广/演绎</text>
+        </svg>
+      </div>
+
+      <div class="think-grid">
+        <div class="think-card">
+          <h3>公式加工题：别证明，按工序变形</h3>
+          <p><strong>题眼：</strong>“转化为前束范式”“母式为合取范式”“写出 Skolem 范式”。</p>
+          <p><strong>第一句：</strong>先对约束变元改名，并消去等价和蕴涵。</p>
+          <p><strong>记忆钩子：</strong>这类题像整理公式，不需要构造模型；每一步只要和上一行等值或按 Skolem 规则保持可满足性。</p>
+        </div>
+        <div class="think-card">
+          <h3>语义构造题：先让目标反过来</h3>
+          <p><strong>题眼：</strong>“填写解释表，使公式为假/为真”。</p>
+          <p><strong>第一句：</strong>要使存在式为假，需对任意候选 <code>x∈D, y∈D</code> 都找到失败原因。</p>
+          <p><strong>记忆钩子：</strong>exists 要真只要一个成功；exists 要假必须全部失败。or 要假必须左右都假。</p>
+        </div>
+        <div class="think-card">
+          <h3>语义永真题：任取结构，不要举例</h3>
+          <p><strong>题眼：</strong>“证明公式为永真式”“若 A 永真，则 B 永真”“Γ |= Q”。</p>
+          <p><strong>第一句：</strong>任取一个非空论域 <code>D</code> 和解释 <code>I</code>，下面证明在该结构下公式为真。</p>
+          <p><strong>记忆钩子：</strong>永真不是找一个例子，而是所有结构都要过关；所以开头必须“任取”。</p>
+        </div>
+        <div class="think-card">
+          <h3>公理证明题：先懂自然骨架，再贴规则</h3>
+          <p><strong>题眼：</strong>“可直接引用推演规则”“求证 |- ...”。</p>
+          <p><strong>第一句：</strong>先假设最外层蕴涵的前件，再逐层假设里面的前件。</p>
+          <p><strong>记忆钩子：</strong>证明 P -> Q，就假设 P 去推出 Q；证明 forall y R(y)，就任取 <code>y0∈D</code> 去推出 R(y0)。</p>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>常见目标</th><th>第一句</th><th>下一步</th><th>适用真题</th></tr></thead>
+        <tbody>
+          <tr><td>证明 Γ |= Q</td><td>反设存在解释/赋值使 Γ 全真且 Q 假。</td><td>逐条用前提推出矛盾。</td><td>2022/2020 语义推论证明。</td></tr>
+          <tr><td>证明 forall x P(x)</td><td>任取 <code>a∈D</code>。</td><td>证明 P(a)，最后全称推广。</td><td>谓词逻辑证明、公理证明。</td></tr>
+          <tr><td>证明 exists x P(x)</td><td>构造一个具体见证 <code>a∈D</code>。</td><td>验证 P(a) 成立。</td><td>语义构造、模型证明。</td></tr>
+          <tr><td>证明 P -> Q</td><td>假设 P 成立。</td><td>推出 Q 成立，再用演绎思想收束。</td><td>公理证明、命题证明。</td></tr>
+          <tr><td>证明公式不成立</td><td>给一个反例结构或赋值。</td><td>说明前提真而结论假。</td><td>判断题、语义蕴含反例。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>这不是 2024 专用：</strong>2024 后半集中考长题，但 2022/2020 的语义推论、自然语言符号化、范式和证明题也用同一套导航。先会分流，后面刷真题才不会变成“逐题背答案”。
+      </div>
+    </section>
+
+    <section class="card" id="prenex">
+      <h2>2. 前束范式：把所有量词搬到最前面</h2>
+      <p>前束范式的样子很单纯：前面是一串量词，后面是不含量词的母式。它像把一篇句子先分成“谁先被选择”与“最后要满足什么条件”。</p>
+      <div class="math-card">
+        <div class="display-eq">前束范式 <span class="op">=</span> 量词前缀 <span class="op">+</span> 无量词母式</div>
+        <div class="display-eq"><span class="mi">Q</span><sub>1</sub><span class="mi">x</span><sub>1</sub> <span class="mi">Q</span><sub>2</sub><span class="mi">x</span><sub>2</sub> <span class="op">…</span> <span class="mi">Q</span><sub><span class="mi">n</span></sub><span class="mi">x</span><sub><span class="mi">n</span></sub> <span class="mi">M</span><span class="op">(</span><span class="mi">x</span><sub>1</sub><span class="op">,</span><span class="mi">x</span><sub>2</sub><span class="op">,</span><span class="op">…</span><span class="op">,</span><span class="mi">x</span><sub><span class="mi">n</span></sub><span class="op">)</span></div>
+        <div class="display-eq">∀<span class="mi">x</span> ∃<span class="mi">y</span> ∀<span class="mi">z</span> <span class="mi">M</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">,</span><span class="mi">z</span><span class="op">)</span></div>
+        <ul>
+          <li><strong>量词前缀</strong>：只放 <code>forall</code> 或 <code>exists</code>，表示变量选择顺序。</li>
+          <li><strong>母式</strong>：不再含量词，只含谓词、联结词和变量。</li>
+          <li><strong>考试动作</strong>：不是发明新公式，而是按规则把量词搬到前面。</li>
+        </ul>
+      </div>
+      <div class="mini-svg" aria-label="前束范式结构图">
+        <svg viewBox="0 0 940 280" role="img">
+          <rect width="940" height="280" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">前束范式：前面只负责“选变量”，后面只负责“满足条件”</text>
+            <rect x="80" y="90" width="270" height="70" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="123" y="122" font-weight="700">exists z forall y exists u forall v</text>
+            <text x="145" y="148" fill="#687581">量词前缀：选择顺序</text>
+            <path d="M355 125 H455" stroke="#687581" stroke-width="3" marker-end="url(#prenexArrow)"/>
+            <rect x="470" y="90" width="390" height="70" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="515" y="120" font-weight="700">P(z) and (...) and (...)</text>
+            <text x="540" y="148" fill="#687581">母式：不再含量词</text>
+            <rect x="180" y="205" width="600" height="38" rx="8" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="240" y="230" fill="#687581">判断每次前移是否合法：变量是否在旁边公式中自由出现？</text>
+          </g>
+          <defs><marker id="prenexArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <div class="flow">
+        <div class="step"><b>1 改名</b>同名约束变量先换名，避免搬量词时互相撞车。</div>
+        <div class="step"><b>2 去箭头</b><code>A -> B</code> 改成 <code>not A or B</code>；<code>A &lt;-&gt; B</code> 拆成两个方向。</div>
+        <div class="step"><b>3 否定内移</b>用德摩根和量词否定，把 <code>not</code> 推到原子公式前。</div>
+        <div class="step"><b>4 量词前移</b>变量不自由出现时，才能放心把量词往前搬。</div>
+        <div class="step"><b>5 母式 CNF</b>最后无量词部分化成“若干子句的合取”。</div>
+        <div class="step"><b>6 写理由</b>每一步标注去蕴涵、量词否定、变量改名、量词前移。</div>
+      </div>
+      <table>
+        <thead><tr><th>规则</th><th>人话</th><th>例子</th></tr></thead>
+        <tbody>
+          <tr><td>not forall x A</td><td>不是所有都 A，就是存在一个不 A。</td><td><code>not forall x Q(x)</code> 等价于 <code>exists x not Q(x)</code></td></tr>
+          <tr><td>not exists x A</td><td>不存在 A，就是所有都不 A。</td><td><code>not exists x Q(x)</code> 等价于 <code>forall x not Q(x)</code></td></tr>
+          <tr><td>量词前移</td><td>x 不在 B 里自由出现时，可把量词移过 B。</td><td><code>(exists x A(x)) or B</code> 等价于 <code>exists x(A(x) or B)</code></td></tr>
+          <tr><td>改名</td><td>约束变量只是占位名，可以换。</td><td><code>forall x Q(x,y)</code> 可以改成 <code>forall v Q(v,y)</code></td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>零基础题眼：</strong>前束题不是让你“想出新公式”，而是让你按流程搬家。每搬一次量词，都问一句：这个变量会不会在旁边那块公式里自由出现？不会，才安全。
+      </div>
+    </section>
+
+    <section class="card" id="skolem">
+      <h2>3. Skolem 范式：把“存在”换成常量或函数</h2>
+      <p>Skolem 化的核心直觉：如果题目说“存在某个东西”，我们给它起一个名字；如果这个东西依赖前面任取的变量，就把它写成那些变量的函数。</p>
+      <div class="mini-svg" aria-label="Skolem 依赖关系图">
+        <svg viewBox="0 0 940 330" role="img">
+          <rect width="940" height="330" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">Skolem 化只问一个问题：这个“存在”依赖前面哪些“任取”？</text>
+            <rect x="85" y="88" width="115" height="58" rx="10" fill="#fff9e6" stroke="#936b12"/>
+            <text x="112" y="123" font-weight="700">exists z</text>
+            <path d="M205 117 H310" stroke="#687581" stroke-width="3" marker-end="url(#skArrow)"/>
+            <rect x="325" y="88" width="180" height="58" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="358" y="123" font-weight="700">前面无 forall</text>
+            <path d="M510 117 H615" stroke="#687581" stroke-width="3" marker-end="url(#skArrow)"/>
+            <rect x="630" y="88" width="180" height="58" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="672" y="123" font-weight="700">z -> 常量 a</text>
+
+            <rect x="85" y="205" width="115" height="58" rx="10" fill="#fff9e6" stroke="#936b12"/>
+            <text x="112" y="240" font-weight="700">exists u</text>
+            <path d="M205 234 H310" stroke="#687581" stroke-width="3" marker-end="url(#skArrow)"/>
+            <rect x="325" y="205" width="180" height="58" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="363" y="240" font-weight="700">前面有 forall y</text>
+            <path d="M510 234 H615" stroke="#687581" stroke-width="3" marker-end="url(#skArrow)"/>
+            <rect x="630" y="205" width="180" height="58" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="666" y="240" font-weight="700">u -> f(y)</text>
+            <rect x="210" y="288" width="520" height="32" rx="8" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="254" y="310" fill="#687581">不能把 u 写成常量：u 可能随着任取的 y 改变。</text>
+          </g>
+          <defs><marker id="skArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <table>
+        <thead><tr><th>量词片段</th><th>Skolem 替换</th><th>为什么</th></tr></thead>
+        <tbody>
+          <tr><td><code>exists z</code> 前面没有全称量词</td><td>把 z 换成常量 <code>a</code></td><td>它不依赖任何“任取对象”，就是某个固定见证。</td></tr>
+          <tr><td><code>forall y exists u</code></td><td>把 u 换成函数 <code>f(y)</code></td><td>u 可能随着 y 的不同而不同。</td></tr>
+          <tr><td><code>forall x forall y exists z</code></td><td>把 z 换成 <code>g(x,y)</code></td><td>z 可以依赖前面所有全称变量。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2024 参考卷 F2 手把手</h3>
+      <p>原题公式：</p>
+      <div class="math-card">
+        <div class="display-eq"><span class="mi">F</span><sub>2</sub> <span class="op">=</span> ∃<span class="mi">z</span><span class="op">(</span><span class="mi">P</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span> ∧ ∀<span class="mi">y</span><span class="op">(</span>∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ↔ <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></div>
+        <ul>
+          <li>外层 <code>exists z</code>：先选一个 z。</li>
+          <li><code>P(z)</code>：这个 z 要满足 P。</li>
+          <li><code>forall y(...)</code>：对任意 y，都要求里面的等价式成立。</li>
+        </ul>
+      </div>
+      <p>第一步先拆等价。注意 <code>A &lt;-&gt; B</code> 等价于 <code>(A -> B) and (B -> A)</code>。</p>
+      <div class="math-card">
+        <div class="display-eq">∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ↔ <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="display-eq">≡ <span class="op">(</span>∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> → <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> ∧ <span class="op">(</span><span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> → ∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+        <ul>
+          <li>等价式一定先拆成两个蕴涵方向。</li>
+          <li>后面两个方向里的 <code>x</code> 最好改名，避免量词前移后互相混淆。</li>
+        </ul>
+      </div>
+      <p>再去箭头、否定内移。为了避免两个 x 混在一起，我们把第一个方向里的 x 改名为 u，第二个方向里的 x 改名为 v。</p>
+      <div class="math-card">
+        <div class="display-eq">∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> → <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="display-eq">≡ ¬∀<span class="mi">u</span><span class="mi">Q</span><span class="op">(</span><span class="mi">u</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="display-eq">≡ ∃<span class="mi">u</span><span class="op">(</span>¬<span class="mi">Q</span><span class="op">(</span><span class="mi">u</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> → ∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="display-eq">≡ ¬<span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ ∀<span class="mi">v</span><span class="mi">Q</span><span class="op">(</span><span class="mi">v</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span></div>
+        <div class="display-eq">≡ ∀<span class="mi">v</span><span class="op">(</span>¬<span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">Q</span><span class="op">(</span><span class="mi">v</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+        <ul>
+          <li><code>not forall u</code> 要变成 <code>exists u not</code>。</li>
+          <li><code>not R(z,y)</code> 不含 v，所以 <code>forall v</code> 可以前移。</li>
+        </ul>
+      </div>
+      <p>于是可以写出一个标准前束范式：</p>
+      <div class="math-card">
+        <div class="display-eq"><span class="mi">F</span><sub>3</sub> <span class="op">=</span> ∃<span class="mi">z</span> ∀<span class="mi">y</span> ∃<span class="mi">u</span> ∀<span class="mi">v</span> <span class="op">[</span></div>
+        <div class="display-eq"><span class="mi">P</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span> ∧ <span class="op">(</span>¬<span class="mi">Q</span><span class="op">(</span><span class="mi">u</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> ∧ <span class="op">(</span>¬<span class="mi">R</span><span class="op">(</span><span class="mi">z</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">Q</span><span class="op">(</span><span class="mi">v</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="op">]</span></div>
+        <ul>
+          <li>量词前缀是 <code>exists z forall y exists u forall v</code>。</li>
+          <li>中括号里是母式，不再含量词。</li>
+        </ul>
+      </div>
+      <div class="mark warnbox">
+        <strong>为什么 P(z) 也在母式里：</strong>原公式外层是 <code>P(z) and ...</code>。搬量词时不能把 P(z) 丢掉，它只是没有 y/u/v，所以一直陪着 z 进入母式。
+      </div>
+      <p>Skolem 化时，<code>exists z</code> 前面没有全称量词，所以 z 换成常量 a；<code>exists u</code> 前面有 <code>forall y</code>，所以 u 换成函数 f(y)。剩下全称量词通常省略或保留说明。</p>
+      <div class="math-card">
+        <div class="display-eq"><span class="mi">F</span><sub>4</sub> <span class="op">=</span> ∀<span class="mi">y</span> ∀<span class="mi">v</span> <span class="op">[</span></div>
+        <div class="display-eq"><span class="mi">P</span><span class="op">(</span><span class="mi">a</span><span class="op">)</span> ∧ <span class="op">(</span>¬<span class="mi">Q</span><span class="op">(</span><span class="mi">f</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">R</span><span class="op">(</span><span class="mi">a</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> ∧ <span class="op">(</span>¬<span class="mi">R</span><span class="op">(</span><span class="mi">a</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">Q</span><span class="op">(</span><span class="mi">v</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="op">]</span></div>
+        <ul>
+          <li><code>z -> a</code>：z 前面没有全称量词，所以是常量。</li>
+          <li><code>u -> f(y)</code>：u 前面有 <code>forall y</code>，所以是依赖 y 的函数。</li>
+          <li>外层剩下全称量词 <code>forall y forall v</code>，有时可写成全称闭包。</li>
+        </ul>
+      </div>
+      <div class="mark">
+        <strong>考场可写：</strong>也可以写“Skolem 母式为 ...，其中 a 为 Skolem 常量，f 为一元 Skolem 函数，外层全称闭包省略”。变量名不唯一，结构正确最重要。
+      </div>
+    </section>
+
+    <section class="card" id="semantic">
+      <h2>4. 语义构造：让公式为假，不是猜表，是反着造</h2>
+      <p>2024 参考卷里的语义构造题很适合训练“模型语言”。它给你一个 A 表，让你填 S 表，使公式为假。</p>
+      <div class="math-card">
+        <div class="math-note"><strong>公式 I：</strong>外层存在式要为假，必须打掉所有候选 x,y。</div>
+        <div class="display-eq">∃<span class="mi">x</span> ∃<span class="mi">y</span> ∀<span class="mi">w</span><span class="op">(</span><span class="op">(</span><span class="mi">A</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∧ <span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> ∨ ¬<span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">w</span><span class="op">)</span><span class="op">)</span></div>
+        <ul>
+          <li>最外层是 <code>exists x exists y</code>：只要有一对 <code>x∈D,y∈D</code> 成功，公式就真。</li>
+          <li>要让公式假，就必须让每一对 <code>x∈D,y∈D</code> 都失败。</li>
+          <li>里面是一个析取，析取要假，左右两边都必须假。</li>
+        </ul>
+      </div>
+      <div class="mini-svg" aria-label="语义构造反向造假流程">
+        <svg viewBox="0 0 940 320" role="img">
+          <rect width="940" height="320" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">让公式 I 为假：从外到内反着拆</text>
+            <rect x="70" y="82" width="190" height="62" rx="12" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="92" y="119" font-weight="700">打掉所有 x∈D,y∈D</text>
+            <path d="M265 113 H350" stroke="#687581" stroke-width="3" marker-end="url(#semBuildArrow)"/>
+            <rect x="365" y="82" width="210" height="62" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="390" y="119" font-weight="700">每对 x∈D,y∈D 找 w∈D</text>
+            <path d="M580 113 H665" stroke="#687581" stroke-width="3" marker-end="url(#semBuildArrow)"/>
+            <rect x="680" y="82" width="190" height="62" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="713" y="119" font-weight="700">让括号为假</text>
+            <rect x="190" y="205" width="560" height="58" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="235" y="229" font-weight="700">析取 B or C 为假：B 假且 C 假</text>
+            <text x="258" y="253" fill="#687581">所以让 A(x,y) and S(x,y) 假，同时让 not S(x,w) 假。</text>
+          </g>
+          <defs><marker id="semBuildArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <p>要让一个“存在 x 存在 y ...”的公式为假，就要让每一对 <code>x∈D,y∈D</code> 都失败。也就是：</p>
+      <div class="math-card">
+        <div class="math-note">对任意 <code>x∈D,y∈D</code>，都要找到某个 <code>w∈D</code>，使下面这个括号为假：</div>
+        <div class="display-eq"><span class="op">(</span><span class="mi">A</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∧ <span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> ∨ ¬<span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">w</span><span class="op">)</span></div>
+      </div>
+      <p>一个析取 <code>B or C</code> 为假，必须 B 假且 C 假。所以我们需要：</p>
+      <div class="math-card">
+        <div class="display-eq">1. <span class="mi">A</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> ∧ <span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span> 为假</div>
+        <div class="display-eq">2. ¬<span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">w</span><span class="op">)</span> 为假，也就是 <span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">w</span><span class="op">)</span> 为真</div>
+      </div>
+      <p>给定 A 表每一行都有两个 1 和一个 0。最干净的构造是：把 S 设成 A 的补表，也就是 A 为 1 的位置 S 为 0，A 为 0 的位置 S 为 1。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>A 表</strong>
+          <div class="matrix">
+            <span class="head">A</span><span class="head">1</span><span class="head">2</span><span class="head">3</span>
+            <span class="head">1</span><span>1</span><span>1</span><span>0</span>
+            <span class="head">2</span><span>1</span><span>0</span><span>1</span>
+            <span class="head">3</span><span>0</span><span>1</span><span>1</span>
+          </div>
+        </div>
+        <div class="box">
+          <strong>S 补表</strong>
+          <div class="matrix">
+            <span class="head">S</span><span class="head">1</span><span class="head">2</span><span class="head">3</span>
+            <span class="head">1</span><span>0</span><span>0</span><span>1</span>
+            <span class="head">2</span><span>0</span><span>1</span><span>0</span>
+            <span class="head">3</span><span>1</span><span>0</span><span>0</span>
+          </div>
+        </div>
+      </div>
+      <p>这样做为什么对？固定任意 <code>x∈D,y∈D</code>。因为 S 是 A 的补表，所以只要 A(x,y)=1，就有 S(x,y)=0；如果 A(x,y)=0，前半部分本来也假。因此 <code>A(x,y) and S(x,y)</code> 总是假。又因为每一行 S 都至少有一个 1，所以能找到 <code>w∈D</code> 使 <code>S(x,w)=1</code>，于是 <code>not S(x,w)</code> 假。两个都假，整个括号假。</p>
+      <div class="mark">
+        <strong>这个题的通用套路：</strong>要否定存在式，就对所有候选都打掉；要打掉 forall w，就给每个候选找一个反例 w；要让析取假，就让两边都假。
+      </div>
+
+      <h3>公式 II 的有效性证明：分两种 S 的情况</h3>
+      <div class="math-card">
+        <div class="math-note"><strong>公式 II：</strong>证明永真时，要利用已知永真式先拿到关键对象 a。</div>
+        <div class="display-eq">∃<span class="mi">x</span> ∃<span class="mi">y</span> ∃<span class="mi">z</span> ∀<span class="mi">w</span><span class="op">(</span><span class="op">(</span><span class="mi">P</span> ∧ <span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> ∨ ¬<span class="mi">S</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">w</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq">已知：∃<span class="mi">x</span> ∀<span class="mi">y</span> ∃<span class="mi">z</span> <span class="mi">P</span> 是永真式</div>
+        <div class="math-note">且 P 不含 w，也不含谓词 S。</div>
+        <ul>
+          <li>已知永真式给你一个关键对象 a。</li>
+          <li>接下来只看 S 的第 a 行：要么全 0，要么至少有一个 1。</li>
+        </ul>
+      </div>
+      <p>证明思路不要硬算。任取一个非空论域 <code>D</code> 和任意解释 <code>I</code>。由已知永真，存在某个 <code>a∈D</code>，使对任意 <code>y∈D</code>，都存在 <code>z∈D</code> 让 P 为真。现在只看 S 在第 a 行的情况。</p>
+      <table>
+        <thead><tr><th>第 a 行 S 的情况</th><th>怎么选 y,z</th><th>为什么公式 II 真</th></tr></thead>
+        <tbody>
+          <tr><td>对所有 <code>w∈D</code>，S(a,w) 都是假</td><td>随便取一个 <code>y∈D</code>，再按已知取 <code>z∈D</code> 使 P 真。</td><td>任意 <code>w∈D</code> 都有 not S(a,w) 真，所以 forall w 的括号恒真。</td></tr>
+          <tr><td>存在 <code>b∈D</code>，使 S(a,b) 为真</td><td>取 y=b。由已知，对这个 b 存在 <code>z∈D</code> 使 P 真。</td><td>P 真且 S(a,b) 真，所以 P and S(a,b) 真，括号对任意 w 都真。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark purplebox">
+        <strong>规范语言：</strong>“任取论域和解释”说明你在证明永真；“由已知存在 a”说明你使用了前提；“分 S 的第 a 行全 0 或存在 1”说明你穷尽了所有可能。
+      </div>
+    </section>
+
+    <section class="card" id="axiom">
+      <h2>5. 公理证明：先写语义骨架，再靠规则压成形式证明</h2>
+      <p>公理证明题看起来吓人，因为它不让你自由地说“显然”。但从学习顺序上，先理解它到底想证明什么，再去补形式规则，效率最高。</p>
+      <div class="mini-svg" aria-label="公理证明骨架图">
+        <svg viewBox="0 0 940 300" role="img">
+          <rect width="940" height="300" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">公理证明先搭骨架：假设、实例化、MP、推广、收束</text>
+            <rect x="55" y="88" width="145" height="58" rx="10" fill="#eef7fc" stroke="#1f5f8b"/><text x="93" y="123" font-weight="700">假设前件</text>
+            <path d="M205 117 H270" stroke="#687581" stroke-width="3" marker-end="url(#axArrow)"/>
+            <rect x="285" y="88" width="145" height="58" rx="10" fill="#eef9f3" stroke="#24724f"/><text x="320" y="123" font-weight="700">任取对象</text>
+            <path d="M435 117 H500" stroke="#687581" stroke-width="3" marker-end="url(#axArrow)"/>
+            <rect x="515" y="88" width="145" height="58" rx="10" fill="#fff9e6" stroke="#936b12"/><text x="548" y="123" font-weight="700">全称实例</text>
+            <path d="M665 117 H730" stroke="#687581" stroke-width="3" marker-end="url(#axArrow)"/>
+            <rect x="745" y="88" width="145" height="58" rx="10" fill="#fff2ef" stroke="#a23b32"/><text x="788" y="123" font-weight="700">MP 推出</text>
+            <rect x="205" y="205" width="530" height="42" rx="10" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="248" y="232" fill="#687581">最后用全称推广/演绎定理，把临时假设收回成原公式。</text>
+          </g>
+          <defs><marker id="axArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <h3>题 1 的人话</h3>
+      <div class="math-card">
+        <div class="math-note"><strong>要证：</strong></div>
+        <div class="display-eq">⊢ ∀<span class="mi">x</span>∀<span class="mi">y</span><span class="op">(</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span> → <span class="mi">R</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span> → <span class="op">(</span>∀<span class="mi">x</span><span class="mi">Q</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span> → ∀<span class="mi">y</span><span class="mi">R</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+      </div>
+      <p>人话：如果任意 <code>x∈D</code> 的 Q 都能推出任意 <code>y∈D</code> 的 R，那么只要所有 <code>x∈D</code> 都满足 Q，就能推出所有 <code>y∈D</code> 都满足 R。</p>
+      <div class="math-card">
+        <div class="math-note"><strong>考试骨架：</strong>这题不是硬背公理号，先把“假设、实例化、MP、全称推广、演绎收束”的动作写稳。</div>
+        <ol>
+          <li>假设 <strong>H</strong>：∀x∀y(Q(x) -> R(y))。</li>
+          <li>再假设 <strong>A</strong>：∀x Q(x)。现在目标变成推出 ∀y R(y)。</li>
+          <li>任取 <code>y0∈D</code>，目标缩小为证明 R(y0)。</li>
+          <li>由 H 全称实例化，得到 Q(x0) -> R(y0)。</li>
+          <li>由 A 全称实例化，得到 Q(x0)。</li>
+          <li>用 MP 得到 R(y0)。</li>
+          <li>因为 <code>y0∈D</code> 是任取的，所以全称推广得到 ∀y R(y)。</li>
+          <li>用演绎定理把临时假设 A 和 H 收回，得到原式。</li>
+        </ol>
+      </div>
+      <div class="mark warnbox">
+        <strong>注意：</strong>第 4、5 步里的 <code>x0∈D</code> 只是任选的一个对象。通常一阶逻辑论域非空，所以可以取一个对象来触发 Q(x0) -> R(y0)。形式系统里会用全称实例化、全称推广和演绎定理来包装这件事。
+      </div>
+
+      <h3>题 2 的人话</h3>
+      <div class="math-card">
+        <div class="math-note"><strong>要证：</strong></div>
+        <div class="display-eq">⊢ <span class="op">(</span><span class="mi">Q</span> → ¬<span class="op">(</span><span class="mi">P</span> ∧ <span class="mi">Q</span><span class="op">)</span><span class="op">)</span> → <span class="op">(</span><span class="mi">P</span> ∧ <span class="mi">Q</span> → <span class="mi">R</span><span class="op">)</span></div>
+      </div>
+      <p>人话：如果 Q 会推出“P 且 Q 不成立”，那么一旦 P 且 Q 成立，就会和这个条件冲突。冲突以后在经典逻辑里可以推出任意 R。</p>
+      <div class="math-card">
+        <div class="math-note"><strong>考试骨架：</strong>这题的灵魂是“从 P∧Q 出发制造矛盾，再由矛盾推出 R”。</div>
+        <ol>
+          <li>假设 <strong>H</strong>：Q -> not(P and Q)。</li>
+          <li>再假设 <strong>B</strong>：P and Q。现在目标变成推出 R。</li>
+          <li>由 B 可得 Q。</li>
+          <li>由 H 和 Q，用 MP 得到 not(P and Q)。</li>
+          <li>同时有 B 和 not B，形成矛盾。</li>
+          <li>在经典命题逻辑中，矛盾可以推出任意公式 R，所以得到 B -> R。</li>
+          <li>用演绎定理收回 H，得到 H -> (B -> R)。</li>
+        </ol>
+      </div>
+      <p>如果老师要求必须贴合给定引用规则，核心仍然是把“B 与 not B 矛盾”转化成给定公理/规则可接受的形式。短时间冲刺时，你至少要先把上述骨架写对，后面再补形式化行号。</p>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>6. 题卡：先作答，再看答案</h2>
+
+      <article class="drill">
+        <h3>题卡 1：前束算法默写</h3>
+        <p><strong>题目：</strong>把任意谓词公式化成前束范式，推荐的步骤是什么？每一步为什么必要？</p>
+        <textarea data-key="d4-q1" placeholder="先写 6 步：改名、去箭头/等价、否定内移、量词前移、母式 CNF、标理由。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>标准步骤：约束变量改名；消去 -> 和 &lt;-&gt;；把否定内移到原子公式前；在变量不自由冲突的前提下把量词移到最前面；把无量词母式化成合取范式；每一步写出所用规则。</p>
+            <p>改名是为了防止两个量词用了同一个变量名导致误绑定；去箭头和否定内移是为了把公式变成只含 not/and/or/量词的形式；量词前移是前束范式的定义要求；母式 CNF 是 2024 参考卷明确要求的。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>前束题是流程题，不能凭感觉跳步。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 2：F2 前束第一刀</h3>
+        <p><strong>题目：</strong>对 <code>forall x Q(x,y) &lt;-&gt; R(z,y)</code> 做“去等价 + 去蕴涵 + 否定内移”。</p>
+        <textarea data-key="d4-q2" placeholder="提示：A <-> B 先变 (A -> B) and (B -> A)，再把 not forall 改成 exists not。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>它等价于 <code>(exists u(not Q(u,y)) or R(z,y)) and (not R(z,y) or forall v Q(v,y))</code>。继续前移量词可写成 <code>exists u forall v[(not Q(u,y) or R(z,y)) and (not R(z,y) or Q(v,y))]</code>。</p>
+            <p>这里 u、v 是把原来的 x 改名得到的。改名不是改变含义，而是防止两个方向里的 x 搬到前面后互相混淆。最容易丢分的是忘记 <code>not forall</code> 要变成 <code>exists not</code>。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>等价先拆两个方向；否定穿过全称时，全称变存在。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 3：F2 的 F3 和 F4</h3>
+        <p><strong>题目：</strong>写出 F2 的一个前束范式 F3，以及由 F3 得到的 Skolem 范式 F4。</p>
+        <textarea data-key="d4-q3" placeholder="先写量词串：exists z forall y exists u forall v，然后写母式。Skolem 化：z -> a，u -> f(y)。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>一个可接受的前束范式是：<code>exists z forall y exists u forall v [P(z) and (not Q(u,y) or R(z,y)) and (not R(z,y) or Q(v,y))]</code>。</p>
+            <p>Skolem 化：z 在所有全称量词之前出现，所以用常量 a 替换；u 前面有 forall y，所以用函数 f(y) 替换。得到 <code>forall y forall v [P(a) and (not Q(f(y),y) or R(a,y)) and (not R(a,y) or Q(v,y))]</code>。</p>
+            <p>变量名、Skolem 常量名、函数名可以不同，但依赖关系不能错。若把 u 写成常量，就表示它不随 y 变化，这是关键错误。</p>
+          </div>
+          <div class="rubric"><span>闸门</span><span>会不会判断 Skolem 函数依赖谁，是这题的核心。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 4：构造 S 表使公式 I 为假</h3>
+        <p><strong>题目：</strong>给定 A 表，填写 S 表，使 <code>exists x exists y forall w((A(x,y) and S(x,y)) or not S(x,w))</code> 为假，并说明构造思路。</p>
+        <textarea data-key="d4-q4" placeholder="先写：S 取 A 的补表。再解释为什么每个 x∈D,y∈D 都能找到 w∈D 让括号为假。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>S 表可填为：第 1 行 0,0,1；第 2 行 0,1,0；第 3 行 1,0,0，也就是 A 的补表。</p>
+            <p>解释：固定任意 <code>x∈D,y∈D</code>。若 A(x,y)=1，则 S(x,y)=0，所以 A(x,y) and S(x,y) 为假；若 A(x,y)=0，则前半也假。与此同时，每一行 S 都有一个 1，因此可选 <code>w∈D</code> 使 S(x,w)=1，于是 not S(x,w) 为假。前半假、后半假，括号假。对所有 <code>x∈D,y∈D</code> 都能这样做，所以不存在成功的 x,y，整个存在式为假。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>要让 exists 失败，就逐个打掉所有候选；要让 or 假，就两边都假。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 5：公式 II 永真证明的分情况</h3>
+        <p><strong>题目：</strong>已知 <code>exists x forall y exists z P</code> 永真，且 P 不含 w 与 S。证明公式 II 永真时，为什么要分 S 的某一行是否全 0？</p>
+        <textarea data-key="d4-q5" placeholder="先写：任取非空论域 D 和解释 I，由已知取 a∈D。看 S(a,w) 是否全假。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>任取任意结构，论域为非空集合 <code>D</code>。由 <code>exists x forall y exists z P</code> 永真，存在 <code>a∈D</code>，使得对任意 <code>y∈D</code> 都能找到 <code>z∈D</code> 令 P 真。现在看 S 的第 a 行。若对所有 <code>w∈D</code>，S(a,w) 都假，则任意 w 都有 not S(a,w) 真，所以公式 II 成立。若存在 <code>b∈D</code> 使 S(a,b) 真，则取 y=b；由已知可取 <code>z∈D</code> 使 P 真，于是 P and S(a,b) 真，括号对任意 w 都真。</p>
+            <p>分情况的原因是：公式 II 的括号有两条通路，一条靠 <code>not S(x,w)</code> 对所有 w 真，另一条靠 <code>P and S(x,y)</code> 一次性真。S 的第 a 行全 0 走第一条；不全 0 走第二条。</p>
+          </div>
+          <div class="rubric"><span>规范</span><span>证明永真式要从“任取结构”开始，而不是只举一个结构。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 6：公理证明题 1 骨架</h3>
+        <p><strong>题目：</strong>写出证明 <code>forall x forall y(Q(x)->R(y)) -> (forall x Q(x) -> forall y R(y))</code> 的自然推理骨架。</p>
+        <textarea data-key="d4-q6" placeholder="先假设 H，再假设 forall x Q(x)，任取 y0∈D，找一个 x0∈D，实例化，MP，推广。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>骨架：假设 H；再假设 A: forall x Q(x)。任取 <code>y0∈D</code>，目标 R(y0)。由 H 全称实例化得 Q(x0)->R(y0)，由 A 全称实例化得 Q(x0)，其中 <code>x0∈D</code> 可任选，MP 得 R(y0)。因为 y0 任意，得 forall y R(y)。因此 A -> forall y R(y)，再推出整式。</p>
+            <p>题眼不是“R(y) 从哪里来”，而是 H 已经说了任意 Q(x) 都能推出任意 R(y)。只要 A 给你一个 Q(x0)，就能喂给 H，吐出目标 R(y0)。</p>
+          </div>
+          <div class="rubric"><span>得分点</span><span>出现任取 y0、全称实例化、MP、全称推广。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 7：公理证明题 2 骨架</h3>
+        <p><strong>题目：</strong>为什么 <code>Q -> not(P and Q)</code> 能推出 <code>P and Q -> R</code>？</p>
+        <textarea data-key="d4-q7" placeholder="先从假设 P and Q 出发，得到 Q，再推出 not(P and Q)，制造矛盾。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>假设 H: Q -> not(P and Q)。再假设 B: P and Q。由 B 可得 Q；由 H 和 Q 得 not(P and Q)。于是同时有 B 与 not B，矛盾。在经典逻辑中，矛盾可以推出任意公式 R，因此 B -> R。最后得到 H -> (B -> R)。</p>
+            <p>这题真正要识别的是“前提会制造矛盾”。看到结论是任意 R，不要以为要从 P、Q 里分析 R 的内容；R 只是爆炸原理的结果。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>结论 R 与前提无关，说明要走矛盾推出任意式。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 8：公理系统选择题</h3>
+        <p><strong>题目：</strong>“若公理系统不具有可靠性，那么通过扩充其公理集合，有可能使其具备可靠性。”这句话为什么错？</p>
+        <textarea data-key="d4-q8" placeholder="提示：不可靠说明已经能推出某个语义上不真的定理。扩充公理不会删除旧定理。"></textarea>
+        <details>
+          <summary>查看答案与解析</summary>
+          <div class="answer-block">
+            <p>可靠性说的是：凡是系统能证明的，都应该在语义上有效。若系统已经不可靠，说明它已经能证明某个不该成立的公式。扩充公理集合只会让可证明的公式更多，不会把旧的错误定理删掉，所以不能靠“加公理”恢复可靠性。</p>
+            <p>这个选择题的常见误区是把“补充规则让系统更强”误解成“让系统更正确”。强不等于可靠；如果已经能推出错东西，加更多公理只会保留甚至扩大问题。</p>
+          </div>
+          <div class="rubric"><span>迁移</span><span>完全性是“该证的都能证”；可靠性是“能证的都是真的”。两者别混。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>7. 过关闸门：Day4 到 B，才进入 2024 整卷分块复盘</h2>
+      <table>
+        <thead><tr><th>等级</th><th>表现</th><th>下一步</th></tr></thead>
+        <tbody>
+          <tr><td>C</td><td>能听懂前束/Skolem 的答案，但自己不知道先做哪一步。</td><td>重读第 1、2 节，默写 6 步流程，重做题卡 1-3。</td></tr>
+          <tr><td>B</td><td>能独立写出 F2 的前束量词串、Skolem 常量/函数依赖；能解释 S 补表为什么使公式为假。</td><td>可以开始做 2024 参考卷后半分块题。</td></tr>
+          <tr><td>A</td><td>能用“任取结构/由永真取见证/分情况”的语言证明公式 II，并能写出两个公理证明的骨架。</td><td>进入离散 Day5：2024 参考卷分块解析与错题回炉。</td></tr>
+        </tbody>
+      </table>
+      <textarea data-key="d4-summary" placeholder="闭眼复述：1. 前束 6 步；2. Skolem 函数依赖谁；3. S 补表为什么有效；4. 两个公理证明各自题眼是什么。"></textarea>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day1_discrete_logic_proof.html">回离散 Day1</a> · <a href="./day2_discrete_proof_starter.html">回离散 Day2</a> · <a href="./day3_discrete_equiv_normal_predicate.html">回离散 Day3</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-discrete-day4-prenex-skolem-axiom";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-key]").forEach(area => {
+      const id = area.dataset.key;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

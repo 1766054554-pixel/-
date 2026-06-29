@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 1 AI 零基础故事线讲义</title>
+  <style>
+    :root {
+      --ink: #18222f;
+      --muted: #637284;
+      --line: #d8e3ee;
+      --paper: #fbfdff;
+      --blue: #1f66c2;
+      --green: #16845b;
+      --orange: #bf5b13;
+      --red: #b83232;
+      --purple: #6d46c7;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6ff 0, #f8fbff 280px, #fff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+      letter-spacing: 0;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 12px 34px rgba(38, 73, 115, .07);
+    }
+    header { padding: 30px; }
+    section { margin-top: 18px; padding: 24px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.24; letter-spacing: 0; }
+    h1 { font-size: 40px; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; margin-top: 18px; }
+    p { margin: 8px 0 0; }
+    a { color: #1558c8; }
+    ul, ol { margin-top: 8px; padding-left: 22px; }
+    li { margin: 5px 0; }
+    .muted { color: var(--muted); }
+    .pillrow, nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .pill, nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      border: 1px solid #cbdbea;
+      border-radius: 999px;
+      background: #fff;
+      padding: 5px 11px;
+      color: #31506f;
+      font-weight: 750;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    nav a { border-radius: 6px; color: #1558c8; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .box {
+      border: 1px solid #d8e3ee;
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 15px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 4px; }
+    .story {
+      border-left: 6px solid var(--blue);
+      background: #f1f7ff;
+      border-radius: 8px;
+      padding: 15px 17px;
+      margin-top: 14px;
+    }
+    .exam {
+      border-left: 6px solid var(--green);
+      background: #f0fbf6;
+      border-radius: 8px;
+      padding: 15px 17px;
+      margin-top: 14px;
+    }
+    .warn {
+      border-left: 6px solid var(--orange);
+      background: #fff8ed;
+      border-radius: 8px;
+      padding: 15px 17px;
+      margin-top: 14px;
+    }
+    .figure {
+      border: 1px solid #d3e0ec;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .figure svg { min-width: 760px; width: 100%; height: auto; display: block; }
+    .caption {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #d8e3ee;
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #edf6ff; color: #174d85; }
+    details {
+      margin-top: 12px;
+      border: 1px solid #d8e3ee;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+    }
+    summary { cursor: pointer; font-weight: 800; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border: 1px solid #cbd8e6;
+      border-radius: 8px;
+      padding: 10px;
+      font: inherit;
+      margin-top: 10px;
+      background: #fbfdff;
+    }
+    .question {
+      border: 1px solid #d8e3ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .options {
+      display: grid;
+      gap: 8px;
+      margin: 10px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .options li {
+      border: 1px solid #d8e3ee;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 9px 11px;
+    }
+    .answer {
+      border-left: 5px solid var(--green);
+      background: #f1fbf6;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .route {
+      display: grid;
+      grid-template-columns: 110px minmax(0,1fr);
+      gap: 10px;
+      align-items: start;
+      border: 1px solid #d8e3ee;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #fbfdff;
+    }
+    .route strong { color: var(--blue); }
+    @media (max-width: 820px) {
+      main { padding: 16px 12px 42px; }
+      header, section { padding: 18px; }
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      .figure svg { min-width: 690px; }
+      .route { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+<main>
+  <header>
+    <div class="pillrow">
+      <span class="pill">AI Day1 主线</span>
+      <span class="pill">零基础起步</span>
+      <span class="pill">选择/填空/简答/小计算地基</span>
+      <span class="pill">无需计算器</span>
+    </div>
+    <h1>AI 零基础故事线：先知道这门课到底在考什么</h1>
+    <p class="muted">这页不再把 CNN、RNN、Transformer 全塞成一锅。Day1 只负责建立地基：AI 题目在问哪一层、专业词是什么意思、公式为什么长这样、看到题怎么开始。模型细节等 Day3-Day5 学；如果名词串不起来，再看 Tips 图解课。</p>
+    <nav>
+      <a href="#why">0. 为什么会乱</a>
+      <a href="#exam">1. 考试地图</a>
+      <a href="#story">2. AI 一句话故事</a>
+      <a href="#words">3. 新词翻译</a>
+      <a href="#types">4. 三类学习</a>
+      <a href="#linear">5. 线性模型</a>
+      <a href="#tree">6. 决策树入门</a>
+      <a href="#eval">7. 评价指标</a>
+      <a href="#practice">8. Day1 小测</a>
+      <a href="#next">9. 后面怎么接</a>
+    </nav>
+  </header>
+
+  <section id="why">
+    <h2>0. 你看 AI 烦，不是你笨，是它一次性丢了太多层</h2>
+    <p>AI 课最痛苦的地方是：老师可能一句话说“用带标签样本训练模型，最小化损失函数，避免过拟合，提高泛化能力”，里面每个词都像认识，但连起来就雾蒙蒙。Day1 先把这句话拆开。</p>
+    <div class="story">
+      <strong>先记一个核心比喻：</strong>
+      AI 模型像一个会调旋钮的答题机器。你给它输入，它输出答案；它答错了，损失函数告诉它错得多离谱；训练算法根据错误调旋钮；最后拿没见过的新题检验它是不是真的学会。
+    </div>
+    <div class="figure">
+      <svg viewBox="0 0 980 360" role="img" aria-label="AI 学习闭环">
+        <rect width="980" height="360" fill="#fff"/>
+        <g font-family="sans-serif" font-size="16" fill="#18222f">
+          <text x="50" y="42" font-size="22" font-weight="700" fill="#1f66c2">AI 考试里反复出现的同一条链</text>
+          <rect x="50" y="95" width="140" height="70" rx="12" fill="#eef7ff" stroke="#1f66c2" stroke-width="2"/>
+          <text x="91" y="125" font-weight="700">输入 x</text>
+          <text x="75" y="150" font-size="14">特征/样本</text>
+          <path d="M195 130 H270" stroke="#637284" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="280" y="95" width="150" height="70" rx="12" fill="#f0fbf6" stroke="#16845b" stroke-width="2"/>
+          <text x="326" y="125" font-weight="700">模型 f</text>
+          <text x="312" y="150" font-size="14">带参数的规则</text>
+          <path d="M435 130 H510" stroke="#637284" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="520" y="95" width="150" height="70" rx="12" fill="#fff8ed" stroke="#bf5b13" stroke-width="2"/>
+          <text x="557" y="125" font-weight="700">预测 ŷ</text>
+          <text x="545" y="150" font-size="14">数值/类别/动作</text>
+          <path d="M675 130 H750" stroke="#637284" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="760" y="95" width="150" height="70" rx="12" fill="#fff4f4" stroke="#b83232" stroke-width="2"/>
+          <text x="806" y="125" font-weight="700">损失 L</text>
+          <text x="785" y="150" font-size="14">错得有多严重</text>
+          <path d="M835 170 C835 250 355 270 355 170" stroke="#6d46c7" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+          <text x="430" y="266" fill="#6d46c7" font-weight="700">训练：根据损失反过来调参数</text>
+          <rect x="280" y="285" width="150" height="42" rx="10" fill="#f7f2ff" stroke="#6d46c7"/>
+          <text x="320" y="312" font-weight="700" fill="#6d46c7">参数 w, b</text>
+        </g>
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#637284"/></marker>
+          <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#6d46c7"/></marker>
+        </defs>
+      </svg>
+      <div class="caption">以后看到任何模型，先问：输入是什么？输出是什么？参数是什么？损失怎么衡量？怎么评价？这五问能救很多选择、填空和简答。</div>
+    </div>
+  </section>
+
+  <section id="exam">
+    <h2>1. 考试地图：题型不同，脑子里打开的抽屉不同</h2>
+    <p>你说 AI 题型包括选择、填空、计算、简答和综合题，而且无需计算器。这说明考试大概率不是巨量复杂运算，而是考你能不能快速识别概念、解释公式、做小规模手算、比较模型。</p>
+    <table>
+      <thead><tr><th>题型</th><th>它通常想考什么</th><th>Day1 先练什么</th></tr></thead>
+      <tbody>
+        <tr><td>选择/填空</td><td>概念边界：监督/无监督/强化、过拟合、泛化、训练/测试、模型适用场景。</td><td>看到关键词先归类，不靠背孤立定义。</td></tr>
+        <tr><td>计算</td><td>线性模型损失、sigmoid 概率、熵/信息增益、Precision/Recall/F1、Q-learning 一步更新。</td><td>先会读公式里每个符号。</td></tr>
+        <tr><td>简答</td><td>为什么某模型适合某类数据，优缺点是什么，如何避免过拟合。</td><td>用“问题 -> 方法 -> 原因 -> 局限”四句式。</td></tr>
+        <tr><td>综合题</td><td>给场景让你选模型/解释流程/比较方案。</td><td>先判断输入、输出、反馈信号，再选模型族。</td></tr>
+      </tbody>
+    </table>
+    <div class="exam">
+      <strong>Day1 目标不是背完 AI。</strong>
+      今天只要你能把题目放进正确抽屉：这是监督学习还是强化学习？这是回归还是分类？这是训练误差还是测试泛化？这是模型公式还是评价指标？能分抽屉，后面公式和题型才接得住。
+    </div>
+  </section>
+
+  <section id="story">
+    <h2>2. AI 一句话故事：从“看样本”到“会泛化”</h2>
+    <p>我们用一个最普通的例子讲：系统要根据学生的学习时长、作业完成率、平时测验分数，预测期末是否能过 85。</p>
+    <div class="grid">
+      <div class="box"><strong>样本 sample</strong>一条训练记录。比如“某同学学习 4 小时、作业完成 80%、小测 70 分、最终 86 分”。</div>
+      <div class="box"><strong>特征 feature</strong>输入里的可观察信息。学习时长、作业完成率、小测分数就是特征，通常记作 x。</div>
+      <div class="box"><strong>标签 label</strong>标准答案。最终分数、是否 85+、是否通过，就是标签，通常记作 y。</div>
+      <div class="box"><strong>模型 model</strong>从特征到答案的规则。线性模型是一组加权，决策树是一串问题，神经网络是很多可调单元。</div>
+      <div class="box"><strong>训练 training</strong>用已知答案的样本调模型参数，让预测越来越接近标签。</div>
+      <div class="box"><strong>泛化 generalization</strong>模型遇到没见过的新样本也能答好。考试很爱问“为什么训练集好但测试集差”。</div>
+    </div>
+    <details>
+      <summary>把老师式句子翻译成人话</summary>
+      <p><strong>原句：</strong>给定带标签样本，选择模型并最小化损失函数，使模型在测试集上具有较好泛化能力。</p>
+      <p><strong>人话：</strong>先拿一批有标准答案的例题，让模型做题；它做错了，损失函数给它扣分；训练过程不断调模型里的参数；最后用它没见过的新题检查它是不是只背了答案，还是学到了规律。</p>
+    </details>
+  </section>
+
+  <section id="words">
+    <h2>3. 新词翻译表：每个词都要知道“考试怎么问”</h2>
+    <p>下面这张表不是词典，是考场索引。你看到一个词，要能立刻联想到它在题里可能怎么出现。</p>
+    <table>
+      <thead><tr><th>词</th><th>从零解释</th><th>考试信号</th></tr></thead>
+      <tbody>
+        <tr><td>参数 parameter</td><td>模型里要学出来的数字。线性模型里的权重，神经网络里的连接权重都是参数。</td><td>求最优参数、权重向量、更新 w。</td></tr>
+        <tr><td>超参数 hyperparameter</td><td>训练前由人设置的选项，不是模型自己学出来的。</td><td>学习率、树深、K 值、正则化系数。</td></tr>
+        <tr><td>损失函数 loss</td><td>衡量预测和标准答案差多少。</td><td>MSE、交叉熵、目标函数、最小化。</td></tr>
+        <tr><td>训练集/测试集</td><td>训练集用来学习参数，测试集用来模拟新题检验泛化。</td><td>不能用测试集调参；训练好但测试差。</td></tr>
+        <tr><td>过拟合 overfitting</td><td>模型把训练集里的偶然噪声也记住了，训练集好，新样本差。</td><td>训练误差低、测试误差高；模型太复杂。</td></tr>
+        <tr><td>正则化 regularization</td><td>给复杂模型加惩罚，防止参数太大或模型太任性。</td><td>L1/L2、惩罚项、泛化能力。</td></tr>
+        <tr><td>梯度下降</td><td>沿着损失下降最快的方向一点点调参数。</td><td>学习率、迭代、参数更新。</td></tr>
+        <tr><td>模型复杂度</td><td>模型表达能力有多强。太弱会欠拟合，太强可能过拟合。</td><td>树太深、参数太多、训练样本少。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="types">
+    <h2>4. 三类学习：先看“答案/反馈”从哪里来</h2>
+    <p>监督、无监督、强化学习最稳的区分方法，不是背定义，而是问：有没有标准答案？有没有奖励反馈？</p>
+    <div class="figure">
+      <svg viewBox="0 0 940 360" role="img" aria-label="监督无监督强化学习区别">
+        <rect width="940" height="360" fill="#fff"/>
+        <g font-family="sans-serif" font-size="16" fill="#18222f">
+          <text x="50" y="42" font-size="22" font-weight="700" fill="#1f66c2">看反馈来源，先分学习范式</text>
+          <rect x="55" y="92" width="250" height="185" rx="14" fill="#eef7ff" stroke="#1f66c2" stroke-width="2"/>
+          <text x="118" y="125" font-size="20" font-weight="700">监督学习</text>
+          <text x="82" y="164">每个样本有标准答案 y</text>
+          <text x="82" y="198">学输入 x 到标签 y 的映射</text>
+          <text x="82" y="232">例：分类、回归</text>
+          <rect x="345" y="92" width="250" height="185" rx="14" fill="#f0fbf6" stroke="#16845b" stroke-width="2"/>
+          <text x="408" y="125" font-size="20" font-weight="700">无监督学习</text>
+          <text x="372" y="164">没有标准标签</text>
+          <text x="372" y="198">自己找结构/分组/低维表示</text>
+          <text x="372" y="232">例：聚类、PCA</text>
+          <rect x="635" y="92" width="250" height="185" rx="14" fill="#fff8ed" stroke="#bf5b13" stroke-width="2"/>
+          <text x="698" y="125" font-size="20" font-weight="700">强化学习</text>
+          <text x="662" y="164">没有逐题标准答案</text>
+          <text x="662" y="198">通过状态、动作、奖励学策略</text>
+          <text x="662" y="232">例：游戏、机器人控制</text>
+        </g>
+      </svg>
+      <div class="caption">选择题看到“有标签样本”先想监督学习；看到“聚类/降维”先想无监督；看到“状态、动作、奖励、策略”先想强化学习。</div>
+    </div>
+    <table>
+      <thead><tr><th>题干信号</th><th>归类</th><th>一句标准解释</th></tr></thead>
+      <tbody>
+        <tr><td>给图片和猫/狗标签，训练分类器。</td><td>监督学习-分类</td><td>有输入和离散标签，学习类别判别规则。</td></tr>
+        <tr><td>给房屋面积、位置，预测价格。</td><td>监督学习-回归</td><td>标签是连续数值，输出连续预测值。</td></tr>
+        <tr><td>把顾客按消费行为自动分群。</td><td>无监督学习-聚类</td><td>没有标准标签，按相似性发现组。</td></tr>
+        <tr><td>智能体在迷宫里试动作，根据奖励学路线。</td><td>强化学习</td><td>通过环境反馈的奖励学习长期收益好的策略。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="linear">
+    <h2>5. 线性模型：AI 公式的第一块积木</h2>
+    <p>很多后续模型再复杂，也绕不开“给特征加权”这个基本动作。线性模型的想法很朴素：每个特征有一个重要程度，把它们乘起来再相加。</p>
+    <div class="math-card">
+      <div class="display-eq">
+        ŷ<span class="op">=</span>
+        <span class="mi">w</span><sub>1</sub><span class="mi">x</span><sub>1</sub>
+        <span class="op">+</span>
+        <span class="mi">w</span><sub>2</sub><span class="mi">x</span><sub>2</sub>
+        <span class="op">+</span>
+        <span class="op">…</span>
+        <span class="op">+</span>
+        <span class="mi">w</span><sub>d</sub><span class="mi">x</span><sub>d</sub>
+        <span class="op">+</span>
+        <span class="mi">b</span>
+      </div>
+      <div class="math-note">读法：预测值 = 每个特征 × 它的权重，再加上偏置。权重越大，这个特征越影响结果。</div>
+    </div>
+    <div class="grid">
+      <div class="box"><strong>x 是特征</strong>例如学习时长、作业完成率、小测分数。它是题目给模型看的信息。</div>
+      <div class="box"><strong>w 是权重</strong>表示每个特征有多重要。训练就是在找一组合适的 w。</div>
+      <div class="box"><strong>b 是偏置</strong>即使所有特征为 0，模型也可以有一个基础输出。</div>
+      <div class="box"><strong>ŷ 是预测</strong>模型算出来的答案，不一定等于真实 y。</div>
+    </div>
+    <h3>5.1 损失函数：模型错了，总得有个扣分标准</h3>
+    <p>回归题常见平方误差。它把每个样本的预测误差平方后加起来，误差越大惩罚越重。</p>
+    <div class="math-card">
+      <div class="display-eq">
+        <span class="mi">L</span><span class="op">(</span><span class="mb">w</span><span class="op">)</span>
+        <span class="op">=</span>
+        <span class="op">(</span><span class="mb">Y</span><span class="op">−</span><span class="mb">Xw</span><span class="op">)</span><sup>T</sup>
+        <span class="op">(</span><span class="mb">Y</span><span class="op">−</span><span class="mb">Xw</span><span class="op">)</span>
+        <span class="op">=</span>
+        <span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+        <span class="mi">e</span><sub>i</sub><sup>2</sup>
+      </div>
+      <div class="math-note">读法：所有样本的误差平方和。Y 是真实答案，Xw 是模型预测，二者相减就是误差。</div>
+    </div>
+    <h3>5.2 分类为什么要 sigmoid</h3>
+    <p>如果题目是“是否通过”“是不是垃圾邮件”，输出应该像概率，落在 0 到 1 之间。sigmoid 的作用就是把任意实数分数压成概率。</p>
+    <div class="math-card">
+      <div class="display-eq">
+        <span class="func">sigmoid</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span>
+        <span class="op">=</span>
+        <span class="frac"><span>1</span><span>1<span class="op">+</span><span class="mi">e</span><sup>−z</sup></span></span>
+      </div>
+      <div class="math-note">z 很大时概率接近 1，z 很小时概率接近 0。逻辑回归就是“线性打分 + sigmoid 概率”。</div>
+    </div>
+    <details>
+      <summary>考试怎么问线性/逻辑回归？</summary>
+      <p><strong>选择填空：</strong>问 w、b、损失函数、sigmoid 的含义。</p>
+      <p><strong>计算：</strong>给 z，让你算 sigmoid 大概方向；给一组误差，让你算平方误差。</p>
+      <p><strong>简答：</strong>问逻辑回归为什么可以做二分类，答“线性组合得到分数，再经 sigmoid 映射为 0-1 概率，并可用阈值分类”。</p>
+    </details>
+  </section>
+
+  <section id="tree">
+    <h2>6. 决策树入门：像一串“问问题”的分类器</h2>
+    <p>决策树不要先背信息增益公式。先理解它在干什么：每个节点问一个问题，把样本分到不同分支，目标是让每个叶子节点里的样本尽量同类。</p>
+    <div class="figure">
+      <svg viewBox="0 0 900 360" role="img" aria-label="决策树从问题到叶子">
+        <rect width="900" height="360" fill="#fff"/>
+        <g font-family="sans-serif" font-size="16" fill="#18222f">
+          <text x="55" y="42" font-size="22" font-weight="700" fill="#1f66c2">决策树：每个节点问一个能让类别更纯的问题</text>
+          <rect x="350" y="82" width="200" height="58" rx="12" fill="#eef7ff" stroke="#1f66c2" stroke-width="2"/>
+          <text x="391" y="117" font-weight="700">作业完成率 ≥ 80%?</text>
+          <path d="M390 140 L230 220" stroke="#637284" stroke-width="3" marker-end="url(#ta)"/>
+          <path d="M510 140 L670 220" stroke="#637284" stroke-width="3" marker-end="url(#ta)"/>
+          <text x="286" y="185" fill="#16845b" font-weight="700">是</text>
+          <text x="586" y="185" fill="#b83232" font-weight="700">否</text>
+          <rect x="130" y="220" width="210" height="62" rx="12" fill="#f0fbf6" stroke="#16845b" stroke-width="2"/>
+          <text x="169" y="257" font-weight="700">小测 ≥ 70?</text>
+          <rect x="560" y="220" width="210" height="62" rx="12" fill="#fff4f4" stroke="#b83232" stroke-width="2"/>
+          <text x="602" y="257" font-weight="700">风险较高</text>
+          <path d="M190 282 L140 325" stroke="#637284" stroke-width="3" marker-end="url(#ta)"/>
+          <path d="M280 282 L330 325" stroke="#637284" stroke-width="3" marker-end="url(#ta)"/>
+          <text x="85" y="345" fill="#16845b" font-weight="700">预测 85+</text>
+          <text x="305" y="345" fill="#bf5b13" font-weight="700">继续观察</text>
+        </g>
+        <defs><marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#637284"/></marker></defs>
+      </svg>
+      <div class="caption">考试问“决策树如何选择划分属性”，再用熵和信息增益解释：哪个问题让混乱减少最多，就优先问哪个。</div>
+    </div>
+    <div class="math-card">
+      <div class="display-eq">
+        <span class="func">Entropy</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span>
+        <span class="op">=</span>
+        −
+        <span class="sum"><span class="top">k</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+        <span class="mi">p</span><sub>i</sub>
+        <span class="func">log</span><sub>2</sub>
+        <span class="mi">p</span><sub>i</sub>
+      </div>
+      <div class="math-note">读法：熵表示一堆样本有多混乱。类别越平均越混乱，熵越大；全是一类时熵为 0。</div>
+    </div>
+    <details>
+      <summary>Day1 到这里够了，什么时候学信息增益？</summary>
+      <p>今天只要知道“熵是混乱程度，信息增益是划分后混乱减少多少”。Day3 再做具体信息增益小计算；如果看到决策树图不懂，去 Tips AI 模型图解课补。</p>
+    </details>
+  </section>
+
+  <section id="eval">
+    <h2>7. 评价指标：模型说得准，不等于考试能用一个准确率糊弄</h2>
+    <p>分类模型常被问 Accuracy、Precision、Recall、F1。零基础最容易混的是 Precision 和 Recall：一个管“我报出来的正类有多准”，一个管“真实正类我捞回来多少”。</p>
+    <div class="grid">
+      <div class="box"><strong>TP</strong>预测正，实际也正。报对了。</div>
+      <div class="box"><strong>FP</strong>预测正，实际是负。误报了。</div>
+      <div class="box"><strong>FN</strong>预测负，实际是正。漏报了。</div>
+      <div class="box"><strong>TN</strong>预测负，实际也负。正确排除了。</div>
+    </div>
+    <div class="math-card">
+      <div class="display-eq">
+        <span class="func">Precision</span>
+        <span class="op">=</span>
+        <span class="frac"><span>TP</span><span>TP<span class="op">+</span>FP</span></span>
+        <span class="op">,</span>
+        <span class="func">Recall</span>
+        <span class="op">=</span>
+        <span class="frac"><span>TP</span><span>TP<span class="op">+</span>FN</span></span>
+      </div>
+      <div class="math-note">Precision 怕误报，Recall 怕漏报。</div>
+    </div>
+    <div class="math-card">
+      <div class="display-eq">
+        <span class="mi">F</span><sub>1</sub>
+        <span class="op">=</span>
+        <span class="frac"><span>2<span class="op">×</span><span class="func">Precision</span><span class="op">×</span><span class="func">Recall</span></span><span><span class="func">Precision</span><span class="op">+</span><span class="func">Recall</span></span></span>
+      </div>
+      <div class="math-note">F1 是 Precision 和 Recall 的调和平均，二者都不能太差。</div>
+    </div>
+    <div class="warn">
+      <strong>考试场景记忆：</strong>
+      垃圾短信误报会烦人，所以看 Precision；疾病筛查漏报很危险，所以看 Recall；类别极不平衡时，只看 Accuracy 可能被骗。
+    </div>
+  </section>
+
+  <section id="practice">
+    <h2>8. Day1 小测：不是猜选项，是练题眼</h2>
+    <p class="muted">每题先在文本框写三句话：题眼是什么、它属于哪一层、为什么选这个答案。写完再看解析。</p>
+
+    <div class="question">
+      <h3>题 1：学习范式识别</h3>
+      <p>题干：给出大量用户购买记录，但没有人为标注类别，希望系统自动把用户分成若干相似群体。最合适的学习范式是？</p>
+      <ul class="options">
+        <li>A. 监督学习</li>
+        <li>B. 无监督学习</li>
+        <li>C. 强化学习</li>
+        <li>D. 数据库事务恢复</li>
+      </ul>
+      <textarea data-note="ai_day1_q1" placeholder="1. 题眼是____。&#10;2. 有没有标签/奖励？____。&#10;3. 我选____，因为____。"></textarea>
+      <details><summary>看答案和解析</summary><div class="answer">
+        <p><strong>答案：B。</strong></p>
+        <p><strong>题眼：</strong>没有人为标注类别、自动分成相似群体。</p>
+        <p><strong>为什么：</strong>没有标签就不能按监督学习“输入 -> 标准答案”来训练；题干也没有状态、动作、奖励，所以不是强化学习。按相似性分群是无监督学习里的聚类。</p>
+        <p><strong>下次识别信号：</strong>“没有标签 + 自动分群/发现结构”就先想无监督学习。</p>
+      </div></details>
+    </div>
+
+    <div class="question">
+      <h3>题 2：公式符号解释</h3>
+      <p>在线性模型中，公式里的权重 w 通常表示什么？</p>
+      <ul class="options">
+        <li>A. 每个特征对预测结果的影响程度</li>
+        <li>B. 测试集的样本数量</li>
+        <li>C. 类别标签的名字</li>
+        <li>D. 神经网络一定有多少层</li>
+      </ul>
+      <textarea data-note="ai_day1_q2" placeholder="1. 公式中 x 是____。&#10;2. w 的作用是____。&#10;3. 为什么不是 B/C/D？"></textarea>
+      <details><summary>看答案和解析</summary><div class="answer">
+        <p><strong>答案：A。</strong></p>
+        <p><strong>从零解释：</strong>线性模型把每个特征 x 乘上一个权重 w，再相加得到预测。w 越大，这个特征对结果影响越大。训练过程要学的核心就是一组合适的 w。</p>
+        <p><strong>干扰项：</strong>样本数量通常用 n；标签常写 y；层数不是 w 的含义。</p>
+      </div></details>
+    </div>
+
+    <div class="question">
+      <h3>题 3：过拟合判断</h3>
+      <p>某模型在训练集准确率 99%，但在测试集准确率只有 62%。最可能的问题是什么？</p>
+      <ul class="options">
+        <li>A. 过拟合</li>
+        <li>B. 泛化能力很好</li>
+        <li>C. 没有任何训练</li>
+        <li>D. 测试集一定没有标签</li>
+      </ul>
+      <textarea data-note="ai_day1_q3" placeholder="1. 训练集表现____。&#10;2. 测试集表现____。&#10;3. 这说明____。"></textarea>
+      <details><summary>看答案和解析</summary><div class="answer">
+        <p><strong>答案：A。</strong></p>
+        <p><strong>题眼：</strong>训练集非常好，测试集明显差。</p>
+        <p><strong>为什么：</strong>这说明模型可能记住了训练集中的偶然细节或噪声，没有学到能迁移到新样本的规律。泛化能力关注的正是“没见过的新样本能不能做好”。</p>
+        <p><strong>答简答题可补：</strong>处理方法包括增加数据、降低模型复杂度、正则化、早停、交叉验证、剪枝等。</p>
+      </div></details>
+    </div>
+
+    <div class="question">
+      <h3>题 4：Precision 和 Recall 场景</h3>
+      <p>如果系统用于疾病初筛，漏掉真正患病的人代价很高，此时更应该关注哪个指标？</p>
+      <ul class="options">
+        <li>A. Recall</li>
+        <li>B. 只看 Accuracy</li>
+        <li>C. 模型参数个数</li>
+        <li>D. 数据库外键数量</li>
+      </ul>
+      <textarea data-note="ai_day1_q4" placeholder="1. 漏报对应 FN 还是 FP？&#10;2. 哪个公式分母里有 FN？&#10;3. 我选____。"></textarea>
+      <details><summary>看答案和解析</summary><div class="answer">
+        <p><strong>答案：A。</strong></p>
+        <p><strong>为什么：</strong>漏掉真正患病的人是 FN。Recall = TP / (TP + FN)，关注真实正类中有多少被找回。疾病初筛宁可多报一些可疑，也要尽量少漏掉真正正类。</p>
+        <p><strong>对比：</strong>Precision 更关注误报，也就是模型说是正类的人里有多少真的是正类。</p>
+      </div></details>
+    </div>
+
+    <div class="question">
+      <h3>题 5：决策树题眼</h3>
+      <p>决策树选择某个属性作为划分节点，是因为该属性能让划分后的样本更“纯”。这通常对应哪个概念？</p>
+      <ul class="options">
+        <li>A. 信息增益</li>
+        <li>B. 学习率</li>
+        <li>C. 测试集大小</li>
+        <li>D. SQL 的 GROUP BY</li>
+      </ul>
+      <textarea data-note="ai_day1_q5" placeholder="1. 决策树每个节点在做什么？&#10;2. “更纯”说明混乱程度____。&#10;3. 我选____。"></textarea>
+      <details><summary>看答案和解析</summary><div class="answer">
+        <p><strong>答案：A。</strong></p>
+        <p><strong>从零解释：</strong>决策树每次选一个问题把样本分开。一个好问题会让分出来的子集类别更集中，也就是熵更低。信息增益衡量“划分前的混乱”减去“划分后的加权混乱”，越大越值得选。</p>
+        <p><strong>Day1 要会到哪：</strong>先会说“熵是混乱，信息增益是混乱减少”。具体数字计算放到 Day3。</p>
+      </div></details>
+    </div>
+  </section>
+
+  <section id="next">
+    <h2>9. 后面怎么接：主线和 Tips 分开用</h2>
+    <div class="route">
+      <strong>Day1</strong>
+      <div>先看本页。目标是建立 AI 语言和考试地图，能做基础识别题和解释题。</div>
+    </div>
+    <div class="route">
+      <strong>Day2</strong>
+      <div>接 <a href="./day1_ai_reference_bridge.html">AI 参考习题桥接</a>、<a href="./day2_ai_reference_ml_cards.html">机器学习题卡</a>、<a href="./day2_ai_reference_nn_cards.html">神经网络题卡</a>，开始把参考习题拆成可作答小块。</div>
+    </div>
+    <div class="route">
+      <strong>Day3-5</strong>
+      <div>再进 <a href="./day3_ai_formula_model_closure.html">公式与模型闭环</a>、<a href="./day4_ai_unsupervised_rl_closure.html">无监督/强化学习</a>、<a href="./day5_ai_exam_sprint_mixed.html">考前混合小测</a>。</div>
+    </div>
+    <div class="route">
+      <strong>Tips</strong>
+      <div>如果决策树、神经网络、CNN、RNN/LSTM、Transformer 的关系开始糊，就穿插看 <a href="./tips_ai_visual_model_masterclass.html">AI 模型图解与名词串联</a>。Tips 是辅助理解，不占每日主线编号。</div>
+    </div>
+    <p style="margin-top:14px"><a href="./index.html">回学习舱</a> · <a href="./day1_se_diagram_zero.html">接软工 Day1 画图从零</a></p>
+  </section>
+</main>
+</body>
+</html>

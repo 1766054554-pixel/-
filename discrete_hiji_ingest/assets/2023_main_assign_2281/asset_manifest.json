@@ -1,0 +1,53 @@
+{
+  "assets": [
+    {
+      "contentType": "image/png",
+      "id": "393942a6b00bccf0",
+      "kind": "image",
+      "name": "logoCG4839196648.png",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880/393942a6b00bccf0.png",
+      "url": "http://judge.buaa.edu.cn/userfiles/skin/logoCG4839196648.png"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "ba906198e82a8587",
+      "kind": "image",
+      "name": "stuside.svg#close",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880/ba906198e82a8587.svg",
+      "url": "http://judge.buaa.edu.cn/images/nav/stuside.svg#close"
+    },
+    {
+      "contentType": "image/png",
+      "id": "d296bd91a97fe6d2",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880/d296bd91a97fe6d2",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=68b4db0125b3139c1d817e9ad399ec14.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "8ce0f700d7baa295",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880/8ce0f700d7baa295",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=1c1ad7b550c57c86f8f97eef92374dfd.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "53c84dbe9aebef4b",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880/53c84dbe9aebef4b",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=96dc11d64af057bb12b16b13a6f153ef.png"
+    }
+  ],
+  "directoryPath": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880",
+  "failures": [],
+  "manifestPath": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/dbf25d56-ff42-4c4b-8d5f-b82504370880/manifest.json",
+  "summary": {
+    "downloadedCount": 5,
+    "elapsedMs": 2437.171916000021,
+    "failedCount": 0,
+    "requestedCount": 5
+  }
+}

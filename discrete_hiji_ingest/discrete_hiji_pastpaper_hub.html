@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>离散希冀近三年真题作战首页</title>
+  <style>
+    :root {
+      --bg: #f5f7f9;
+      --panel: #ffffff;
+      --ink: #172331;
+      --muted: #647386;
+      --line: #d8e1ea;
+      --blue: #1f6391;
+      --green: #19704f;
+      --red: #a43a36;
+      --amber: #946618;
+      --purple: #6550a7;
+      --soft-blue: #eef7ff;
+      --soft-green: #eef9f4;
+      --soft-red: #fff3f0;
+      --soft-amber: #fff8e7;
+      --soft-purple: #f6f2ff;
+      --shadow: 0 12px 28px rgba(23,35,49,.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #eaf4fb 0, #f5f7f9 330px, #fff 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+      letter-spacing: 0;
+    }
+    .wrap { width: min(1120px, calc(100% - 28px)); margin: 0 auto; padding: 30px 0 64px; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    .muted { color: var(--muted); }
+    .key {
+      font-weight: 900;
+      color: #11202d;
+      background: linear-gradient(transparent 58%, #ffe49a 58%);
+      padding: 0 2px;
+    }
+    header, section {
+      background: rgba(255,255,255,.98);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 14px 0;
+      box-shadow: var(--shadow);
+    }
+    a.btn, button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #b9d6e8;
+      background: #f4fbff;
+      color: var(--blue);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font: inherit;
+      font-weight: 850;
+      text-decoration: none;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-right: 6px;
+    }
+    a.primary, button.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill {
+      display: inline-flex;
+      border: 1px solid #c9d7e4;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .pill.hot { color: var(--red); border-color: #dfaaa3; background: var(--soft-red); }
+    .pill.good { color: var(--green); border-color: #a7d3b8; background: var(--soft-green); }
+    .pill.warn { color: var(--amber); border-color: #ddc184; background: var(--soft-amber); }
+    .pill.purple { color: var(--purple); border-color: #c7bae5; background: var(--soft-purple); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 15px;
+      min-width: 0;
+    }
+    .card.hot { background: var(--soft-red); border-color: #dfaaa3; }
+    .card.good { background: var(--soft-green); border-color: #a7d3b8; }
+    .card.warn { background: var(--soft-amber); border-color: #ddc184; }
+    .progress-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 15px;
+      min-width: 0;
+    }
+    .progress-card strong { color: var(--blue); }
+    .progress-card .num {
+      font-size: 26px;
+      font-weight: 950;
+      color: var(--red);
+      line-height: 1.2;
+      margin: 5px 0;
+    }
+    .progress-card.good .num { color: var(--green); }
+    .progress-card.warn .num { color: var(--amber); }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid var(--line); padding: 10px 11px; text-align: left; vertical-align: top; }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .route {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .route-row {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px;
+    }
+    .route-row b { color: var(--red); }
+    .todo label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+    .todo label.done { border-color: #9bcaa8; background: var(--soft-green); }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 900; }
+    .micro { color: var(--muted); font-size: 13px; }
+    @media (max-width: 860px) {
+      .wrap { width: min(100% - 22px, 1120px); padding-top: 18px; }
+      h1 { font-size: 28px; }
+      .grid, .grid.three, .route-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>离散希冀近三年真题作战首页</h1>
+      <p class="muted">这不是普通链接列表，而是 6/28 前的真题调度台。你要按 <span class="key">精练闸门 -> 2024 主战卷 -> 2025 查漏 -> 2023 主观表达</span> 的顺序走，别一上来被整张卷压住。</p>
+      <div class="pillrow">
+        <span class="pill hot">2024：主战卷</span>
+        <span class="pill good">2025：客观查漏 + 长题变式</span>
+        <span class="pill purple">2023：主观表达和公理系统</span>
+        <span class="pill warn">做完要复述错因</span>
+      </div>
+      <a class="btn primary" href="./discrete_hiji_precision_drill.html">先做真题精练闸门</a>
+      <a class="btn" href="../final48_discrete_score_booster.html">回最后48小时查漏</a>
+      <a class="btn" href="../final_two_subject_command_center.html">回最后两科作战台</a>
+    </header>
+
+    <section>
+      <h2>1. 今晚到考前怎么用三套卷</h2>
+      <div class="route">
+        <div class="route-row">
+          <b>6/26 晚</b>
+          <div>
+            <p>先过 <span class="key">精练闸门</span>，确认你能把题分到盒子：命题、辖域、主范式、前束/Skolem、语义反例、公理证明。错的题先不追整套卷，回 Day7 或 final48 补口令。</p>
+            <a class="btn primary" href="./discrete_hiji_precision_drill.html">打开精练闸门</a>
+            <a class="btn" href="../day7_discrete_final_recall.html">Day7 速查</a>
+          </div>
+        </div>
+        <div class="route-row">
+          <b>6/27 主战</b>
+          <div>
+            <p>做 <span class="key">2024 主战卷</span>：客观题要点选判分，主观题至少写“题眼 + 第一动作 + 关键步骤”再看解析；图片核对区用来确认公式和表格。</p>
+            <a class="btn primary" href="./discrete_2024_hiji_interactive.html">打开 2024 交互卷</a>
+            <a class="btn" href="./discrete_hiji_tactics_map.html">三年题型作战地图</a>
+          </div>
+        </div>
+        <div class="route-row">
+          <b>6/27 晚</b>
+          <div>
+            <p>用 <span class="key">2025 查漏</span>：快速扫客观题和 2025-21 到 2025-30。重点看替换式、辖域、自然语言翻译、真值表、前束/Skolem、量词顺序和公理证明。</p>
+            <a class="btn primary" href="./discrete_2025_hiji_interactive.html">打开 2025 交互卷</a>
+          </div>
+        </div>
+        <div class="route-row">
+          <b>6/28 考前</b>
+          <div>
+            <p>只做 <span class="key">2023 主观表达</span> 和 final48 错题回炉，不再钻新难题。目标是把证明第一句、反例三件套、可靠性/完全性箭头、Skolem 依赖叫醒。</p>
+            <a class="btn primary" href="./discrete_2023_hiji_interactive.html">打开 2023 交互卷</a>
+            <a class="btn" href="../final48_discrete_score_booster.html#templates">看六个卷面模板</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>1.5 自动进度：现在该刷卷还是回炉</h2>
+      <p class="muted">这里读取你本机的做题记录。它不评价你“努力没努力”，只告诉你下一步最该补哪一格。</p>
+      <div class="grid.three" id="autoProgress"></div>
+      <div class="note good" id="autoAdvice"></div>
+    </section>
+
+    <section>
+      <h2>2. 三套卷分工，不要平均用力</h2>
+      <div class="grid.three">
+        <div class="card hot">
+          <h3>2024：主战卷</h3>
+          <p><span class="key">14 道客观 + 7 道主观 + 12 张图片核对</span>。优先练语义计算、真值表主范式、前束/Skolem、语义证明、公理证明。</p>
+          <p><strong>过关：</strong>客观题能判分；主观题每题能写第一步；图片区能核对公式不被排版误导。</p>
+          <a class="btn primary" href="./discrete_2024_hiji_interactive.html">打开 2024</a>
+        </div>
+        <div class="card good">
+          <h3>2025：查漏卷</h3>
+          <p><span class="key">20 道客观 + 10 道简答/证明</span>。它很适合查概念边界：命题、项/公式、范式、可判定、协调、完全性、辖域、替换式。</p>
+          <p><strong>过关：</strong>错题能说出错在定义、符号读法还是第一动作。</p>
+          <a class="btn primary" href="./discrete_2025_hiji_interactive.html">打开 2025</a>
+        </div>
+        <div class="card">
+          <h3>2023：表达卷</h3>
+          <p><span class="key">10 道客观 + 9 道主观</span>。主价值在主观题表达：语义计算、简答、证明题、公理系统。少数客观题原网页公式不完整，不作为主练。</p>
+          <p><strong>过关：</strong>能把参考答案压成自己的“第一句 + 证据链”。</p>
+          <a class="btn primary" href="./discrete_2023_hiji_interactive.html">打开 2023</a>
+        </div>
+      </div>
+      <div class="note hot">
+        临考不要平均主义。2024 是主战卷，2025 是查漏卷，2023 是主观表达补强。你不是在做收藏夹，你是在给考场反应上发条。
+      </div>
+    </section>
+
+    <section>
+      <h2>3. 真题怎么做才算有效</h2>
+      <table>
+        <thead><tr><th>题型</th><th>做题动作</th><th>看答案后必须复述</th></tr></thead>
+        <tbody>
+          <tr><td>客观题</td><td>先独立点选；错了看解析；把错因归到定义、符号、范式、语义、公理系统。</td><td>“我为什么选错？下次看到哪个信号要换动作？”</td></tr>
+          <tr><td>填空/辖域/替换</td><td>先画括号和完整子公式，别凭眼感替换。</td><td>“量词管到哪里？替的是完整出现还是像而已？”</td></tr>
+          <tr><td>真值表/主范式</td><td>按固定变量顺序列最后一列；主析取看 1 行，主合取看 0 行。</td><td>“主合取 0 写原变量，1 写否定，我有没有反？”</td></tr>
+          <tr><td>前束/Skolem</td><td>改名、防捕获、消箭头、否定内移、量词前移、Skolem 依赖左侧全称变量。</td><td>“这个存在变量依赖谁？为什么不能依赖右边变量？”</td></tr>
+          <tr><td>语义证明/反例</td><td>成立就排除前提全真结论假；不成立就交代论域、解释、前提真、结论假。</td><td>“我的反例三件套齐了吗？”</td></tr>
+          <tr><td>公理证明</td><td>先写自然骨架，再标公理实例、MP、UG、给定定理；不要偷用语义解释。</td><td>“哪一行从哪一行来？是否用了题目禁用的演绎定理？”</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. 做完一套卷后的自评闸门</h2>
+      <p class="muted">这里的勾不是仪式感，是防止“我看过答案，所以我会了”的错觉。每完成一项就打勾。</p>
+      <div class="todo" id="todo">
+        <label><input type="checkbox" data-todo="h1"> 我先做了精练闸门，知道自己最弱的是哪两个题型盒子。</label>
+        <label><input type="checkbox" data-todo="h2"> 2024 客观题已独立点选并核对，错题能说出错因。</label>
+        <label><input type="checkbox" data-todo="h3"> 2024 主观题至少写了“题眼 + 第一动作”，不是直接看答案。</label>
+        <label><input type="checkbox" data-todo="h4"> 2024 图片核对区看过关键公式/表格，确认页面文字没有误导我。</label>
+        <label><input type="checkbox" data-todo="h5"> 2025 查漏卷做完客观题，整理出 3 个最容易混的概念。</label>
+        <label><input type="checkbox" data-todo="h6"> 2025 长题至少完成真值表、前束/Skolem、语义推论三类。</label>
+        <label><input type="checkbox" data-todo="h7"> 2023 主观题挑 3 道练表达，并能复述参考答案的第一句。</label>
+        <label><input type="checkbox" data-todo="h8"> final48 页面错题回炉区写了至少 3 条“下次口令”。</label>
+      </div>
+      <p class="micro" id="todoStats"></p>
+    </section>
+
+    <section>
+      <h2>5. 卡住时回哪里</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>符号看不懂</h3>
+          <p>回公式视觉手册，先把 ∈、⊆、⊨、⊢、∀、∃、辖域、解释读成人话。</p>
+          <a class="btn" href="../tips_discrete_formula_visual_handbook.html">公式视觉手册</a>
+        </div>
+        <div class="card">
+          <h3>证明不会起手</h3>
+          <p>回 Day6 或证明链条工坊，只练“第一句之后怎么接证据”。</p>
+          <a class="btn" href="../day6_discrete_proof_sprint.html">Day6 证明训练营</a>
+          <a class="btn" href="../discrete_proof_chain_lab.html">证明链条工坊</a>
+        </div>
+        <div class="card">
+          <h3>题型分不出来</h3>
+          <p>回最后 48 小时查漏页，12 题短练就是为了把题眼叫醒。</p>
+          <a class="btn" href="../final48_discrete_score_booster.html">最后48小时查漏</a>
+        </div>
+        <div class="card">
+          <h3>考前只剩很短时间</h3>
+          <p>别再开新卷，直接看 Day7 速查和 final48 六个模板。</p>
+          <a class="btn" href="../day7_discrete_final_recall.html">Day7 最终速查</a>
+        </div>
+      </div>
+      <details>
+        <summary>最后一句小提醒</summary>
+        <p>离散不要求你突然变成数学家。最后 48 小时的目标是：定义题少丢，计算题稳住，语义题有骨架，证明题写出第一句和关键证据。能做到这些，分数会比“只盯最难证明题然后空白”稳很多。</p>
+      </details>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "discrete-hiji-hub-v2";
+    const PAPER_META = {
+      precision: { title: "精练闸门", total: 18, href: "./discrete_hiji_precision_drill.html", key: "discrete_hiji_precision_answers_v1" },
+      2024: { title: "2024 主战卷", objective: 14, briefs: 7, href: "./discrete_2024_hiji_interactive.html", key: "discrete-hiji-2024" },
+      2025: { title: "2025 查漏卷", objective: 20, briefs: 10, href: "./discrete_2025_hiji_interactive.html", key: "discrete-hiji-2025" },
+      2023: { title: "2023 表达卷", objective: 10, briefs: 9, href: "./discrete_2023_hiji_interactive.html", key: "discrete-hiji-2023" }
+    };
+    const todoStats = document.getElementById("todoStats");
+    const checks = [...document.querySelectorAll("#todo input[type='checkbox']")];
+    const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+
+    function readJSON(key) {
+      try { return JSON.parse(localStorage.getItem(key) || "{}"); }
+      catch { return {}; }
+    }
+    function paperProgress(year) {
+      const meta = PAPER_META[year];
+      const data = readJSON(meta.key);
+      const objective = Object.entries(data).filter(([id, v]) => !String(id).startsWith("brief-") && v && v.checked);
+      const wrong = objective.filter(([, v]) => !v.correct).length;
+      const notes = Object.entries(data).filter(([id, v]) => String(id).startsWith("brief-") && v && String(v.note || "").trim().length >= 8).length;
+      return { ...meta, objectiveDone: objective.length, wrong, notes };
+    }
+    function precisionProgress() {
+      const meta = PAPER_META.precision;
+      const data = readJSON(meta.key);
+      const entries = Object.values(data).filter(v => v && v.checked);
+      const wrong = entries.filter(v => !v.correct).length;
+      return { ...meta, done: entries.length, wrong };
+    }
+    function renderAutoProgress() {
+      const precision = precisionProgress();
+      const papers = [2024, 2025, 2023].map(paperProgress);
+      const cards = [
+        `<article class="progress-card ${precision.done >= precision.total && precision.wrong <= 4 ? "good" : precision.wrong >= 5 ? "warn" : ""}">
+          <strong>${precision.title}</strong>
+          <div class="num">${precision.done}/${precision.total}</div>
+          <p class="muted">已核对 ${precision.done} 题，错 ${precision.wrong} 题。</p>
+          <a class="btn" href="${precision.href}">打开闸门</a>
+        </article>`,
+        ...papers.map(p => `<article class="progress-card ${p.objectiveDone >= p.objective && p.wrong === 0 ? "good" : p.wrong ? "warn" : ""}">
+          <strong>${p.title}</strong>
+          <div class="num">${p.objectiveDone}/${p.objective}</div>
+          <p class="muted">客观已核对 ${p.objectiveDone} 题，错 ${p.wrong} 题；主观已写骨架 ${p.notes}/${p.briefs}。</p>
+          <a class="btn" href="${p.href}">打开这套卷</a>
+        </article>`)
+      ];
+      document.getElementById("autoProgress").innerHTML = cards.join("");
+      const y2024 = papers[0], y2025 = papers[1], y2023 = papers[2];
+      let advice = "";
+      if (precision.done < precision.total) {
+        advice = `<strong>下一步：</strong>先做完精练闸门 18 题。它是进整卷前的雷达，不做完容易在真题里乱撞。`;
+      } else if (precision.wrong >= 5) {
+        advice = `<strong>下一步：</strong>精练闸门错 ${precision.wrong} 题，先去 <a href="../final_two_wrong_review.html">错题回炉台</a> 看是哪几个盒子塌了，再进整卷。`;
+      } else if (y2024.objectiveDone < y2024.objective || y2024.notes < 3) {
+        advice = `<strong>下一步：</strong>推进 2024 主战卷。客观题要核对完，主观题至少写 3 道骨架，再看图片和解析。`;
+      } else if (y2025.objectiveDone < Math.min(12, y2025.objective)) {
+        advice = `<strong>下一步：</strong>用 2025 查漏。先限时做 12 道客观题，错题只追概念边界。`;
+      } else if (y2023.notes < 3) {
+        advice = `<strong>下一步：</strong>用 2023 补主观表达。挑 3 道证明/简答，只写第一句和证据链，不必整卷硬啃。`;
+      } else {
+        advice = `<strong>下一步：</strong>别再重复刷会的题，去 <a href="../final_two_wrong_review.html">错题回炉台</a> 收口，再看 Day7 速查。`;
+      }
+      document.getElementById("autoAdvice").innerHTML = advice;
+    }
+
+    function save() {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      update();
+    }
+    function update() {
+      let done = 0;
+      checks.forEach(input => {
+        const checked = !!state[input.dataset.todo];
+        input.checked = checked;
+        input.closest("label").classList.toggle("done", checked);
+        if (checked) done += 1;
+      });
+      todoStats.textContent = `真题闸门完成 ${done} / ${checks.length} 项。越接近考试，越要追“会复述错因”，不是追“打开过页面”。`;
+    }
+    checks.forEach(input => {
+      input.addEventListener("change", () => {
+        state[input.dataset.todo] = input.checked;
+        save();
+      });
+    });
+    renderAutoProgress();
+    update();
+  </script>
+</body>
+</html>

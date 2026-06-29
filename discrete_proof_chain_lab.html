@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散证明链条工坊：从第一句到证据链</title>
+  <style>
+    :root {
+      --bg: #f3f7f8;
+      --paper: #fffefe;
+      --ink: #17212b;
+      --muted: #617181;
+      --line: #d9e3e8;
+      --blue: #1f5f8b;
+      --green: #22724f;
+      --red: #a23b32;
+      --amber: #946a12;
+      --violet: #67509a;
+      --soft-blue: #eef7fc;
+      --soft-green: #eef9f3;
+      --soft-red: #fff3f1;
+      --soft-amber: #fff9e8;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf3f6 0, rgba(243,247,248,0) 330px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 64px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: clamp(30px, 4vw, 46px); }
+    h2 { font-size: 25px; }
+    h3 { font-size: 19px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); font-weight: 800; }
+    .hero, .card {
+      background: rgba(255,255,255,.98);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid #cfe0ea;
+      background: #f8fbfd;
+      padding: 6px 11px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); background: var(--soft-red); border-color: #ecc2bc; }
+    .good { color: var(--green); background: var(--soft-green); border-color: #bfe0cb; }
+    .warn { color: var(--amber); background: var(--soft-amber); border-color: #e8d29d; }
+    .purple { color: var(--violet); background: #f5f1ff; border-color: #d1c7ee; }
+    .focus {
+      color: var(--red);
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, rgba(255, 210, 92, .38) 58%);
+      padding: 0 2px;
+    }
+    .key {
+      color: var(--blue);
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, rgba(151, 205, 239, .45) 58%);
+      padding: 0 2px;
+    }
+    .formula {
+      display: inline-block;
+      font-family: "Times New Roman", "STIX Two Math", "Cambria Math", serif;
+      font-size: 1.06em;
+      letter-spacing: 0;
+      padding: 1px 3px;
+      color: #111827;
+      background: #f7fafc;
+      border-radius: 5px;
+    }
+    .note {
+      border-left: 5px solid var(--blue);
+      background: #f4f9fd;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 12px 0;
+    }
+    .note.good { border-left-color: var(--green); }
+    .note.warn { border-left-color: var(--amber); }
+    .note.danger { border-left-color: var(--red); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 14px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 6px; }
+    .chain {
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .chain div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      min-width: 0;
+    }
+    .chain .head { background: var(--soft-blue); color: var(--blue); font-weight: 900; }
+    .chain .why { background: var(--soft-green); }
+    .step-list {
+      counter-reset: step;
+      display: grid;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .step {
+      counter-increment: step;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 11px 12px 11px 46px;
+      position: relative;
+    }
+    .step::before {
+      content: counter(step);
+      position: absolute;
+      left: 13px;
+      top: 12px;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .drill {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .choices { display: grid; gap: 8px; margin: 10px 0; }
+    button.choice, button.small {
+      border: 1px solid #cfe0ea;
+      background: #f8fbfd;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+    button.choice:hover, button.small:hover { border-color: #9bc4dd; background: #eef7fc; }
+    button.choice.correct { border-color: #9bd0b0; background: #eef9f3; }
+    button.choice.wrong { border-color: #e2aaa3; background: #fff3f1; }
+    .feedback {
+      display: none;
+      border-radius: 8px;
+      background: #f7fbfe;
+      border: 1px solid var(--line);
+      padding: 12px;
+      margin-top: 10px;
+    }
+    details {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 900; }
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      line-height: 1.65;
+      font: inherit;
+      resize: vertical;
+      background: #fbfdfe;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; background: #fff; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; text-align: left; }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .mini { font-size: 13px; color: var(--muted); }
+    @media (max-width: 860px) {
+      main { padding: 18px 12px 46px; }
+      .hero, .card { padding: 18px; }
+      .grid, .grid.three, .chain { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="strip">
+      <span class="pill hot">离散证明补强</span>
+      <span class="pill good">2012-2022 高频题眼</span>
+      <span class="pill warn">第一句 -> 证据链</span>
+      <span class="pill purple">Day6 后使用</span>
+    </div>
+    <h1>离散证明链条工坊</h1>
+    <p class="muted">这页专门补一个很要命的断点：你已经会写“第一句”了，但下一步不知道怎么接。离散证明不是靠灵光一闪，而是把每一句都写成 <span class="focus">结论 + 证据 + 理由</span>。这一页放在 <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> 之后、<a href="./day7_discrete_final_recall.html">Day7 最终速查</a> 和 <a href="./discrete_final_mixed_interactive.html">真题混合卷</a> 之前。</p>
+    <div class="toc">
+      <a href="#method">证据链方法</a>
+      <a href="#chains">六类高频链条</a>
+      <a href="#drills">链条拼图</a>
+      <a href="#templates">考场模板</a>
+      <a href="#gate">上场闸门</a>
+    </div>
+  </section>
+
+  <section class="card" id="method">
+    <h2>0. 先建立一个底层动作：每一句都要有“凭什么”</h2>
+    <p>很多证明写不下去，不是因为你完全不会数学，而是你脑子里只有“好像应该推出”，没有把“凭什么推出”落到纸上。卷面上的好证明，其实像一串小台阶：</p>
+    <div class="chain">
+      <div class="head">我要写什么</div>
+      <div class="head">我凭什么写</div>
+      <div class="head">这一步服务哪个目标</div>
+      <div><strong>结论</strong><br>例如 P 真、R 假、存在 a、b1≤b2。</div>
+      <div><strong>证据</strong><br>来自前提、定义、已知定理、构造的模型、反设条件。</div>
+      <div><strong>目标</strong><br>证明结论真、制造矛盾、给反例、证明唯一性、完成单射/满射。</div>
+    </div>
+    <div class="note good">
+      <strong>你现在要练的不是“背完整答案”，而是练一句话的手感：</strong>“由……可得……，因为……”。只要这句话能写顺，证明就从雾里出来了。
+    </div>
+    <div class="grid three">
+      <div class="box">
+        <strong>语义证明</strong>
+        先假设所有前提为真，再推出结论为真；或者造出前提全真、结论假的反例。
+      </div>
+      <div class="box">
+        <strong>量词题</strong>
+        <span class="key">∀ 是任取</span>，<span class="key">∃ 是给见证</span>。顺序一变，见证能不能依赖前面的对象就变了。
+      </div>
+      <div class="box">
+        <strong>公理证明</strong>
+        每一行必须标证据：公理、前提、MP、已给定定理。题目说不能用演绎定理，就别偷用。
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="chains">
+    <h2>1. 六类高频证明链条：先看“下一句为什么成立”</h2>
+    <p class="muted">下面不是整卷硬刷，而是把多年题里反复出现的证明骨架拆成可迁移链条。每条都按“题眼 -> 第一动作 -> 证据链 -> 卷面答案”来读。</p>
+
+    <article class="box">
+      <h3>链条 A：语义推出成立，靠“反设失败情形”推进</h3>
+      <p><strong>题眼：</strong><span class="formula">(P∧Q)→R, ¬S, ¬R∨S ⊨ ¬P∨¬Q</span> 这类题来自 2022 风格：让你用命题逻辑语义方法判断推论。</p>
+      <div class="note">
+        <strong>为什么先反设？</strong><span class="formula">Γ ⊨ Q</span> 的失败情形只有一种：所有前提真，但 Q 假。你把这个失败情形推出矛盾，就说明失败不可能。
+      </div>
+      <div class="step-list">
+        <div class="step"><span class="focus">反设失败：</span>设某个赋值下三个前提全真，而结论 <span class="formula">¬P∨¬Q</span> 为假。</div>
+        <div class="step">结论为假推出 <span class="formula">P</span> 真且 <span class="formula">Q</span> 真。理由：析取为假，两个支都假；所以 <span class="formula">¬P</span> 假、<span class="formula">¬Q</span> 假。</div>
+        <div class="step">由 <span class="formula">P∧Q</span> 真和前提 <span class="formula">(P∧Q)→R</span> 真，推出 <span class="formula">R</span> 真。</div>
+        <div class="step">由 <span class="formula">¬S</span> 真推出 <span class="formula">S</span> 假；又因为 <span class="formula">¬R∨S</span> 真且 <span class="formula">S</span> 假，所以 <span class="formula">¬R</span> 真，即 <span class="formula">R</span> 假。</div>
+        <div class="step">得到 <span class="formula">R</span> 既真又假，矛盾。因此不存在前提全真而结论假的赋值，推论成立。</div>
+      </div>
+      <details>
+        <summary>卷面可写答案</summary>
+        <p>证明：任取赋值 v。反设 v 使得三个前提均为真，而 <span class="formula">¬P∨¬Q</span> 为假。则 v(P)=1 且 v(Q)=1，于是 v(P∧Q)=1。由 v((P∧Q)→R)=1 得 v(R)=1。又 v(¬S)=1，所以 v(S)=0；由 v(¬R∨S)=1 且 v(S)=0，得 v(¬R)=1，即 v(R)=0，矛盾。所以该推论成立。</p>
+      </details>
+    </article>
+
+    <article class="box">
+      <h3>链条 B：语义推出不成立，反例要让“前提真、结论假”同时出现</h3>
+      <p><strong>题眼：</strong><span class="formula">(Q→P)→(Q→R) ⊨ Q∧(P→R)</span> 这类 2020 风格题很容易误判：左边看着有箭头，右边看着也合理，但语义推出只认反例。</p>
+      <div class="step-list">
+        <div class="step">要否定 <span class="formula">Γ ⊨ Q</span>，你不需要证明很多情况；只要给出一个赋值，让前提真、结论假。</div>
+        <div class="step">取 <span class="formula">Q=0</span>。这时 <span class="formula">Q→P</span> 和 <span class="formula">Q→R</span> 都为真，所以前提 <span class="formula">(Q→P)→(Q→R)</span> 为真。</div>
+        <div class="step">但结论 <span class="formula">Q∧(P→R)</span> 因为 <span class="formula">Q=0</span>，整体为假。</div>
+        <div class="step">因此存在反例，推论不成立。</div>
+      </div>
+      <div class="note warn">
+        <strong>扣分坑：</strong>不要只写“令 Q=0”就停。反例必须同时验两件事：<span class="focus">前提确实真</span>、<span class="focus">结论确实假</span>。
+      </div>
+    </article>
+
+    <article class="box">
+      <h3>链条 C：量词分配反例，核心是“性质可以分摊在不同对象上”</h3>
+      <p><strong>题眼：</strong><span class="formula">∀x(Q(x)∨R(x)) ⊨ ∀xQ(x)∨∀xR(x)</span>。多年卷里反复出现：问“是否成立？不成立给反例”。</p>
+      <div class="step-list">
+        <div class="step">先翻译成人话：每个对象都满足 Q 或 R，是否能推出“所有对象都满足 Q”或“所有对象都满足 R”？</div>
+        <div class="step">反例就让不同对象“轮流满足”。取论域 <span class="formula">D={1,2}</span>，其中 <span class="formula">1∈D, 2∈D</span>。</div>
+        <div class="step">令 <span class="formula">Q(1)=真, Q(2)=假</span>；令 <span class="formula">R(1)=假, R(2)=真</span>。</div>
+        <div class="step">于是每个对象都满足 <span class="formula">Q∨R</span>，所以左边真；但并不是所有对象都满足 Q，也不是所有对象都满足 R，右边假。</div>
+      </div>
+      <details>
+        <summary>怎么迁移到别的量词反例</summary>
+        <p>看到 <span class="formula">∀x(A∨B)</span> 想到“分摊”；看到 <span class="formula">∃xA ∧ ∃xB</span> 想到“两个存在见证不一定是同一个”；看到 <span class="formula">∃x∀yP(x,y)</span> 和 <span class="formula">∀y∃xP(x,y)</span>，马上问“x 能不能依赖 y”。</p>
+      </details>
+    </article>
+
+    <article class="box">
+      <h3>链条 D：量词顺序证明，关键看“见证能不能依赖前面的量词”</h3>
+      <p><strong>题眼：</strong><span class="formula">∃x∀yP(x,y) ⊨ ∀y∃xP(x,y)</span> 是成立的；但反过来一般不成立。</p>
+      <div class="step-list">
+        <div class="step">左边说：存在一个固定的 x，能对所有 y 都成立。把这个固定对象叫 a。</div>
+        <div class="step">要证右边 <span class="formula">∀y∃xP(x,y)</span>，就任取 <span class="formula">y∈D</span>。</div>
+        <div class="step">因为 a 对所有 y 都有 <span class="formula">P(a,y)</span>，所以对刚才任取的这个 y，也有 <span class="formula">P(a,y)</span>。</div>
+        <div class="step">于是存在 <span class="formula">x∈D</span> 使 <span class="formula">P(x,y)</span> 成立，见证就选 <span class="formula">x=a</span>。因为 <span class="formula">y∈D</span> 是任取的，所以右边成立。</div>
+      </div>
+      <div class="note">
+        <strong>反向为什么危险：</strong><span class="formula">∀y∃xP(x,y)</span> 允许每个 y 配不同的 x；<span class="formula">∃x∀yP(x,y)</span> 要求先选一个固定 x 管所有 y。考试看到量词换序，先问“见证是否必须固定”。
+      </div>
+    </article>
+
+    <article class="box">
+      <h3>链条 E：Skolem 依赖，不是乱写 f，而是看左边有哪些全称量词</h3>
+      <p><strong>题眼：</strong>前束/Skolem 常见于 2020、2024 信号和多年老题。例子：<span class="formula">∀x∃y∀z∃u P(x,y,z,u)</span>。</p>
+      <div class="step-list">
+        <div class="step">第一个存在量词 <span class="formula">∃y</span> 左边有 <span class="formula">∀x</span>，所以 y 可以依赖 x，写成 <span class="formula">f(x)</span>。</div>
+        <div class="step">第二个存在量词 <span class="formula">∃u</span> 左边有 <span class="formula">∀x</span> 和 <span class="formula">∀z</span>。注意 <span class="formula">y</span> 已被替换成函数，不是新的全称变量。</div>
+        <div class="step">所以 u 写成 <span class="formula">g(x,z)</span>。</div>
+        <div class="step">Skolem 化后得到 <span class="formula">∀x∀z P(x,f(x),z,g(x,z))</span>，最后通常可以省略全称量词，只保留子句化对象。</div>
+      </div>
+      <div class="note warn">
+        <strong>扣分坑：</strong>如果前面没有全称量词，存在量词替换成常元 c；如果左边有多个全称量词，Skolem 函数参数必须全带上。
+      </div>
+    </article>
+
+    <article class="box">
+      <h3>链条 F：公理证明，先找可复用定理，再一行一证据</h3>
+      <p><strong>题眼：</strong><span class="formula">R→¬Q, P→Q ⊢ R→¬P</span>。2020 风格卷会明确说“不可用演绎定理，使用按比例扣分”。这时你不能写语义解释，必须写形式推导证据。</p>
+      <div class="step-list">
+        <div class="step">由前提 <span class="formula">P→Q</span> 和反置定理 <span class="formula">(P→Q)→(¬Q→¬P)</span>，用 MP 得 <span class="formula">¬Q→¬P</span>。</div>
+        <div class="step">用公理 1 把它“塞进 R 的前件”里：由 <span class="formula">¬Q→¬P</span> 得 <span class="formula">R→(¬Q→¬P)</span>。</div>
+        <div class="step">用公理 2 的分配形态：<span class="formula">R→(¬Q→¬P)</span> 推出 <span class="formula">(R→¬Q)→(R→¬P)</span>。</div>
+        <div class="step">再用前提 <span class="formula">R→¬Q</span>，MP 得目标 <span class="formula">R→¬P</span>。</div>
+      </div>
+      <details>
+        <summary>卷面证据表写法</summary>
+        <table>
+          <thead><tr><th>行</th><th>公式</th><th>证据</th></tr></thead>
+          <tbody>
+            <tr><td>A1</td><td><span class="formula">(P→Q)→(¬Q→¬P)</span></td><td>公理/已给定反置定理</td></tr>
+            <tr><td>A2</td><td><span class="formula">P→Q</span></td><td>前提</td></tr>
+            <tr><td>A3</td><td><span class="formula">¬Q→¬P</span></td><td>A1, A2, MP</td></tr>
+            <tr><td>A4</td><td><span class="formula">(¬Q→¬P)→(R→(¬Q→¬P))</span></td><td>公理 1</td></tr>
+            <tr><td>A5</td><td><span class="formula">R→(¬Q→¬P)</span></td><td>A3, A4, MP</td></tr>
+            <tr><td>A6</td><td><span class="formula">(R→(¬Q→¬P))→((R→¬Q)→(R→¬P))</span></td><td>公理 2</td></tr>
+            <tr><td>A7</td><td><span class="formula">(R→¬Q)→(R→¬P)</span></td><td>A5, A6, MP</td></tr>
+            <tr><td>A8</td><td><span class="formula">R→¬Q</span></td><td>前提</td></tr>
+            <tr><td>A9</td><td><span class="formula">R→¬P</span></td><td>A7, A8, MP</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </article>
+
+    <article class="box">
+      <h3>加餐链条：关系/函数证明，定义落地就是一半分</h3>
+      <div class="grid">
+        <div>
+          <p><strong>最大元唯一：</strong>设 b1、b2 都是 B 中最大元。因为 b2 是最大元且 b1∈B，所以 b1≤b2；因为 b1 是最大元且 b2∈B，所以 b2≤b1。由偏序反对称性，b1=b2。</p>
+        </div>
+        <div>
+          <p><strong>双射复合：</strong>要证 <span class="formula">h∘g∘f</span> 是双射，拆成单射和满射。单射看“复合值相等能不能逐层推出原像相等”；满射看“任取目标元素，能不能逐层找原像”。</p>
+        </div>
+      </div>
+      <div class="note good">
+        <strong>短期策略：</strong>关系/函数证明比公理证明更容易拿格式分。先写定义、再假设对象、最后调用反对称/单射/满射，不要空着。
+      </div>
+    </article>
+  </section>
+
+  <section class="card" id="drills">
+    <h2>2. 证据链拼图：14 题只练“下一句”</h2>
+    <p class="muted">这部分不追求一次写完整大题。你先把下一句选对，再读解析。前 6 题接上面六条主链，后 8 题专门练变式迁移：可靠性/完全性、辖域、唯一性、函数复合、量词换序和谓词反例。能连续选对，说明你开始有证明手感了。</p>
+    <div class="note">
+      <strong>读法：</strong>每题都先问自己三个小问题：<span class="focus">题眼是什么</span>、<span class="focus">下一句凭什么成立</span>、<span class="focus">这一步是为了证明成立还是构造反例</span>。不要急着背答案，先练这个反应。
+    </div>
+    <table>
+      <thead><tr><th>变式外壳</th><th>看到什么信号</th><th>第一反应</th></tr></thead>
+      <tbody>
+        <tr><td>可靠性/完全性</td><td><span class="formula">⊢Q</span> 和 <span class="formula">⊨Q</span> 混在一起</td><td>可靠性：能证就语义真；完全性：语义真就能证。</td></tr>
+        <tr><td>辖域/自由变量</td><td>量词后面没有清楚括号，或同名变量反复出现</td><td>先补括号，标出每个量词管到哪里，别急着化简。</td></tr>
+        <tr><td>关系/函数证明</td><td>最大元、唯一、单射、满射、复合映射</td><td>先展开定义：任取元素、假设两个对象、用定义推出相等。</td></tr>
+        <tr><td>谓词反例</td><td>问是否有效/是否可推出，带 <span class="formula">∀</span> 和 <span class="formula">∃</span></td><td>小论域 <span class="formula">D={1,2}</span>，让见证依赖对象或让性质分摊。</td></tr>
+      </tbody>
+    </table>
+    <div id="score" class="note">正在载入题卡……</div>
+    <div id="drillBox"></div>
+  </section>
+
+  <section class="card" id="templates">
+    <h2>3. 考场模板：写不出完整证明时，至少把骨架写对</h2>
+    <div class="grid">
+      <div class="box">
+        <strong>语义推出成立</strong>
+        任取解释/赋值 v，设 Γ 中所有前提均为真。由前提逐步推出 Q 也为真，所以 Γ ⊨ Q。
+      </div>
+      <div class="box">
+        <strong>语义推出不成立</strong>
+        构造解释/赋值 v，使 Γ 中所有前提为真，但 Q 为假。因此 Γ ⊭ Q。
+      </div>
+      <div class="box">
+        <strong>全称证明</strong>
+        任取 <span class="formula">a∈D</span>，证明 a 满足目标性质。因为 a 任意，所以所有对象都满足。
+      </div>
+      <div class="box">
+        <strong>存在证明</strong>
+        给出一个具体 <span class="formula">a∈D</span> 作为见证，并验证它满足目标性质。
+      </div>
+      <div class="box">
+        <strong>唯一性证明</strong>
+        假设有两个对象都满足定义，分别用定义推出它们相互小于/相等/互相包含，再用性质合并。
+      </div>
+      <div class="box">
+        <strong>公理证明</strong>
+        每一行写公式，每一行标证据：公理、前提、MP、已给定定理。题目禁用演绎定理时不能偷用。
+      </div>
+    </div>
+    <h3>写一遍你的“证明急救句”</h3>
+    <p class="muted">不用写很长。你现在把最容易忘的两句写下来，考前回来读，会比重看一大堆答案更有效。</p>
+    <textarea id="selfNote" placeholder="例：语义推出题先反设前提全真结论假；量词反例常用 D={1,2} 做性质分摊；公理证明必须一行一证据……"></textarea>
+  </section>
+
+  <section class="card" id="gate">
+    <h2>4. 上场闸门：做到这些，再去完整混合卷</h2>
+    <table>
+      <thead><tr><th>闸门</th><th>能做到什么</th><th>卡住回哪页</th></tr></thead>
+      <tbody>
+        <tr><td>语义推论</td><td>能说出 <span class="formula">Γ ⊨ Q</span> 的失败情形，并能写反设或反例。</td><td><a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a></td></tr>
+        <tr><td>量词反例</td><td>能用 <span class="formula">D={1,2}</span> 构造至少一种“性质分摊”反例。</td><td><a href="./discrete_pastpaper_proof_gate.html">多年题眼证明闸门</a></td></tr>
+        <tr><td>前束/Skolem</td><td>能解释 Skolem 函数参数为什么是左侧全称变量。</td><td><a href="./day4_discrete_prenex_skolem_axiom.html">Day4 前束/Skolem</a></td></tr>
+        <tr><td>公理证明</td><td>能看懂“不可用演绎定理”，并能给每一行标证据。</td><td><a href="./day6_discrete_proof_sprint.html">Day6 公理证明</a></td></tr>
+        <tr><td>整卷</td><td>链条拼图至少 11/14，再做 Day7 和真题混合卷。</td><td><a href="./day7_discrete_final_recall.html">Day7 最终速查</a>、<a href="./discrete_final_mixed_interactive.html">混合卷</a></td></tr>
+      </tbody>
+    </table>
+    <div class="note good">
+      <strong>给你加油：</strong>离散证明看起来冷冰冰，但它其实很吃“开局动作”。你现在不是从零硬爬一座山，而是在学会每一步脚该放哪。能写第一句，能解释下一句，证明题就已经开始向你让分了。
+    </div>
+    <p class="mini">资料依据：2022/2020/2019/2017/2016/2014/2012 离散真题及答案文本、12-13 到 19-20 复习题、定义必须背、Day4-Day7 已有讲义。2018-19 文本层异常仍保留二次核查风险。</p>
+  </section>
+</main>
+
+<script>
+  const drills = [
+    {
+      tag: "语义成立",
+      q: "反设 (P∧Q)→R, ¬S, ¬R∨S 全真，而 ¬P∨¬Q 假。下一句最应该写什么？",
+      choices: [
+        "由 ¬P∨¬Q 假，得 P 真且 Q 真。",
+        "直接写所以结论成立。",
+        "令 P、Q、R、S 都为假。",
+        "先做 Skolem 化。"
+      ],
+      answer: 0,
+      explain: "析取为假时两个支都假，所以 ¬P 假、¬Q 假，也就是 P 真且 Q 真。这样才能接上 (P∧Q)→R，推出 R 真。"
+    },
+    {
+      tag: "语义反例",
+      q: "要说明 (Q→P)→(Q→R) 不能推出 Q∧(P→R)，最省的反例信号是什么？",
+      choices: [
+        "取 Q=0，让前提因空真为真，而结论因 Q 为假。",
+        "取 Q=1, P=1, R=1。",
+        "列出公理 A1、A2、A3。",
+        "证明 P→R 永真。"
+      ],
+      answer: 0,
+      explain: "Q=0 时，Q→P 与 Q→R 都为真，前提真；但 Q∧(P→R) 的第一个支 Q 为假，所以结论假。反例成立。"
+    },
+    {
+      tag: "量词反例",
+      q: "∀x(Q(x)∨R(x)) 不推出 ∀xQ(x)∨∀xR(x)。反例的关键设计是什么？",
+      choices: [
+        "让 D={1,2}，Q 只覆盖 1，R 只覆盖 2。",
+        "让 D 为空集。",
+        "让 Q 和 R 对所有对象都真。",
+        "把 ∀x 直接换成 ∃x。"
+      ],
+      answer: 0,
+      explain: "左边只要求每个对象至少满足 Q 或 R，可以由两个性质分摊覆盖；右边要求某一个性质覆盖所有对象，所以会失败。"
+    },
+    {
+      tag: "量词顺序",
+      q: "证明 ∃x∀yP(x,y) 推出 ∀y∃xP(x,y) 时，第一步拿到的对象 a 是什么？",
+      choices: [
+        "左边存在量词给出的固定见证，能对所有 y 成立。",
+        "任意 y 自己生成的不同 x。",
+        "随便选一个不验证的常元。",
+        "Skolem 化里的函数 g(y)。"
+      ],
+      answer: 0,
+      explain: "∃x∀yP(x,y) 的 x 是先选好的固定见证 a。之后任取 y，用同一个 a 作为 ∃x 的见证即可。"
+    },
+    {
+      tag: "Skolem",
+      q: "∀x∃y∀z∃uP(x,y,z,u) 中，u 应该替换成什么？",
+      choices: [
+        "g(x,z)，因为 u 左边的全称变量是 x 和 z。",
+        "g(y)，因为 y 离 u 最近。",
+        "常元 c，因为存在量词都变常元。",
+        "g(x,y,z)，因为所有前面变量都带上。"
+      ],
+      answer: 0,
+      explain: "Skolem 函数只依赖左侧还在量词前缀中的全称变量。y 已经被 f(x) 替掉，不作为新参数；所以 u = g(x,z)。"
+    },
+    {
+      tag: "公理证明",
+      q: "在 R→¬Q, P→Q ⊢ R→¬P 中，由 P→Q 和反置定理先得到什么？",
+      choices: [
+        "¬Q→¬P。",
+        "R→¬P。",
+        "R→¬Q。",
+        "P→¬R。"
+      ],
+      answer: 0,
+      explain: "反置定理给 (P→Q)→(¬Q→¬P)，配合前提 P→Q，用 MP 得 ¬Q→¬P。后面再把它提升到 R 的前件下。"
+    },
+    {
+      tag: "可靠性",
+      q: "老师问“为什么从 Γ ⊢ Q 可以推出 Γ ⊨ Q？”这其实在问什么？第一句最应该写什么？",
+      choices: [
+        "这是可靠性：形式系统每一步推导都保持语义真，所以可证推出语义后承。",
+        "这是完全性：只要语义真就一定能形式证明。",
+        "这是 Skolem 化：把存在量词换成函数。",
+        "这是主范式：先列真值表。"
+      ],
+      answer: 0,
+      explain: "Γ ⊢ Q 是“形式上能推出”，Γ ⊨ Q 是“语义上所有模型都满足”。从可证到语义真叫可靠性。卷面可以写：对推导长度归纳，公理永真，MP 保真，因此结论在所有满足 Γ 的解释下为真。"
+    },
+    {
+      tag: "完全性",
+      q: "如果题目写“若 Γ ⊨ Q，则 Γ ⊢ Q”，它考的是哪条元定理？",
+      choices: [
+        "完全性，因为语义后承可以被形式系统证明出来。",
+        "可靠性，因为证明不会推出假的东西。",
+        "反对称性，因为两个元素互相小于等于。",
+        "德摩根律，因为要把否定推进去。"
+      ],
+      answer: 0,
+      explain: "完全性的方向是语义到语法：只要 Q 在所有 Γ 的模型中都真，形式系统就能推出 Q。可靠性方向刚好反过来：Γ ⊢ Q 推出 Γ ⊨ Q。考试常故意让你区分这两个箭头。"
+    },
+    {
+      tag: "辖域",
+      q: "公式 ∀xP(x)→Q(x) 如果没有括号，做题前最该先问什么？",
+      choices: [
+        "∀x 的辖域到底是 P(x)，还是整个 P(x)→Q(x)。",
+        "先把 x 全部替换成常元 c。",
+        "先断定 x 一定没有自由出现。",
+        "先做公理证明。"
+      ],
+      answer: 0,
+      explain: "辖域决定变量是否被量词绑定。若读作 (∀xP(x))→Q(x)，后面的 x 可能是自由变量；若读作 ∀x(P(x)→Q(x))，两个 x 都被绑定。零基础时先补括号，是避免整题走歪的第一动作。"
+    },
+    {
+      tag: "前束化",
+      q: "把带量词公式往前束范式移动前，遇到同名约束变量，下一步最稳是什么？",
+      choices: [
+        "先改名约束变量，避免量词前移时变量捕获。",
+        "直接把所有量词挪到最前面。",
+        "把所有 ∀ 都改成 ∃。",
+        "跳过否定内移。"
+      ],
+      answer: 0,
+      explain: "前束化不是机械搬家。若不同量词用了同一个变量名，先改名，保证变量不会被错误绑定；之后再去箭头、否定内移、量词前移。"
+    },
+    {
+      tag: "最大元唯一",
+      q: "证明偏序集中最大元唯一。设 b1、b2 都是 B 的最大元后，下一句应该是什么？",
+      choices: [
+        "由 b2 最大且 b1∈B 得 b1≤b2；由 b1 最大且 b2∈B 得 b2≤b1。",
+        "直接说最大元显然唯一。",
+        "构造 D={1,2}。",
+        "先把关系 Skolem 化。"
+      ],
+      answer: 0,
+      explain: "唯一性证明常用“假设有两个，再证相等”。偏序里的相等来自反对称性，所以你要先推出 b1≤b2 和 b2≤b1，再由反对称性得 b1=b2。"
+    },
+    {
+      tag: "函数复合",
+      q: "证明 h∘g∘f 是单射时，若 (h∘g∘f)(x1)=(h∘g∘f)(x2)，下一句最该用什么？",
+      choices: [
+        "先用 h 的单射性推出 (g∘f)(x1)=(g∘f)(x2)，再逐层用 g、f 的单射性。",
+        "直接推出 x1=x2，不说明理由。",
+        "证明 h 是满射。",
+        "令 x1∈D 后马上构造反例。"
+      ],
+      answer: 0,
+      explain: "复合单射证明是“从外往里剥”。等式先经过 h，若 h 单射，就能取消 h；再用 g 单射取消 g；最后用 f 单射推出 x1=x2。"
+    },
+    {
+      tag: "谓词反例",
+      q: "要说明 ∀x∃yP(x,y) 一般不能推出 ∃y∀xP(x,y)，最经典的反例思路是什么？",
+      choices: [
+        "让每个 x 都能找到自己的 y，但没有一个统一 y 适合所有 x。",
+        "让论域只有一个元素且 P 全真。",
+        "先用可靠性定理。",
+        "把 ∃y 移到最前面，不需要解释。"
+      ],
+      answer: 0,
+      explain: "∀x∃y 允许 y 依赖 x；∃y∀x 要求先选一个固定 y 管住所有 x。反例可取 D={1,2}，令 P(x,y) 表示 x=y：每个 x 都有自己的 y=x，但不存在一个 y 等于所有 x。"
+    },
+    {
+      tag: "重言式反例",
+      q: "题目问某命题公式是否为重言式，你怀疑不是。下一步最省力是什么？",
+      choices: [
+        "找一个赋值让公式为假，并说明这一行就是反例。",
+        "证明所有赋值都为真。",
+        "把公式当成谓词公式做 Skolem 化。",
+        "只说看起来不是。"
+      ],
+      answer: 0,
+      explain: "不是重言式只需要一个假赋值。若题目问“是重言式吗”，先尝试找反例通常比完整真值表更快；但卷面必须写清该赋值下公式为何为假。"
+    }
+  ];
+
+  const state = JSON.parse(localStorage.getItem("discrete-proof-chain-state") || "{}");
+  const box = document.getElementById("drillBox");
+  const score = document.getElementById("score");
+  function save() {
+    localStorage.setItem("discrete-proof-chain-state", JSON.stringify(state));
+  }
+  function updateScore() {
+    const done = drills.filter((_, i) => state[i] !== undefined).length;
+    const right = drills.filter((d, i) => state[i] === d.answer).length;
+    score.innerHTML = `<strong>链条进度：</strong>已完成 ${done}/${drills.length}，正确 ${right}/${drills.length}。${right >= 11 ? "可以接 Day7 和混合卷。" : "先别急着整卷，继续把下一句练顺。"}`;
+  }
+  function displayChoices(choices, index) {
+    const items = choices.map((text, original) => ({ text, original }));
+    if (items.length < 2) return items;
+    const shift = ((index * 2 + 1) % items.length) || 1;
+    return items.slice(shift).concat(items.slice(0, shift));
+  }
+  function render() {
+    box.innerHTML = "";
+    drills.forEach((d, i) => {
+      const card = document.createElement("div");
+      card.className = "drill";
+      const chosen = state[i];
+      card.innerHTML = `
+        <span class="pill good">${d.tag}</span>
+        <h3>${i + 1}. ${d.q}</h3>
+        <p class="mini">选项已错位排列。先判断这一步凭什么成立，再选下一句。</p>
+        <div class="choices">
+          ${displayChoices(d.choices, i).map(({ text: c, original: j }) => {
+            const cls = chosen === undefined ? "" : (j === d.answer ? " correct" : (j === chosen ? " wrong" : ""));
+            return `<button class="choice${cls}" data-i="${i}" data-j="${j}">${c}</button>`;
+          }).join("")}
+        </div>
+        <div class="feedback" id="fb-${i}" style="${chosen === undefined ? "" : "display:block"}">
+          <strong>${chosen === d.answer ? "对，下一步稳了。" : "这一步要重接证据。"}</strong>
+          <p>${d.explain}</p>
+        </div>
+      `;
+      box.appendChild(card);
+    });
+    document.querySelectorAll("button.choice").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const i = Number(btn.dataset.i);
+        const j = Number(btn.dataset.j);
+        state[i] = j;
+        save();
+        render();
+      });
+    });
+    updateScore();
+  }
+  const note = document.getElementById("selfNote");
+  note.value = localStorage.getItem("discrete-proof-chain-note") || "";
+  note.addEventListener("input", () => localStorage.setItem("discrete-proof-chain-note", note.value));
+  render();
+</script>
+</body>
+</html>

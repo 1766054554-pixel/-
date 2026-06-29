@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>页面走丢了 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛 404 兜底页，帮助用户回到课程岛、资源库和真题训练台。">
+  <meta name="theme-color" content="#f6b9cf">
+  <link rel="icon" type="image/svg+xml" href="./assets/brand/icon.svg">
+  <link rel="manifest" href="./site.webmanifest">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255,255,255,.86);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69,84,117,.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 16% 14%, rgba(246,185,207,.44), transparent 28%),
+        radial-gradient(circle at 84% 10%, rgba(155,201,236,.40), transparent 26%),
+        radial-gradient(circle at 76% 80%, rgba(159,218,203,.34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 48%, #fff9ec 100%);
+    }
+    .wrap {
+      width: min(940px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 52px 0;
+    }
+    .panel {
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 5vw, 44px);
+    }
+    .icon {
+      width: 86px;
+      height: 86px;
+      display: block;
+      margin-bottom: 18px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+    }
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(46px, 9vw, 92px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    p {
+      margin: 0 0 12px;
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255,224,139,.62) 58%);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: #31516f;
+      font-weight: 850;
+      text-decoration: none;
+      box-shadow: 0 6px 16px rgba(60,84,115,.07);
+    }
+    .primary {
+      color: #293047;
+      border-color: rgba(196,142,180,.46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .card {
+      padding: 14px;
+      border: 1px solid rgba(115,135,168,.18);
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+    }
+    .card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #293047;
+    }
+    .card span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .actions a { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="panel">
+      <img class="icon" src="./assets/brand/icon.svg" alt="星光学习岛图标">
+      <span class="eyebrow">404 · 页面没有找到</span>
+      <h1>这条学习航线暂时不存在</h1>
+      <p>可能是链接写错、页面改名，或者旧材料已经被收进新的资源库。别在空白页里绕圈，先回到<span class="key">课程岛、精品资源库或真题训练台</span>继续学习。</p>
+      <div class="actions">
+        <a class="primary" href="./index.html">回首页</a>
+        <a class="primary" href="./resources.html">查资源库</a>
+        <a href="./practice_lab.html">做真题训练</a>
+        <a href="./dashboard.html">继续学习</a>
+      </div>
+      <div class="grid" aria-label="推荐入口">
+        <div class="card"><strong>第一次来</strong><span>用新手向导选课程和状态，生成三步路线。</span></div>
+        <div class="card"><strong>找不到资料</strong><span>去资源库按课程、题型、阶段和优先级筛。</span></div>
+        <div class="card"><strong>想直接做题</strong><span>进真题训练台，先整卷校准，再专项补洞。</span></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

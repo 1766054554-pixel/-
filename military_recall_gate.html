@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>军理闭卷召回闸门：数字、定义、简答骨架</title>
+  <style>
+    :root {
+      --bg: #f5f7f4;
+      --panel: #ffffff;
+      --ink: #19231c;
+      --muted: #657263;
+      --line: #d9e2d7;
+      --green: #2f6f4e;
+      --red: #a54235;
+      --gold: #956b18;
+      --blue: #2f5f8d;
+      --soft-green: #eef7ee;
+      --soft-red: #fff2ef;
+      --soft-gold: #fff8e9;
+      --shadow: 0 14px 32px rgba(25,35,28,.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #edf6ed 0, #f5f7f4 330px, #ffffff 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.82;
+      letter-spacing: 0;
+    }
+    .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: 28px 0 72px; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.98);
+      box-shadow: var(--shadow);
+    }
+    header { padding: 30px; }
+    section { padding: 24px; margin-top: 18px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 25px; }
+    h3 { font-size: 18px; margin-top: 14px; }
+    p { margin: 8px 0 0; }
+    a { color: var(--green); }
+    .muted { color: var(--muted); }
+    .key {
+      color: var(--red);
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #ffe2d8 58%);
+      padding: 0 2px;
+    }
+    .mark {
+      color: var(--green);
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #dff0df 58%);
+      padding: 0 2px;
+    }
+    nav, .pillrow, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+    nav a, .pill, .btn {
+      border: 1px solid #b8d1bd;
+      border-radius: 6px;
+      background: #f6fbf6;
+      color: var(--green);
+      padding: 6px 11px;
+      font-size: 14px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+    .pill { border-radius: 999px; }
+    .btn { cursor: pointer; font-family: inherit; font-size: 15px; }
+    .primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .ghost { background: #fff; color: var(--muted); }
+    .hot { color: var(--red); border-color: #dfa59e; background: var(--soft-red); }
+    .warn { color: var(--gold); border-color: #e0be84; background: var(--soft-gold); }
+    .good { color: var(--green); border-color: #9fceb6; background: var(--soft-green); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfa;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card strong { display: block; color: var(--green); margin-bottom: 5px; }
+    .note {
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: var(--soft-green);
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .note.warn { border-left-color: var(--gold); background: var(--soft-gold); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; background: #fff; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; text-align: left; }
+    th { background: #eef6ef; color: var(--green); }
+    .table-scroll { overflow-x: auto; }
+    textarea, input[type=text] {
+      width: 100%;
+      border: 1px solid #cbd9c9;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      font: inherit;
+      line-height: 1.65;
+      margin-top: 8px;
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfa;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--green); font-weight: 900; }
+    .quiz-list { display: grid; gap: 12px; margin-top: 12px; }
+    .quiz-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfa;
+      padding: 14px;
+    }
+    .quiz-card.done { border-color: #9fceb6; background: var(--soft-green); }
+    .quiz-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .tag {
+      display: inline-block;
+      border: 1px solid #c8d9c8;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--green);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #cbd9c9;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .option:hover { border-color: var(--green); background: #f1faf1; }
+    .option.correct { border-color: #64ad82; background: var(--soft-green); }
+    .option.wrong { border-color: #d38c84; background: var(--soft-red); }
+    .answer {
+      display: none;
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: var(--soft-green);
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    .answer.show { display: block; }
+    .progress {
+      border: 1px solid #cfe0d1;
+      border-radius: 8px;
+      background: #f7fbf7;
+      padding: 10px 12px;
+      font-weight: 850;
+      color: var(--green);
+    }
+    @media (max-width: 860px) {
+      .grid, .grid.three, .options { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      header, section { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>军理闭卷召回闸门</h1>
+      <p class="muted">这页只做一件事：把军理从“我看过”变成 <span class="key">我能闭卷写出来</span>。系统学习看 <a href="./day8_military_closed_book_sprint.html">军理闭卷背诵舱</a>；考前自查先用本页。</p>
+      <div class="pillrow">
+        <span class="pill hot">6/26 闭卷</span>
+        <span class="pill good">先默写再看答案</span>
+        <span class="pill warn">数字/定义/简答骨架</span>
+        <span class="pill">适合软工考后使用</span>
+      </div>
+      <nav>
+        <a href="#route">背诵路线</a>
+        <a href="#numbers">数字雷达</a>
+        <a href="#blurting">五章默写</a>
+        <a href="#quiz">30问速测</a>
+        <a href="#templates">简答骨架</a>
+        <a href="./day8_military_closed_book_sprint.html">回背诵舱</a>
+        <a href="./index.html">回主页</a>
+      </nav>
+    </header>
+
+    <section id="route">
+      <h2>6/25 考后到 6/26：三段闭卷路线</h2>
+      <div class="grid three">
+        <div class="card">
+          <strong>软工考后 45 分钟</strong>
+          <p>只背 <span class="key">数字雷达</span> 和五章标题。目标是第二天醒来不完全陌生。</p>
+        </div>
+        <div class="card">
+          <strong>6/26 上午 90 分钟</strong>
+          <p>先做五章默写，再做 30 问速测。错的不是失败，是你最后要背的清单。</p>
+        </div>
+        <div class="card">
+          <strong>进场前 15 分钟</strong>
+          <p>只看简答骨架和错题。不要再翻长资料，闭卷前吸新知识效率很低。</p>
+        </div>
+      </div>
+      <div class="note hot"><strong>最低保命线：</strong>国防定义、国防动员、总体国家安全观、毛泽东军事思想、信息化战争、新概念武器、精确制导、航天技术。把这些写出来，闭卷就不会空白。</div>
+    </section>
+
+    <section id="numbers">
+      <h2>必背数字雷达：填空题的骨头</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>数字/专名</th><th>对应知识点</th><th>怎么记</th></tr></thead>
+          <tbody>
+            <tr><td>2.2 万多千米</td><td>中国陆地边界线长度</td><td>国家安全地缘数字，和 14 个陆地邻国一起背。</td></tr>
+            <tr><td>14 个</td><td>与中国有共同陆地边界的国家</td><td>填空高频。</td></tr>
+            <tr><td>2035 年</td><td>基本实现国防和军队现代化</td><td>强军目标时间点。</td></tr>
+            <tr><td>本世纪中叶</td><td>全面建成世界一流军队</td><td>和 2035 成对出现。</td></tr>
+            <tr><td>13 篇</td><td>《孙子兵法》篇数</td><td>作者孙武，现存最早兵书。</td></tr>
+            <tr><td>2010.2.26 / 2010.7.1</td><td>《国防动员法》通过/施行</td><td>2月26日通过，7月1日施行。</td></tr>
+            <tr><td>14章72条</td><td>《国防动员法》结构</td><td>和日期一起背。</td></tr>
+            <tr><td>18 / 22 / 24</td><td>兵役年龄</td><td>男18应征、未征集22前仍可征集、高校毕业生可放宽到24。</td></tr>
+            <tr><td>9月第三个星期六</td><td>全民国防教育日</td><td>老题选择填空爱考。</td></tr>
+            <tr><td>200海里</td><td>专属经济区</td><td>从领海基线量起不超过200海里。</td></tr>
+            <tr><td>300万平方千米</td><td>海洋国土老题说法</td><td>作为往年题补丁记。</td></tr>
+            <tr><td>50%以上</td><td>精确制导武器直接命中概率</td><td>定义条件，不只是“有制导”。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="blurting">
+      <h2>五章闭卷默写：先写，再展开</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>中国国防</strong>
+          <p>默写：国防定义、国防地位作用、武装力量组成、国防动员。</p>
+          <textarea data-save="blur_defense" placeholder="先闭卷写关键词。"></textarea>
+          <details><summary>展开答案骨架</summary><p>国防定义：防备抵抗侵略、制止颠覆分裂、保卫主权统一领土完整安全发展利益、军事及相关活动。地位作用：安全保障、独立前提、富强条件。武装力量：解放军、武警、民兵。国防动员：平时转战时/紧急状态。</p></details>
+        </div>
+        <div class="card">
+          <strong>国家安全</strong>
+          <p>默写：总体国家安全观五大要素、地缘数字、国际战略形势。</p>
+          <textarea data-save="blur_security" placeholder="先闭卷写关键词。"></textarea>
+          <details><summary>展开答案骨架</summary><p>五大要素：人民安全为宗旨，政治安全为根本，经济安全为基础，军事文化社会安全为保障，促进国际安全为依托。数字：陆地边界2.2万多千米，陆地邻国14个。形势：多极化加快、全球化波折、大国博弈激烈、全球性挑战增多。</p></details>
+        </div>
+        <div class="card">
+          <strong>军事思想</strong>
+          <p>默写：《孙子兵法》、毛泽东军事思想发展与主要内容、新时代强军目标。</p>
+          <textarea data-save="blur_thought" placeholder="先闭卷写关键词。"></textarea>
+          <details><summary>展开答案骨架</summary><p>《孙子兵法》：孙武、现存最早兵书、13篇、知彼知己。毛泽东军事思想：产生、形成、丰富发展；内容为战争观和方法论、人民军队、人民战争、战略战术、国防建设。强军目标：听党指挥、能打胜仗、作风优良；2035；本世纪中叶。</p></details>
+        </div>
+        <div class="card">
+          <strong>现代战争</strong>
+          <p>默写：战争定义、新军事革命、机械化战争、信息化战争。</p>
+          <textarea data-save="blur_war" placeholder="先闭卷写关键词。"></textarea>
+          <details><summary>展开答案骨架</summary><p>战争定义：国家或政治集团，为政治经济等目的，使用武装力量进行大规模激烈交战。新军事革命：20世纪末以来，以信息化为核心。机械化战争：快、重、广、大。信息化战争：网络化信息系统、信息化武器装备、多域、体系对抗。</p></details>
+        </div>
+        <div class="card">
+          <strong>信息化装备</strong>
+          <p>默写：装备分类、指挥信息系统、新概念武器。</p>
+          <textarea data-save="blur_equipment" placeholder="先闭卷写关键词。"></textarea>
+          <details><summary>展开答案骨架</summary><p>信息化装备：信息化主战武器系统和信息系统。指挥信息系统：计算机网络为核心，指挥控制、情报、通信、信息对抗、综合保障。新概念武器：原理、毁伤机理、运用方式与传统武器显著不同；定向能、动能、机器人、非致命。</p></details>
+        </div>
+        <div class="card">
+          <strong>往年题补丁</strong>
+          <p>默写：国防教育日、航天技术、精确制导、信息化战场三域。</p>
+          <textarea data-save="blur_patch" placeholder="先闭卷写关键词。"></textarea>
+          <details><summary>展开答案骨架</summary><p>国防教育日：每年9月第三个星期六。航天技术又称空间技术，系统包括运输、卫星、载人航天、空间武器。精确制导：命中概率50%以上，精度高、效能高、可控强。信息化战场：物理域、信息域、认知域。</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <h2>30问闭卷速测</h2>
+      <p>先答再看答案。选择/判断会自动标错；填空题允许你先写，展开后自己核对。</p>
+      <div class="actions">
+        <button class="btn primary" id="resetQuiz">重置速测</button>
+        <span class="progress" id="quizProgress">已完成 0 / 30</span>
+      </div>
+      <div class="quiz-list" id="quizList"></div>
+    </section>
+
+    <section id="templates">
+      <h2>简答题临场骨架：三行也要有结构</h2>
+      <div class="grid">
+        <div class="card"><strong>国防动员</strong><p>定义：平时转战时/紧急状态。内容：武装力量、国民经济、人民防空、交通战备、政治动员。作用：战时应战、急时应急、平时服务。</p></div>
+        <div class="card"><strong>毛泽东军事思想</strong><p>定义：关于中国革命战争和军队问题的科学理论体系。内容：战争观和方法论、人民军队、人民战争、战略战术、国防建设。地位：我军克敌制胜法宝。</p></div>
+        <div class="card"><strong>信息化战争</strong><p>定义：网络化信息系统 + 信息化装备 + 多域 + 体系对抗。特征：资源主导、装备信息化、空间多维、节奏快速、要素一体、指挥扁平、行动精确。</p></div>
+        <div class="card"><strong>周边安全环境</strong><p>邻国多；边界漫长海域辽阔，争议多；大国利益交汇，影响复杂。最后写：周边安全环境是制定国防战略的重要依据。</p></div>
+      </div>
+      <div class="note warn"><strong>闭卷写法：</strong>不会完整句也别空，先写关键词。简答题评分通常看点，关键词比修辞重要。</div>
+    </section>
+  </main>
+
+  <script>
+    const QUIZ = [
+      {type:"choice", tag:"国防", q:"我国国防类型是？", opts:["自卫型","扩张型","联盟型","中立型"], answer:[0], exp:"我国是自卫型国防，军事战略方针是积极防御。"},
+      {type:"fill", tag:"国防", q:"中国武装力量由解放军、武警和____组成。", answer:"民兵", exp:"三件套：解放军、武警、民兵。"},
+      {type:"fill", tag:"国防", q:"国防地位作用：国防是国家独立自主的____。", answer:"前提", exp:"三句：安全保障、独立前提、富强条件。"},
+      {type:"judge", tag:"国防", q:"国防动员只在已经爆发战争后才有意义。", answer:false, exp:"国防动员也可应对其他安全威胁，具有战时应战、急时应急、平时服务功能。"},
+      {type:"fill", tag:"国防", q:"海军战略要求：近海防御、____。", answer:"远海防卫", exp:"陆机立、海近远、空空攻、火核全、武多稳。"},
+      {type:"choice", tag:"法规", q:"国防法规体系在宪法之下通常按哪三层记？", opts:["法律、法规、规章","战略、战役、战术","陆、海、空","政治、经济、文化"], answer:[0], exp:"按层次关系记：法律层、法规层、规章层。"},
+      {type:"fill", tag:"法规", q:"《国防动员法》2010年____月1日起施行。", answer:"7", exp:"2010年2月26日通过，2010年7月1日施行，14章72条。"},
+      {type:"choice", tag:"兵役", q:"普通高等学校毕业生征集年龄可放宽至多少周岁？", opts:["20","22","24","26"], answer:[2], exp:"主干按 24 周岁记。"},
+      {type:"fill", tag:"教育", q:"全民国防教育日是每年9月第____个星期六。", answer:"三", exp:"每年9月第三个星期六。"},
+      {type:"choice", tag:"安全", q:"总体国家安全观五大要素中，根本是？", opts:["人民安全","政治安全","经济安全","国际安全"], answer:[1], exp:"人民安全为宗旨，政治安全为根本，经济安全为基础。"},
+      {type:"fill", tag:"安全", q:"中国陆地边界线约____万多千米。", answer:"2.2", exp:"地缘数字：2.2万多千米，陆地邻国14个。"},
+      {type:"fill", tag:"安全", q:"与中国有共同陆地边界的国家有____个。", answer:"14", exp:"填空高频数字。"},
+      {type:"choice", tag:"安全", q:"下列哪项属于新兴领域国家安全？", opts:["网络空间安全","外层空间安全","极地安全","以上都属于"], answer:[3], exp:"新兴安全包括网络、外层空间、国际海底区域、极地、生物等。"},
+      {type:"choice", tag:"军事思想", q:"《孙子兵法》的作者是？", opts:["孙武","孙膑","吴起","克劳塞维茨"], answer:[0], exp:"春秋末孙武，现存最早兵书，共13篇。"},
+      {type:"fill", tag:"军事思想", q:"《孙子兵法》共____篇。", answer:"13", exp:"常与作者孙武、现存最早兵书一起考。"},
+      {type:"choice", tag:"军事思想", q:"毛泽东军事思想的主要内容不包括？", opts:["人民战争思想","人民军队思想","国防建设思想","精确制导武器制导原理"], answer:[3], exp:"精确制导属于装备/武器技术，不是毛泽东军事思想主要内容。"},
+      {type:"fill", tag:"强军", q:"新时代强军目标：听党指挥、能打胜仗、____。", answer:"作风优良", exp:"九个字必须准。"},
+      {type:"fill", tag:"强军", q:"到____年基本实现国防和军队现代化。", answer:"2035", exp:"2035年基本实现，本世纪中叶全面建成世界一流军队。"},
+      {type:"choice", tag:"现代战争", q:"新军事革命的核心是？", opts:["信息化","冷兵器化","单纯数量扩张","骑兵化"], answer:[0], exp:"20世纪末以来，以信息化为核心。"},
+      {type:"choice", tag:"现代战争", q:"机械化战争特征不包括？", opts:["机动速度快","火力毁伤重","战场范围广","作战指挥扁平化"], answer:[3], exp:"作战指挥扁平化属于信息化战争特征。"},
+      {type:"judge", tag:"现代战争", q:"信息化战争以体系对抗为主要形式。", answer:true, exp:"定义关键词：体系对抗。"},
+      {type:"judge", tag:"现代战争", q:"信息化战争不再具有暴力对抗性质。", answer:false, exp:"它仍是战争，仍具有暴力对抗，只是信息成为核心要素。"},
+      {type:"choice", tag:"装备", q:"指挥信息系统以什么为核心？", opts:["计算机网络","火炮","地形","单兵体能"], answer:[0], exp:"定义：以计算机网络为核心。"},
+      {type:"choice", tag:"装备", q:"下列属于定向能武器的是？", opts:["激光武器","电磁炮","动能拦截弹","普通步枪"], answer:[0], exp:"定向能：激光、高功率微波、粒子束。电磁炮属于动能。"},
+      {type:"fill", tag:"装备", q:"动能武器包括动能拦截弹和____。", answer:"电磁炮", exp:"别和定向能武器混。"},
+      {type:"fill", tag:"海洋", q:"专属经济区自领海基线量起不超过____海里。", answer:"200", exp:"老题高频。"},
+      {type:"choice", tag:"精确制导", q:"精确制导武器直接命中概率通常要求？", opts:["30%以上","40%以上","50%以上","90%以上"], answer:[2], exp:"定义条件：50%以上。"},
+      {type:"fill", tag:"航天", q:"航天技术又称____技术。", answer:"空间", exp:"航天技术又称空间技术。"},
+      {type:"choice", tag:"航天", q:"军事航天系统通常不包括？", opts:["运输系统","卫星系统","载人航天系统","地面装甲突击系统"], answer:[3], exp:"四类：运输、卫星、载人航天、空间武器。"},
+      {type:"choice", tag:"信息化", q:"信息化战场通常包括哪三个域？", opts:["物理域、信息域、认知域","陆域、水域、火域","经济域、文化域、政治域","近地、远地、月球"], answer:[0], exp:"物理域、信息域、认知域。"}
+    ];
+
+    const storeKey = "military_recall_gate_v1";
+    const state = JSON.parse(localStorage.getItem(storeKey) || "{}");
+    const done = new Set(state.done || []);
+    const quizList = document.getElementById("quizList");
+    const progress = document.getElementById("quizProgress");
+
+    function save() {
+      state.done = [...done];
+      document.querySelectorAll("[data-save]").forEach(el => state[el.dataset.save] = el.value);
+      localStorage.setItem(storeKey, JSON.stringify(state));
+      progress.textContent = `已完成 ${done.size} / ${QUIZ.length}`;
+    }
+
+    document.querySelectorAll("[data-save]").forEach(el => {
+      el.value = state[el.dataset.save] || "";
+      el.addEventListener("input", save);
+    });
+
+    function renderQuiz() {
+      quizList.innerHTML = "";
+      QUIZ.forEach((item, idx) => {
+        const card = document.createElement("article");
+        card.className = "quiz-card" + (done.has(idx) ? " done" : "");
+        const body = item.type === "fill"
+          ? `<input type="text" data-fill="${idx}" placeholder="先闭卷写，再核对"><div class="actions"><button class="btn primary" data-show="${idx}">核对</button></div>`
+          : `<div class="options">${item.opts.map((o, j) => `<button class="option" data-choice="${idx}:${j}">${String.fromCharCode(65 + j)}. ${o}</button>`).join("")}</div>`;
+        card.innerHTML = `
+          <div class="quiz-head"><h3>${idx + 1}. ${item.q}</h3><span class="tag">${item.tag}</span></div>
+          ${body}
+          <div class="answer"><strong>答案：</strong>${item.type === "judge" ? (item.answer ? "正确" : "错误") : (Array.isArray(item.answer) ? item.answer.map(a => item.opts ? String.fromCharCode(65 + a) : a).join("、") : item.answer)}。${item.exp}</div>
+        `;
+        quizList.appendChild(card);
+      });
+      save();
+    }
+
+    document.addEventListener("click", e => {
+      const choice = e.target.closest("[data-choice]");
+      if (choice) {
+        const [i, j] = choice.dataset.choice.split(":").map(Number);
+        const item = QUIZ[i];
+        const card = choice.closest(".quiz-card");
+        card.querySelectorAll(".option").forEach((node, idx) => {
+          node.classList.remove("correct", "wrong");
+          if (item.answer.includes(idx)) node.classList.add("correct");
+        });
+        if (!item.answer.includes(j)) choice.classList.add("wrong");
+        card.querySelector(".answer").classList.add("show");
+        done.add(i);
+        card.classList.add("done");
+        save();
+      }
+      const show = e.target.closest("[data-show]");
+      if (show) {
+        const i = Number(show.dataset.show);
+        const card = show.closest(".quiz-card");
+        card.querySelector(".answer").classList.add("show");
+        done.add(i);
+        card.classList.add("done");
+        save();
+      }
+      if (e.target.closest("#resetQuiz")) {
+        done.clear();
+        state.done = [];
+        localStorage.setItem(storeKey, JSON.stringify(state));
+        renderQuiz();
+      }
+    });
+
+    renderQuiz();
+  </script>
+</body>
+</html>

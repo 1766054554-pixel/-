@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>软工 Day5 官方五类题型闭环：客观题、简答题、综合题怎么拿分</title>
+  <style>
+    :root {
+      --bg: #f6f8fa;
+      --ink: #1d2835;
+      --muted: #657386;
+      --line: #d9e3ec;
+      --panel: #ffffff;
+      --blue: #1f66b3;
+      --green: #15704f;
+      --orange: #ad5b15;
+      --red: #aa3636;
+      --purple: #6548a7;
+      --shadow: 0 12px 30px rgba(29, 40, 53, .07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #edf5fb 0, #f6f8fa 320px, #ffffff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+      letter-spacing: 0;
+    }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 28px 20px 64px; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+    }
+    header { padding: 30px; }
+    section { padding: 24px; margin-top: 18px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.24; letter-spacing: 0; }
+    h1 { font-size: 36px; }
+    h2 { font-size: 25px; }
+    h3 { font-size: 18px; margin-top: 18px; }
+    p { margin: 8px 0 0; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .pillrow, nav { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+    .pill, nav a {
+      border: 1px solid #c8d9e8;
+      border-radius: 999px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 5px 11px;
+      font-size: 14px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    nav a { border-radius: 6px; }
+    .hot { color: var(--red); border-color: #e4b2ad; background: #fff4f2; }
+    .good { color: var(--green); border-color: #acd8c1; background: #f1faf5; }
+    .warn { color: var(--orange); border-color: #e2c18f; background: #fff8eb; }
+    .purple { color: var(--purple); border-color: #cbbdea; background: #f7f3ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f1f7ff;
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .note.good { border-left-color: var(--green); }
+    .note.warn { border-left-color: var(--orange); }
+    .note.hot { border-left-color: var(--red); }
+    .key {
+      color: var(--red);
+      font-weight: 850;
+      background: linear-gradient(transparent 58%, #ffe8dd 58%);
+      padding: 0 2px;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #eef6ff; color: var(--blue); }
+    .figure {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .figure svg { width: 100%; min-width: 780px; height: auto; display: block; }
+    .caption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 16px;
+      margin-top: 14px;
+      box-shadow: 0 8px 20px rgba(29, 40, 53, .045);
+    }
+    .drill h3 { margin-top: 0; color: var(--blue); }
+    .stem {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #f7fbff;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    .choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+    .choice div {
+      border: 1px solid #d9e3ec;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 9px 10px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdff;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 850; color: var(--blue); }
+    .answer {
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: #f1faf5;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .rubric {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #eef6ff;
+      color: var(--blue);
+      font-weight: 850;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .stepgrid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .stepcard {
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px;
+      min-width: 0;
+    }
+    .stepcard strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .flowline {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .flowline span:first-child {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #eef6ff;
+      color: var(--blue);
+      font-weight: 850;
+      text-align: center;
+      padding: 8px;
+    }
+    .flowline span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .checklist li { margin: 6px 0; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe0ee;
+      border-radius: 6px;
+      background: #f5fbff;
+      padding: 1px 6px;
+    }
+    @media (max-width: 860px) {
+      .wrap { padding: 18px 12px 44px; }
+      header, section { padding: 18px; }
+      h1 { font-size: 28px; }
+      .grid, .grid.three, .choice, .rubric, .stepgrid, .flowline { grid-template-columns: 1fr; }
+      .figure svg { min-width: 700px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="pillrow">
+        <span class="pill hot">软工 Day5</span>
+        <span class="pill">官方五类题型</span>
+        <span class="pill good">客观题边界</span>
+        <span class="pill warn">简答题模板</span>
+        <span class="pill purple">综合题分流</span>
+      </div>
+      <h1>软工官方五类题型闭环：从“看过”到“会答”</h1>
+      <p class="muted">这页根据 6/18 课程群通知和你已有的软工 PPT、打印资料、往届题整理。它不重复 Day3 的纸质开卷索引，也不重复 Day4 的画图微课；它专门训练正式考试里的单选、多选、判断、简答和综合题。</p>
+      <nav>
+        <a href="#route">0. 怎么用</a>
+        <a href="#official">1. 五类题型</a>
+        <a href="#objective">2. 客观题边界</a>
+        <a href="#short">3. 简答题模板</a>
+        <a href="#comprehensive">4. 综合题分流</a>
+        <a href="#codearts">5. 上机检查器</a>
+        <a href="#drills">6. 客观/简答/综合题卡</a>
+        <a href="#paper">7. 迁移到纸质材料</a>
+      </nav>
+    </header>
+
+    <section id="route">
+      <h2>0. 今天先知道它在整个软工路线里的位置</h2>
+      <p>软工现在已经不是“随便看看 PPT、会画几张图”就够了。官方明确给了五类题型，综合题还点名了 <span class="key">UML 需求分析与建模、系统概要设计、详细设计</span>。所以你要把软工拆成三层能力：</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>第一层：概念边界</strong>
+          单选、多选、判断主要考这个。比如“面向对象模型是不是软件过程模型”“项目管理对象有哪些”“黑盒测试方法有哪些”。
+        </div>
+        <div class="box">
+          <strong>第二层：标准表达</strong>
+          简答题主要考这个。比如故障、错误、失效的区别与关系，不能只背三个词，要写出传播链和例子。
+        </div>
+        <div class="box">
+          <strong>第三层：案例建模</strong>
+          综合题主要考这个。先读材料，再拆需求、概要设计、详细设计，最后才决定画什么图。
+        </div>
+      </div>
+      <div class="note good">
+        <strong>使用顺序：</strong>Day3 负责把可带纸质资料做成索引；Day4 负责练图题第一笔；本页负责把官方五类题型连成考场流程。你看它时不要追求全背，先做到“看到题能分流，知道第一句话怎么写”。
+      </div>
+      <div class="note warn">
+        <strong>6/20-6/22 低成本保温版：</strong>现在数据库和 AI 更紧，软工先不要全页硬啃。只做 <a href="#drills">第 6 节题 1 到题 3G</a>，目标是把单选、多选、判断题里的<span class="key">过程模型、项目管理对象、黑盒/白盒、需求/概要/详细、故障/错误/失效、测试层次</span>分清楚。等数据库考完，再回本页做简答题和综合题分流。
+      </div>
+    </section>
+
+    <section id="official">
+      <h2>1. 官方五类题型：其实只考三种动作</h2>
+      <p>通知里写了单选、多选、判断、简答、综合。它们表面上是五类，但答题动作可以压成三类：<span class="key">判边界</span>、<span class="key">写关系</span>、<span class="key">建模型</span>。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 430" role="img" aria-label="软工官方五类题型到三种答题动作">
+          <defs>
+            <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#1f66b3"></path>
+            </marker>
+          </defs>
+          <rect x="350" y="26" width="280" height="60" rx="8" fill="#eef6ff" stroke="#9fc0df"/>
+          <text x="490" y="62" text-anchor="middle" font-size="20" font-weight="800">软工 30 分卷面</text>
+          <line x1="490" y1="88" x2="170" y2="150" stroke="#1f66b3" stroke-width="3" marker-end="url(#arrow)"/>
+          <line x1="490" y1="88" x2="490" y2="150" stroke="#1f66b3" stroke-width="3" marker-end="url(#arrow)"/>
+          <line x1="490" y1="88" x2="810" y2="150" stroke="#1f66b3" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="44" y="154" width="252" height="100" rx="8" fill="#f7fbff" stroke="#bcd3e8"/>
+          <text x="170" y="185" text-anchor="middle" font-size="18" font-weight="800">单选 / 多选 / 判断</text>
+          <text x="170" y="214" text-anchor="middle" font-size="15">动作：判概念边界</text>
+          <text x="170" y="239" text-anchor="middle" font-size="13">模型、测试、管理对象、需求类型</text>
+          <rect x="364" y="154" width="252" height="100" rx="8" fill="#f1faf5" stroke="#aad4bf"/>
+          <text x="490" y="185" text-anchor="middle" font-size="18" font-weight="800">简答题</text>
+          <text x="490" y="214" text-anchor="middle" font-size="15">动作：写定义 + 区别 + 关系</text>
+          <text x="490" y="239" text-anchor="middle" font-size="13">故障/错误/失效，黑盒/白盒，过程模型</text>
+          <rect x="684" y="154" width="252" height="100" rx="8" fill="#fff7ec" stroke="#e5bd8c"/>
+          <text x="810" y="185" text-anchor="middle" font-size="18" font-weight="800">综合题</text>
+          <text x="810" y="214" text-anchor="middle" font-size="15">动作：读材料 -> 分层 -> 建模</text>
+          <text x="810" y="239" text-anchor="middle" font-size="13">需求分析、概要设计、详细设计</text>
+          <line x1="170" y1="256" x2="170" y2="315" stroke="#1f66b3" stroke-width="3" marker-end="url(#arrow)"/>
+          <line x1="490" y1="256" x2="490" y2="315" stroke="#15704f" stroke-width="3" marker-end="url(#arrow)"/>
+          <line x1="810" y1="256" x2="810" y2="315" stroke="#ad5b15" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="66" y="320" width="208" height="62" rx="8" fill="#ffffff" stroke="#d9e3ec"/>
+          <text x="170" y="345" text-anchor="middle" font-size="15" font-weight="800">先想“它属于哪类”</text>
+          <text x="170" y="369" text-anchor="middle" font-size="13">不要靠词眼乱猜</text>
+          <rect x="386" y="320" width="208" height="62" rx="8" fill="#ffffff" stroke="#d9e3ec"/>
+          <text x="490" y="345" text-anchor="middle" font-size="15" font-weight="800">按三段式作答</text>
+          <text x="490" y="369" text-anchor="middle" font-size="13">定义、区别、关系/例子</text>
+          <rect x="706" y="320" width="208" height="62" rx="8" fill="#ffffff" stroke="#d9e3ec"/>
+          <text x="810" y="345" text-anchor="middle" font-size="15" font-weight="800">先拆小问再画图</text>
+          <text x="810" y="369" text-anchor="middle" font-size="13">需求/概要/详细不能混</text>
+        </svg>
+        <p class="caption">考场上不要把五类题型当五条线背。它们会共享同一批知识点，只是问法不同。</p>
+      </div>
+      <table>
+        <thead><tr><th>题型</th><th>先做什么</th><th>高频知识点</th><th>常见丢分</th></tr></thead>
+        <tbody>
+          <tr><td>单选</td><td>找“不属于”“最适合”“主要对象”这类限定词。</td><td>过程模型、项目管理对象、测试方法、需求类型。</td><td>把相似但不同层次的词混在一起。</td></tr>
+          <tr><td>多选</td><td>逐项判定，不要只找一个看起来最熟的。</td><td>项目管理、黑盒测试、设计原则、需求工程活动。</td><td>漏选正确项，或把白盒方法混进黑盒方法。</td></tr>
+          <tr><td>判断</td><td>先找绝对词，再对照定义。</td><td>测试、过程模型、UML 图的用途。</td><td>看到熟词就判对，没有检查“范围是否过大”。</td></tr>
+          <tr><td>简答</td><td>写三段：定义、区别、关系/例子。</td><td>故障/错误/失效，黑盒/白盒，需求/设计区别，过程模型适用场景。</td><td>只列名词，不解释关系。</td></tr>
+          <tr><td>综合</td><td>拆小问：需求分析、概要设计、详细设计分别产出什么。</td><td>用例图、系统顺序图、操作合约、概念类图、组件图、设计类图、顺序图。</td><td>题目问概要设计却画详细类图，或题目问需求却提前写实现。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="objective">
+      <h2>2. 客观题概念边界：先把容易混的词拆开</h2>
+      <p>客观题不是“死背 PPT 名词”，而是考你能不能把相邻概念分开。下面这些边界来自课程 PPT、打印资料和官方样例，优先级很高。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>边界 1：过程模型 vs 面向对象模型</strong>
+          瀑布、增量、螺旋、敏捷回答的是“软件开发过程怎么组织”。面向对象回答的是“用对象、类、继承、多态等方式分析和设计系统”。所以官方样例里“不属于软件过程模型”的答案是面向对象模型。
+        </div>
+        <div class="box">
+          <strong>边界 2：项目管理对象</strong>
+          软件项目管理常围绕 <span class="key">过程、产品、人员</span>。过程管理管怎么做，产品管理管交付物和质量，人员管理管角色、协作和资源。对象管理不是这一组里的管理对象。
+        </div>
+        <div class="box">
+          <strong>边界 3：黑盒测试 vs 白盒测试</strong>
+          黑盒不看代码结构，按输入输出和规格说明设计测试，如等价类、边界值、错误推测、因果图、场景分析。白盒看程序内部结构，如语句覆盖、判定覆盖、条件覆盖、路径覆盖。
+        </div>
+        <div class="box">
+          <strong>边界 4：需求类型</strong>
+          功能需求说系统做什么；质量需求说做得怎么样，如性能、安全、可靠性；约束需求说必须遵守什么限制，如平台、法规、接口、开发语言。
+        </div>
+        <div class="box">
+          <strong>边界 5：需求分析 vs 概要设计 vs 详细设计</strong>
+          需求分析面向用户目标和系统边界；概要设计面向系统分块、组件和接口；详细设计面向类、方法、消息、数据结构和算法。
+        </div>
+        <div class="box">
+          <strong>边界 6：故障、错误、失效</strong>
+          故障通常是软件制品中的缺陷或问题；错误是程序运行时进入了不正确状态；失效是系统对外没有提供应有服务。它们常形成“故障导致错误，错误可能表现为失效”的链条。
+        </div>
+      </div>
+      <div class="mini">
+        <strong>客观题训练入口：</strong>本页第 6 节已经按正式卷面拆成单选、多选、判断题卡。先做题 1-题 3G：过程模型、项目管理对象、黑盒/白盒、需求/概要/详细、故障/错误/失效、测试层次。它们不是学习方法题，而是会出现在卷面上的概念边界题。
+      </div>
+    </section>
+
+    <section id="short">
+      <h2>3. 简答题模板：别只背定义，要写出关系</h2>
+      <p>简答题最怕答案像词典：每个词都写了，但老师看不出你理解关系。你可以把每道简答压成一个固定结构：<span class="key">先一句总述，再分点定义，最后写关系或例子</span>。</p>
+      <table>
+        <thead><tr><th>题目类型</th><th>第一句话</th><th>答案骨架</th><th>加分点</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>故障、错误、失效区别与关系</td>
+            <td>三者描述的是缺陷从软件制品到运行状态再到外部表现的传播过程。</td>
+            <td>故障是制品中的缺陷；错误是运行时内部状态不正确；失效是对外服务不满足需求。故障可能触发错误，错误可能导致失效。</td>
+            <td>举例：代码中条件写错是故障，运行时变量值异常是错误，用户看到错误结果是失效。</td>
+          </tr>
+          <tr>
+            <td>黑盒测试与白盒测试区别</td>
+            <td>二者的核心区别在于是否依据程序内部结构设计测试。</td>
+            <td>黑盒依据需求规格和输入输出设计；白盒依据代码结构、控制流和路径设计。</td>
+            <td>分别列方法：等价类/边界值 vs 语句覆盖/判定覆盖/路径覆盖。</td>
+          </tr>
+          <tr>
+            <td>过程模型适用场景</td>
+            <td>不同过程模型适用于不同需求稳定性、风险和交付节奏。</td>
+            <td>瀑布适合需求稳定、阶段清晰；增量适合需求较清楚且希望分批交付；螺旋适合风险高、需要反复风险分析；敏捷适合需求变化快、需要快速迭代。</td>
+            <td>题干出现“高风险/新技术”优先想螺旋；出现“快速交付部分功能”优先想增量。</td>
+          </tr>
+          <tr>
+            <td>软件设计原则</td>
+            <td>设计原则的目标是降低复杂度、提高可理解性、可维护性和可复用性。</td>
+            <td>抽象、模块化、信息隐藏、关注点分离、复用、迭代、可追踪；模块设计强调高内聚、低耦合。</td>
+            <td>别只列词，补一句：高内聚让模块内部职责集中，低耦合减少模块间依赖。</td>
+          </tr>
+          <tr>
+            <td>需求工程三阶段</td>
+            <td>需求工程要把模糊业务问题逐步变成可验证的系统需求。</td>
+            <td>需求获取：从干系人和业务场景收集信息；需求表示/规约：用文字、模型和规格说明表达；需求确认/验证：检查一致性、完整性和可实现性。</td>
+            <td>联系三层需求：业务需求、用户需求、系统需求。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note warn">
+        <strong>背诵提示：</strong>简答题不是越长越好，而是每一句都要有功能。第一句定范围，分点给定义，最后一句写关系或例子。这样即使你临场紧张，也不会变成散装关键词。
+      </div>
+    </section>
+
+    <section id="comprehensive">
+      <h2>4. 综合题分流：案例题不是一上来画图</h2>
+      <p>官方说综合题类似大作业题材，围绕系统需求分析与设计。你看到一段案例材料时，先不要打开 CodeArts Modeling 就画。先问：这个小问是在要 <span class="key">需求分析</span>、<span class="key">概要设计</span> 还是 <span class="key">详细设计</span>？</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 500" role="img" aria-label="软工综合题从案例材料到需求分析概要设计详细设计的分流">
+          <defs>
+            <marker id="arr2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#1f66b3"></path>
+            </marker>
+          </defs>
+          <rect x="360" y="25" width="260" height="58" rx="8" fill="#eef6ff" stroke="#9fc0df"/>
+          <text x="490" y="60" text-anchor="middle" font-size="20" font-weight="800">案例材料</text>
+          <line x1="490" y1="84" x2="170" y2="150" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr2)"/>
+          <line x1="490" y1="84" x2="490" y2="150" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr2)"/>
+          <line x1="490" y1="84" x2="810" y2="150" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr2)"/>
+          <rect x="45" y="155" width="250" height="110" rx="8" fill="#f7fbff" stroke="#bcd3e8"/>
+          <text x="170" y="185" text-anchor="middle" font-size="18" font-weight="800">需求分析</text>
+          <text x="170" y="214" text-anchor="middle" font-size="14">系统要做什么？</text>
+          <text x="170" y="240" text-anchor="middle" font-size="13">参与者、用例、系统边界、场景</text>
+          <rect x="365" y="155" width="250" height="110" rx="8" fill="#f1faf5" stroke="#aad4bf"/>
+          <text x="490" y="185" text-anchor="middle" font-size="18" font-weight="800">概要设计</text>
+          <text x="490" y="214" text-anchor="middle" font-size="14">系统怎么分块？</text>
+          <text x="490" y="240" text-anchor="middle" font-size="13">子系统、组件、接口、架构</text>
+          <rect x="685" y="155" width="250" height="110" rx="8" fill="#fff7ec" stroke="#e5bd8c"/>
+          <text x="810" y="185" text-anchor="middle" font-size="18" font-weight="800">详细设计</text>
+          <text x="810" y="214" text-anchor="middle" font-size="14">内部怎么协作？</text>
+          <text x="810" y="240" text-anchor="middle" font-size="13">类、方法、消息、状态、数据</text>
+          <line x1="170" y1="266" x2="170" y2="320" stroke="#1f66b3" stroke-width="3" marker-end="url(#arr2)"/>
+          <line x1="490" y1="266" x2="490" y2="320" stroke="#15704f" stroke-width="3" marker-end="url(#arr2)"/>
+          <line x1="810" y1="266" x2="810" y2="320" stroke="#ad5b15" stroke-width="3" marker-end="url(#arr2)"/>
+          <rect x="45" y="325" width="250" height="96" rx="8" fill="#ffffff" stroke="#d9e3ec"/>
+          <text x="170" y="352" text-anchor="middle" font-size="15" font-weight="800">常画</text>
+          <text x="170" y="378" text-anchor="middle" font-size="13">用例图、系统顺序图</text>
+          <text x="170" y="402" text-anchor="middle" font-size="13">操作合约、概念类图</text>
+          <rect x="365" y="325" width="250" height="96" rx="8" fill="#ffffff" stroke="#d9e3ec"/>
+          <text x="490" y="352" text-anchor="middle" font-size="15" font-weight="800">常画</text>
+          <text x="490" y="378" text-anchor="middle" font-size="13">组件图、包图、架构图</text>
+          <text x="490" y="402" text-anchor="middle" font-size="13">提供/需要接口</text>
+          <rect x="685" y="325" width="250" height="96" rx="8" fill="#ffffff" stroke="#d9e3ec"/>
+          <text x="810" y="352" text-anchor="middle" font-size="15" font-weight="800">常画</text>
+          <text x="810" y="378" text-anchor="middle" font-size="13">设计类图、顺序图、状态图</text>
+          <text x="810" y="402" text-anchor="middle" font-size="13">方法流程、持久化设计</text>
+        </svg>
+        <p class="caption">同一段案例材料可以问多个小问。每个小问先分层，再选择图和文字模板。</p>
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>需求分析第一步</strong>
+          圈参与者、目标动作、系统边界和业务对象。参与者在系统外，用例在系统内，概念类图里的类来自业务名词，不来自代码实现细节。
+        </div>
+        <div class="box">
+          <strong>概要设计第一步</strong>
+          把系统拆成子系统或组件，说明每块职责和接口。这里不要急着写某个方法怎么实现，重点是模块边界和依赖关系。
+        </div>
+        <div class="box">
+          <strong>详细设计第一步</strong>
+          选一个具体用例或操作，安排对象、类、消息、状态变化。这里才进入设计类、方法调用、控制对象、实体对象、持久化对象。
+        </div>
+        <div class="box">
+          <strong>CodeArts Modeling 作图第一步</strong>
+          先建干净项目和图类型，画前列清单：图名、参与元素、关系、箭头方向、文字说明。不要边想边乱连。
+        </div>
+      </div>
+    </section>
+
+    <section id="codearts">
+      <h2>5. CodeArts 综合题检查器：把材料变成可交付图</h2>
+      <p>画图题 PDF 前 12 页给的链路很重要：它不是让你记一堆图名，而是在训练从<span class="key">需求获取</span>到<span class="key">概要设计</span>再到<span class="key">详细设计</span>的连续产物。综合题如果让你在线画图，最稳的做法是先把材料放进这条链。</p>
+      <div class="stepgrid">
+        <div class="stepcard">
+          <strong>1. 先写用户故事/EARS</strong>
+          用户故事按“作为谁，我想做什么，以便获得什么价值”。EARS 需求句式用在需求规约里，例如“当……发生时”“如果……则……”“在……状态下”。
+        </div>
+        <div class="stepcard">
+          <strong>2. 再写用例描述</strong>
+          用例描述至少抓：名称、参与者、触发条件、前置条件、基本流程、扩展流程、后置条件、补充约束。它是后面画图的材料池。
+        </div>
+        <div class="stepcard">
+          <strong>3. 再选需求图</strong>
+          用例图回答谁使用哪些功能；系统顺序图回答外部参与者如何向黑盒系统发消息；概念类图回答业务对象及关系。
+        </div>
+        <div class="stepcard">
+          <strong>4. 再做操作合约</strong>
+          操作合约不是顺序图。它写一次系统操作的前置条件和后置条件，后置条件常按三类：创建/删除对象、属性变化、形成/消除关联。
+        </div>
+        <div class="stepcard">
+          <strong>5. 再进入概要设计</strong>
+          包图/组件图/组件顺序图回答系统内部如何分块、组件职责是什么、接口如何协作。这里重点是边界和依赖，不是方法细节。
+        </div>
+        <div class="stepcard">
+          <strong>6. 最后详细设计</strong>
+          设计类图、用例实现顺序图、活动图、状态机回答对象/类/方法/消息/状态如何实现具体用例。这里才可以写控制类、服务类、数据访问类。
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>CodeArts 作图前 30 秒：</strong>先在草稿区写三行：题目要的是哪一层？这张图回答什么问题？至少需要哪些元素？写完再画，比直接拖图元更快。
+      </div>
+
+      <table>
+        <thead><tr><th>题干信号</th><th>该交付什么</th><th>最低检查项</th><th>常见扣分</th></tr></thead>
+        <tbody>
+          <tr><td>“参与者、功能、系统边界”</td><td>用例图</td><td>参与者在边界外；用例是动宾短语；include/extend 方向正确。</td><td>把业务对象画成参与者；把步骤画成用例。</td></tr>
+          <tr><td>“一次系统操作、系统对外响应”</td><td>系统顺序图</td><td>参与者 + 黑盒系统；消息从上到下；只画一个场景。</td><td>把内部服务/数据库提前画出来。</td></tr>
+          <tr><td>“操作签名、前置/后置条件”</td><td>系统操作合约</td><td>后置条件写创建对象、属性变化、关联变化。</td><td>只写流程步骤，没有写系统状态变化。</td></tr>
+          <tr><td>“业务概念、领域对象、关系”</td><td>概念类图</td><td>类名来自业务名词；有关联和多重性；不写实现方法。</td><td>把页面、控制器、数据库表混进概念类图。</td></tr>
+          <tr><td>“系统分块、组件、接口”</td><td>组件图/包图</td><td>组件职责清楚；依赖方向可解释；接口名有业务含义。</td><td>画成类图；组件粒度过细。</td></tr>
+          <tr><td>“对象协作、方法调用、实现某用例”</td><td>设计顺序图/设计类图</td><td>边界/控制/实体或服务对象合理；消息是方法级动作。</td><td>仍把系统当黑盒；没有对象职责分工。</td></tr>
+          <tr><td>“状态流转、待审核/已取消/有冲突”</td><td>状态图</td><td>围绕同一个对象生命周期；事件触发转换；有初态/终态。</td><td>把业务流程画成状态图，或多个对象混在一张状态图。</td></tr>
+          <tr><td>“流程、如果/否则、并行、循环”</td><td>活动图</td><td>动作节点、判断/合并、开始/结束清楚。</td><td>用活动图表达静态对象结构。</td></tr>
+        </tbody>
+      </table>
+
+      <div class="mini">
+        <strong>特别注意 CodeArts 工作项：</strong>画图题 PDF 里也出现了 Epic、Feature、Story、Task、Bug。它们属于项目管理/需求管理语境，不是 UML 图元素。若客观题问工作项层次，可以按“Epic 最大、Feature 细化功能、Story 从用户角度描述价值、Task 是实现任务、Bug 是缺陷”来分。
+      </div>
+    </section>
+
+    <section id="drills">
+      <h2>6. 仿真训练：题目要练“运用”，不是复述</h2>
+      <p>下面的题按官方样例和课程资料改写。每题先自己写题眼或答案，再展开解析。解析会告诉你为什么对、为什么错、下次换问法怎么识别。</p>
+
+      <div class="drill">
+        <h3>题 1｜单选：软件过程模型边界</h3>
+        <div class="stem">以下哪个选项不属于软件过程模型？</div>
+        <div class="choice">
+          <div>A. 瀑布模型</div>
+          <div>B. 面向对象模型</div>
+          <div>C. 增量模型</div>
+          <div>D. 螺旋模型</div>
+        </div>
+        <textarea data-save="se-day5-q1" placeholder="先写：我怎么判断“过程模型”这个边界？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>题眼：</strong>“软件过程模型”问的是开发活动按什么顺序和节奏组织。瀑布、增量、螺旋都在回答“开发过程怎么走”。面向对象模型则是分析与设计的思想和建模方式，回答“系统怎么按对象组织”，不是过程模型。</p>
+            <p><strong>为什么容易错：</strong>因为“模型”两个字会干扰你。软工里很多东西都叫模型，但题目限定的是“过程模型”。以后看到“不属于某一类”，先写类别边界，再逐项排除。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 2｜多选：软件项目管理对象</h3>
+        <div class="stem">下面哪些属于软件项目管理的主要对象？</div>
+        <div class="choice">
+          <div>A. 过程管理</div>
+          <div>B. 人员管理</div>
+          <div>C. 产品管理</div>
+          <div>D. 对象管理</div>
+        </div>
+        <textarea data-save="se-day5-q2" placeholder="先写：过程、人员、产品分别管什么？为什么 D 不在这一组里？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：A、B、C。</strong></p>
+            <p><strong>过程管理</strong>关心开发活动、进度、方法和流程；<strong>人员管理</strong>关心团队角色、任务分配、沟通协作；<strong>产品管理</strong>关心交付物、范围和质量。对象管理更像面向对象分析设计里的概念，不是项目管理三类对象。</p>
+            <p><strong>多选题策略：</strong>不要因为 A 很熟就停下，多选要逐项判定。D 的迷惑点是“对象”也是软工术语，但它不属于项目管理对象。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3｜判断：黑盒测试方法</h3>
+        <div class="stem">在设计黑盒测试的过程中，常用的方法有等价类划分法、边界值分析法、错误推测法、因果图分析法和场景分析法。</div>
+        <textarea data-save="se-day5-q3" placeholder="先判断对错，再写：这些方法为什么都属于黑盒？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>判断：正确。</strong></p>
+            <p><strong>解析：</strong>黑盒测试把程序内部结构先“盖住”，根据需求规格、输入输出、业务规则来设计测试。等价类划分把输入域分成有效/无效类别；边界值分析盯边界附近最容易出错的点；错误推测依赖经验找可能错的地方；因果图分析输入条件与输出结果之间的组合关系；场景分析按业务流程设计测试。</p>
+            <p><strong>变式提醒：</strong>如果选项里出现语句覆盖、判定覆盖、路径覆盖，那是白盒测试。黑盒看规格，白盒看结构。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3A｜单选：需求、概要、详细的阶段边界</h3>
+        <div class="stem">需求分析阶段最不应该直接产出的内容是？</div>
+        <div class="choice">
+          <div>A. 软件需求模型</div>
+          <div>B. 软件需求文档</div>
+          <div>C. 软件确认测试计划</div>
+          <div>D. 模块内部算法和数据结构伪代码</div>
+        </div>
+        <textarea data-save="se-day5-q3a" placeholder="先写：需求分析回答 What 还是 How？D 为什么越界？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：D。</strong></p>
+            <p><strong>来源依据：</strong>十讲合集把需求分析写成“问题是什么”，产出包括软件需求模型、需求文档、确认测试计划；详细设计才设计模块内部细节、算法和数据结构。</p>
+            <p><strong>排除法：</strong>A、B 都是在描述系统要满足什么需求；C 看起来像测试，但确认测试计划可以从需求阶段开始准备，因为确认测试要验证软件是否满足用户需求。D 已经在说模块内部怎么实现，属于详细设计。</p>
+            <p><strong>考场触发器：</strong>看到“用户角度、功能/非功能、系统边界、需求文档”想需求；看到“模块、组件、接口、整体架构”想概要；看到“类、方法、算法、数据结构、对象消息”想详细。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3B｜判断：概要设计是不是写算法</h3>
+        <div class="stem">概要设计阶段的核心任务是确定模块内部算法和局部数据结构。</div>
+        <textarea data-save="se-day5-q3b" placeholder="先判断对错，再写：这句话错在把哪个阶段混到哪个阶段？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>判断：错误。</strong></p>
+            <p><strong>解析：</strong>这句话把<strong>概要设计</strong>和<strong>详细设计</strong>混在一起了。概要设计站在宏观、全局、整体层面，回答系统怎样分块、模块之间怎样协作、接口如何组织；详细设计才站到某个模块内部，回答算法、局部数据结构、类、方法和对象消息怎么安排。</p>
+            <p><strong>考场识别：</strong>看到“系统架构、模块/组件、接口、子系统协作”，选概要设计；看到“模块内部、算法、局部数据结构、类方法、对象交互”，选详细设计。正式卷面很爱用这种判断题卡边界，因为它会直接影响综合题里你该画组件/包图，还是设计类图/顺序图。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3C｜多选：黑盒方法里混入白盒词</h3>
+        <div class="stem">下面哪些通常属于黑盒测试用例设计方法？</div>
+        <div class="choice">
+          <div>A. 等价类划分法</div>
+          <div>B. 边界值分析法</div>
+          <div>C. 判定覆盖</div>
+          <div>D. 因果图分析法</div>
+          <div>E. 基本路径覆盖</div>
+        </div>
+        <textarea data-save="se-day5-q3c" placeholder="先逐项写：它看需求输入输出，还是看代码内部结构？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：A、B、D。</strong></p>
+            <p><strong>解析：</strong>黑盒测试根据需求规格、输入输出和业务规则设计测试。等价类把输入集合分成有效/无效类别；边界值盯最容易出错的边界附近；因果图处理多个输入条件组合与输出结果之间的关系。</p>
+            <p><strong>C、E 为什么不选：</strong>判定覆盖和基本路径覆盖要看程序控制结构，是白盒测试。多选题不要凭“我认识这个词”就选，要先判断它依赖需求说明还是依赖代码结构。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3D｜判断：故障一定会导致失效吗</h3>
+        <div class="stem">软件制品中存在故障时，系统运行时一定会表现为失效。</div>
+        <textarea data-save="se-day5-q3d" placeholder="先判断对错，再写：故障、错误、失效之间为什么是“可能”链条？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>判断：错误。</strong></p>
+            <p><strong>解析：</strong>测试笔记给出的链条是“故障 -> 错误 -> 失效”，但这里的箭头不是数学必然。故障是代码、模型或文档中的缺陷；它要在特定输入、路径或环境下被触发，才可能造成运行时错误；错误继续传播到系统外部，才表现为用户可观察的失效。</p>
+            <p><strong>例子：</strong>代码里某个罕见分支写错是故障；如果这条分支从未执行，用户就未必看到失效。考试写“可能导致”比写“一定导致”更严谨。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3E｜单选：过程模型适用场景</h3>
+        <div class="stem">某项目需求前期不够清楚，技术风险较高，需要通过多轮风险分析和原型验证逐步推进。最适合优先考虑的过程模型是？</div>
+        <div class="choice">
+          <div>A. 瀑布模型</div>
+          <div>B. 螺旋模型</div>
+          <div>C. 只做一次编码实现</div>
+          <div>D. 完全不做需求分析</div>
+        </div>
+        <textarea data-save="se-day5-q3e" placeholder="先圈题眼：需求不清、风险高、多轮验证。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>解析：</strong>十讲里把螺旋模型和“帮助利益相关者明确需求、产生更准确需求”以及风险控制联系起来。题干出现“需求不清、技术风险高、多轮验证”，就要想到螺旋模型或原型/迭代思想，其中“风险分析”是螺旋模型的强信号。</p>
+            <p><strong>A 为什么不优先：</strong>瀑布适合需求容易定义、不易变动、阶段边界清晰的项目。这里恰好反过来。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3F｜单选：测试层次与依据</h3>
+        <div class="stem">在单元测试之后，将模块按照概要设计要求组装成子系统或系统，重点发现模块接口之间的问题，这通常属于哪类测试？</div>
+        <div class="choice">
+          <div>A. 单元测试</div>
+          <div>B. 集成测试</div>
+          <div>C. 确认测试</div>
+          <div>D. 回归测试</div>
+        </div>
+        <textarea data-save="se-day5-q3f" placeholder="先写：题干里的依据和对象分别是什么？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>解析：</strong>题干已经给出“单元测试之后”“模块组装”“接口之间的问题”，这些都是集成测试的题眼。集成测试依据概要设计，关注模块之间的接口和协作。</p>
+            <p><strong>其他项：</strong>单元测试关注模块内部；确认测试关注软件是否满足用户需求，依据需求文档；回归测试关注修改后旧功能是否被破坏。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3G｜历史上机客观题保温：Git 风险判断</h3>
+        <div class="stem">关于 <code>git push --force</code>，下列说法更合理的是？</div>
+        <div class="choice">
+          <div>A. 强制推送没有任何风险。</div>
+          <div>B. 强制推送可能覆盖远端历史，协作项目中必须谨慎使用。</div>
+          <div>C. 强制推送只能创建本地分支。</div>
+          <div>D. 强制推送等价于查看当前分支。</div>
+        </div>
+        <textarea data-save="se-day5-q3g" placeholder="先写：2020 上机客观题里这种工具题为什么低优先保温？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>定位：</strong>这题来自 2020 上机客观题风格，只作为低优先保温。2026 正式通知样例更强调过程模型、项目管理、测试、简答和综合建模，所以 Git/Vue/Flask 不抢主线。</p>
+            <p><strong>解析：</strong><code>git push --force</code> 会强制更新远端分支，可能覆盖别人已经推送的提交历史。考试如果考工具题，常见问法不是让你背全部命令，而是判断安全风险、基本操作和概念边界。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 4｜简答：故障、错误、失效</h3>
+        <div class="stem">简述故障、错误、失效三者的区别与关系。</div>
+        <textarea data-save="se-day5-q4" placeholder="用三段式作答：总述 -> 三个定义 -> 传播关系/例子。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准答案骨架：</strong>故障、错误、失效描述的是软件问题从内部缺陷到运行状态再到外部表现的传播链。故障是软件制品中的缺陷或问题，可以存在于代码、模型、文档或规格说明中；错误是程序运行时由于故障被触发而产生的不正确内部状态；失效是软件运行结果对外表现为未能提供规定功能或行为。</p>
+            <p><strong>关系：</strong>故障可能导致错误，错误可能进一步导致失效，但不是每个故障都会被触发，也不是每个错误都会立刻被用户观察到。</p>
+            <p><strong>例子：</strong>判断条件写反是故障；运行时把不该通过的输入判成通过是错误；用户因此得到了错误审批结果，就是失效。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 5｜简答变式：过程模型选择</h3>
+        <div class="stem">某系统涉及新技术验证、需求存在不确定性，且项目失败代价较高。应优先考虑哪类过程模型？请说明理由。</div>
+        <textarea data-save="se-day5-q5" placeholder="先圈题眼：新技术、不确定性、高风险。然后写适用模型和理由。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>参考答案：</strong>优先考虑螺旋模型。题干中的新技术、需求不确定和失败代价高，都指向高风险场景。螺旋模型的特点是迭代推进，并在每一轮中重视风险识别、风险分析和风险控制，适合风险较高、需要逐步澄清需求和技术可行性的项目。</p>
+            <p><strong>为什么不是瀑布：</strong>瀑布模型更适合需求稳定、阶段边界清晰的项目。这里需求不确定，若一开始就线性推进，后期返工风险大。</p>
+            <p><strong>为什么不是只写敏捷：</strong>敏捷适合需求变化和快速反馈，但题干强烈强调“高风险”和“新技术验证”，这正是螺旋模型的核心题眼。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 6｜综合题小型演练：实验预约平台</h3>
+        <div class="stem">
+          软件学院需要开发一个实验预约平台。教师可以发布实验项目并设置可预约时间段；学生可以查看实验项目、预约时间段、取消预约；管理员可以管理实验室资源并处理时间冲突。系统需要支持预约状态流转，如待确认、已预约、有冲突、已取消。
+          <br><br>
+          问：如果小问分别要求“需求分析建模”“概要设计”“详细设计”，你会各自提交哪些图或文字产物？每一类至少写 2 个。
+        </div>
+        <textarea data-save="se-day5-q6" placeholder="不要急着画。先分三层：需求分析、概要设计、详细设计。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>需求分析建模：</strong>可以提交用例图，列出教师、学生、管理员以及发布实验、预约、取消、管理资源、处理冲突等用例；可以提交系统顺序图，描述学生预约实验这一系统级交互；可以写操作合约，例如“预约时间段”的前置条件和后置条件；还可以画概念类图，抽出教师、学生、实验项目、时间段、实验室、预约记录等业务概念。</p>
+            <p><strong>概要设计：</strong>可以提交组件图或架构图，把系统拆成用户/权限、实验项目、预约管理、资源管理、冲突检测、通知等组件；说明组件职责、接口和依赖关系。概要设计重点是系统分块，不是某个类的方法细节。</p>
+            <p><strong>详细设计：</strong>可以提交设计类图，给出 Appointment、Experiment、LabResource、ConflictChecker 等类及方法；可以提交“学生预约实验”的设计顺序图，展示界面对象、控制对象、实体对象或服务对象之间的消息；可以提交预约状态图，表示待确认、已预约、有冲突、已取消之间的事件触发。</p>
+            <p><strong>扣分提醒：</strong>需求分析阶段不要写数据库表结构和具体代码；概要设计阶段不要只画一堆类；详细设计阶段要能落到具体对象协作和状态变化。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 7｜综合题变式：系统操作合约怎么写</h3>
+        <div class="stem">
+          在实验预约平台中，系统操作 <code>reserveExperiment(studentId, slotId)</code> 表示学生预约某个实验时间段。已知该学生存在，该时间段存在且仍有余量。请写出该操作的前置条件和至少 3 条后置条件。
+        </div>
+        <textarea data-save="se-day5-q7" placeholder="先按操作合约写：前置条件 -> 创建/属性变化/关联变化。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>前置条件：</strong>学生 studentId 已注册且可预约；时间段 slotId 存在；该时间段未满且没有与学生已有预约冲突。</p>
+            <p><strong>后置条件示例：</strong>创建了一个 Appointment 预约记录；Appointment 与 Student 建立关联；Appointment 与 ExperimentSlot 建立关联；Appointment.status 被设置为“已预约”或“待确认”；ExperimentSlot.availableCount 减 1；必要时创建通知记录。</p>
+            <p><strong>为什么这样写：</strong>操作合约的核心不是“先点击按钮再保存”，而是操作完成后系统状态发生了哪些可验证变化。画图题 PDF 明确把后置条件分为创建/删除对象、属性值变化、形成/消除关联。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 8｜图型选择：同一材料三种问法</h3>
+        <div class="stem">
+          仍以实验预约平台为材料。A 问“系统有哪些外部用户以及各自能完成哪些目标级功能”；B 问“预约记录从待确认、有冲突、已预约到已取消如何变化”；C 问“学生提交预约时，界面、预约服务、冲突检测服务、预约记录之间如何协作”。分别应该画什么图？每张图第一笔画什么？
+        </div>
+        <textarea data-save="se-day5-q8" placeholder="按 A/B/C 写图型 + 第一笔。"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>A：用例图。</strong>题眼是外部用户和目标级功能。第一笔画系统边界，再把学生、教师、管理员放在边界外，把预约时间段、取消预约、发布实验、管理资源等用例放在边界内。</p>
+            <p><strong>B：状态图。</strong>题眼是预约记录的状态变化。第一笔选定对象“预约记录”，画初态和第一个状态，例如待确认，再用事件连接有冲突、已预约、已取消等状态。</p>
+            <p><strong>C：设计顺序图或组件顺序图。</strong>题眼是内部对象/组件如何协作。第一笔列生命线：预约界面、预约服务、冲突检测服务、预约记录/数据库、通知服务；再按时间写提交预约、检查冲突、创建记录、返回结果。</p>
+            <p><strong>迁移提醒：</strong>同一材料不是只能画一张图。题干问“谁和功能”就是用例图，问“状态变化”就是状态图，问“谁给谁发消息”就是顺序图。</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="drill">
+        <h3>题 9｜客观题：工作项层次不是 UML</h3>
+        <div class="stem">CodeArts 项目管理中，下面哪个说法更合理？</div>
+        <div class="choice">
+          <div>A. Epic 通常表示较宏观的大型需求或目标。</div>
+          <div>B. Bug 是 UML 用例图中的参与者。</div>
+          <div>C. Task 一定比 User Story 更面向用户价值。</div>
+          <div>D. Feature 只能表示代码类之间的继承关系。</div>
+        </div>
+        <textarea data-save="se-day5-q9" placeholder="先写：Epic/Feature/Story/Task/Bug 分别在什么语境？"></textarea>
+        <details>
+          <summary>展开参考答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：A。</strong></p>
+            <p><strong>解析：</strong>Epic 是较宏观的大需求或目标，Feature 是对 Epic 的功能细化，User Story 从用户角度描述需求和价值，Task 是实现 Story 的具体工作，Bug 是缺陷。B 把项目管理工作项和 UML 参与者混了；C 反了，User Story 更强调用户价值，Task 更强调实现工作；D 把 Feature 和类继承混了。</p>
+            <p><strong>考试意义：</strong>这类题不是让你背 CodeArts 操作按钮，而是区分项目管理词、需求词和 UML 词的层次。</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="paper">
+      <h2>7. 最后要迁移到纸质材料：网页负责学懂，考场靠边注</h2>
+      <p>本页可以帮你学，但考试不能带电子材料。所以你要把这里的内容压缩成纸质 PPT 边注或装订笔记。不是整段抄，而是抄“题眼 -> 第一反应 -> 答题骨架”。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>客观题边注</strong>
+          过程模型：瀑布/增量/螺旋/敏捷。面向对象不是过程模型。
+          <br>项目管理对象：过程、产品、人员。
+          <br>黑盒：等价类、边界值、错误推测、因果图、场景。
+        </div>
+        <div class="box">
+          <strong>简答题边注</strong>
+          故障 -> 错误 -> 失效。
+          <br>故障：制品缺陷；错误：运行状态异常；失效：外部服务失败。
+          <br>答题：总述 + 定义 + 关系 + 例子。
+        </div>
+        <div class="box">
+          <strong>综合题边注</strong>
+          需求：用例图、系统顺序图、操作合约、概念类图。
+          <br>概要：组件图、架构图、接口。
+          <br>详细：设计类图、设计顺序图、状态图、方法流程。
+        </div>
+        <div class="box">
+          <strong>CodeArts Modeling 边注</strong>
+          先列元素清单，再选图类型。
+          <br>画完检查：边界、元素、关系、箭头、多重性、文字说明。
+          <br>考前建干净项目，只用 Modeling。
+        </div>
+      </div>
+      <div class="note hot">
+        <strong>过关线：</strong>看完本页后，你至少要能闭眼说出：五类题型分别先做什么；故障/错误/失效怎么写；黑盒和白盒怎么分；综合题为什么要先分需求、概要、详细。能做到这一步，软工就不再是“开卷但不知道翻哪儿”。
+      </div>
+    </section>
+  </div>
+
+  <script>
+    document.querySelectorAll("textarea[data-save]").forEach((el) => {
+      const key = el.dataset.save;
+      el.value = localStorage.getItem(key) || "";
+      el.addEventListener("input", () => localStorage.setItem(key, el.value));
+    });
+  </script>
+</body>
+</html>

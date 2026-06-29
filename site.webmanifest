@@ -1,0 +1,40 @@
+{
+  "name": "星光学习岛 Starlight Study Island",
+  "short_name": "星光学习岛",
+  "description": "一个面向期末冲刺的交互学习平台，整合课程岛、真题训练、资源库、闯关和错题回炉。",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fff8fb",
+  "theme_color": "#f6b9cf",
+  "icons": [
+    {
+      "src": "./assets/brand/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "课程岛",
+      "short_name": "课程岛",
+      "description": "进入七门课程的统一入口。",
+      "url": "./index.html#courses"
+    },
+    {
+      "name": "真题训练台",
+      "short_name": "真题",
+      "description": "按课程和题型开始交互训练。",
+      "url": "./practice_lab.html"
+    },
+    {
+      "name": "精品资源库",
+      "short_name": "资源库",
+      "description": "筛选讲义、真题、闪卡和回炉资源。",
+      "url": "./resources.html"
+    }
+  ]
+}

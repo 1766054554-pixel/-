@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>20-21操作系统期末·交互刷题</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑",sans-serif;}
+body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px 10px;color:#333;}
+.wrap{max-width:880px;margin:0 auto;}
+h1{text-align:center;color:#fff;margin-bottom:8px;font-size:25px;text-shadow:2px 2px 6px rgba(0,0,0,.3);}
+.sub{text-align:center;color:#fff;opacity:.85;margin-bottom:20px;font-size:13px;}
+.nav{position:sticky;top:0;z-index:99;background:rgba(255,255,255,.95);border-radius:14px;padding:10px;margin-bottom:18px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.2);backdrop-filter:blur(8px);}
+.nav button{background:#eef;border:none;color:#445;padding:6px 11px;border-radius:16px;margin:3px;cursor:pointer;font-size:12px;transition:.2s;}
+.nav button:hover{background:#667eea;color:#fff;}
+.sec{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.sec h2{color:#5a3a9a;border-left:5px solid #667eea;padding-left:10px;margin-bottom:14px;font-size:19px;}
+.q{margin-bottom:18px;padding:14px;background:#f7f8ff;border-radius:12px;}
+.qt{font-weight:bold;margin-bottom:10px;line-height:1.6;}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid #e0e4f5;padding:9px 13px;border-radius:9px;margin:6px 0;cursor:pointer;font-size:14px;transition:.2s;}
+.opt:hover{border-color:#667eea;background:#f0f3ff;}
+.opt.right{background:#d4f8d4;border-color:#38c038;}
+.opt.wrong{background:#ffd6d6;border-color:#e84545;}
+.tf button{padding:7px 24px;margin:5px 8px 5px 0;border:2px solid #e0e4f5;background:#fff;border-radius:20px;cursor:pointer;font-size:15px;transition:.2s;}
+.tf button:hover{border-color:#667eea;}
+.tf button.right{background:#d4f8d4;border-color:#38c038;}
+.tf button.wrong{background:#ffd6d6;border-color:#e84545;}
+.exp{display:none;margin-top:10px;padding:11px;background:#fff8e6;border-left:4px solid #ffb300;border-radius:8px;font-size:13px;line-height:1.7;}
+.exp.show{display:block;}
+.blank input{border:2px solid #c0c8e8;border-radius:8px;padding:7px 10px;font-size:14px;width:160px;margin:0 6px;}
+.blank button{background:#667eea;color:#fff;border:none;padding:7px 16px;border-radius:8px;cursor:pointer;margin-left:6px;}
+.blank button:hover{background:#5566d0;}
+.bres{font-weight:bold;margin-left:8px;}
+.step{background:#667eea;color:#fff;border:none;padding:9px 18px;border-radius:10px;cursor:pointer;margin:8px 0;font-size:14px;display:block;width:100%;transition:.2s;}
+.step:hover{background:#5566d0;}
+.stepc{display:none;margin:8px 0;padding:13px;background:#eef5ff;border-left:4px solid #667eea;border-radius:8px;font-size:14px;line-height:1.9;}
+.stepc.show{display:block;}
+.code{background:#2d2d3a;color:#9ef;padding:12px;border-radius:8px;font-family:Consolas,monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;margin:6px 0;}
+.hint{color:#888;font-style:italic;font-size:13px;margin:6px 0;}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;}
+table td,table th{border:1px solid #bbb;padding:5px 8px;text-align:center;}
+table th{background:#eef;}
+b{color:#5a3a9a;}
+.ok{color:#38c038;}.no{color:#e84545;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎓 2020-2021《操作系统》期末·交互刷题</h1>
+<p class="sub">选择/判断点击即判分+解析 ｜ 填空输入校验 ｜ 大题逐步点击揭晓完整解题过程</p>
+
+<div class="nav">
+<button onclick="go('s1')">一·判断</button>
+<button onclick="go('s2')">二·选择</button>
+<button onclick="go('s3')">三·填空</button>
+<button onclick="go('s4')">四·内存</button>
+<button onclick="go('s5')">五·同步</button>
+<button onclick="go('s6')">六·调度</button>
+<button onclick="go('s7')">七·死锁</button>
+<button onclick="go('s8')">八·文件</button>
+</div>
+
+<div class="sec" id="s1"><h2>一、判断题（本题共10分，每题1分）</h2><div id="tfbox"></div></div>
+<div class="sec" id="s2"><h2>二、单项选择题（本题共20分，每小题2分）</h2><div id="mcbox"></div></div>
+<div class="sec" id="s3"><h2>三、填空题（每个空1分，共10分）</h2><div id="fbbox"></div></div>
+
+<div class="sec" id="s4">
+<h2>四、内存管理（本题共15分）</h2>
+<div class="q">
+<div class="qt">一个32位的虚拟存储系统采用两级页表结构，每个页面大小为4096字节。逻辑地址中第22到31位是第一级页表(页目录)的索引，第12位到21位是第二级页表的索引，页内偏移占第0到11位。每个页表(目录)项包含20位物理页框号和12位标志位。<br>1. 该系统的逻辑地址空间一共有多少字节？<br>2. 该系统第一级页表共有多少页目录项？第二级页表共有多少页表项？<br>3. 假设第二级页表的起始逻辑地址为0x1FC00000，请给出逻辑地址0x01234567对应的页目录项的逻辑地址。(提示：先根据自映射，找出一级页表的起始逻辑地址)<br>4. 假设第二级页表的起始逻辑地址为0x1FC00000，请给出一级页表对应的页目录项的逻辑地址。<br>5. 假设逻辑地址0x12345678对应的第二级页表的物理地址为0x00007000，请给出该逻辑地址对应的页表项的物理地址、该逻辑地址对应的页目录项中包含的物理页框号。</div>
+</div>
+<div id="s4steps"></div>
+</div>
+
+<div class="sec" id="s5">
+<h2>五、进程同步与互斥（共15分）</h2>
+<div class="q">
+<div class="qt">自动生产线上有4个机器人R1-R4。R1、R2分别生产零件X、Y；R3将X、Y装配成零件Z；R4将Z加工成成品P。共享零件暂存区最多放10个零件，每次仅一个机器人访问。R1、R2需等R3取走之前的零件才能放入新零件（暂存区中X和Y的数量都不大于1）。<br>要求：仅使用信号量实现同步互斥，定义信号量初值并给出四个机器人的完整流程。动作说明：produce开头可并发，put/get开头需互斥访问暂存区。<br>R1动作：produceX()、putX()<br>R2动作：produceY()、putY()<br>R3动作：getX()、getY()、produceZ()、putZ()<br>R4动作：getZ()、produceP()</div>
+</div>
+<div id="s5steps"></div>
+</div>
+
+<div class="sec" id="s6">
+<h2>六、进程调度（共10分）</h2>
+<div class="q">
+<div class="qt">5个进程参数如下表，分别采用FCFS、最短剩余时间优先(SRTF，抢占式)、时间片轮转(RR，时间片=1)、静态优先级(数越高越优先，非抢占)四种算法调度。要求给出各时刻运行进程ID，并计算各算法的平均等待时间（等待时间=首次调度时刻-到达时刻）。</div>
+<table>
+<tr><th>进程ID</th><th>到达时间</th><th>运行时间</th><th>优先级数</th></tr>
+<tr><td>A</td><td>0</td><td>3</td><td>4</td></tr>
+<tr><td>B</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>C</td><td>3</td><td>5</td><td>5</td></tr>
+<tr><td>D</td><td>6</td><td>2</td><td>6</td></tr>
+<tr><td>E</td><td>8</td><td>2</td><td>1</td></tr>
+</table>
+</div>
+<div id="s6steps"></div>
+</div>
+
+<div class="sec" id="s7">
+<h2>七、死锁（本题共10分）</h2>
+<div class="q">
+<div class="qt">系统有3个进程(P1,P2,P3)、4类资源(R1,R2,R3,R4)，各进程已分配资源、最大剩余需求如下表，当前可用资源：R1=2, R2=1, R3=0, R4=0。<br>(1) 若3个进程同时发出最大资源请求，画出资源分配图并用化简法检测是否存在死锁。<br>(2) 若此时进程P2请求1个R1资源，根据银行家算法判断是否可以满足该请求。</div>
+<table>
+<tr><th rowspan="2">进程</th><th colspan="4">已分配资源</th><th colspan="4">最多还需要资源</th></tr>
+<tr><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th></tr>
+<tr><td>P1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>2</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>P2</td><td>2</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>P3</td><td>0</td><td>1</td><td>2</td><td>0</td><td>2</td><td>1</td><td>0</td><td>0</td></tr>
+</table>
+</div>
+<div id="s7steps"></div>
+</div>
+
+<div class="sec" id="s8">
+<h2>八、文件系统（本题共10分）</h2>
+<div class="q">
+<div class="qt">类Unix索引文件系统，数据块大小512字节，块地址占4字节。每个inode包含10个直接索引、1个一级间接索引、1个二级间接索引、1个三级间接索引。<br>(1) 求该文件系统支持的最大文件大小（单位：KB）。<br>(2) 读取文件 /tmp/foo，根目录内容已在内存，不考虑间接索引，写出从根目录开始查找并读取文件的主要步骤。</div>
+</div>
+<div id="s8steps"></div>
+</div>
+
+</div>
+
+<script>
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+
+// ====================== 一、判断题 ======================
+var tf = [
+{q:"1. 中断方式的数据传送是在中断处理时由CPU控制完成的；而在DMA方式下，数据传送过程不经过CPU，是在DMA控制器的控制下完成的。",a:true,e:"✅ <b>正确</b>。中断方式由CPU在中断服务程序中完成数据传输；DMA方式由DMA控制器独立完成数据块传输，传输过程无需CPU干预。"},
+{q:"2. 管道机制中的数据只存在于内存中。",a:true,e:"✅ <b>正确</b>。管道本质是内核中的内存缓冲区，数据仅在内存中暂存，不持久化到磁盘。"},
+{q:"3. 在一个磁盘上设置多个分区能改善磁盘设备I/O性能。",a:false,e:"❌ <b>错误</b>。分区仅为逻辑划分，不改变物理I/O性能，主要用于管理与隔离；跨分区访问反而可能增加寻道开销。"},
+{q:"4. 分页存储管理技术，是用于虚存管理的技术，但也可以用于物理内存管理。",a:true,e:"✅ <b>正确</b>。分页既可用于纯物理内存管理（无虚拟存储），也可配合请求分页实现虚拟存储。"},
+{q:"5. 简单地说，进程是程序的执行过程。因而，进程和程序是一一对应的。",a:false,e:"❌ <b>错误</b>。一个程序可以对应多个进程（如多次启动同一程序），并非一一对应。"},
+{q:"6. 操作系统中的Spooling技术，实质是将独占设备转换为共享设备的技术。",a:true,e:"✅ <b>正确</b>。SPOOLing通过外存缓冲将打印机等独占设备虚拟化为共享设备，提升设备利用率。"},
+{q:"7. 将二进制数据转换为文本以便打印是设备无关软件层负责的。",a:false,e:"❌ <b>错误</b>。数据格式化、二进制转文本属于用户层库函数功能，不属于设备无关软件层。"},
+{q:"8. 一个物理硬盘可以分成多个逻辑硬盘分区进行面向用户文件系统的管理。",a:true,e:"✅ <b>正确</b>。物理磁盘可划分为多个逻辑分区，每个分区可独立构建文件系统。"},
+{q:"9. 设备控制器是一块能控制一台或多台外围设备与CPU并行工作的硬件。",a:true,e:"✅ <b>正确</b>。设备控制器可管理一台或多台外设，与CPU并行工作，独立控制设备操作。"},
+{q:"10. 在内存管理中，地址空间不能小于物理内存空间。",a:false,e:"❌ <b>错误</b>。虚拟地址空间可以小于物理内存空间，地址空间大小与物理内存无强制大小关系。"}
+];
+
+var tfbox = document.getElementById('tfbox');
+for(var i=0;i<tf.length;i++){
+    var d = document.createElement('div');d.className='q';
+    d.innerHTML='<div class="qt">'+tf[i].q+'</div><div class="tf"><button onclick="jtf('+i+',true,this)">✔ 对</button><button onclick="jtf('+i+',false,this)">✘ 错</button></div><div class="exp" id="tfe'+i+'">'+tf[i].e+'</div>';
+    tfbox.appendChild(d);
+}
+function jtf(i,c,btn){
+    btn.classList.add(tf[i].a===c?'right':'wrong');
+    document.getElementById('tfe'+i).classList.add('show');
+}
+
+// ====================== 二、单项选择题 ======================
+var mc = [
+{q:"1. 下列选项中，不可能在用户态发生的事件是",o:["A.系统调用","B.外部中断","C.进程切换","D.缺页"],a:2,
+e:["A 系统调用由用户态主动触发陷入内核。","B 外部中断可打断用户态程序执行。","C 正确（答案）：进程切换是内核特权操作，只能在内核态完成。","D 缺页异常发生在用户态访存时，随后陷入内核处理。"]},
+{q:"2. 在支持多线程的系统中，进程P创建的若干个线程不能共享的是",o:["A.进程P的代码段","B.进程P中打开的文件","C.进程P的全局变量","D.进程P中某线程的栈指针"],a:3,
+e:["A、B、C均为进程级资源，所有线程共享。","D 正确（答案）：每个线程拥有独立的栈与栈指针，属于线程私有资源。"]},
+{q:"3. 若一个用户进程通过read系统调用读取一个磁盘文件中的数据，下列叙述正确的是<br>Ⅰ. 若数据不在内存，进程进入阻塞状态<br>Ⅱ. read系统调用会使CPU从用户态切换到核心态<br>Ⅲ. read系统调用的参数应包含文件的名称",o:["A. 仅Ⅰ、Ⅱ","B. 仅Ⅰ、Ⅲ","C. 仅Ⅱ、Ⅲ","D. Ⅰ、Ⅱ和Ⅲ"],a:0,
+e:["Ⅰ 正确：数据不在内存时触发I/O，进程阻塞等待。","Ⅱ 正确：系统调用必须从用户态陷入内核态执行。","Ⅲ 错误：read使用文件描述符，文件名由open系统调用传入。","正确答案：A"]},
+{q:"4. 磁头当前位于第105道，向磁道序号增加方向移动。访问序列：35,45,12,68,110,180,170,195。采用SCAN电梯调度的访问序列是",o:["A.110,170,180,195,68,45,35,12","B.110,68,45,35,12,170,180,195","C.110,170,180,195,12,35,45,68","D.12,35,45,68,110,170,180,195"],a:0,
+e:["SCAN沿当前方向处理所有请求，到达端点后反向。","向增大方向：110 → 170 → 180 → 195","反向后从大到小：68 → 45 → 35 → 12","正确答案：A"]},
+{q:"5. 分配4个页框，访问序列：2,0,2,9,3,4,2,8,2,4,8,4,5。下一页为7，LRU算法应淘汰的页号是",o:["A.2","B.3","C.4","D.8"],a:0,
+e:["模拟LRU栈：访问5后页框从近到远为 [5,4,8,2]","访问7时淘汰最久未使用的2号页。","正确答案：A"]},
+{q:"6. 对记录式文件，操作系统为用户存取文件信息的最小单位是",o:["A.字符","B.数据项","C.记录","D.文件"],a:2,
+e:["记录式文件以记录为基本存取单位。","正确答案：C"]},
+{q:"7. 在多进程操作系统中，以下说法正确的是",o:["A. 一个用户进程死循环，其他进程永远不可能获得执行","B. 一个用户进程死循环，操作系统可以终止该进程执行","C. 用户进程跳转到0地址，操作系统内核会立即崩溃","D. 用户进程除以0，操作系统内核会立即崩溃"],a:1,
+e:["A 错误：时间片轮转调度会切换进程，不会永久占用CPU。","B 正确（答案）：操作系统可通过信号机制终止用户进程。","C、D 错误：用户态异常由内核捕获处理，不会导致内核崩溃。"]},
+{q:"8. 缓冲技术用于",o:["A.协调主机和设备交换信息的速度差异","B.提供主、辅存接口","C.减少设备故障","D.扩充相对地址空间"],a:0,
+e:["缓冲的核心作用是匹配CPU与外设的速度差异，平滑数据流。","正确答案：A"]},
+{q:"9. 实时操作系统追求的目标是",o:["A.高吞吐率","B.充分利用内存","C.快速响应","D.减少系统开销"],a:2,
+e:["实时系统以时间约束为核心，追求及时响应、满足截止时间。","正确答案：C"]},
+{q:"10. 用户在使用I/O设备时，通常采用",o:["A.物理设备名","B.逻辑设备名","C.虚拟设备名","D.设备牌号"],a:1,
+e:["用户通过逻辑设备名访问设备，由操作系统映射到具体物理设备。","正确答案：B"]}
+];
+
+var mcbox = document.getElementById('mcbox');
+for(var k=0;k<mc.length;k++){
+    var dm = document.createElement('div');dm.className='q';
+    var opts='';
+    for(var j=0;j<mc[k].o.length;j++){opts+='<button class="opt" onclick="jmc('+k+','+j+',this)">'+mc[k].o[j]+'</button>';}
+    dm.innerHTML='<div class="qt">'+mc[k].q+'</div>'+opts+'<div class="exp" id="mce'+k+'"></div>';
+    mcbox.appendChild(dm);
+}
+function jmc(i,j,btn){
+    var m=mc[i];var correct=(j===m.a);
+    btn.classList.add(correct?'right':'wrong');
+    if(!correct&&m.a>=0){btn.parentElement.querySelectorAll('.opt')[m.a].classList.add('right');}
+    var e=document.getElementById('mce'+i);
+    var html='';for(var x=0;x<m.e.length;x++){html+='• '+m.e[x]+'<br>';}
+    if(m.a>=0){html+='<b>正确答案：'+'ABCD'[m.a]+'</b>';}
+    e.innerHTML=html;e.classList.add('show');
+}
+
+// ====================== 三、填空题 ======================
+var fb = [
+{q:"1. 静态变量通常被装载到_________段中，局部变量通常被装载到_________段。",ans:["数据","栈"],e:"<b>答案：数据（data/bss）、栈</b>。静态变量存储在数据段，局部自动变量存储在栈段。"},
+{q:"2. 操作系统中虚拟内存机制有效的基础是程序访存的_________原理。",ans:["局部性"],e:"<b>答案：局部性</b>。时间局部性与空间局部性是虚拟存储高效运行的核心前提。"},
+{q:"3. 页面走向：5,4,3,2,4,5,4,1,5,2,5,4,5,2,1，3个物理页初始为空。OPT算法缺页____次，FIFO算法缺页____次。",ans:["7","11"],e:"<b>答案：7、11</b>。OPT最优置换共7次缺页；FIFO先进先出共11次缺页。"},
+{q:"4. 银行家算法是_________死锁的方法。",ans:["避免"],e:"<b>答案：避免</b>。银行家算法是经典的死锁避免算法，动态检查系统安全性。"},
+{q:"5. 磁盘传送到缓冲区50ms，缓冲区到用户区20ms，CPU处理60ms。单缓冲区，吞吐能力约_______块/s。",ans:["12.5"],e:"<b>答案：12.5</b>。单缓冲稳态每块耗时 max(50,60)+20 = 80ms，1000/80 = 12.5块/秒。"},
+{q:"6. 按数据组织分类，设备分为两类：_________和_________。",ans:["块设备","字符设备"],e:"<b>答案：块设备、字符设备</b>。块设备以块为单位随机访问，字符设备以字符为单位顺序访问。"},
+{q:"7. 文件系统中，\".\" 通常表示_________目录。",ans:["当前","工作"],e:"<b>答案：当前（工作）</b>。\".\"代表当前目录，\"..\"代表父目录。"}
+];
+
+var fbbox = document.getElementById('fbbox');
+for(var f=0;f<fb.length;f++){
+    var df = document.createElement('div');df.className='q';
+    df.innerHTML='<div class="qt">'+fb[f].q+'</div><div class="blank"><input id="fbi'+f+'" placeholder="多个答案用逗号分隔"><button onclick="jfb('+f+')">检查</button><span class="bres" id="fbr'+f+'"></span></div><div class="exp" id="fbe'+f+'">'+fb[f].e+'</div>';
+    fbbox.appendChild(df);
+}
+function jfb(i){
+    var v=document.getElementById('fbi'+i).value.trim().toLowerCase();
+    var ok=false;
+    for(var a=0;a<fb[i].ans.length;a++){
+        if(v.indexOf(fb[i].ans[a].toLowerCase())>=0){ok=true;break;}
+    }
+    var r=document.getElementById('fbr'+i);
+    r.innerHTML=ok?'<span class="ok">✔ 正确!</span>':'<span class="no">✘ 参考答案：'+fb[i].ans.join('、')+'</span>';
+    document.getElementById('fbe'+i).classList.add('show');
+}
+
+// ====================== 通用大题分步渲染函数 ======================
+function buildSteps(containerId,steps){
+    var box=document.getElementById(containerId);
+    for(var i=0;i<steps.length;i++){
+        (function(s){
+            var btn=document.createElement('button');btn.className='step';btn.textContent='👉 点击揭晓 '+s.t;
+            var c=document.createElement('div');c.className='stepc';c.innerHTML=s.c;
+            btn.onclick=function(){
+                c.classList.toggle('show');
+                btn.textContent=c.classList.contains('show')?'🔽 收起 '+s.t:'👉 点击揭晓 '+s.t;
+            };
+            box.appendChild(btn);box.appendChild(c);
+        })(steps[i]);
+    }
+}
+
+// ====================== 四、内存管理 分步解析 ======================
+buildSteps('s4steps',[
+{t:"小题1：逻辑地址空间总大小",c:"32位逻辑地址空间总大小 = 2³² 字节 = <b>4294967296 字节（4GB）</b>"},
+{t:"小题2：两级页表项数量",c:"一级索引占10位（第22~31位）→ 一级页目录项数 = 2¹⁰ = <b>1024 项</b><br>二级索引占10位（第12~21位）→ 每个二级页表1024项<br>二级页表总项数 = 1024 × 1024 = <b>1048576 项</b>"},
+{t:"小题3：求0x01234567对应页目录项逻辑地址",c:"1. 自映射推导：二级页表起始0x1FC00000，其高10位PDX=127，即自映射索引为127<br>2. 一级页表（页目录）起始逻辑地址 = 0x1FC00000 + 127×4KB = <b>0x1FC7F000</b><br>3. 0x01234567的一级索引PDX = 0x01234567 >> 22 = 4<br>4. 页目录项逻辑地址 = 0x1FC7F000 + 4×4 = <b>0x1FC7F010</b>"},
+{t:"小题4：一级页表对应的页目录项逻辑地址",c:"一级页表自身对应的目录项即自映射项，索引为127<br>地址 = 0x1FC7F000 + 127×4 = <b>0x1FC7F1FC</b>"},
+{t:"小题5：页表项物理地址与页框号",c:"1. 0x12345678的二级索引PTX = (0x12345678 >> 12) & 0x3FF = 0x345<br>2. 二级页表物理基址0x00007000<br>3. 页表项物理地址 = 0x7000 + 0x345×4 = <b>0x7D14</b><br>4. 二级页表物理页框号 = 0x00007000 >> 12 = <b>0x7</b>"}
+]);
+
+// ====================== 五、进程同步 分步解析 ======================
+buildSteps('s5steps',[
+{t:"信号量定义与初值",c:'<div class="code">semaphore mutex = 1;     // 暂存区操作互斥\nsemaphore empty = 10;    // 暂存区总空位\nsemaphore empty_x = 1;   // X零件空位（最多1个）\nsemaphore full_x = 0;    // X零件满位\nsemaphore empty_y = 1;   // Y零件空位（最多1个）\nsemaphore full_y = 0;    // Y零件满位\nsemaphore full_z = 0;    // Z零件满位</div>'},
+{t:"R1 生产X零件流程",c:'<div class="code">R1() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;produceX();\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty_x);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;putX();\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(full_x);\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"R2 生产Y零件流程",c:'<div class="code">R2() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;produceY();\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty_y);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;putY();\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(full_y);\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"R3 装配Z零件流程",c:'<div class="code">R3() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(full_x);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex); getX(); V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(empty_x); V(empty);\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(full_y);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex); getY(); V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(empty_y); V(empty);\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;produceZ();\n\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex); putZ(); V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(full_z);\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"R4 加工成品P流程",c:'<div class="code">R4() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(full_z);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex); getZ(); V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(empty);\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;produceP();\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"设计说明",c:"✅ mutex保证暂存区操作互斥<br>✅ empty控制总容量不超过10<br>✅ empty_x/empty_y保证X、Y各最多1个，需取走才能放入新零件<br>✅ full_x/full_y/full_z实现生产者-消费者同步<br>✅ 仅使用信号量，无额外共享变量，符合题目要求"}
+]);
+
+// ====================== 六、进程调度 分步解析 ======================
+buildSteps('s6steps',[
+{t:"FCFS 先来先服务",c:"执行顺序：A(0-3) → B(3-4) → C(4-9) → D(9-11) → E(11-13)<br>首次调度时间：A=0, B=3, C=4, D=9, E=11<br>等待时间：0, 2, 1, 3, 3<br><b>平均等待时间 = 9/5 = 1.8</b>"},
+{t:"SRTF 最短剩余时间优先（抢占式）",c:"时序：0-1 A；1-2 B；2-4 A；4-6 C；6-8 D；8-10 E；10-13 C<br>首次调度时间：A=0, B=1, C=4, D=6, E=8<br>等待时间：0, 0, 1, 0, 0<br><b>平均等待时间 = 1/5 = 0.2</b>"},
+{t:"RR 时间片轮转（时间片=1）",c:"时序：0-A,1-B,2-A,3-C,4-A,5-C,6-D,7-C,8-D,9-C,10-E,11-C,12-E<br>首次调度时间：A=0, B=1, C=3, D=6, E=10<br>等待时间：0, 0, 0, 0, 2<br><b>平均等待时间 = 2/5 = 0.4</b>"},
+{t:"静态优先级（数越高越优先，非抢占）",c:"执行顺序：A(0-3) → C(3-8) → D(8-10) → B(10-11) → E(11-13)<br>首次调度时间：A=0, B=10, C=3, D=8, E=11<br>等待时间：0, 9, 0, 2, 3<br><b>平均等待时间 = 14/5 = 2.8</b>"}
+]);
+
+// ====================== 七、死锁 分步解析 ======================
+buildSteps('s7steps',[
+{t:"(1) 资源分配图化简与死锁检测",c:"当前可用资源：(2,1,0,0)<br>各进程剩余需求Need：<br>P1: (2,0,0,1) &nbsp; P2: (1,0,1,0) &nbsp; P3: (2,1,0,0)<br><br>第一轮：P3的Need ≤ 可用，可执行。P3完成后释放资源，可用变为(2,2,2,0)<br>第二轮：P2的Need ≤ 可用，可执行。P2完成后释放，可用变为(4,2,2,1)<br>第三轮：P1的Need ≤ 可用，可执行。<br><b>结论：资源分配图可完全化简，不存在死锁。化简顺序：P3 → P2 → P1</b>"},
+{t:"(2) P2请求1个R1：银行家算法判断",c:"P2请求 Request = (1,0,0,0)<br>1. 合法性校验：Request ≤ Need 且 Request ≤ 可用，请求合法<br>2. 试探分配后：<br>&nbsp;&nbsp;可用 = (1,1,0,0)<br>&nbsp;&nbsp;P2已分配=(3,0,0,1)，Need=(0,0,1,0)<br>3. 安全性检查：所有进程的Need均无法被可用资源满足，系统进入不安全状态。<br><b>结论：不能满足P2的请求，否则系统不安全。</b>"}
+]);
+
+// ====================== 八、文件系统 分步解析 ======================
+buildSteps('s8steps',[
+{t:"(1) 计算最大文件大小",c:"块大小512B，块地址4B → 每块存 512/4 = 128 个地址<br><br>• 10个直接块：10 × 512B = 5120B = <b>5 KB</b><br>• 1个一级间接：128 × 512B = 65536B = <b>64 KB</b><br>• 1个二级间接：128×128 × 512B = 8388608B = <b>8192 KB</b><br>• 1个三级间接：128³ × 512B = 1073741824B = <b>1048576 KB</b><br><br><b>最大文件总大小 = 5 + 64 + 8192 + 1048576 = 1056837 KB</b>"},
+{t:"(2) 读取 /tmp/foo 的步骤",c:"前提：根目录内容已在内存中<br>1. 读取根目录内容，查找目录项 \"tmp\"，获得tmp目录的inode号<br>2. 根据inode号读取tmp目录的inode，得到tmp目录的数据块地址<br>3. 读取tmp目录的数据块，查找目录项 \"foo\"，获得foo文件的inode号<br>4. 读取foo文件的inode，得到文件数据块的物理地址<br>5. 根据数据块地址读取文件数据，完成文件读取"}
+]);
+
+</script>
+</body>
+</html>

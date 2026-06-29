@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Tips 模型闯关训练：看到题干就知道切哪个模型</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --ink: #17212d;
+      --muted: #617084;
+      --paper: #ffffff;
+      --line: #d9e4ee;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6fb 0, rgba(246,248,251,0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+      letter-spacing: 0;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 60px; }
+    .hero, .card, .gate, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 36px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f9fbfc;
+      color: var(--blue);
+      padding: 5px 10px;
+      font-size: 13px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    .pill.hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .pill.good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .pill.warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .pill.purple { color: var(--purple); border-color: #c9bee8; background: #f7f4ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 4px; }
+    .story {
+      border-left: 5px solid var(--blue);
+      background: #eef7fc;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .answer {
+      border-left: 5px solid var(--green);
+      background: #f2fbf6;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .warnbox {
+      border-left: 5px solid var(--yellow);
+      background: #fff9e6;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .danger {
+      border-left: 5px solid var(--red);
+      background: #fff5f4;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 12px; background: #fff; }
+    th, td { border: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
+    th { color: var(--blue); background: #eef7fc; }
+    .figure {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .figure svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .caption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      resize: vertical;
+      border: 1px solid #cbd8e6;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 10px;
+      font: inherit;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 780; }
+    .signal {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .signal span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .signal span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .checklist div {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px;
+    }
+    .checklist strong { display: block; color: var(--green); margin-bottom: 4px; }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      h1 { font-size: 30px; }
+      .grid, .grid.three, .signal, .checklist { grid-template-columns: 1fr; }
+      .figure svg { min-width: 660px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="strip">
+        <span class="pill">AI Tips</span>
+        <span class="pill good">模型分流</span>
+        <span class="pill warn">应用训练</span>
+        <span class="pill purple">不占 Day 编号</span>
+      </div>
+      <h1>AI 模型闯关训练：看到题干就知道切哪个模型</h1>
+      <p class="muted">这页不是新增一天任务，而是 AI 主线学到模型时的“考场反应训练器”。如果你看完 <a href="./day1_ai_se_visual.html">AI Day1</a> 仍然觉得名词散，或读到 <a href="./day3_ai_formula_model_closure.html">AI Day3 公式模型闭环</a> 后不知道怎么用，就来这里闯关。</p>
+      <div class="toc">
+        <a href="#router">0. 分流器</a>
+        <a href="#nn">1. 神经网络</a>
+        <a href="#cnn">2. CNN</a>
+        <a href="#rnn">3. RNN/LSTM</a>
+        <a href="#transformer">4. Transformer</a>
+        <a href="#mixed">5. 混合题</a>
+      </div>
+    </section>
+
+    <section class="card" id="router">
+      <h2>0. 先装一个“模型分流器”：不要见到新词就慌</h2>
+      <p>AI 模型题最怕的是你把模型当成单词表。考试真正想看的是：给你一个场景，你能不能把数据形状、模型结构、训练目标和优缺点串起来。</p>
+      <div class="story">
+        <strong>高分答题骨架：</strong>先说“数据是什么形状”，再说“模型为什么适合这种数据”，再补“关键结构/公式”，最后写“优点、局限或常见改进”。
+      </div>
+      <div class="figure">
+        <svg viewBox="0 0 980 520" role="img" aria-label="AI 模型题分流器">
+          <defs>
+            <marker id="arrowGate" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/>
+            </marker>
+          </defs>
+          <rect width="980" height="520" fill="#fff"/>
+          <g font-family="sans-serif" fill="#17212d">
+            <rect x="360" y="28" width="260" height="64" rx="10" fill="#eef7fc" stroke="#9dc7de" stroke-width="2"/>
+            <text x="490" y="56" text-anchor="middle" font-size="18" font-weight="700">题干先问：数据长什么样？</text>
+            <text x="490" y="80" text-anchor="middle" font-size="14" fill="#617084">表格、图像、序列、长文本、状态奖励？</text>
+
+            <line x1="490" y1="94" x2="160" y2="156" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowGate)"/>
+            <line x1="490" y1="94" x2="330" y2="156" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowGate)"/>
+            <line x1="490" y1="94" x2="490" y2="156" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowGate)"/>
+            <line x1="490" y1="94" x2="650" y2="156" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowGate)"/>
+            <line x1="490" y1="94" x2="820" y2="156" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowGate)"/>
+
+            <rect x="52" y="160" width="210" height="92" rx="10" fill="#f9fbfc" stroke="#d9e4ee"/>
+            <text x="157" y="190" text-anchor="middle" font-size="17" font-weight="700">表格/规则明显</text>
+            <text x="157" y="216" text-anchor="middle" font-size="14">决策树/SVM/线性模型</text>
+            <text x="157" y="238" text-anchor="middle" font-size="13" fill="#617084">熵、增益、间隔、损失</text>
+
+            <rect x="284" y="160" width="210" height="92" rx="10" fill="#fff8ed" stroke="#e2a15d"/>
+            <text x="389" y="190" text-anchor="middle" font-size="17" font-weight="700">复杂非线性</text>
+            <text x="389" y="216" text-anchor="middle" font-size="14">神经网络/BP</text>
+            <text x="389" y="238" text-anchor="middle" font-size="13" fill="#617084">激活、梯度、链式法则</text>
+
+            <rect x="516" y="160" width="210" height="92" rx="10" fill="#f0fbf6" stroke="#9bd5b8"/>
+            <text x="621" y="190" text-anchor="middle" font-size="17" font-weight="700">图像/局部结构</text>
+            <text x="621" y="216" text-anchor="middle" font-size="14">CNN</text>
+            <text x="621" y="238" text-anchor="middle" font-size="13" fill="#617084">卷积核、池化、参数共享</text>
+
+            <rect x="748" y="160" width="190" height="92" rx="10" fill="#f7f4ff" stroke="#c9bee8"/>
+            <text x="843" y="190" text-anchor="middle" font-size="17" font-weight="700">序列/记忆</text>
+            <text x="843" y="216" text-anchor="middle" font-size="14">RNN/LSTM</text>
+            <text x="843" y="238" text-anchor="middle" font-size="13" fill="#617084">隐藏状态、门控</text>
+
+            <rect x="340" y="318" width="300" height="92" rx="10" fill="#eef7fc" stroke="#9dc7de"/>
+            <text x="490" y="348" text-anchor="middle" font-size="17" font-weight="700">长距离依赖/全局关系/并行</text>
+            <text x="490" y="374" text-anchor="middle" font-size="14">Transformer / Attention</text>
+            <text x="490" y="396" text-anchor="middle" font-size="13" fill="#617084">Q、K、V、softmax、BERT/GPT/ViT</text>
+
+            <rect x="120" y="444" width="740" height="42" rx="9" fill="#ffffff" stroke="#d9e4ee"/>
+            <text x="490" y="471" text-anchor="middle" font-size="16" font-weight="700">一句话记忆：表格看规则/间隔，图像看局部，序列看记忆，长距离看注意力。</text>
+          </g>
+        </svg>
+        <div class="caption">先分数据形状，再选模型。这个顺序比背模型名稳定得多。</div>
+      </div>
+      <div class="grid three">
+        <div class="box"><strong>题干信号</strong>“图片、边缘、纹理、局部窗口”优先切 CNN。</div>
+        <div class="box"><strong>题干信号</strong>“句子、时间序列、隐藏状态、长期依赖”优先切 RNN/LSTM。</div>
+        <div class="box"><strong>题干信号</strong>“Q/K/V、self-attention、并行、长距离依赖”优先切 Transformer。</div>
+      </div>
+      <div class="warnbox">
+        <strong>不要这样答：</strong>“CNN 是卷积神经网络，Transformer 是一种模型。” 这只是翻译名词，几乎没有分。你要写它为什么出现、解决什么数据问题、结构关键词是什么。
+      </div>
+    </section>
+
+    <section class="gate" id="nn">
+      <h2>关卡 1：神经网络不是玄学，是“多层可调打分器”</h2>
+      <p>你看到神经网络、BP、激活函数时，不要先想大模型。先想最小结构：输入特征乘权重，加偏置，过激活函数，得到输出；损失函数批改；反向传播把错误分给各层参数。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 380" role="img" aria-label="神经网络前向和反向传播">
+          <defs>
+            <marker id="arrowNn" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+            </marker>
+            <marker id="arrowBack" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#a23b32"/>
+            </marker>
+          </defs>
+          <rect width="980" height="380" fill="#fff"/>
+          <g font-family="sans-serif" fill="#17212d">
+            <text x="50" y="44" font-size="20" font-weight="700" fill="#1f5f8b">前向传播：从输入算预测</text>
+            <circle cx="120" cy="115" r="25" fill="#eef7fc" stroke="#9dc7de"/><text x="120" y="121" text-anchor="middle">x1</text>
+            <circle cx="120" cy="190" r="25" fill="#eef7fc" stroke="#9dc7de"/><text x="120" y="196" text-anchor="middle">x2</text>
+            <circle cx="120" cy="265" r="25" fill="#eef7fc" stroke="#9dc7de"/><text x="120" y="271" text-anchor="middle">x3</text>
+            <circle cx="340" cy="150" r="38" fill="#fff8ed" stroke="#e2a15d"/><text x="340" y="147" text-anchor="middle" font-weight="700">z</text><text x="340" y="169" text-anchor="middle" font-size="13">加权求和</text>
+            <circle cx="340" cy="240" r="38" fill="#fff8ed" stroke="#e2a15d"/><text x="340" y="237" text-anchor="middle" font-weight="700">g(z)</text><text x="340" y="259" text-anchor="middle" font-size="13">激活</text>
+            <rect x="560" y="155" width="150" height="78" rx="9" fill="#f0fbf6" stroke="#9bd5b8"/>
+            <text x="635" y="186" text-anchor="middle" font-size="16" font-weight="700">预测 y_hat</text>
+            <text x="635" y="211" text-anchor="middle" font-size="13">类别/概率/数值</text>
+            <rect x="792" y="155" width="136" height="78" rx="9" fill="#fff5f4" stroke="#e5b3ad"/>
+            <text x="860" y="186" text-anchor="middle" font-size="16" font-weight="700">损失 L</text>
+            <text x="860" y="211" text-anchor="middle" font-size="13">和真实 y 比较</text>
+            <line x1="145" y1="115" x2="300" y2="150" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowNn)"/>
+            <line x1="145" y1="190" x2="300" y2="190" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowNn)"/>
+            <line x1="145" y1="265" x2="300" y2="240" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowNn)"/>
+            <line x1="380" y1="195" x2="556" y2="195" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowNn)"/>
+            <line x1="710" y1="195" x2="788" y2="195" stroke="#2563eb" stroke-width="3" marker-end="url(#arrowNn)"/>
+            <path d="M855 238 C810 322, 410 330, 210 292" fill="none" stroke="#a23b32" stroke-width="3" marker-end="url(#arrowBack)"/>
+            <text x="520" y="338" text-anchor="middle" font-size="16" fill="#a23b32" font-weight="700">反向传播：用链式法则把损失的责任分回各层参数</text>
+          </g>
+        </svg>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">z</span><span class="op">=</span><span class="mb">w</span><sup>⊤</sup><span class="mb">x</span><span class="op">+</span><span class="mi">b</span>
+          <span class="op">,</span>
+          <span class="mi">a</span><span class="op">=</span><span class="mi">g</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span>
+        </div>
+        <div class="math-note">读法：先把输入特征加权求和成打分 z，再用激活函数 g 变成下一层可用的输出 a。</div>
+      </div>
+      <div class="signal"><span>题眼</span><span>“激活函数为什么必要？” 答：引入非线性；否则多层线性可合并成一层线性。</span></div>
+      <div class="signal"><span>题眼</span><span>“BP 如何训练？” 答：前向算预测和损失，反向用链式法则求梯度，再更新参数。</span></div>
+      <div class="drill">
+        <h3>练习：为什么需要激活函数？</h3>
+        <textarea data-key="ai-gate-nn" placeholder="先写：如果没有激活会怎样；再写：ReLU/sigmoid 这种非线性带来什么。"></textarea>
+        <details><summary>看丰满解析</summary><div class="answer">
+          <p>如果每一层都只是线性变换，那么多层线性变换的复合仍然等价于一个线性变换，网络层数增加也不能表达复杂的非线性边界。激活函数把非线性引入网络，例如 ReLU 将负值压为 0、正值保留，使模型能拟合更复杂的函数关系。考试答题时要写出“没有激活的后果”和“激活带来的表达能力提升”，只写 ReLU 公式不够。</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="gate" id="cnn">
+      <h2>关卡 2：CNN 的关键词不是“图像”，而是“局部结构 + 参数共享”</h2>
+      <p>图像不是任意排列的一串数。相邻像素会组成边缘、纹理、角点。CNN 的卷积核就是一个可学习的小窗口，滑过整张图，专门找这些局部模式。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 420" role="img" aria-label="CNN 局部结构参数共享">
+          <defs>
+            <marker id="arrowCnn" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#24724f"/>
+            </marker>
+          </defs>
+          <rect width="980" height="420" fill="#fff"/>
+          <g font-family="sans-serif" fill="#17212d">
+            <text x="48" y="42" font-size="20" font-weight="700" fill="#24724f">CNN：同一个小窗口，在不同位置找同一种局部特征</text>
+            <g transform="translate(66,88)">
+              <rect width="230" height="230" fill="#f7fbff" stroke="#9dc7de" stroke-width="2"/>
+              <g stroke="#c8d8e8">
+                <path d="M46 0 V230 M92 0 V230 M138 0 V230 M184 0 V230 M0 46 H230 M0 92 H230 M0 138 H230 M0 184 H230"/>
+              </g>
+              <rect x="46" y="46" width="92" height="92" fill="#fff1cf" stroke="#c05a12" stroke-width="3"/>
+              <text x="115" y="262" text-anchor="middle" font-size="15">输入图片网格</text>
+            </g>
+            <line x1="316" y1="204" x2="420" y2="204" stroke="#24724f" stroke-width="3" marker-end="url(#arrowCnn)"/>
+            <rect x="440" y="122" width="158" height="164" rx="10" fill="#fff8ed" stroke="#e2a15d"/>
+            <text x="519" y="158" text-anchor="middle" font-size="18" font-weight="700">卷积核</text>
+            <text x="519" y="190" text-anchor="middle" font-size="14">一组共享参数</text>
+            <text x="519" y="216" text-anchor="middle" font-size="14">到处滑动</text>
+            <text x="519" y="242" text-anchor="middle" font-size="14">提边缘/纹理</text>
+            <line x1="612" y1="204" x2="710" y2="204" stroke="#24724f" stroke-width="3" marker-end="url(#arrowCnn)"/>
+            <g transform="translate(734,88)">
+              <rect width="190" height="190" fill="#f0fbf6" stroke="#9bd5b8" stroke-width="2"/>
+              <g stroke="#b7ddc9">
+                <path d="M48 0 V190 M96 0 V190 M144 0 V190 M0 48 H190 M0 96 H190 M0 144 H190"/>
+              </g>
+              <rect x="48" y="48" width="96" height="96" fill="#dbf5e8" stroke="#24724f" stroke-width="3"/>
+              <text x="95" y="224" text-anchor="middle" font-size="15">特征图</text>
+            </g>
+            <rect x="190" y="342" width="600" height="44" rx="8" fill="#ffffff" stroke="#d9e4ee"/>
+            <text x="490" y="370" text-anchor="middle" font-size="16" font-weight="700">卷积层提局部模式；池化保留强响应并降维；ReLU 引入非线性。</text>
+          </g>
+        </svg>
+      </div>
+      <div class="checklist">
+        <div><strong>卷积层</strong>提取边缘、纹理、角点等局部特征。</div>
+        <div><strong>参数共享</strong>同一个卷积核扫整张图，减少参数。</div>
+        <div><strong>池化</strong>保留局部强响应，降低特征图尺寸。</div>
+        <div><strong>ReLU</strong>引入非线性，让网络能学复杂边界。</div>
+      </div>
+      <div class="drill">
+        <h3>练习：CNN 为什么比全连接更适合图像？</h3>
+        <textarea data-key="ai-gate-cnn" placeholder="按：图像特点 -> 卷积核 -> 参数共享 -> 池化/激活 写。"></textarea>
+        <details><summary>看丰满解析</summary><div class="answer">
+          <p>图像具有局部空间结构，相邻像素会形成边缘、纹理等局部模式。如果直接拉平成向量做全连接，空间邻近关系不明显，参数量也很大。CNN 用卷积核在局部窗口滑动，能利用局部结构；同一个卷积核在不同位置共享参数，减少参数量并能在整张图上检测同类特征。池化层进一步降低特征图尺寸、保留显著响应，ReLU 等激活函数引入非线性，使网络能组合出更复杂的图像模式。</p>
+          <p><strong>常见扣分：</strong>只写“CNN 用于图像分类”不够。必须说明“为什么”：局部连接、参数共享、池化、非线性。</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="gate" id="rnn">
+      <h2>关卡 3：RNN/LSTM 不是“另一种网络”，而是为序列保留记忆</h2>
+      <p>句子和时间序列的重点是顺序。“我不喜欢”里的“不”会影响后面的情感判断。RNN 用隐藏状态带着前文往后读；LSTM 用门控让重要信息更容易传得远。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 420" role="img" aria-label="RNN LSTM 序列记忆">
+          <defs>
+            <marker id="arrowRnn" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#66519a"/>
+            </marker>
+          </defs>
+          <rect width="980" height="420" fill="#fff"/>
+          <g font-family="sans-serif" fill="#17212d">
+            <text x="52" y="42" font-size="20" font-weight="700" fill="#66519a">RNN：一步步读；LSTM：用门控保护重要记忆</text>
+            <g transform="translate(70,94)">
+              <rect width="120" height="70" rx="8" fill="#eef7fc" stroke="#9dc7de"/>
+              <text x="60" y="32" text-anchor="middle" font-weight="700">x1</text>
+              <text x="60" y="54" text-anchor="middle" font-size="13">我</text>
+            </g>
+            <g transform="translate(260,94)">
+              <rect width="120" height="70" rx="8" fill="#eef7fc" stroke="#9dc7de"/>
+              <text x="60" y="32" text-anchor="middle" font-weight="700">x2</text>
+              <text x="60" y="54" text-anchor="middle" font-size="13">不</text>
+            </g>
+            <g transform="translate(450,94)">
+              <rect width="120" height="70" rx="8" fill="#eef7fc" stroke="#9dc7de"/>
+              <text x="60" y="32" text-anchor="middle" font-weight="700">x3</text>
+              <text x="60" y="54" text-anchor="middle" font-size="13">喜欢</text>
+            </g>
+            <g transform="translate(640,94)">
+              <rect width="120" height="70" rx="8" fill="#eef7fc" stroke="#9dc7de"/>
+              <text x="60" y="32" text-anchor="middle" font-weight="700">x4</text>
+              <text x="60" y="54" text-anchor="middle" font-size="13">电影</text>
+            </g>
+            <line x1="192" y1="129" x2="258" y2="129" stroke="#66519a" stroke-width="3" marker-end="url(#arrowRnn)"/>
+            <line x1="382" y1="129" x2="448" y2="129" stroke="#66519a" stroke-width="3" marker-end="url(#arrowRnn)"/>
+            <line x1="572" y1="129" x2="638" y2="129" stroke="#66519a" stroke-width="3" marker-end="url(#arrowRnn)"/>
+            <text x="226" y="113" font-size="14" fill="#617084">h1</text>
+            <text x="416" y="113" font-size="14" fill="#617084">h2</text>
+            <text x="606" y="113" font-size="14" fill="#617084">h3</text>
+            <rect x="190" y="238" width="600" height="92" rx="10" fill="#f7f4ff" stroke="#c9bee8"/>
+            <text x="490" y="268" text-anchor="middle" font-size="18" font-weight="700">LSTM 的门控记忆</text>
+            <text x="490" y="296" text-anchor="middle" font-size="15">遗忘门：旧信息留多少；输入门：新信息写多少；输出门：当前输出多少</text>
+            <rect x="206" y="356" width="568" height="36" rx="8" fill="#ffffff" stroke="#d9e4ee"/>
+            <text x="490" y="380" text-anchor="middle" font-size="16" font-weight="700">长期依赖题 = 普通 RNN 梯度路径长，LSTM 用门控缓解。</text>
+          </g>
+        </svg>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">h</span><sub><span class="mi">t</span></sub>
+          <span class="op">=</span>
+          <span class="func">activation</span><span class="op">(</span>
+          <span class="mb">W</span><sub><span class="mi">x</span></sub><span class="mi">x</span><sub><span class="mi">t</span></sub>
+          <span class="op">+</span>
+          <span class="mb">W</span><sub><span class="mi">h</span></sub><span class="mi">h</span><sub><span class="mi">t</span><span class="op">−</span>1</sub>
+          <span class="op">+</span><span class="mi">b</span><span class="op">)</span>
+        </div>
+        <div class="math-note">读法：当前记忆 h_t 同时看当前输入 x_t 和上一时刻记忆 h_{t−1}。</div>
+      </div>
+      <div class="drill">
+        <h3>练习：为什么 LSTM 能缓解长期依赖？</h3>
+        <textarea data-key="ai-gate-rnn" placeholder="写：普通 RNN 的问题 -> LSTM 的记忆单元和三个门 -> 结果。"></textarea>
+        <details><summary>看丰满解析</summary><div class="answer">
+          <p>普通 RNN 在长序列中反向传播需要跨很多时间步，梯度反复相乘后容易消失或爆炸，因此早期重要信息难以影响后面输出。LSTM 引入记忆单元和门控机制：遗忘门决定旧信息保留多少，输入门决定新信息写入多少，输出门决定当前输出多少。这样重要信息可以沿较长路径更稳定地传递，所以能缓解长期依赖困难。</p>
+          <p><strong>辨析：</strong>CNN 题眼是局部窗口和卷积核；Transformer 题眼是 Q/K/V 和全局注意力；这里题干若说隐藏状态、时间步、长期依赖，优先切 RNN/LSTM。</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="gate" id="transformer">
+      <h2>关卡 4：Transformer 的核心不是“高级”，而是每个 token 能直接看全局</h2>
+      <p>RNN 像排队传话，远处信息要一步步传过来。Transformer 的 self-attention 让每个 token 直接和所有 token 算相关性，所以更容易并行，也更擅长长距离依赖。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 440" role="img" aria-label="Transformer QKV attention">
+          <defs>
+            <marker id="arrowTf" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/>
+            </marker>
+          </defs>
+          <rect width="980" height="440" fill="#fff"/>
+          <g font-family="sans-serif" fill="#17212d">
+            <text x="50" y="42" font-size="20" font-weight="700" fill="#1f5f8b">Attention：QK 算“看谁多少”，V 是真正被汇总的内容</text>
+            <g transform="translate(72,92)">
+              <rect width="130" height="58" rx="8" fill="#eef7fc" stroke="#9dc7de"/><text x="65" y="36" text-anchor="middle" font-weight="700">token A</text>
+              <rect y="86" width="130" height="58" rx="8" fill="#eef7fc" stroke="#9dc7de"/><text x="65" y="122" text-anchor="middle" font-weight="700">token B</text>
+              <rect y="172" width="130" height="58" rx="8" fill="#eef7fc" stroke="#9dc7de"/><text x="65" y="208" text-anchor="middle" font-weight="700">token C</text>
+            </g>
+            <rect x="300" y="82" width="168" height="74" rx="8" fill="#fff8ed" stroke="#e2a15d"/>
+            <text x="384" y="112" text-anchor="middle" font-size="17" font-weight="700">Q 查询</text>
+            <text x="384" y="137" text-anchor="middle" font-size="13">我想找什么？</text>
+            <rect x="300" y="184" width="168" height="74" rx="8" fill="#f0fbf6" stroke="#9bd5b8"/>
+            <text x="384" y="214" text-anchor="middle" font-size="17" font-weight="700">K 索引</text>
+            <text x="384" y="239" text-anchor="middle" font-size="13">我能被怎样匹配？</text>
+            <rect x="300" y="286" width="168" height="74" rx="8" fill="#f7f4ff" stroke="#c9bee8"/>
+            <text x="384" y="316" text-anchor="middle" font-size="17" font-weight="700">V 内容</text>
+            <text x="384" y="341" text-anchor="middle" font-size="13">真正拿来汇总</text>
+            <line x1="204" y1="121" x2="294" y2="119" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowTf)"/>
+            <line x1="204" y1="207" x2="294" y2="221" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowTf)"/>
+            <line x1="204" y1="293" x2="294" y2="323" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowTf)"/>
+            <line x1="474" y1="119" x2="620" y2="190" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowTf)"/>
+            <line x1="474" y1="221" x2="620" y2="221" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowTf)"/>
+            <line x1="474" y1="323" x2="620" y2="252" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrowTf)"/>
+            <rect x="636" y="158" width="282" height="126" rx="10" fill="#ffffff" stroke="#d9e4ee"/>
+            <text x="777" y="190" text-anchor="middle" font-size="18" font-weight="700">softmax 权重</text>
+            <text x="777" y="219" text-anchor="middle" font-size="14">Q 和 K 点积得到相关性</text>
+            <text x="777" y="245" text-anchor="middle" font-size="14">权重再乘 V，得到汇总表示</text>
+          </g>
+        </svg>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">Attention</span><span class="op">(</span><span class="mb">Q</span><span class="op">,</span><span class="mb">K</span><span class="op">,</span><span class="mb">V</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="func">softmax</span><span class="op">(</span>
+          <span class="frac">
+            <span><span class="mb">Q</span><span class="mb">K</span><sup>⊤</sup></span>
+            <span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub><span class="mi">k</span></sub></span></span></span>
+          </span>
+          <span class="op">)</span><span class="mb">V</span>
+        </div>
+        <div class="math-note">读法：Q 和 K 算相关性，softmax 变权重，再按权重汇总 V；除以 √d_k 是为了缩放稳定。</div>
+      </div>
+      <div class="grid three">
+        <div class="box"><strong>BERT</strong>偏理解任务，常说双向上下文、Encoder-only。</div>
+        <div class="box"><strong>GPT</strong>偏生成任务，常说自回归、Decoder-only。</div>
+        <div class="box"><strong>ViT</strong>把图片切成 patch，当成视觉 token 交给 Transformer。</div>
+      </div>
+      <div class="drill">
+        <h3>练习：解释 Attention 公式，并说明为什么比 RNN 更易并行</h3>
+        <textarea data-key="ai-gate-transformer" placeholder="写：Q/K/V 含义；softmax 权重；sqrt(d_k)；并行原因。"></textarea>
+        <details><summary>看丰满解析</summary><div class="answer">
+          <p>Q 表示查询，表示当前 token 想找什么；K 表示键或索引，用来和 Q 计算相关性；V 表示真正被加权汇总的信息。QK<sup>⊤</sup> 得到相关性分数，softmax 把分数变成权重，再用这些权重汇总 V。除以 √d_k 是为了防止点积随着维度变大而数值过大，导致 softmax 过尖、训练不稳定。Transformer 不需要像 RNN 那样按时间步依次传递隐藏状态，各位置的注意力可以并行计算，并且每个 token 能直接关注远处 token，因此更适合长距离依赖。</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="card" id="mixed">
+      <h2>5. 混合闯关：真正训练“换个问法也能反应”</h2>
+      <p>下面这些题不问“哪个选项看起来不像”，而是逼你说出题干信号、模型选择和排除理由。每题先自己写 3 行，再展开解析。</p>
+
+      <div class="drill">
+        <h3>题 1：图像任务</h3>
+        <p>题干：某模型用于识别手写数字。它使用小矩阵在图像上滑动提取边缘和局部纹理，再通过下采样降低特征图尺寸。问：这是什么模型结构？为什么适合该任务？</p>
+        <textarea data-key="ai-mixed-1" placeholder="写：模型名；题干信号；适合原因；常见结构。"></textarea>
+        <details><summary>看解析</summary><div class="answer">
+          <p>这是 CNN。题干信号是“小矩阵滑动”“边缘和局部纹理”“下采样”“特征图”，分别对应卷积核、局部特征、池化和特征图。它适合图像任务，因为图像有局部空间结构，卷积核能在局部窗口提取边缘/纹理等模式，参数共享能减少参数量，池化能降低特征图尺寸并保留显著响应。</p>
+          <p><strong>排除：</strong>RNN/LSTM 题干通常有时间步、隐藏状态、长期依赖；Transformer 题干通常有 Q/K/V、self-attention、全局关系。</p>
+        </div></details>
+      </div>
+
+      <div class="drill">
+        <h3>题 2：序列长期依赖</h3>
+        <p>题干：某模型逐词读入句子，用隐藏状态保存上下文，但长句中前面词语的影响容易衰减，于是加入遗忘门、输入门、输出门。问：模型是什么？三个门各解决什么问题？</p>
+        <textarea data-key="ai-mixed-2" placeholder="写：RNN/LSTM；长期依赖；三个门人话含义。"></textarea>
+        <details><summary>看解析</summary><div class="answer">
+          <p>这是 RNN/LSTM 相关题，核心模型是 LSTM。逐词读入、隐藏状态是 RNN 信号；前面词影响衰减是长期依赖困难；遗忘门、输入门、输出门直接指向 LSTM。遗忘门控制旧记忆保留多少，输入门控制新信息写入多少，输出门控制当前隐藏输出多少。</p>
+          <p><strong>高分句：</strong>LSTM 不是完全消灭所有梯度问题，而是通过门控记忆机制缓解普通 RNN 的长期依赖困难。</p>
+        </div></details>
+      </div>
+
+      <div class="drill">
+        <h3>题 3：注意力公式解释</h3>
+        <p>题干：某模型不按时间步串行传播隐藏状态，而是让序列中每个位置直接与所有位置计算相关性。公式中出现 Q、K、V 和 softmax。问：这是什么机制？Q/K/V 怎么解释？</p>
+        <textarea data-key="ai-mixed-3" placeholder="写：Self-attention；Q/K/V；并行与长距离依赖。"></textarea>
+        <details><summary>看解析</summary><div class="answer">
+          <p>这是 Transformer 的 self-attention 机制。Q 是查询，表示当前位置想找什么信息；K 是键或索引，表示各位置可被匹配的线索；V 是值或内容，表示真正被加权汇总的信息。Q 与 K 计算相关性，softmax 变成注意力权重，再用权重汇总 V。由于各位置可同时计算注意力，不必像 RNN 一样串行传递隐藏状态，因此更易并行，也更容易建模长距离依赖。</p>
+        </div></details>
+      </div>
+
+      <div class="drill">
+        <h3>题 4：模型比较</h3>
+        <p>题干：比较 CNN、RNN/LSTM、Transformer 在图像、普通文本序列、长文本全局依赖中的适用差异。</p>
+        <textarea data-key="ai-mixed-4" placeholder="按数据形状写：图像、序列、长距离全局关系。"></textarea>
+        <details><summary>看解析</summary><div class="answer">
+          <p>CNN 适合图像等有局部空间结构的数据，卷积核能提取边缘、纹理等局部模式，参数共享降低参数量。RNN/LSTM 适合序列数据，按时间步处理输入并用隐藏状态保存上下文，LSTM 通过门控缓解长期依赖。Transformer 用 self-attention 建模全局关系，各位置可并行计算，适合长文本、长距离依赖和大规模预训练模型。比较题不能只列名字，要按“数据形状 -> 结构特点 -> 适用场景”写。</p>
+        </div></details>
+      </div>
+
+      <div class="drill">
+        <h3>题 5：名词落地</h3>
+        <p>题干：ViT 为什么能把 Transformer 用到图像上？它和 CNN 的直觉有什么不同？</p>
+        <textarea data-key="ai-mixed-5" placeholder="写：patch/token；Transformer 全局关系；CNN 局部卷积。"></textarea>
+        <details><summary>看解析</summary><div class="answer">
+          <p>ViT 把图像切成固定大小的 patch，每个 patch 展平成向量并映射成视觉 token，然后像处理词序列一样输入 Transformer，用 self-attention 建模 patch 之间的全局关系。CNN 的直觉是先用卷积核提局部边缘和纹理，再逐层组合；ViT 的直觉是把图片转成 token 序列，直接用注意力建模全局关系。考试若问二者差异，重点写“CNN 偏局部卷积归纳偏置，ViT 偏全局 attention”。</p>
+        </div></details>
+      </div>
+
+      <div class="danger">
+        <strong>过关线：</strong>你能不用看答案完成 5 道中的 4 道，并且每道都写出“题干信号 + 模型选择 + 为什么不是另一个模型”，这页就达标。达标后再回 <a href="./day5_ai_exam_sprint_mixed.html">AI Day5 混合小测</a> 做限时复刷。
+      </div>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./tips_ai_visual_model_masterclass.html">回 AI 模型图解课</a> · <a href="./study_update_roadmap.html">回同步路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const storeKey = "ai-model-gate-practice-v1";
+    const saved = JSON.parse(localStorage.getItem(storeKey) || "{}");
+    document.querySelectorAll("textarea[data-key]").forEach((el) => {
+      const key = el.dataset.key;
+      if (saved[key]) el.value = saved[key];
+      el.addEventListener("input", () => {
+        saved[key] = el.value;
+        localStorage.setItem(storeKey, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

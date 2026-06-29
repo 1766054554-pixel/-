@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 2 总路线与掌握闸门</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip, .toc, .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box, .route-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong, .route-item strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .route { display: grid; gap: 12px; counter-reset: route; margin-top: 12px; }
+    .route-item { position: relative; padding-left: 54px; }
+    .route-item:before {
+      counter-increment: route;
+      content: counter(route);
+      position: absolute;
+      left: 14px;
+      top: 15px;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    @media (max-width: 860px) {
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+      .route-item { padding-left: 46px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 2 总路线与掌握闸门</h1>
+      <p class="muted">Day2 的任务不是重新学 Day1，也不是一下子冲完整卷。今天要把 Day1 的“认识术语”推进成“能处理典型题型”：数据库跨表和嵌套，AI 参考题，软工真实画图题，离散证明入口。</p>
+      <div class="strip">
+        <span class="pill hot">主线：SQL 连接与嵌套</span>
+        <span class="pill info">AI：参考习题题卡</span>
+        <span class="pill warn">软工：2020 三图</span>
+        <span class="pill good">离散：证明第一句</span>
+      </div>
+      <div class="toc">
+        <a href="#route">1. 今天顺序</a>
+        <a href="#gates">2. 掌握闸门</a>
+        <a href="#why">3. 为什么这样排</a>
+        <a href="#next">4. Day3 怎么接</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>1. Day2 正确顺序：数据库加厚，三科插针</h2>
+      <div class="route">
+        <div class="route-item">
+          <strong>保底 1：数据库 SQL 连接/嵌套</strong>
+          打开 <a href="./day2_database_sql_join_nested.html">数据库 Day2 SQL 连接/嵌套</a>。今天最重要的是会区分 JOIN、LEFT JOIN、自连接、子查询、全部/不存在。
+        </div>
+        <div class="route-item">
+          <strong>保底 2：SQL 真题手把手</strong>
+          回到学习舱里的“SQL 真题手把手：emp 表四类题”。不要追求全背答案，只练四种题眼：员工与 boss、自连接、不是任何人的 boss、部门最高工资。
+        </div>
+        <div class="route-item">
+          <strong>标准 1：AI 模型故事线</strong>
+          打开 <a href="./day2_ai_model_storyline.html">Day2 AI 模型故事线</a>。先把 LDA、熵、SVM、AdaBoost、BP、LSTM 这些新词放进“输入 -> 模型 -> 损失/纯度 -> 训练 -> 作答”的主线里，不直接硬刷题卡。
+        </div>
+        <div class="route-item">
+          <strong>标准 2：AI 参考习题机器学习题卡</strong>
+          打开 <a href="./day2_ai_reference_ml_cards.html">AI 机器学习题卡</a>。重点不是刷选项，而是知道 LDA、熵、SVM、AdaBoost、正则化这些词分别解决什么问题，并能写题眼和排除理由。
+        </div>
+        <div class="route-item">
+          <strong>标准 3：软工 2020 三图</strong>
+          打开 <a href="./day2_se_2020_diagram_workshop.html">软工 2020 画图题手把手</a>。把同一段上机题干拆成用例图、类图、顺序图，训练“问法一变图也变”。
+        </div>
+        <div class="route-item">
+          <strong>标准 4：离散证明入口</strong>
+          打开 <a href="./day2_discrete_proof_starter.html">离散 Day2 证明入口</a>。今天不硬推大证明，只背目标识别和第一句话：证全称任取，证存在构造，证蕴涵假设前件。
+        </div>
+        <div class="route-item">
+          <strong>加餐：AI 神经网络题卡</strong>
+          状态好再打开 <a href="./day2_ai_reference_nn_cards.html">AI 神经网络题卡</a>，补 BP、sigmoid、LSTM、GAN、XOR 等参考习题。卡住就先看 Tips，不把 Tips 当新 Day。
+        </div>
+        <div class="route-item">
+          <strong>收束：Day2 综合主动回忆闯关</strong>
+          学完前面几个 Day2 板块后，打开 <a href="./day2_active_recall_arena.html">Day2 综合主动回忆闯关</a>。它不重复讲义，而是训练数据库、AI、软工、离散四科的题眼、第一步和变式识别。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>Day2 最容易犯的错：</strong>数据库题一复杂就全写成 JOIN；AI 题只背名词；软工只临摹图；离散证明只看答案。今天的核心动作是“看到题眼就切模板”。
+      </div>
+    </section>
+
+    <section class="card" id="gates">
+      <h2>2. 掌握闸门：过了才进入 Day3 大题后半</h2>
+      <table>
+        <thead><tr><th>科目</th><th>B 级：Day2 过关</th><th>A 级：可以加餐/真题</th><th>没过怎么办</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>数据库</td>
+            <td>能区分普通 JOIN、LEFT JOIN、自连接、IN/EXISTS、NOT EXISTS，并能解释“全部课程”为不存在没选的课。</td>
+            <td>能写出“各部门最高工资员工”这类分组回表题，能处理“不是任何人的 boss”。</td>
+            <td>不要开范式，回 SQL 连接页重做 4 类题眼。</td>
+          </tr>
+          <tr>
+            <td>AI</td>
+            <td>能先用 <a href="./day2_ai_model_storyline.html">AI 模型故事线</a> 解释 LDA、熵、SVM、AdaBoost、BP 分别解决什么问题，再做参考题卡。</td>
+            <td>能做信息增益、AdaBoost 权重/alpha、L2 正则化的基本题，并解释公式符号和模型适用场景。</td>
+            <td>先回 AI Day2 模型故事线或 Day1 术语地基，再做 ML 题卡，不直接做混合卷。</td>
+          </tr>
+          <tr>
+            <td>软工</td>
+            <td>能从 2020 上机题干里圈出角色、动作、对象，并判断用例图/类图/顺序图分别画什么。</td>
+            <td>同一题干换问法时，能解释为什么这次画顺序图而不是类图。</td>
+            <td>回 Day1 四支笔，重新拆题干，不临摹答案图。</td>
+          </tr>
+          <tr>
+            <td>离散</td>
+            <td>能写 6 类证明目标第一句，能用反例说明语义蕴含不成立。</td>
+            <td>能把主范式、谓词翻译、辖域和语义证明起手串起来。</td>
+            <td>先背证明开头句和语义蕴含反例，不碰 2024 长题。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="why">
+      <h2>3. 为什么 Day2 这样排</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>数据库必须优先加厚 SQL</strong>
+          6.22 最近。SQL 是最容易通过训练快速拿分的板块，连接和嵌套又是 SQL 大题的分水岭，所以 Day2 先把它打厚。
+        </div>
+        <div class="box">
+          <strong>AI 要尽早碰参考题</strong>
+          AI 没有稳定往年题，参考习题 PDF 价值高。Day2 先拆机器学习题卡，是为了让公式和模型名词不再漂在空中。
+        </div>
+        <div class="box">
+          <strong>软工不能只到图名识别</strong>
+          Day1 只会判断图类型还不够，Day2 必须拿真实上机题干练一次“同一系统不同图”的转换。
+        </div>
+        <div class="box">
+          <strong>离散证明要早预热</strong>
+          离散难在证明，但 Day2 不能整卷硬啃。先把证明第一句练成条件反射，后面 Day4/Day5 才接得住长题。
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="next">
+      <h2>4. Day2 学完怎么接 Day3</h2>
+      <table>
+        <thead><tr><th>Day2 完成状态</th><th>Day3 接法</th></tr></thead>
+        <tbody>
+          <tr><td>数据库连接/嵌套还卡</td><td>继续 SQL，不急着开范式事务。至少把普通 JOIN、LEFT JOIN、自连接、NOT EXISTS 四类题写出来。</td></tr>
+          <tr><td>数据库 Day2 到 B+</td><td>进入 <a href="./day3_database_fd_tx_er.html">数据库 Day3 范式事务 ER</a>，当天主攻候选码、BCNF、事务、恢复、ER 图。</td></tr>
+          <tr><td>AI ML 题卡读完但公式不稳</td><td>进入 <a href="./day3_ai_formula_model_closure.html">AI Day3 公式模型闭环</a>，重点默写公式含义和模型对比。</td></tr>
+          <tr><td>四科 Day2 都碰过但不确定会不会用</td><td>先做 <a href="./day2_active_recall_arena.html">Day2 综合主动回忆闯关</a>，用题眼和第一步确认是否真到 B 级。</td></tr>
+          <tr><td>软工/离散只是碰过但不熟</td><td>保持低成本保温：软工每天 20 分钟画图分流，离散每天 20 分钟证明开头句。</td></tr>
+        </tbody>
+      </table>
+      <p><a href="./index.html">回到学习舱</a> · <a href="./day2_active_recall_arena.html">打开 Day2 综合闯关</a> · <a href="./full_final_schedule_0616_0630.html">查看 6.16-6.30 全程计划</a></p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>新手上岛向导 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛新手上岛向导：选择科目和当前状态，生成清晰的三步复习路线。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(246, 185, 207, .42), transparent 28%),
+        radial-gradient(circle at 86% 8%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 78% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.96) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .22) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo,
+    .icon {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo { width: 40px; height: 40px; }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks,
+    .actions,
+    .choice-grid,
+    .tag-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .navlinks { justify-content: flex-end; }
+    .btn,
+    .navlinks a,
+    .choice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+    }
+    .btn:hover,
+    .navlinks a:hover,
+    .choice-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary,
+    .choice-btn.active {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .course-card,
+    .state-card,
+    .route-card,
+    .metric {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .hero-main {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 90% 12%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 10ch;
+      margin: 18px 0 10px;
+      font-size: clamp(50px, 7vw, 88px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 76ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions { margin-top: 22px; }
+    .metric {
+      padding: 18px;
+      display: grid;
+      gap: 4px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.94), rgba(249,252,255,.78)),
+        radial-gradient(circle at 84% 12%, rgba(201, 185, 244, .28), transparent 38%);
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .metric strong {
+      font-size: 34px;
+      line-height: 1.1;
+      color: #2f5c84;
+    }
+    .section { padding: 22px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-head p { max-width: 72ch; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .course-card,
+    .state-card,
+    .route-card {
+      padding: 18px;
+      min-height: 100%;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(249,252,255,.80)),
+        radial-gradient(circle at 92% 10%, rgba(246, 185, 207, .22), transparent 34%);
+    }
+    .course-card,
+    .state-card {
+      text-align: left;
+    }
+    .course-card.active,
+    .state-card.active {
+      border-color: rgba(196, 142, 180, .58);
+      box-shadow: var(--shadow);
+    }
+    .course-card h3,
+    .state-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .icon {
+      width: 42px;
+      height: 42px;
+      color: #67558f;
+      flex: 0 0 auto;
+    }
+    .icon svg { width: 28px; height: 28px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      background: rgba(255,255,255,.70);
+      color: #56657e;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .tag-row { margin-top: 12px; }
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .route-card {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
+    .route-no {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff);
+      font-weight: 950;
+      color: #5d5b8c;
+    }
+    .empty {
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed rgba(104, 122, 154, .28);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+    }
+    .footer {
+      margin-top: 32px;
+      padding: 28px 0 38px;
+      color: var(--muted);
+      border-top: 1px solid rgba(104, 122, 154, .18);
+    }
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid,
+      .route-grid { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1160px); }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .navlinks { justify-content: flex-start; }
+      h1 { font-size: 46px; }
+      .actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="主导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M32 8l5.6 13.6L52 24.4 40.8 34l3.6 14.4L32 40.8 19.6 48.4 23.2 34 12 24.4l14.4-2.8L32 8z" fill="#f7df8b" stroke="#6d618c" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M18 50c8 6 20 6 28 0" stroke="#9fdacb" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        星光学习岛
+      </a>
+      <div class="navlinks">
+        <a href="./index.html">首页</a>
+        <a href="./dashboard.html">继续学习</a>
+        <a href="./practice_lab.html">训练台</a>
+        <a href="./resources.html">资源库</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <article class="panel hero-main">
+        <div>
+          <span class="eyebrow">Start Here</span>
+          <h1>新手上岛向导</h1>
+          <p class="lead">
+            第一次打开不用研究整个平台。先选一门课，再选你现在的状态，星光学习岛会生成<span class="key">三步路线</span>：
+            去哪看主线、去哪开始练题、去哪回炉补洞。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="#choose-course">开始选择</a>
+            <a class="btn mint" href="./practice_lab.html">直接练题</a>
+            <a class="btn" href="./dashboard.html">继续上次进度</a>
+          </div>
+        </div>
+        <p class="lead">这个向导只做一件事：把“我该点哪里”变成一个明确答案。</p>
+      </article>
+      <aside class="hero-side">
+        <article class="metric">
+          <span>主线步数</span>
+          <strong>3</strong>
+          <p>课程岛定方向，训练台上手，资源库或仪表盘续航。</p>
+        </article>
+        <article class="metric">
+          <span>覆盖课程</span>
+          <strong id="courseCount">7</strong>
+          <p>所有课程都从同一套清单生成，后续扩展不需要重写页面。</p>
+        </article>
+        <article class="metric">
+          <span>学习状态</span>
+          <strong>4</strong>
+          <p>迷路、想做卷、想补洞、想回炉，都有不同路线。</p>
+        </article>
+      </aside>
+    </section>
+
+    <section class="wrap section" id="choose-course">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">第一步</span>
+          <h2>先选一门课。</h2>
+        </div>
+        <p>别一上来打开所有资料。选中一门课后，下面的路线会自动贴合它的考试形态。</p>
+      </div>
+      <div class="grid" id="courseGrid"></div>
+    </section>
+
+    <section class="wrap section" id="choose-state">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">第二步</span>
+          <h2>再选你现在的状态。</h2>
+        </div>
+        <p>同一门课，不同状态要走不同入口。零基础先看主线，临考先做真题，卡住就补洞。</p>
+      </div>
+      <div class="grid" id="stateGrid"></div>
+    </section>
+
+    <section class="wrap section" id="route">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">第三步</span>
+          <h2>照这三步走。</h2>
+        </div>
+        <p id="routeSummary">先选择课程和状态，路线会在这里出现。</p>
+      </div>
+      <div id="routeGrid" class="route-grid">
+        <div class="empty">路线还没生成。先在上面点一门课和一个状态。</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p><strong>新手上岛向导</strong> 适合第一次打开或不知道下一步的人。熟悉平台后，可以直接去 <a href="./practice_lab.html">真题训练台</a> 或 <a href="./dashboard.html">继续学习仪表盘</a>。</p>
+  </footer>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    (() => {
+      const ROUTE_KEY = "starlight-start-route-v1";
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+      const catalog = window.STARLIGHT_RESOURCE_CATALOG || [];
+      const quality = window.STARLIGHT_RESOURCE_QUALITY || {};
+      const courses = manifest.courses || [];
+      let activeCourse = courses[0]?.id || "";
+      let activeState = "lost";
+
+      const states = [
+        {
+          id: "lost",
+          title: "我完全不知道从哪开始",
+          desc: "先建立这门课的地图，再做一小段真题校准。",
+          mode: "required",
+          labels: ["先认路", "必做", "低压力"]
+        },
+        {
+          id: "paper",
+          title: "我想先做接近期末的题",
+          desc: "直接进整卷或交互卷，用真实题型校准手感。",
+          mode: "papers",
+          labels: ["真题", "卷面", "计时感"]
+        },
+        {
+          id: "drill",
+          title: "我知道自己有洞要补",
+          desc: "去专项补洞：画图、证明、公式、背诵和变式。",
+          mode: "drills",
+          labels: ["专项", "变式", "补基础"]
+        },
+        {
+          id: "review",
+          title: "我快考了，只想收口",
+          desc: "优先看速查、错题、召回和最终回炉入口。",
+          mode: "review",
+          labels: ["回炉", "速查", "临考"]
+        }
+      ];
+
+      const $ = selector => document.querySelector(selector);
+
+      function escapeHtml(text) {
+        return String(text ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function iconSvg(type) {
+        const icons = {
+          db: `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="14" rx="19" ry="8" fill="#dff4ff" stroke="currentColor" stroke-width="3"/><path d="M13 14v28c0 5 8.5 9 19 9s19-4 19-9V14" fill="#eef9ff" stroke="currentColor" stroke-width="3"/><path d="M13 28c0 5 8.5 9 19 9s19-4 19-9M13 40c0 5 8.5 9 19 9s19-4 19-9" fill="none" stroke="currentColor" stroke-width="3"/></svg>`,
+          ai: `<svg viewBox="0 0 64 64"><rect x="16" y="14" width="32" height="32" rx="10" fill="#f2ebff" stroke="currentColor" stroke-width="3"/><path d="M24 25h16M24 33h16M24 41h10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="8" r="4" fill="#ffd76f"/><circle cx="48" cy="52" r="5" fill="#aee2d6"/></svg>`,
+          se: `<svg viewBox="0 0 64 64"><rect x="12" y="13" width="40" height="30" rx="6" fill="#fff4d8" stroke="currentColor" stroke-width="3"/><path d="M20 23h24M20 32h14M20 51h24M28 43v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="32" r="5" fill="#ffc2dc" stroke="currentColor" stroke-width="2"/></svg>`,
+          military: `<svg viewBox="0 0 64 64"><path d="M32 9l21 8v14c0 12-8 20-21 25C19 51 11 43 11 31V17l21-8Z" fill="#e8fbf3" stroke="currentColor" stroke-width="3"/><path d="M32 18v26M22 29h20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
+          ladder: `<svg viewBox="0 0 64 64"><path d="M10 48 C18 22 44 20 54 48Z" fill="#b9e4f6" stroke="currentColor" stroke-width="3"/><path d="M18 48h28M22 40h22M26 32h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="20" r="8" fill="#fff3a8" stroke="currentColor" stroke-width="3"/></svg>`,
+          marx: `<svg viewBox="0 0 64 64"><path d="M16 12h26a8 8 0 0 1 8 8v34H24a8 8 0 0 1-8-8Z" fill="#ffeef5" stroke="currentColor" stroke-width="3"/><path d="M24 24h18M24 34h18M24 44h12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+          os: `<svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="8" fill="#eef1ff" stroke="currentColor" stroke-width="3"/><rect x="22" y="22" width="20" height="20" rx="4" fill="#fff" stroke="currentColor" stroke-width="3"/><path d="M8 24h8M8 40h8M48 24h8M48 40h8M24 8v8M40 8v8M24 48v8M40 48v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`
+        };
+        return icons[type] || `<svg viewBox="0 0 64 64"><path d="M32 8l5.5 13.4L52 24.3 40.7 33.7l3.7 14.2L32 40.4 19.6 47.9l3.7-14.2L12 24.3l14.5-2.9L32 8z" fill="#f7df8b" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>`;
+      }
+
+      function selectedCourse() {
+        return courses.find(course => course.id === activeCourse) || courses[0];
+      }
+
+      function selectedState() {
+        return states.find(state => state.id === activeState) || states[0];
+      }
+
+      function practiceUrl(courseId, mode) {
+        return `./practice_lab.html?course=${encodeURIComponent(courseId)}&mode=${encodeURIComponent(mode)}`;
+      }
+
+      function qualityOf(item) {
+        return quality[item.id] || { level: "draft" };
+      }
+
+      function sortResource(a, b) {
+        const priorityWeight = { "必做": 0, "推荐": 1, "可选": 2 };
+        const qualityWeight = { "exam-like": 0, reviewed: 1, draft: 2, archive: 9 };
+        const stageOrder = ["整卷校准", "题型校准", "先学", "先背", "定位", "补洞", "考前收口", "回炉", "举一反三", "迁移"];
+        const pa = priorityWeight[a.priority] ?? 9;
+        const pb = priorityWeight[b.priority] ?? 9;
+        if (pa !== pb) return pa - pb;
+        const qa = qualityWeight[qualityOf(a).level] ?? 8;
+        const qb = qualityWeight[qualityOf(b).level] ?? 8;
+        if (qa !== qb) return qa - qb;
+        const sa = stageOrder.indexOf(a.stage);
+        const sb = stageOrder.indexOf(b.stage);
+        return (sa === -1 ? 99 : sa) - (sb === -1 ? 99 : sb) || a.title.localeCompare(b.title, "zh-CN");
+      }
+
+      function firstResource(courseId, state) {
+        const courseItems = catalog
+          .filter(item => item.courseId === courseId && qualityOf(item).level !== "archive")
+          .sort(sortResource);
+        const wanted = state.mode === "papers"
+          ? ["真题卷", "交互卷", "真题包"]
+          : state.mode === "drills"
+            ? ["专项训练", "变式题", "闸门题", "召回题", "背诵舱", "开卷包", "闪卡"]
+            : state.mode === "review"
+              ? ["速查包", "错题本"]
+              : [];
+        return courseItems.find(item => item.priority === "必做" && qualityOf(item).level === "exam-like" && (!wanted.length || wanted.includes(item.type))) ||
+          courseItems.find(item => item.priority === "必做" && wanted.includes(item.type)) ||
+          courseItems.find(item => wanted.includes(item.type)) ||
+          courseItems.find(item => item.priority === "必做") ||
+          courseItems[0];
+      }
+
+      function routeFor(course, state) {
+        const resource = firstResource(course.id, state);
+        const middleTitle = state.id === "lost" ? "打开课程岛，先看清地图" :
+          state.id === "paper" ? "进入训练台，只看真题/交互卷" :
+          state.id === "drill" ? "进入训练台，只看专项补洞" :
+          "进入训练台，只看回炉/速查";
+        const middleHref = state.id === "lost" ? `./course.html?id=${encodeURIComponent(course.id)}` : practiceUrl(course.id, state.mode);
+        return [
+          {
+            no: "1",
+            title: middleTitle,
+            desc: state.id === "lost" ? course.description : state.desc,
+            href: middleHref,
+            button: state.id === "lost" ? "打开课程岛" : "打开训练台"
+          },
+          {
+            no: "2",
+            title: resource ? `做：${resource.title}` : "做一个必做资源",
+            desc: resource ? resource.description : "先完成一个高价值入口，再决定是否继续加量。",
+            href: resource ? resource.href : practiceUrl(course.id, "required"),
+            button: "开始"
+          },
+          {
+            no: "3",
+            title: "回到仪表盘，续上进度",
+            desc: "完成后看下一步建议，或者用资源库继续筛选同科目的推荐资源。",
+            href: "./dashboard.html",
+            button: "看下一步"
+          }
+        ];
+      }
+
+      function saveRoute() {
+        localStorage.setItem(ROUTE_KEY, JSON.stringify({
+          courseId: activeCourse,
+          stateId: activeState,
+          updatedAt: new Date().toISOString()
+        }));
+      }
+
+      function renderCourses() {
+        $("#courseCount").textContent = String(courses.length);
+        $("#courseGrid").innerHTML = courses.map(course => `
+          <button class="course-card ${course.id === activeCourse ? "active" : ""}" type="button" data-course="${escapeHtml(course.id)}">
+            <h3><span class="icon" aria-hidden="true">${iconSvg(course.icon)}</span>${escapeHtml(course.title)}</h3>
+            <p>${escapeHtml(course.examMode || course.description)}</p>
+            <div class="tag-row">${(course.resourceTags || []).slice(0, 3).map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}</div>
+          </button>
+        `).join("");
+      }
+
+      function renderStates() {
+        $("#stateGrid").innerHTML = states.map(state => `
+          <button class="state-card ${state.id === activeState ? "active" : ""}" type="button" data-state="${escapeHtml(state.id)}">
+            <span class="pill">${state.mode === "required" ? "推荐" : "训练"}</span>
+            <h3>${escapeHtml(state.title)}</h3>
+            <p>${escapeHtml(state.desc)}</p>
+            <div class="tag-row">${state.labels.map(label => `<span class="pill">${escapeHtml(label)}</span>`).join("")}</div>
+          </button>
+        `).join("");
+      }
+
+      function renderRoute() {
+        const course = selectedCourse();
+        const state = selectedState();
+        if (!course) return;
+        saveRoute();
+        $("#routeSummary").textContent = `当前路线：${course.title} · ${state.title}`;
+        $("#routeGrid").innerHTML = routeFor(course, state).map(item => `
+          <article class="route-card">
+            <span class="route-no">${escapeHtml(item.no)}</span>
+            <div>
+              <h3>${escapeHtml(item.title)}</h3>
+              <p>${escapeHtml(item.desc)}</p>
+            </div>
+            <a class="btn primary" href="${escapeHtml(item.href)}">${escapeHtml(item.button)}</a>
+          </article>
+        `).join("");
+      }
+
+      function restore() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(ROUTE_KEY) || "{}");
+          if (courses.some(course => course.id === saved.courseId)) activeCourse = saved.courseId;
+          if (states.some(state => state.id === saved.stateId)) activeState = saved.stateId;
+        } catch {
+          activeCourse = courses[0]?.id || "";
+          activeState = "lost";
+        }
+      }
+
+      document.addEventListener("click", event => {
+        const courseButton = event.target.closest("[data-course]");
+        if (courseButton) {
+          activeCourse = courseButton.dataset.course;
+          renderCourses();
+          renderRoute();
+          return;
+        }
+        const stateButton = event.target.closest("[data-state]");
+        if (stateButton) {
+          activeState = stateButton.dataset.state;
+          renderStates();
+          renderRoute();
+          document.querySelector("#route").scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+
+      restore();
+      renderCourses();
+      renderStates();
+      renderRoute();
+    })();
+  </script>
+</body>
+</html>

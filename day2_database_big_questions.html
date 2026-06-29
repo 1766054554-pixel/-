@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据库大题从零深学讲义</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245, 247, 248, 0) 260px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      font-size: 13px;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 4px; }
+    .steps { counter-reset: step; display: grid; gap: 9px; margin: 10px 0; }
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px 11px 46px;
+    }
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .formula {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .diagram {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .diagram svg, .source-img img { display: block; width: 100%; height: auto; }
+    .source-img {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 10px;
+    }
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>数据库大题从零深学讲义</h1>
+      <p class="muted">目标：把范式、事务、恢复、ER 图这些大题地基讲成人话。今天不是直接啃符号，而是建立“题干出现什么，我该切到哪套流程”的反应。</p>
+      <div class="strip">
+        <span class="pill hot">数据管理技术 6/22</span>
+        <span class="pill info">2023A 风格</span>
+        <span class="pill warn">范式/事务/ER</span>
+        <span class="pill good">先模板，再真题</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>0. 数据库大题分三类，不是一团雾</h2>
+      <p>你看到数据库大题会慌，通常是因为 SQL、范式、事务、ER 图混在一起。先分流，题目就会变小。</p>
+      <div class="grid">
+        <div class="box"><strong>范式题</strong>题干长这样：R(A,B,C,D,E), F={ABC->D, E->B, AD->C}。核心是候选键、BCNF/3NF、分解。</div>
+        <div class="box"><strong>事务题</strong>题干长这样：T1/T2/T3, read(A), write(B), lock, commit, crash。核心是并发是否等价、锁协议、恢复。</div>
+        <div class="box"><strong>ER/设计题</strong>题干长这样：医生、患者、门诊、预约、诊疗记录。核心是实体、联系、属性、基数。</div>
+        <div class="box"><strong>SQL 题</strong>题干长这样：查询员工、部门、最高工资、不是 boss。核心是表怎么连、怎么分组、怎么回表。</div>
+      </div>
+      <p class="formula">第一反应口诀：R/F 看范式，T/read/write 看事务，业务名词看 ER，SELECT 查询看 SQL。</p>
+    </section>
+
+    <section class="card">
+      <h2>1. 范式题从零：函数依赖到底是什么</h2>
+      <p>函数依赖 X -> Y 的人话是：只要 X 的值确定了，Y 的值也就被唯一确定了。比如学号确定姓名，学号 -> 姓名；但姓名不一定确定学号，因为可能重名。</p>
+      <div class="grid">
+        <div class="box"><strong>决定因素 X</strong>箭头左边。它像“钥匙”，用来决定别的属性。</div>
+        <div class="box"><strong>依赖因素 Y</strong>箭头右边。它像“被钥匙打开的信息”。</div>
+        <div class="box"><strong>属性闭包 X+</strong>从 X 出发，用所有函数依赖能推出哪些属性。</div>
+        <div class="box"><strong>候选键</strong>能推出全部属性，并且删掉任何一个属性就不行的最小属性组。</div>
+      </div>
+      <div class="steps">
+        <div class="step"><strong>求闭包</strong>先把 X 放进 X+，看哪些依赖左边已经包含在 X+ 里。</div>
+        <div class="step"><strong>不断扩张</strong>如果 A->B 且 A 已在 X+，就把 B 加进 X+。重复直到不能再加。</div>
+        <div class="step"><strong>判断是否是超码</strong>如果 X+ 包含全部属性 U，X 就是超码。</div>
+        <div class="step"><strong>判断候选键</strong>如果 X 是超码，而且 X 的任何真子集都不是超码，X 就是候选键。</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. 2023A 范式题怎么起步</h2>
+      <p>2023A 给了关系模式：</p>
+      <p class="formula">R(A,B,C,D,E)
+F = { ABC -> D, E -> B, AD -> C }</p>
+      <p>这类题不要第一眼就分解。先求候选键，因为 BCNF 判断必须知道哪些左边是超码。</p>
+      <div class="steps">
+        <div class="step"><strong>先观察右边没出现的属性</strong>A 和 E 没出现在任何依赖右边，所以它们通常必须在候选键里。</div>
+        <div class="step"><strong>从 AE 开始求闭包</strong>AE+ 初始有 A,E。E -> B，所以加 B。现在有 A,E,B。</div>
+        <div class="step"><strong>还缺 C,D</strong>有 A,B,E 还不能用 ABC -> D，因为缺 C；也不能用 AD -> C，因为缺 D。</div>
+        <div class="step"><strong>尝试加 C</strong>AEC+ 有 A,E,C；E -> B 得 B；ABC -> D 得 D；于是得到全部 A,B,C,D,E，所以 AEC 是候选键。</div>
+        <div class="step"><strong>尝试加 D</strong>AED+ 有 A,E,D；E -> B 得 B；AD -> C 得 C；也得到全部，所以 AED 也是候选键。</div>
+      </div>
+      <p class="formula">起步答案骨架：由于 A,E 不出现在任何依赖右部，候选键必须包含 A,E。计算 (AEC)+ = ABCDE，(AED)+ = ABCDE，且去掉任一属性后不能推出全属性，因此候选键为 AEC、AED。</p>
+      <details>
+        <summary>为什么不能直接说 ABC 是键？</summary>
+        <p>ABC -> D 只能推出 D，不能推出 E；所以 ABC+ 不是全部属性。候选键必须能推出 R 的所有属性。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>3. BCNF 判断：看每条依赖左边是不是超码</h2>
+      <p>BCNF 的人话：表里的每个“决定关系”都应该由足够强的钥匙来决定。形式化一点：对每个非平凡依赖 X -> Y，X 必须是超码。</p>
+      <div class="grid">
+        <div class="box"><strong>如果 X 是超码</strong>这条依赖不违反 BCNF。</div>
+        <div class="box"><strong>如果 X 不是超码</strong>这条依赖违反 BCNF，要考虑分解。</div>
+      </div>
+      <p>在 2023A 的 F 中：</p>
+      <div class="steps">
+        <div class="step">ABC -> D：ABC 不能推出 E，所以 ABC 不是超码，违反 BCNF。</div>
+        <div class="step">E -> B：E 不能推出 A,C,D，所以 E 不是超码，违反 BCNF。</div>
+        <div class="step">AD -> C：AD 不能推出 E,B，所以 AD 不是超码，违反 BCNF。</div>
+      </div>
+      <p class="formula">BCNF 分解模板：若 R 中 X -> Y 违反 BCNF，则分解为 R1 = X ∪ Y，R2 = R - (Y - X)。之后继续检查子关系。</p>
+      <p>现在先记模板，不急着追求一次分解到完美。考场写分解时最重要的是：说明依据哪条依赖分解、继续检查、最后说明无损连接/保持依赖。</p>
+    </section>
+
+    <section class="card">
+      <h2>4. 事务从零：为什么需要事务</h2>
+      <p>事务不是抽象概念，它就是“要么全做，要么全不做”的一组数据库操作。最经典例子是转账：A 扣 100，B 加 100，两个操作必须同生共死。</p>
+      <div class="grid">
+        <div class="box"><strong>原子性 Atomicity</strong>全做或全不做。失败时不能只扣 A 不加 B。</div>
+        <div class="box"><strong>一致性 Consistency</strong>事务前后数据库要符合业务规则，比如总金额不凭空变化。</div>
+        <div class="box"><strong>隔离性 Isolation</strong>并发事务之间不能互相看见半截状态。</div>
+        <div class="box"><strong>持久性 Durability</strong>提交后即使断电，结果也不能丢。</div>
+      </div>
+      <p class="formula">ACID 不是死背：A 管失败撤销，C 管业务正确，I 管并发互不干扰，D 管提交后不丢。</p>
+    </section>
+
+    <section class="card">
+      <h2>5. 并发调度：先找冲突，再看能不能串行化</h2>
+      <p>事务题看到 T1、T2、read/write，不要慌。先找冲突操作：不同事务、同一数据项、至少一个是 write。</p>
+      <div class="steps">
+        <div class="step"><strong>读读不冲突</strong>T1 read(A) 和 T2 read(A) 可以同时读。</div>
+        <div class="step"><strong>读写冲突</strong>T1 read(A) 和 T2 write(A) 冲突。</div>
+        <div class="step"><strong>写读冲突</strong>T1 write(A) 和 T2 read(A) 冲突。</div>
+        <div class="step"><strong>写写冲突</strong>T1 write(A) 和 T2 write(A) 冲突。</div>
+      </div>
+      <p>有了冲突，就可以画优先图：如果 T1 的冲突操作在 T2 前，就画 T1 -> T2。图里没有环，就冲突可串行化；有环，就不可冲突串行化。</p>
+      <div class="diagram">
+        <svg viewBox="0 0 820 280" role="img" aria-label="冲突优先图示意">
+          <rect width="820" height="280" fill="#fff"/>
+          <g font-family="sans-serif" font-size="18" fill="#18212a">
+            <circle cx="180" cy="135" r="54" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/><text x="162" y="142" font-weight="700">T1</text>
+            <circle cx="410" cy="135" r="54" fill="#eef9f3" stroke="#24724f" stroke-width="2"/><text x="392" y="142" font-weight="700">T2</text>
+            <circle cx="640" cy="135" r="54" fill="#fff9e6" stroke="#936b12" stroke-width="2"/><text x="622" y="142" font-weight="700">T3</text>
+            <path d="M234 135 H356" stroke="#687581" stroke-width="3" marker-end="url(#arrow)"/><text x="265" y="122">冲突先后</text>
+            <path d="M464 135 H586" stroke="#687581" stroke-width="3" marker-end="url(#arrow)"/><text x="500" y="122">无环</text>
+            <text x="205" y="230" fill="#687581">无环：等价于某个串行顺序。若出现 T1 -> T2 -> T1 这样的环，则不行。</text>
+          </g>
+          <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6. 2PL 和严格 2PL：锁题的第一反应</h2>
+      <p>两阶段锁协议 2PL 的核心不是“有锁就行”，而是一个事务分两段：先增长，后收缩。</p>
+      <div class="grid">
+        <div class="box"><strong>增长阶段</strong>可以申请锁，不能释放锁。</div>
+        <div class="box"><strong>收缩阶段</strong>可以释放锁，但释放后不能再申请新锁。</div>
+        <div class="box"><strong>2PL 保证</strong>冲突可串行化。</div>
+        <div class="box"><strong>严格 2PL</strong>写锁通常保持到提交/回滚，避免其他事务读到未提交数据。</div>
+      </div>
+      <p class="formula">判断 2PL 模板：找每个事务第一次 unlock；如果它之后还 lock 新数据项，就违反 2PL。</p>
+    </section>
+
+    <section class="card">
+      <h2>7. 恢复题：Undo/Redo 先看提交没提交</h2>
+      <p>恢复题的核心是崩溃后如何让数据库回到可信状态。最粗糙但好用的第一反应：未提交的要撤销，已提交的要保证留下。</p>
+      <div class="grid">
+        <div class="box"><strong>Undo</strong>撤销未提交事务造成的影响。</div>
+        <div class="box"><strong>Redo</strong>重做已经提交但可能没写回磁盘的影响。</div>
+        <div class="box"><strong>日志</strong>记录事务对数据项改了什么，是恢复依据。</div>
+        <div class="box"><strong>检查点</strong>帮助缩小恢复时要扫描的日志范围。</div>
+      </div>
+      <p>2023A 事务恢复题里出现 Undo，就先找崩溃时哪些事务没提交。不要看到日志就立刻乱算。</p>
+    </section>
+
+    <section class="card">
+      <h2>8. ER 图从零：从业务名词变成实体和联系</h2>
+      <p>ER 图题通常给一段业务描述，比如诊所、医生、患者、门诊记录。第一步不是画，而是抽三类东西：实体、联系、属性。</p>
+      <div class="steps">
+        <div class="step"><strong>实体</strong>能独立存在的对象：医生、患者、科室、门诊记录、药品。</div>
+        <div class="step"><strong>属性</strong>实体自己的信息：医生编号、姓名、职称；患者编号、姓名、年龄。</div>
+        <div class="step"><strong>联系</strong>实体之间的关系：医生接诊患者，患者产生门诊记录，门诊记录包含药品。</div>
+        <div class="step"><strong>基数</strong>一对一、一对多、多对多。例如一个医生可接诊多个患者，一个患者也可多次就诊。</div>
+      </div>
+      <div class="diagram">
+        <svg viewBox="0 0 820 340" role="img" aria-label="诊所 ER 图骨架">
+          <rect width="820" height="340" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <rect x="80" y="70" width="130" height="70" rx="8" fill="#eef7fc" stroke="#1f5f8b"/><text x="120" y="111" font-weight="700">医生</text>
+            <rect x="610" y="70" width="130" height="70" rx="8" fill="#eef9f3" stroke="#24724f"/><text x="650" y="111" font-weight="700">患者</text>
+            <polygon points="380,70 455,105 380,140 305,105" fill="#fff9e6" stroke="#936b12"/><text x="364" y="111" font-weight="700">接诊</text>
+            <rect x="345" y="225" width="150" height="70" rx="8" fill="#fff2ef" stroke="#a23b32"/><text x="378" y="266" font-weight="700">门诊记录</text>
+            <line x1="210" y1="105" x2="305" y2="105" stroke="#687581" stroke-width="2"/><text x="235" y="95">1</text>
+            <line x1="455" y1="105" x2="610" y2="105" stroke="#687581" stroke-width="2"/><text x="580" y="95">N</text>
+            <line x1="420" y1="140" x2="420" y2="225" stroke="#687581" stroke-width="2"/><text x="430" y="185">产生</text>
+          </g>
+        </svg>
+      </div>
+      <p class="formula">ER 答题模板：圈实体 -> 给属性和主键 -> 圈联系 -> 标基数 -> 转关系模式时处理 1:N 和 M:N。</p>
+    </section>
+
+    <section class="card">
+      <h2>9. 资料页参照</h2>
+      <p class="muted">下面是从你的数据库 PDF 渲染出的关键页，用来校准题型来源。不要硬背截图，先掌握上面的步骤。</p>
+      <div class="grid">
+        <div class="source-img">
+          <img src="./assets/pdf-pages/db-2023a-p5.png" alt="2023A 数据库规范化理论题">
+          <div class="caption">2023A 第 5 页：规范化理论题，R(A,B,C,D,E) 与函数依赖 F。</div>
+        </div>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/db-2023a-p4.png" alt="2023A 数据库事务管理与恢复题">
+          <div class="caption">2023A 第 4 页：事务管理与恢复题，T1/T2/T3 调度。</div>
+        </div>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/db-tx-p10.png" alt="事务管理 PPT 事务作用">
+          <div class="caption">事务管理 PPT：事务作为并发控制和恢复的基本单位。</div>
+        </div>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/db-design-p11.png" alt="数据库设计 PPT ER 方法">
+          <div class="caption">数据库设计 PPT：基于 E-R 模型的数据库设计方法。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>10. 主观训练：先写人话，再看答案</h2>
+      <p class="muted">输入框会自动保存。你现在要练的是解释能力，不是秒选答案。</p>
+      <h3>训练 1</h3>
+      <p>用自己的话解释：函数依赖 X -> Y 是什么意思？为什么求候选键要算闭包？</p>
+      <textarea data-note="fd_closure"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>X -> Y 表示只要 X 的值确定，Y 的值也被唯一确定。闭包 X+ 表示从 X 出发，利用所有函数依赖能推出哪些属性。如果 X+ 包含关系模式的全部属性，说明 X 能唯一确定整行，是超码；再检查最小性，就能判断候选键。</p>
+      </details>
+
+      <h3>训练 2</h3>
+      <p>看到事务调度题，第一步应该做什么？什么叫冲突操作？</p>
+      <textarea data-note="tx_conflict"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>第一步先找冲突操作，而不是直接判断串行化。冲突操作必须满足：来自不同事务、访问同一数据项、至少一个是写操作。根据冲突先后画优先图，图无环则冲突可串行化，有环则不可冲突串行化。</p>
+      </details>
+
+      <h3>训练 3</h3>
+      <p>ER 图题中，实体、属性、联系、基数分别是什么？请用诊所系统举例。</p>
+      <textarea data-note="er_basics"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>实体是能独立存在的对象，如医生、患者、药品；属性是实体的信息，如医生编号、患者姓名；联系是实体之间的关系，如医生接诊患者、患者产生门诊记录；基数说明一对一、一对多或多对多，如一个医生可接诊多个患者。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>11. 回到主学习舱</h2>
+      <p><a href="./index.html">回到期末陪跑学习舱</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-finals-db-big-questions-notes";
+    let savedNotes = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+  </script>
+</body>
+</html>

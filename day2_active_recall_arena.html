@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 2 综合主动回忆闯关</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    .muted { color: var(--muted); }
+    .strip, .toc, .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 10px 0 12px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 122px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    .answer {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .code {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.62;
+      margin: 10px 0;
+    }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 620px; height: auto; display: block; }
+    .callout {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+      margin: 10px 0;
+    }
+    .callout > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px;
+    }
+    .callout .label {
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+    }
+    .small { font-size: 13px; color: var(--muted); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    @media (max-width: 860px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .callout { grid-template-columns: 1fr; }
+      .diagram svg { min-width: 560px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 2 综合主动回忆闯关</h1>
+      <p class="muted">这页不是新知识讲义，而是 Day2 学完后的“考场反应训练”。你要先写题眼、第一步和理由，再展开答案。不会很正常，不会才说明这页有用。</p>
+      <div class="strip">
+        <span class="pill hot">数据库：SQL 连接/嵌套</span>
+        <span class="pill info">AI：参考习题机器学习</span>
+        <span class="pill warn">软工：图类型分流</span>
+        <span class="pill good">离散：证明入口</span>
+      </div>
+      <div class="toc">
+        <a href="#rules">0. 使用规则</a>
+        <a href="#db">1. 数据库关</a>
+        <a href="#ai">2. AI 关</a>
+        <a href="#se">3. 软工关</a>
+        <a href="#discrete">4. 离散关</a>
+        <a href="#review">5. 错题回炉</a>
+      </div>
+    </section>
+
+    <section class="card" id="rules">
+      <h2>0. 使用规则：先叫醒，再看答案</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>第一步只写题眼</strong>
+          不急着完整作答。先写“这是 JOIN / 信息增益 / 用例图 / 反例”这种题型判断。
+        </div>
+        <div class="box">
+          <strong>第二步写第一句</strong>
+          SQL 先写 FROM/JOIN；AI 先写公式或模型目标；软工先写图回答的问题；离散先写证明开头。
+        </div>
+        <div class="box">
+          <strong>第三步看解析补漏洞</strong>
+          解析不是为了抄答案，而是为了让你知道“为什么不是另一个模板”。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>闯关标准：</strong>每关至少能完成 2 题的题眼和第一步，才算 Day2 真正进入 B 级。只看答案不算完成。
+      </div>
+    </section>
+
+    <section class="card" id="db">
+      <h2>1. 数据库关：SQL 连接/嵌套不是背模板，是先认关系</h2>
+      <p>Day2 数据库的主战场是“信息分散在多张表”。你先看图，把表之间的桥想清楚，再写 SQL。</p>
+      <div class="diagram">
+        <svg viewBox="0 0 900 340" role="img" aria-label="数据库 Day2 表关系图">
+          <rect width="900" height="340" fill="#fff"/>
+          <g font-family="sans-serif" font-size="17" fill="#18212a">
+            <rect x="40" y="60" width="185" height="135" rx="10" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+            <text x="92" y="90" font-weight="700">Student</text>
+            <text x="70" y="122">Sno, Sname</text>
+            <text x="70" y="150">Sdept</text>
+            <text x="70" y="178">Sage</text>
+
+            <rect x="335" y="60" width="185" height="135" rx="10" fill="#eef9f3" stroke="#24724f" stroke-width="2"/>
+            <text x="404" y="90" font-weight="700">SC</text>
+            <text x="365" y="122">Sno, Cno</text>
+            <text x="365" y="150">Grade</text>
+
+            <rect x="630" y="60" width="185" height="135" rx="10" fill="#fff9e6" stroke="#936b12" stroke-width="2"/>
+            <text x="692" y="90" font-weight="700">Course</text>
+            <text x="660" y="122">Cno, Cname</text>
+            <text x="660" y="150">Cpno, Credit</text>
+
+            <path d="M225 128 H335" stroke="#687581" stroke-width="3" marker-end="url(#arrowDb2)"/>
+            <path d="M520 128 H630" stroke="#687581" stroke-width="3" marker-end="url(#arrowDb2)"/>
+            <text x="252" y="112" fill="#1f5f8b">Sno</text>
+            <text x="550" y="112" fill="#936b12">Cno</text>
+
+            <rect x="230" y="250" width="440" height="54" rx="10" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="258" y="284">题干要姓名 + 课程名 + 成绩：Student 和 Course 中间必须经过 SC。</text>
+          </g>
+          <defs><marker id="arrowDb2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+
+      <article class="drill">
+        <h3>DB-1 普通 JOIN：姓名、课程名、成绩同时出现</h3>
+        <p><strong>题干：</strong>查询选修了课程且成绩不低于 90 分的学生姓名、课程名和成绩。</p>
+        <div class="callout"><div class="label">先写题眼</div><div>输出列分散在 Student、Course、SC 三张表；SC 是桥；需要普通 JOIN，因为只要有选课记录的学生。</div></div>
+        <textarea data-note="day2-db-join" placeholder="先写：需要哪几张表？桥是什么？WHERE 条件是什么？然后尝试写 SQL。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准 SQL：</strong></p>
+            <div class="code">SELECT S.Sname, C.Cname, SC.Grade
+FROM Student AS S
+JOIN SC ON S.Sno = SC.Sno
+JOIN Course AS C ON SC.Cno = C.Cno
+WHERE SC.Grade &gt;= 90;</div>
+            <p><strong>为什么这样写：</strong>学生姓名在 Student，课程名在 Course，成绩在 SC，三张表必须通过 Sno 和 Cno 接起来。成绩不低于 90 是单行条件，所以放 WHERE，不放 HAVING。</p>
+            <p><strong>常见错因：</strong>只写 Student JOIN Course 会缺桥；把 Grade 条件放 HAVING 是把普通行条件误当分组条件；SELECT 里写 Cname 但 FROM 没连 Course 会直接失去来源。</p>
+            <p><strong>变式提醒：</strong>如果题干改成“即使没选课也显示学生”，主体不能丢，就改 LEFT JOIN。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>DB-2 LEFT JOIN：没有记录也要保留主体</h3>
+        <p><strong>题干：</strong>统计每个学生的选课门数，要求没有选课的学生也显示，门数为 0。</p>
+        <textarea data-note="day2-db-left" placeholder="先写：主体是谁？为什么普通 JOIN 会丢人？GROUP BY 应该按什么分组？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准 SQL：</strong></p>
+            <div class="code">SELECT S.Sno, S.Sname, COUNT(SC.Cno) AS course_count
+FROM Student AS S
+LEFT JOIN SC ON S.Sno = SC.Sno
+GROUP BY S.Sno, S.Sname;</div>
+            <p><strong>题眼：</strong>“没有选课的学生也显示”是 LEFT JOIN 的强信号。左表 Student 是主体，即使右表 SC 没匹配也保留。</p>
+            <p><strong>为什么 COUNT(SC.Cno)：</strong>没有选课时，右表字段是 NULL，COUNT(SC.Cno) 不数 NULL，所以会得到 0。若写 COUNT(*)，左表保留下来的那一行也会被数成 1，可能错。</p>
+            <p><strong>变式提醒：</strong>“没有被任何学生选的课程也显示”时，主体变成 Course，要从 Course LEFT JOIN SC。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>DB-3 自连接：一张 emp 表扮演两个角色</h3>
+        <p><strong>题干：</strong>emp(num, name, dept, salary, boss)。查询每位员工姓名及其老板姓名。</p>
+        <textarea data-note="day2-db-self" placeholder="先写：同一张表扮演哪两个角色？别名分别是什么？连接条件是什么？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准 SQL：</strong></p>
+            <div class="code">SELECT E.name AS employee_name, B.name AS boss_name
+FROM emp AS E
+JOIN emp AS B ON E.boss = B.num;</div>
+            <p><strong>题眼：</strong>员工和老板都在 emp 表里。一张表要当两个人用，就必须起两个别名：E 表示员工，B 表示老板。</p>
+            <p><strong>为什么不是两张真实表：</strong>题目只有一个 emp 表，boss 字段存的是老板的 num。自连接的本质是“同一张表复制两份角色视图”。</p>
+            <p><strong>变式提醒：</strong>如果题干要求“没有老板的员工也显示”，用 LEFT JOIN；如果问“不是任何人的 boss”，不是这条自连接，而是排除出现在 boss 列中的人。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>DB-4 全部/所有：双重否定才是稳模板</h3>
+        <p><strong>题干：</strong>查询选修了全部课程的学生学号和姓名。</p>
+        <textarea data-note="day2-db-all" placeholder="先把中文翻译成：不存在一门课程，这个学生没有选。然后写 NOT EXISTS 骨架。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准 SQL：</strong></p>
+            <div class="code">SELECT S.Sno, S.Sname
+FROM Student AS S
+WHERE NOT EXISTS (
+  SELECT *
+  FROM Course AS C
+  WHERE NOT EXISTS (
+    SELECT *
+    FROM SC
+    WHERE SC.Sno = S.Sno
+      AND SC.Cno = C.Cno
+  )
+);</div>
+            <p><strong>人话翻译：</strong>选修全部课程 = 不存在一门课程 C，使得这个学生 S 没有选 C。外层 NOT EXISTS 否定“漏选的课程存在”，内层 NOT EXISTS 判断“这门课没有对应选课记录”。</p>
+            <p><strong>为什么难：</strong>“全部”不是简单 COUNT，也不是随手 JOIN。COUNT 写法也可以，但更容易被重复记录和 DISTINCT 坑到；双重 NOT EXISTS 是关系除法风味题的稳模板。</p>
+            <p><strong>变式提醒：</strong>“选修了张老师教的全部课程”时，Course 子查询先筛张老师的课程，再做同样双重否定。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="ai">
+      <h2>2. AI 关：参考习题名词要变成可调用公式和场景</h2>
+      <p>AI Day2 容易出现一堆新词：LDA、熵、SVM、AdaBoost、正则化。闯关时不要背孤立定义，要回答“它解决什么问题，公式里的量是什么意思，题干怎么识别”。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>决策树公式读法</strong>
+          <div class="math-card">
+            <div class="display-eq"><span class="func">H</span><span class="op">(</span><span class="var">D</span><span class="op">)</span> <span class="op">=</span> <span class="op">-</span><span class="sum"><span class="top"></span><span class="sym">&sum;</span><span class="bot">k</span></span> <span class="var">p</span><sub>k</sub><span class="func">log</span><sub>2</sub><span class="var">p</span><sub>k</sub></div>
+            <div class="math-note">熵 H(D) 衡量一堆样本有多混乱；越纯越接近 0。</div>
+            <div class="display-eq"><span class="func">Gain</span><span class="op">(</span><span class="var">D</span>,<span class="var">A</span><span class="op">)</span> <span class="op">=</span> <span class="func">H</span><span class="op">(</span><span class="var">D</span><span class="op">)</span> <span class="op">-</span> <span class="sum"><span class="top"></span><span class="sym">&sum;</span><span class="bot">v</span></span> <span class="frac"><span>|D<sub>v</sub>|</span><span>|D|</span></span><span class="func">H</span><span class="op">(</span><span class="var">D</span><sub>v</sub><span class="op">)</span></div>
+            <div class="math-note">信息增益 = 划分前混乱度 - 划分后加权混乱度。</div>
+          </div>
+        </div>
+        <div class="box">
+          <strong>SVM / AdaBoost 题眼</strong>
+          <div class="math-card">
+            <div class="display-eq"><span class="func">maximize margin</span> <span class="op">&hArr;</span> <span class="func">minimize</span> <span class="frac"><span>1</span><span>2</span></span><span class="op">||</span><span class="mb">w</span><span class="op">||</span><sup>2</sup></div>
+            <div class="math-note">SVM 找最大间隔分类面，离分界面最近的点叫支持向量。</div>
+            <div class="display-eq"><span class="var">&alpha;</span> <span class="op">=</span> <span class="frac"><span>1</span><span>2</span></span><span class="func">ln</span><span class="frac"><span>1-&epsilon;</span><span>&epsilon;</span></span></div>
+            <div class="math-note">AdaBoost 中错误率越小，弱分类器权重 alpha 越大；错分样本下一轮权重会上升。</div>
+          </div>
+        </div>
+      </div>
+
+      <article class="drill">
+        <h3>AI-1 决策树信息增益：哪个属性先问？</h3>
+        <p><strong>题干：</strong>共有 8 个训练样本，正负各 4 个，所以整体熵 H(D)=1。属性 A 划分成两组：A=0 时 3 正 1 负，A=1 时 1 正 3 负；属性 B 划分成两组：B=0 时 4 正 0 负，B=1 时 0 正 4 负。问根节点应优先选哪个属性？</p>
+        <textarea data-note="day2-ai-tree" placeholder="先写：信息增益看熵下降。A 划分后还混吗？B 划分后纯吗？根节点选谁？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：选属性 B。</strong></p>
+            <p><strong>理由：</strong>整体正负各半，熵是 1。属性 B 划分后，每个子集都只有一种类别，子集熵都是 0，加权后仍是 0，所以 Gain(D,B)=1-0=1。</p>
+            <p><strong>A 为什么不如 B：</strong>A 的两个子集分别是 3:1 和 1:3，都还混杂，熵不为 0，划分后仍有不确定性，因此信息增益小于 B。</p>
+            <p><strong>考试迁移：</strong>你不一定要精确背每个小数。看到一个属性能把样本分成纯组，另一个还混，根节点优先选能让熵下降更多的那个。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>AI-2 SVM：为什么不是“离所有点最近”的线？</h3>
+        <p><strong>题干：</strong>简答：SVM 为什么要最大化分类间隔？支持向量在其中起什么作用？</p>
+        <textarea data-note="day2-ai-svm" placeholder="先写：间隔是什么？支持向量是谁？为什么最大间隔有利于泛化？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准答法：</strong>SVM 在能正确分类训练样本的前提下，选择离两类样本边界最近点都尽可能远的分类超平面，即最大化分类间隔。支持向量是离分类超平面最近、真正决定间隔大小的训练样本。最大间隔让分类边界对小扰动更不敏感，通常有更好的泛化能力。</p>
+            <p><strong>为什么不是“离所有点最近”：</strong>分类边界如果离样本太近，一点点噪声就可能把样本推到另一侧。SVM 要的是离最近的关键点也尽量远，不是贴着点走。</p>
+            <p><strong>题眼：</strong>最大间隔、支持向量、超平面、泛化。如果出现核函数，再补一句“核函数用于把非线性问题映射到高维空间处理”。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>AI-3 AdaBoost：错分样本为什么权重变大？</h3>
+        <p><strong>题干：</strong>某轮弱分类器错误率 &epsilon;=0.25。下一轮训练时，错分样本权重会变大还是变小？这个弱分类器的权重 &alpha; 是正还是负？</p>
+        <textarea data-note="day2-ai-boost" placeholder="先写：epsilon 小于 0.5 代表弱分类器比乱猜强；错分样本下一轮要被更关注。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>答案：</strong>错分样本权重变大；弱分类器权重 &alpha; 为正。</p>
+            <div class="math-card">
+              <div class="display-eq"><span class="var">&alpha;</span> <span class="op">=</span> <span class="frac"><span>1</span><span>2</span></span><span class="func">ln</span><span class="frac"><span>1-0.25</span><span>0.25</span></span> <span class="op">=</span> <span class="frac"><span>1</span><span>2</span></span><span class="func">ln</span>3 <span class="op">&gt;</span> 0</div>
+            </div>
+            <p><strong>从零理解：</strong>AdaBoost 像一个不断纠错的老师。上一轮做错的样本，下一轮要提高权重，让新弱分类器更认真处理这些难点。错误率 0.25 小于 0.5，说明这个弱分类器比乱猜强，所以它在最终集成中有正贡献。</p>
+            <p><strong>常见坑：</strong>不是所有弱分类器都有正权重。若错误率超过 0.5，说明比乱猜还差，公式会给出负的 alpha，实际训练通常会处理或丢弃这种分类器。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>AI-4 L2 正则化：为什么 lambda 不能乱取？</h3>
+        <p><strong>题干：</strong>简答：L2 正则项为什么能缓解过拟合？lambda 越大越好吗？lambda 能取负数吗？</p>
+        <textarea data-note="day2-ai-l2" placeholder="先写：L2 惩罚什么？过大参数为什么危险？lambda 太大/太小分别怎样？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准答法：</strong>L2 正则化在原损失后加入权重平方和惩罚，使过大的参数付出代价，从而限制模型复杂度，降低模型为了拟合训练噪声而把参数调得很夸张的风险，因此可缓解过拟合。</p>
+            <p><strong>lambda 不是越大越好：</strong>lambda 太小，约束不够，仍可能过拟合；lambda 太大，模型被限制得过死，可能欠拟合，训练集和测试集都表现不好。</p>
+            <p><strong>lambda 不能取负：</strong>负数会奖励参数变大，和“惩罚复杂模型”的目标相反，可能让优化不稳定。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="se">
+      <h2>3. 软工关：同一题干，不同图回答不同问题</h2>
+      <p>软工 Day2 的重点不是“我见过这个图”，而是题干换一个问法，你知道该画哪种图。下面用同一个实验预约系统场景训练。</p>
+      <div class="diagram">
+        <svg viewBox="0 0 900 360" role="img" aria-label="软工图类型分流器">
+          <rect width="900" height="360" fill="#fff"/>
+          <g font-family="sans-serif" font-size="17" fill="#18212a">
+            <rect x="330" y="30" width="240" height="58" rx="12" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+            <text x="370" y="66" font-weight="700">题目到底问什么？</text>
+
+            <rect x="40" y="145" width="170" height="70" rx="10" fill="#eef9f3" stroke="#24724f" stroke-width="2"/>
+            <text x="75" y="174" font-weight="700">谁能做什么</text>
+            <text x="92" y="200">用例图</text>
+
+            <rect x="250" y="145" width="170" height="70" rx="10" fill="#fff9e6" stroke="#936b12" stroke-width="2"/>
+            <text x="285" y="174" font-weight="700">有哪些对象</text>
+            <text x="304" y="200">类图</text>
+
+            <rect x="480" y="145" width="170" height="70" rx="10" fill="#f4fbff" stroke="#9dc7de" stroke-width="2"/>
+            <text x="506" y="174" font-weight="700">一步步怎么发生</text>
+            <text x="535" y="200">顺序图</text>
+
+            <rect x="690" y="145" width="170" height="70" rx="10" fill="#fff2ef" stroke="#a23b32" stroke-width="2"/>
+            <text x="724" y="174" font-weight="700">状态怎么变</text>
+            <text x="742" y="200">状态图</text>
+
+            <path d="M450 88 L125 145 M450 88 L335 145 M450 88 L565 145 M450 88 L775 145" stroke="#687581" stroke-width="3" fill="none" marker-end="url(#arrowSe2)"/>
+            <text x="78" y="280" fill="#687581">学生/教师/管理员</text>
+            <text x="276" y="280" fill="#687581">预约、实验室、通知</text>
+            <text x="500" y="280" fill="#687581">提交 -> 检查 -> 保存</text>
+            <text x="704" y="280" fill="#687581">待审核 -> 已通过</text>
+          </g>
+          <defs><marker id="arrowSe2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+
+      <article class="drill">
+        <h3>SE-1 题干分流：这题到底画什么图？</h3>
+        <p><strong>题干：</strong>学生可以查询可预约实验、提交实验预约申请、取消自己的预约；教师可以审核预约申请；管理员可以维护实验室和实验项。若学生提交申请时实验室时间冲突，系统提示冲突并拒绝提交。</p>
+        <p><strong>问法 A：</strong>“请画出系统主要功能及参与者关系。”</p>
+        <p><strong>问法 B：</strong>“请画出学生提交预约申请时系统内部对象之间的消息交互。”</p>
+        <p><strong>问法 C：</strong>“请画出预约记录可能经历的状态变化。”</p>
+        <textarea data-note="day2-se-dispatch" placeholder="先写：A/B/C 分别应该画什么图？每张图回答的问题是什么？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>A：用例图。</strong>题眼是“主要功能及参与者关系”。参与者包括学生、教师、管理员；用例包括查询可预约实验、提交预约申请、取消预约、审核预约、维护实验室、维护实验项。</p>
+            <p><strong>B：顺序图。</strong>题眼是“提交预约申请时对象之间的消息交互”。生命线可以有学生界面、预约控制器、实验室日程/冲突检查服务、预约记录、通知服务。消息大致是提交申请 -> 检查冲突 -> 创建预约或返回冲突提示 -> 通知。</p>
+            <p><strong>C：状态图。</strong>题眼是“预约记录的状态变化”。状态可包括草稿/已提交、待审核、已通过、已拒绝、已取消、冲突拒绝等，触发事件是提交、审核通过、审核拒绝、取消、检测冲突。</p>
+            <p><strong>常见错因：</strong>把“提交预约申请”画成用例图流程细节；把“状态变化”画成活动图；类图里把“查询、提交、取消”这种动作当类。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>SE-2 类图：名词不是全都能变成类</h3>
+        <p><strong>题干：</strong>实验预约系统保存学生、教师、实验室、实验项、预约记录。每条预约记录关联一个学生、一个实验项和一个时间段，并记录状态。教师审核预约记录。</p>
+        <textarea data-note="day2-se-class" placeholder="先写：候选类有哪些？哪些是属性？哪些是关联？多重性大概怎样？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>候选类：</strong>Student、Teacher、LabRoom、ExperimentItem、Reservation。</p>
+            <p><strong>Reservation 的关键属性：</strong>startTime、endTime、status、createdAt。状态不一定单独成类，除非题目要求复杂状态对象；一般作为属性即可。</p>
+            <p><strong>关键关联：</strong>一个 Student 可有多条 Reservation；一条 Reservation 属于一个 Student；一个 ExperimentItem 可被多条 Reservation 预约；一条 Reservation 对应一个 ExperimentItem；Teacher 审核 Reservation；ExperimentItem 可能安排在 LabRoom。</p>
+            <p><strong>为什么“查询、提交、取消”不是类：</strong>它们是动作，通常变成方法、用例或消息，不是系统长期保存的对象。</p>
+            <p><strong>自查表：</strong>类图必须检查类名、属性、方法、关联、多重性。考试如果时间紧，至少把类和关联画对，多重性写核心的 1、0..*。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="discrete">
+      <h2>4. 离散关：证明题先写第一句，别直接硬推</h2>
+      <p>Day2 离散只做证明入口。你现在要练的不是天才式推导，而是看到目标就知道第一句话。</p>
+      <table>
+        <thead><tr><th>目标</th><th>第一句话</th><th>为什么</th></tr></thead>
+        <tbody>
+          <tr><td>证明 &forall;x P(x)</td><td>任取一个对象 a。</td><td>全称要证明所有对象，所以先拿一个任意对象。</td></tr>
+          <tr><td>证明 &exist;x P(x)</td><td>构造/取一个具体对象 a。</td><td>存在只需要给出一个见证。</td></tr>
+          <tr><td>证明 P &rarr; Q</td><td>假设 P 成立。</td><td>蕴涵证明通常从前件出发推出后件。</td></tr>
+          <tr><td>证明 Γ ⊨ Q</td><td>设解释 I 使 Γ 中公式全真。</td><td>语义推论要证明前提全真时结论必真。</td></tr>
+          <tr><td>证明不成立</td><td>给一个反例解释/赋值。</td><td>只要前提真、结论假，就能打破语义蕴含。</td></tr>
+        </tbody>
+      </table>
+
+      <article class="drill">
+        <h3>D-1 语义蕴含：{P -> Q, P} ⊨ Q</h3>
+        <textarea data-note="day2-d-mp" placeholder="先写第一句：设任意赋值使前提都真。然后推出 Q。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准证明：</strong>设任意赋值 v 使 P -> Q 与 P 都为真。因为 P 为真，且 P -> Q 为真，若 Q 为假则 P -> Q 会为假，矛盾。因此 Q 必为真。所以 {P -> Q, P} ⊨ Q。</p>
+            <p><strong>题眼：</strong>这是语义版的假言推理。证明语义蕴含不要一上来写“显然”，要按“前提全真 -> 结论必真”写。</p>
+            <p><strong>变式提醒：</strong>{P -> Q, Q} ⊨ P 不成立，这是肯定后件谬误，可以取 P 假、Q 真作为反例。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>D-2 反例：P ∨ Q ⊨ P 是否成立？</h3>
+        <textarea data-note="day2-d-counter" placeholder="先写：要找前提真、结论假。P 该取什么？Q 该取什么？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>不成立。</strong>取 P 为假、Q 为真，则 P ∨ Q 为真，但 P 为假。这就是前提真、结论假的反例，所以 P ∨ Q ⊭ P。</p>
+            <p><strong>为什么这个反例够用：</strong>语义蕴含要求所有赋值下都不能出现前提真结论假。只要找到一个反例，蕴含就失败。</p>
+            <p><strong>常见错因：</strong>看到 P ∨ Q 里有 P，就以为能推出 P。析取为真可能是 Q 支撑的，不能单独推出 P。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>D-3 谓词翻译：所有预约都属于某个学生</h3>
+        <p><strong>符号约定：</strong>R(x) 表示 x 是预约记录；S(y) 表示 y 是学生；Belong(x,y) 表示预约 x 属于学生 y。</p>
+        <textarea data-note="day2-d-predicate" placeholder="先写：所有预约 x，都存在一个学生 y，使得 x 属于 y。注意“所有 A 都...”和“存在 B 且...”的结构。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <div class="math-card">
+              <div class="display-eq">&forall;<span class="var">x</span><span class="op">(</span><span class="func">R</span><span class="op">(</span><span class="var">x</span><span class="op">)</span> <span class="op">&rarr;</span> &exist;<span class="var">y</span><span class="op">(</span><span class="func">S</span><span class="op">(</span><span class="var">y</span><span class="op">)</span> <span class="op">&and;</span> <span class="func">Belong</span><span class="op">(</span><span class="var">x</span>,<span class="var">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></div>
+            </div>
+            <p><strong>读法：</strong>任意一个 x，如果 x 是预约记录，那么存在一个 y，使得 y 是学生并且 x 属于 y。</p>
+            <p><strong>为什么外层用蕴涵：</strong>“所有预约都……”只约束预约对象。对不是预约的 x，不需要它满足后半句，所以写 R(x) -> ...。</p>
+            <p><strong>为什么内层用合取：</strong>存在的是一个真正的学生 y，而且 Belong(x,y) 成立，所以是 S(y) and Belong(x,y)。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="review">
+      <h2>5. 错题回炉格式：别只写“我不会”</h2>
+      <p>做完这页后，把错题按下面格式抄到学习舱错题回炉或自己的纸上。每题只要 4 行，但这 4 行会把“熟悉感”变成“可调用能力”。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>错题复述模板</strong>
+          <ul>
+            <li>题眼：我应该先认出它是什么题？</li>
+            <li>第一步：我下次第一行写什么？</li>
+            <li>错因：我是概念没懂、模板混了，还是计算漏步？</li>
+            <li>变式：如果题干换一个词，模板还一样吗？</li>
+          </ul>
+        </div>
+        <div class="box">
+          <strong>Day2 过关自检</strong>
+          <ul>
+            <li>数据库：四类 SQL 题眼能分出来。</li>
+            <li>AI：能解释熵、信息增益、SVM、AdaBoost、L2。</li>
+            <li>软工：同一题干能切三种图。</li>
+            <li>离散：证明和反例能写第一句。</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:14px"><a href="./index.html">回到学习舱</a> · <a href="./day2_master_route.html">回到 Day2 总路线</a> · <a href="./day2_database_sql_join_nested.html">回到数据库 Day2 讲义</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-day2-active-recall-notes";
+    const saved = JSON.parse(localStorage.getItem(noteKey) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const key = area.dataset.note;
+      area.value = saved[key] || "";
+      area.addEventListener("input", () => {
+        saved[key] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

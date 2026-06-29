@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 1 数据库 SQL + 关系代数 从零深学讲义</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 260px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1040px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; padding-top: 4px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      font-size: 13px;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; margin-bottom: 4px; color: var(--blue); }
+    .steps { counter-reset: step; display: grid; gap: 9px; margin: 10px 0; }
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px 11px 46px;
+    }
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .code {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    .formula {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px 12px;
+      margin: 10px 0;
+      overflow-x: auto;
+      font-family: "Times New Roman", "Cambria Math", "STIX Two Math", serif;
+      font-size: 18px;
+      line-height: 1.55;
+      white-space: nowrap;
+    }
+    .ra-symbol {
+      display: inline-flex;
+      min-width: 44px;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      color: var(--blue);
+      font-family: "Times New Roman", "Cambria Math", "STIX Two Math", serif;
+      font-size: 24px;
+      font-weight: 800;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .mini-formula {
+      font-family: "Times New Roman", "Cambria Math", "STIX Two Math", serif;
+      font-size: 17px;
+      white-space: nowrap;
+    }
+    .table-demo {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 15px;
+    }
+    .table-demo th, .table-demo td {
+      border: 1px solid var(--line);
+      padding: 9px;
+      text-align: left;
+    }
+    .table-demo th { background: #eef7fc; color: var(--blue); }
+    .table-demo tr:nth-child(even) td { background: #fbfdfe; }
+    .check div {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 9px 10px;
+      margin: 8px 0;
+    }
+    .line-read {
+      display: grid;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .line {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+    }
+    .line code {
+      display: inline-block;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 2px 7px;
+      margin-right: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .danger {
+      border-left: 4px solid var(--red);
+      background: #fff7f5;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+    }
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 1 数据库 SQL + 关系代数 从零深学讲义</h1>
+      <p class="muted">今天先让你第一次真正看懂数据库查询题在说什么。SQL 是写给数据库执行的语言，关系代数是写给阅卷老师看的查询逻辑骨架。这里不假设你知道表、字段、主键、外键、SELECT、WHERE、GROUP BY，也不假设你认识 Π、σ、⋈ 这些符号。所有词都从人话开始。</p>
+      <div class="strip">
+        <span class="pill hot">今天只学 Day 1</span>
+        <span class="pill info">数据管理技术 6/22</span>
+        <span class="pill good">先读懂，再写 SQL</span>
+        <span class="pill warn">不进入 Day2</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>0. 今天的边界：不求多，只求真的懂</h2>
+      <p>你现在是零基础，所以今天不追求“把数据库查询全部学完”。今天只让你拿到五个最基本的能力：</p>
+      <div class="check">
+        <div>看到一张表，知道表名、列名、行、主键、外键分别是什么。</div>
+        <div>知道 SQL 是一种“向数据库提问”的语言，不是神秘咒语。</div>
+        <div>知道 SELECT、FROM、WHERE、GROUP BY、HAVING 每个词为什么存在。</div>
+        <div>能把一道中文查询题先翻译成人话步骤，再写很小的 SQL 骨架。</div>
+        <div>看到关系代数符号，能认出 <span class="mini-formula">σ</span> 筛行、<span class="mini-formula">Π</span> 选列、<span class="mini-formula">⋈</span> 连接、<span class="mini-formula">−</span> 表示差集、<span class="mini-formula">÷</span> 处理“所有/全部”。</div>
+      </div>
+      <p class="muted">如果这四件事不稳，后面连接、嵌套、范式、事务都会像空中楼阁。所以我把 Day2 入口先撤了，先打 Day1 地基。</p>
+    </section>
+
+    <section class="card">
+      <h2>1. 数据库到底是什么：先别想代码</h2>
+      <p>先想一个最朴素的场景：学校有很多学生，每个学生有学号、姓名、院系、年龄。如果这些信息随便写在纸上，查起来会很痛苦。数据库做的第一件事，就是把信息整理成有规则的表。</p>
+      <table class="table-demo">
+        <thead>
+          <tr><th>Sno</th><th>Sname</th><th>Sdept</th><th>Sage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>95001</td><td>李勇</td><td>CS</td><td>20</td></tr>
+          <tr><td>95002</td><td>刘晨</td><td>IS</td><td>19</td></tr>
+          <tr><td>95003</td><td>王敏</td><td>MA</td><td>18</td></tr>
+        </tbody>
+      </table>
+      <div class="grid">
+        <div class="box"><strong>表</strong>像一张规整的名单。上面这张表可以叫 Student，表示学生集合。</div>
+        <div class="box"><strong>列/字段/属性</strong>Sno、Sname、Sdept、Sage 都是列，表示每个学生有哪些信息。</div>
+        <div class="box"><strong>行/记录/元组</strong>一行就是一个具体学生，比如 95001 这一整行。</div>
+        <div class="box"><strong>值</strong>某一行某一列里的具体内容，比如刘晨的 Sdept 是 IS。</div>
+      </div>
+      <p>你看到课本里的“关系、元组、属性”，先不要害怕。它们基本就是“表、行、列”的数据库版本说法。</p>
+      <details>
+        <summary>为什么数据库不直接说 Excel？</summary>
+        <p>因为数据库不只是存表，还负责查询、约束、权限、事务、恢复等。Excel 更像文件，数据库是管理数据的一整套系统。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>2. 主键：一行数据的身份证</h2>
+      <p>如果班里有两个叫“刘晨”的人，只靠姓名就分不清谁是谁。所以数据库需要一个能唯一识别一行的东西，这就是主键。</p>
+      <div class="grid">
+        <div class="box"><strong>主键解决的问题</strong>这张表里，我怎样准确找到某一行？</div>
+        <div class="box"><strong>学生表常见主键</strong>学号 Sno，因为一个学号只对应一个学生。</div>
+        <div class="box"><strong>员工表常见主键</strong>员工编号 num，因为一个编号只对应一个员工。</div>
+        <div class="box"><strong>主键不能含糊</strong>姓名通常不适合做主键，因为可能重名。</div>
+      </div>
+      <p class="code">Student(Sno, Sname, Sdept, Sage)
+如果 Sno 是主键，意思是：Sno 能唯一确定某个学生。</p>
+      <p>第一天你只需要记住：<strong>主键是“找一行”的最稳入口。</strong></p>
+    </section>
+
+    <section class="card">
+      <h2>3. 外键：两张表之间的桥</h2>
+      <p>现实里，学生会选课。学生信息放在 Student 表，课程信息放在 Course 表，选课结果放在 SC 表。为什么要分成多张表？因为学生、课程、选课是不同类型的信息。</p>
+      <table class="table-demo">
+        <thead>
+          <tr><th>SC.Sno</th><th>SC.Cno</th><th>Grade</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>95001</td><td>1</td><td>92</td></tr>
+          <tr><td>95001</td><td>2</td><td>85</td></tr>
+          <tr><td>95002</td><td>1</td><td>88</td></tr>
+        </tbody>
+      </table>
+      <p>SC.Sno 的值不是随便写的，它应该来自 Student.Sno。也就是说，选课表里的学号要能在学生表里找到对应学生。这个“引用别的表主键”的列，就叫外键。</p>
+      <div class="grid">
+        <div class="box"><strong>外键解决的问题</strong>两张表怎么联系起来？</div>
+        <div class="box"><strong>SC.Sno</strong>连接 SC 表和 Student 表。</div>
+        <div class="box"><strong>SC.Cno</strong>连接 SC 表和 Course 表。</div>
+        <div class="box"><strong>JOIN 的来源</strong>外键经常提示两张表的连接条件。</div>
+      </div>
+      <p class="code">Student.Sno = SC.Sno
+Course.Cno = SC.Cno</p>
+      <p>第一天你只需要记住：<strong>主键识别一行，外键连接两张表。</strong></p>
+    </section>
+
+    <section class="card">
+      <h2>4. SQL 是什么：向数据库提问</h2>
+      <p>SQL 可以先理解为“向数据库提问的语言”。你问数据库：“请从学生表里找出所有计算机系学生的姓名。”数据库需要知道四件事：</p>
+      <div class="steps">
+        <div class="step"><strong>从哪里找</strong>数据来自哪张表？这里是 Student。</div>
+        <div class="step"><strong>找哪些行</strong>只要计算机系学生，所以要筛 Sdept = 'CS' 的行。</div>
+        <div class="step"><strong>显示哪些列</strong>题目要姓名，所以只显示 Sname。</div>
+        <div class="step"><strong>要不要排序/分组</strong>这道题暂时不需要。</div>
+      </div>
+      <p>把这四件事翻译成 SQL，就是：</p>
+      <div class="code">SELECT Sname
+FROM Student
+WHERE Sdept = 'CS';</div>
+      <div class="grid">
+        <div class="box"><strong>SELECT Sname</strong>最后要显示姓名这一列。</div>
+        <div class="box"><strong>FROM Student</strong>从学生表里找。</div>
+        <div class="box"><strong>WHERE Sdept = 'CS'</strong>只保留院系是 CS 的学生。</div>
+        <div class="box"><strong>分号</strong>表示这条 SQL 结束。考试手写时不是最核心，但写上更规范。</div>
+      </div>
+      <details>
+        <summary>为什么 SQL 写起来 SELECT 在前，但你说先想 FROM？</summary>
+        <p>因为写法是给数据库看的，思考顺序是给你自己看的。你自己做题时，必须先知道数据从哪张表来，才知道能筛什么、能显示什么。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>4.5 第一次逐行带读：这三行到底各干什么</h2>
+      <p>如果你第一次看到下面这段 SQL，脑子空白很正常。我们不要把它当代码，先把每一行翻译成人话。</p>
+      <div class="code">SELECT Sname
+FROM Student
+WHERE Sdept = 'CS';</div>
+      <div class="line-read">
+        <div class="line">
+          <p><code>FROM Student</code>先看这一行。它回答“去哪里找数据”。这里的意思是：请打开 Student 这张学生表。</p>
+          <p class="muted">为什么先读 FROM？因为如果你不知道打开哪张表，就不知道 Sname、Sdept 这些列从哪里来。</p>
+        </div>
+        <div class="line">
+          <p><code>WHERE Sdept = 'CS'</code>这一行回答“哪些行留下来”。意思是：只保留 Sdept 这一列等于 CS 的学生行。</p>
+          <p class="muted">Sdept 是列名，CS 是具体文本值。文本值要加单引号。</p>
+        </div>
+        <div class="line">
+          <p><code>SELECT Sname</code>最后读这一行。它回答“最后显示什么”。意思是：通过前面筛选后，只把 Sname 这一列交出来。</p>
+          <p class="muted">所以 SELECT 不是“先去选”，而是“最后交卷显示哪些列”。</p>
+        </div>
+      </div>
+      <div class="box danger">
+        <strong>零基础常见卡点</strong>
+        <p>很多人一看到 SELECT 就从输出开始想，结果忘记表和条件。你要强行训练自己：中文题 -> 先问 FROM 哪张表 -> 再问 WHERE 要不要筛行 -> 最后才写 SELECT。</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5. WHERE：先学会筛行</h2>
+      <p>WHERE 的人话是：“只要满足条件的那些行”。它发生在表还没有分组之前，所以它面对的是一行一行的原始记录。</p>
+      <div class="grid">
+        <div class="box"><strong>比较条件</strong>年龄小于 20：Sage &lt; 20。</div>
+        <div class="box"><strong>等于条件</strong>院系是 CS：Sdept = 'CS'。</div>
+        <div class="box"><strong>范围条件</strong>年龄 20 到 23：Sage BETWEEN 20 AND 23。</div>
+        <div class="box"><strong>模糊匹配</strong>姓刘：Sname LIKE '刘%'。</div>
+      </div>
+      <p class="code">SELECT Sname, Sage
+FROM Student
+WHERE Sage &lt; 20;</p>
+      <p>这条 SQL 的人话是：从 Student 表里，只看年龄小于 20 的行，最后显示姓名和年龄。</p>
+      <details>
+        <summary>字符串为什么有引号？</summary>
+        <p>CS、刘% 这种是文本值，SQL 里通常要用单引号包起来。数字 20、23 不需要引号。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>5.5 条件不是玄学：先问“这一行能不能判断”</h2>
+      <p>你判断一个条件该不该放 WHERE，最简单的办法是：只看表里的一行，能不能立刻判断真假？</p>
+      <div class="grid">
+        <div class="box"><strong>Sage &lt; 20</strong>看单个学生这一行就知道年龄是否小于 20，所以是 WHERE。</div>
+        <div class="box"><strong>Sdept = 'CS'</strong>看单个学生这一行就知道院系是不是 CS，所以是 WHERE。</div>
+        <div class="box"><strong>Sname LIKE '刘%'</strong>看单个学生这一行就知道姓名是否姓刘，所以是 WHERE。</div>
+        <div class="box"><strong>COUNT(*) &gt; 2</strong>看单独一行不知道“人数”，必须先把很多行合成一组，所以不是 WHERE。</div>
+      </div>
+      <p class="muted">这是 WHERE/HAVING 的地基。不要先背定义，先问“单独一行能判断吗”。</p>
+    </section>
+
+    <section class="card">
+      <h2>6. SELECT：不是“先想”，而是“最后交卷”</h2>
+      <p>SELECT 决定最终显示哪些列。题目要学号和姓名，你就 SELECT Sno, Sname；题目要所有列，可以 SELECT *。</p>
+      <div class="code">SELECT Sno, Sname
+FROM Student;</div>
+      <p>这条 SQL 的人话是：从 Student 表中显示学号和姓名两列，不筛行。</p>
+      <div class="grid">
+        <div class="box"><strong>SELECT 列名</strong>显示指定列。</div>
+        <div class="box"><strong>SELECT *</strong>显示所有列。考试里可以用，但大题通常按题目要求写具体列更清楚。</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>7. 聚合：把很多行算成一个数</h2>
+      <p>现在升级一点。题目不再问“哪些学生”，而是问“有多少学生”“平均成绩是多少”“最高工资是多少”。这时候就要用聚合函数。</p>
+      <div class="grid">
+        <div class="box"><strong>COUNT</strong>数个数，比如学生人数、选课人数。</div>
+        <div class="box"><strong>SUM</strong>求总和，比如总工资。</div>
+        <div class="box"><strong>AVG</strong>求平均，比如平均成绩。</div>
+        <div class="box"><strong>MAX/MIN</strong>求最大/最小，比如最高工资、最低分。</div>
+      </div>
+      <p class="code">SELECT COUNT(*)
+FROM Student;</p>
+      <p>这条 SQL 的人话是：数 Student 表里一共有多少行，也就是多少个学生。</p>
+    </section>
+
+    <section class="card">
+      <h2>8. GROUP BY：把行分成几堆再统计</h2>
+      <p>如果题目问“每个系有多少学生”，就不能只数全表人数。你要先按院系分堆：CS 一堆，IS 一堆，MA 一堆。然后每堆各自 COUNT。</p>
+      <div class="code">SELECT Sdept, COUNT(*)
+FROM Student
+GROUP BY Sdept;</div>
+      <div class="steps">
+        <div class="step">FROM Student：先拿到学生表。</div>
+        <div class="step">GROUP BY Sdept：按院系分堆。</div>
+        <div class="step">COUNT(*)：每一堆分别数有多少行。</div>
+        <div class="step">SELECT Sdept, COUNT(*)：最后显示院系和人数。</div>
+      </div>
+      <p>“每个、各个、按……统计”这类词，通常是在提醒你要 GROUP BY。</p>
+    </section>
+
+    <section class="card">
+      <h2>9. HAVING：筛分组后的结果</h2>
+      <p>WHERE 筛的是单行，HAVING 筛的是分组后的结果。比如“每个系学生人数超过 2 的系”，人数超过 2 这个条件必须等每个系人数算出来以后才知道。</p>
+      <div class="code">SELECT Sdept, COUNT(*)
+FROM Student
+GROUP BY Sdept
+HAVING COUNT(*) &gt; 2;</div>
+      <div class="grid">
+        <div class="box"><strong>WHERE 管一行</strong>年龄小于 20、院系是 CS、姓名姓刘。</div>
+        <div class="box"><strong>HAVING 管一组</strong>人数超过 2、平均成绩大于 80、最高工资超过 10000。</div>
+      </div>
+      <details>
+        <summary>为什么不能 WHERE COUNT(*) &gt; 2？</summary>
+        <p>因为 WHERE 执行时还没有分组，COUNT(*) 这个“每组人数”还不存在。先 GROUP BY，才有每组的 COUNT。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>9.5 第二次逐行带读：分组题怎么从中文走到 SQL</h2>
+      <p>现在看这句中文：统计每个系学生人数超过 2 的系名。我们慢慢拆，不跳步。</p>
+      <div class="steps">
+        <div class="step"><strong>先找统计对象</strong>“学生人数”说明要数行数，所以需要 COUNT(*)。</div>
+        <div class="step"><strong>再找分组标准</strong>“每个系”说明按 Sdept 分堆，所以 GROUP BY Sdept。</div>
+        <div class="step"><strong>再找筛选条件</strong>“人数超过 2”不是单行条件，是每组算完人数后筛，所以 HAVING COUNT(*) &gt; 2。</div>
+        <div class="step"><strong>最后找输出</strong>题目要系名，所以 SELECT Sdept。</div>
+      </div>
+      <div class="code">SELECT Sdept
+FROM Student
+GROUP BY Sdept
+HAVING COUNT(*) &gt; 2;</div>
+      <div class="line-read">
+        <div class="line"><p><code>FROM Student</code>先打开学生表。</p></div>
+        <div class="line"><p><code>GROUP BY Sdept</code>把学生按院系分成几堆。</p></div>
+        <div class="line"><p><code>HAVING COUNT(*) &gt; 2</code>每堆数人数，只保留人数超过 2 的堆。</p></div>
+        <div class="line"><p><code>SELECT Sdept</code>最后显示留下来的系名。</p></div>
+      </div>
+      <p class="muted">这就是你以后做分组题的固定路线：统计什么 -> 按什么分组 -> 分组后筛什么 -> 输出什么。</p>
+    </section>
+
+    <section class="card">
+      <h2>10. 今日唯一真题风格预告：回表，不要求你现在完全掌握</h2>
+      <p>下面这个题来自 2023A 风格。它比前面难很多，所以今天只理解“为什么不能一步完成”，不要求你熟练写。</p>
+      <p><strong>题干：</strong>查找各个部门薪水最高的员工编号、姓名和部门号。</p>
+      <p>先看一张员工表：</p>
+      <table class="table-demo">
+        <thead>
+          <tr><th>num</th><th>name</th><th>dept</th><th>salary</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>张三</td><td>A</td><td>8000</td></tr>
+          <tr><td>2</td><td>李四</td><td>A</td><td>9000</td></tr>
+          <tr><td>3</td><td>王五</td><td>B</td><td>7000</td></tr>
+          <tr><td>4</td><td>赵六</td><td>B</td><td>9500</td></tr>
+        </tbody>
+      </table>
+      <p>如果先按部门分组，只能稳定得到：</p>
+      <div class="code">A 部门最高工资 9000
+B 部门最高工资 9500</div>
+      <p>但题目要员工编号和姓名。最高工资数值本身不是员工姓名，所以要回到原来的 emp 表，找“部门相同，并且工资等于该部门最高工资”的那一行。这一步叫回表。</p>
+      <div class="steps">
+        <div class="step">先求每个部门的最高工资。</div>
+        <div class="step">把结果当成一张临时小表。</div>
+        <div class="step">再和 emp 原表连接。</div>
+        <div class="step">匹配条件：部门相同，工资等于最高工资。</div>
+      </div>
+      <details>
+        <summary>今天要不要背这段完整 SQL？</summary>
+        <p>不急。今天只要你能解释“为什么要回表”。完整 SQL 后面再练。零基础阶段先把原因讲清楚，别先背长句子。</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>10.5 中文题干翻译词典：考试不会直接喊 SQL 关键词</h2>
+      <p>考试题通常不会说“请你使用 GROUP BY 和 HAVING”。它会用中文绕一层。你要练的是把中文信号翻译成 SQL 部件。</p>
+      <div class="grid">
+        <div class="box"><strong>“查询/列出/找出……”</strong>通常是在问最终输出什么，对应 SELECT 后面的列。</div>
+        <div class="box"><strong>“从学生表/员工表……”</strong>通常是在提示数据来源，对应 FROM。</div>
+        <div class="box"><strong>“年龄小于/姓名为/院系是……”</strong>单独看一行就能判断，对应 WHERE。</div>
+        <div class="box"><strong>“每个/各个/按……统计”</strong>说明要分堆，对应 GROUP BY。</div>
+        <div class="box"><strong>“人数/总数/平均/最高/最低”</strong>说明要把多行算成一个数，对应 COUNT/SUM/AVG/MAX/MIN。</div>
+        <div class="box"><strong>“人数超过/平均大于/最高低于”</strong>如果是分组算完后的条件，对应 HAVING。</div>
+        <div class="box"><strong>“同时显示另一张表的信息”</strong>常常要 JOIN，因为信息分散在多张表。</div>
+        <div class="box"><strong>“对应的员工姓名/完整信息”</strong>如果前面只算出了最大值，常常要回表。</div>
+      </div>
+      <p class="muted">你可以把它当成考场翻译器。先翻译题干，再写 SQL，别反过来硬凑语法。</p>
+    </section>
+
+    <section class="card">
+      <h2>10.6 零基础常见误区：错在这里很正常，但要尽早修</h2>
+      <div class="grid">
+        <div class="box"><strong>误区 1：SELECT 写在前，所以先想 SELECT</strong>做题时先想 FROM。没有数据来源，就没有后面的筛选和输出。</div>
+        <div class="box"><strong>误区 2：看到条件就全放 WHERE</strong>先问“单独一行能判断吗”。能判断放 WHERE，必须先分组计算才知道就放 HAVING。</div>
+        <div class="box"><strong>误区 3：GROUP BY 后随便 SELECT 普通列</strong>分组后，每组里可能有很多行，普通列会变得不确定。</div>
+        <div class="box"><strong>误区 4：背长 SQL，不理解为什么</strong>零基础阶段先会解释原因，再背模板。解释不出来，考试稍微变形就会断。</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>10.7 SQL 题卡：先写骨架，再看逐行解析</h2>
+      <p class="muted">这里不是选择题，也不是让你背答案。每题先写三件事：题眼、SQL 骨架、人话解释。写不完整也没关系，重点是从中文走到 SQL。</p>
+
+      <div class="question">
+        <h3>题 1：单表筛行</h3>
+        <p>已知 Student(Sno, Sname, Sdept, Sage)。查询年龄小于 20 的学生姓名和年龄。</p>
+        <textarea data-note="sql_card_1" placeholder="1. 题眼：____&#10;2. FROM 哪张表：____&#10;3. WHERE 条件：____&#10;4. SELECT 输出：____&#10;5. 尝试写 SQL："></textarea>
+        <details><summary>看标准答案和逐行解析</summary><div class="answer-block">
+          <p><strong>标准答案：</strong></p>
+          <div class="code">SELECT Sname, Sage
+FROM Student
+WHERE Sage &lt; 20;</div>
+          <p><strong>题眼：</strong>“年龄小于 20”看单个学生这一行就能判断，所以放 WHERE。</p>
+          <p><strong>逐行读：</strong>FROM Student 打开学生表；WHERE Sage &lt; 20 留下年龄小于 20 的行；SELECT Sname, Sage 最后显示姓名和年龄。</p>
+          <p><strong>常见坑：</strong>不要写成 SELECT Sname FROM Student WHERE Sage &lt; 20 如果题目还要年龄；输出列要跟题目一致。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 2：LIKE 模糊匹配</h3>
+        <p>已知 Student(Sno, Sname, Sdept, Sage)。查询所有姓“刘”的学生学号和姓名。</p>
+        <textarea data-note="sql_card_2" placeholder="1. 题眼：____&#10;2. 姓刘用什么条件：____&#10;3. 尝试写 SQL："></textarea>
+        <details><summary>看标准答案和逐行解析</summary><div class="answer-block">
+          <p><strong>标准答案：</strong></p>
+          <div class="code">SELECT Sno, Sname
+FROM Student
+WHERE Sname LIKE '刘%';</div>
+          <p><strong>题眼：</strong>“姓刘”不是等于某个完整姓名，而是姓名以“刘”开头，所以用 LIKE '刘%'。</p>
+          <p><strong>% 的意思：</strong>百分号表示后面可以接任意字符。'刘%' 可以匹配刘晨、刘伟、刘某某。</p>
+          <p><strong>常见坑：</strong>文本要加单引号；不要写 Sname = '刘%'，等号不会把 % 当通配符。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 3：分组统计</h3>
+        <p>已知 Student(Sno, Sname, Sdept, Sage)。统计每个系的学生人数，显示系名和人数。</p>
+        <textarea data-note="sql_card_3" placeholder="1. “每个系”提示：____&#10;2. “人数”提示：____&#10;3. GROUP BY 哪一列：____&#10;4. 尝试写 SQL："></textarea>
+        <details><summary>看标准答案和逐行解析</summary><div class="answer-block">
+          <p><strong>标准答案：</strong></p>
+          <div class="code">SELECT Sdept, COUNT(*) AS student_count
+FROM Student
+GROUP BY Sdept;</div>
+          <p><strong>题眼：</strong>“每个系”提示按 Sdept 分组；“人数”提示 COUNT(*)。</p>
+          <p><strong>逐行读：</strong>FROM Student 打开学生表；GROUP BY Sdept 按系分堆；COUNT(*) 数每堆几行；SELECT 显示系名和人数。</p>
+          <p><strong>常见坑：</strong>如果 SELECT 里显示 Sdept 和 COUNT(*)，通常 Sdept 要出现在 GROUP BY 里。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 4：HAVING 筛组</h3>
+        <p>已知 Student(Sno, Sname, Sdept, Sage)。查询学生人数超过 2 的系名和人数。</p>
+        <textarea data-note="sql_card_4" placeholder="1. 先按什么分组：____&#10;2. 人数超过 2 是 WHERE 还是 HAVING：____&#10;3. 尝试写 SQL："></textarea>
+        <details><summary>看标准答案和逐行解析</summary><div class="answer-block">
+          <p><strong>标准答案：</strong></p>
+          <div class="code">SELECT Sdept, COUNT(*) AS student_count
+FROM Student
+GROUP BY Sdept
+HAVING COUNT(*) &gt; 2;</div>
+          <p><strong>题眼：</strong>“人数超过 2”是分组统计以后才知道的条件，所以用 HAVING，不用 WHERE。</p>
+          <p><strong>为什么不是 WHERE：</strong>WHERE 看单独一行时执行，那时候还没有每个系的人数 COUNT(*)。</p>
+          <p><strong>考场自查：</strong>凡是条件里出现 COUNT/AVG/MAX/MIN 这类聚合结果，大概率要放 HAVING。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 5：两表连接的第一步</h3>
+        <p>已知 Student(Sno, Sname, Sdept) 和 SC(Sno, Cno, Grade)。查询选修了课程 C1 的学生姓名和成绩。</p>
+        <textarea data-note="sql_card_5" placeholder="1. 需要几张表：____&#10;2. 两张表靠哪一列连接：____&#10;3. 课程 C1 的条件放哪里：____&#10;4. 尝试写 SQL："></textarea>
+        <details><summary>看标准答案和逐行解析</summary><div class="answer-block">
+          <p><strong>标准答案：</strong></p>
+          <div class="code">SELECT Student.Sname, SC.Grade
+FROM Student, SC
+WHERE Student.Sno = SC.Sno
+  AND SC.Cno = 'C1';</div>
+          <p><strong>题眼：</strong>姓名在 Student 表，成绩和课程号在 SC 表，所以必须用两张表。两张表通过 Sno 对齐。</p>
+          <p><strong>逐行读：</strong>FROM Student, SC 先拿两张表；WHERE Student.Sno = SC.Sno 把同一个学生的两边信息对上；AND SC.Cno = 'C1' 只保留选 C1 的选课记录；SELECT 输出姓名和成绩。</p>
+          <p><strong>常见坑：</strong>只写 FROM SC 就拿不到 Sname；只写 FROM Student 就拿不到 Grade 和 Cno。信息在哪张表，决定 FROM 要不要加表。</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 id="ra-symbols">10.8 Day 1 第二课：关系代数符号识字课</h2>
+      <p>你刚刚学的是 SQL。SQL 像一段写给数据库执行的句子；关系代数像一张写给人看的“查询流程图”。考试会让你在这两种语言之间互相翻译，所以这里不能只认识 <span class="mini-formula">Π</span>、<span class="mini-formula">σ</span> 的名字，必须知道它们<strong>长什么样、读什么、在题里放哪一层</strong>。</p>
+      <div class="box danger">
+        <strong>先纠正一个危险误区</strong>
+        <p>关系代数里的投影通常写大写希腊字母 <span class="mini-formula">Π</span>，不是普通英文 P；选择通常写小写希腊字母 <span class="mini-formula">σ</span>，不是英文 o。你在考卷上看到它们，第一反应要是“哦，Π 选列，σ 筛行”，而不是“这是什么鬼符号”。</p>
+      </div>
+      <table class="table-demo">
+        <thead>
+          <tr><th>符号长相</th><th>名称</th><th>人话动作</th><th>SQL 对应</th><th>考试写法</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="ra-symbol">σ</span></td>
+            <td>选择 selection</td>
+            <td>筛行：留下满足条件的记录</td>
+            <td>WHERE</td>
+            <td><span class="mini-formula">σ<sub>Sdept='CS'</sub>(Student)</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">Π</span></td>
+            <td>投影 projection</td>
+            <td>选列：最后只保留题目要求的字段</td>
+            <td>SELECT</td>
+            <td><span class="mini-formula">Π<sub>Sname,Sage</sub>(Student)</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">×</span></td>
+            <td>笛卡尔积 product</td>
+            <td>暴力两两组合两张表的行</td>
+            <td>FROM R, S 的原始组合</td>
+            <td><span class="mini-formula">R × S</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">⋈</span></td>
+            <td>连接 join</td>
+            <td>按公共属性或条件把表拼起来</td>
+            <td>JOIN / WHERE 连接条件</td>
+            <td><span class="mini-formula">Student ⋈ SC</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">∪</span></td>
+            <td>并 union</td>
+            <td>合并两个同类型结果</td>
+            <td>UNION</td>
+            <td><span class="mini-formula">A ∪ B</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">−</span></td>
+            <td>差 difference</td>
+            <td>在 A 里但不在 B 里</td>
+            <td>NOT IN / NOT EXISTS 的集合味道</td>
+            <td><span class="mini-formula">Π<sub>Sno</sub>(Student) − Π<sub>Sno</sub>(SC)</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">÷</span></td>
+            <td>除 division</td>
+            <td>处理“所有、全部、每一个”</td>
+            <td>双重 NOT EXISTS / COUNT(DISTINCT)</td>
+            <td><span class="mini-formula">Π<sub>Sno,Cno</sub>(SC) ÷ Π<sub>Cno</sub>(Course)</span></td>
+          </tr>
+          <tr>
+            <td><span class="ra-symbol">ρ</span></td>
+            <td>更名 rename</td>
+            <td>给关系或属性改名，避免同名冲突</td>
+            <td>AS / 表别名</td>
+            <td><span class="mini-formula">ρ<sub>E</sub>(Employee)</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="muted">Day1 先把前六个练熟：<span class="mini-formula">σ、Π、×、⋈、∪、−</span>。看到“所有/全部/每一门”再把 <span class="mini-formula">÷</span> 叫出来。<span class="mini-formula">ρ</span> 是处理自连接或重名属性时的辅助工具，先知道它是“改名”即可。</p>
+
+      <h3>从 SQL 翻译到关系代数：顺序其实很固定</h3>
+      <p>关系代数表达式通常是从里面往外看。里面先拿表，外面逐层筛行、选列。你可以把它理解成“SQL 逻辑顺序的符号版”。</p>
+      <div class="grid">
+        <div class="box"><strong>FROM R, S</strong>先拿两张表，对应 <span class="mini-formula">R × S</span> 或连接。</div>
+        <div class="box"><strong>WHERE 条件</strong>筛掉不符合条件的行，对应 <span class="mini-formula">σ<sub>条件</sub>(...)</span>。</div>
+        <div class="box"><strong>SELECT 列</strong>最后只保留输出列，对应 <span class="mini-formula">Π<sub>列</sub>(...)</span>。</div>
+        <div class="box"><strong>没有/所有</strong>“没有”常用差集 <span class="mini-formula">−</span>；“所有”常用除法 <span class="mini-formula">÷</span>。</div>
+      </div>
+      <p><strong>2023 风格例子：</strong></p>
+      <div class="code">SELECT A, B, D
+FROM R, S
+WHERE R.C = S.C;</div>
+      <p>把它翻译成关系代数：</p>
+      <div class="formula">Π<sub>A,B,D</sub>( σ<sub>R.C = S.C</sub>( R × S ) )</div>
+      <div class="steps">
+        <div class="step"><strong>最里面：</strong><span class="mini-formula">R × S</span>，先把 R 和 S 的行暴力组合，这是 FROM R, S 的关系代数底层含义。</div>
+        <div class="step"><strong>中间：</strong><span class="mini-formula">σ<sub>R.C = S.C</sub>(...)</span>，只留下 R.C 和 S.C 相等的组合，这就是 WHERE 条件。</div>
+        <div class="step"><strong>最外面：</strong><span class="mini-formula">Π<sub>A,B,D</sub>(...)</span>，最后只输出 A、B、D 三列，这就是 SELECT。</div>
+      </div>
+      <p class="muted">你也可以写成带条件连接的版本：<span class="mini-formula">Π<sub>A,B,D</sub>(R ⋈<sub>R.C=S.C</sub> S)</span>。如果老师给的是笛卡尔积 + 选择的风格，就按前一种写；如果讲义常用连接符，就按后一种也能表达同一逻辑。</p>
+
+      <h3>真题风格练习：选修 Database 的学生姓名</h3>
+      <p>已知：Student(SID, Name, Age)，Course(CID, CourseName, Credit)，Take(SID, CID)。请用关系代数写出：找选修了课程名为 “Database” 的学生姓名。</p>
+      <textarea data-note="ra_database_student_name" placeholder="先别急着写整式。按四步写：&#10;1. 输出列：____&#10;2. 筛选条件：____&#10;3. 需要哪些表：____&#10;4. 尝试写关系代数："></textarea>
+      <details><summary>看标准答案和逐层解析</summary><div class="answer-block">
+        <p><strong>第一步：输出列。</strong>题目最后要学生姓名，所以最外层一定是 <span class="mini-formula">Π<sub>Name</sub>(...)</span>。这一步对应 SQL 的 SELECT Name。</p>
+        <p><strong>第二步：筛选条件。</strong>课程名为 Database，所以中间需要 <span class="mini-formula">σ<sub>CourseName='Database'</sub>(...)</span>。这一步对应 SQL 的 WHERE CourseName = 'Database'。</p>
+        <p><strong>第三步：需要三张表。</strong>Name 在 Student；CourseName 在 Course；学生和课程的选课关系在 Take。所以必须把 Student、Take、Course 连起来。</p>
+        <p><strong>自然连接简写：</strong></p>
+        <div class="formula">Π<sub>Name</sub>( σ<sub>CourseName='Database'</sub>( Student ⋈ Take ⋈ Course ) )</div>
+        <p><strong>更严格的条件连接写法：</strong></p>
+        <div class="formula">Π<sub>Name</sub>( σ<sub>CourseName='Database'</sub>( (Student ⋈<sub>Student.SID=Take.SID</sub> Take) ⋈<sub>Take.CID=Course.CID</sub> Course ) )</div>
+        <p><strong>考试怎么选写法：</strong>如果三张表的同名列 SID、CID 很清楚，写自然连接简写通常够；如果担心同名属性不明确，就写带条件连接，更不容易被扣“连接条件不清”。</p>
+      </div></details>
+
+      <h3>关系代数最容易丢分的 6 个坑</h3>
+      <div class="grid">
+        <div class="box"><strong>坑 1：把 Π 和 σ 写反</strong><span class="mini-formula">Π</span> 是选列，<span class="mini-formula">σ</span> 是筛行。记忆：Π 像一扇门，最后只让几列出门；σ 像筛子，筛掉不合格的行。</div>
+        <div class="box"><strong>坑 2：最外层忘了投影</strong>题目问姓名，你中间连接筛选都对，但最后没写 <span class="mini-formula">Π<sub>Name</sub></span>，就等于交了一整张大表。</div>
+        <div class="box"><strong>坑 3：跨表不连接</strong>Name 在 Student，CourseName 在 Course，中间没有 Take 就搭不上桥。关系代数题也要先问信息在哪几张表。</div>
+        <div class="box"><strong>坑 4：“没有”和“所有”混用</strong>没有选课是差集；选修所有课程是除法。一个是否定排除，一个是覆盖全集，题眼完全不同。</div>
+        <div class="box"><strong>坑 5：只背符号，不会读式子</strong>看到 <span class="mini-formula">Π<sub>Name</sub>(σ<sub>CourseName='Database'</sub>(...))</span> 要会读成：最后输出姓名，中间只留 Database 课程相关记录。</div>
+        <div class="box"><strong>坑 6：把 SQL 混进关系代数</strong>题目要求关系代数时，不要写 SELECT/FROM/WHERE；要把它们翻译成 <span class="mini-formula">Π/×/σ</span> 或连接。</div>
+      </div>
+
+      <div class="question">
+        <h3>关系代数小测 1：认符号</h3>
+        <p>不看表格，写出下面符号的人话动作：<span class="mini-formula">σ、Π、×、⋈、−、÷</span>。</p>
+        <textarea data-note="ra_symbols_recall" placeholder="σ：____&#10;Π：____&#10;×：____&#10;⋈：____&#10;−：____&#10;÷：____"></textarea>
+        <details><summary>看参考答案</summary><div class="answer-block">
+          <p><span class="mini-formula">σ</span> 筛行；<span class="mini-formula">Π</span> 选列；<span class="mini-formula">×</span> 笛卡尔积，暴力组合；<span class="mini-formula">⋈</span> 连接，按共同属性或条件拼表；<span class="mini-formula">−</span> 差集，A 有 B 没有；<span class="mini-formula">÷</span> 除法，处理所有/全部/每一个。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>关系代数小测 2：从中文到骨架</h3>
+        <p>已知 Student(Sno, Sname)，SC(Sno, Cno)。写出“没有选修任何课程的学生姓名”的关系代数思路。</p>
+        <textarea data-note="ra_no_course_name" placeholder="先写：全体学生 - 已选课学生。注意最后要姓名。"></textarea>
+        <details><summary>看参考答案</summary><div class="answer-block">
+          <p>如果只要学号，最干净是：</p>
+          <div class="formula">Π<sub>Sno</sub>(Student) − Π<sub>Sno</sub>(SC)</div>
+          <p>但题目要姓名，所以可以先求没选课的学号，再和 Student 取姓名：</p>
+          <div class="formula">Π<sub>Sname</sub>( Student ⋈ (Π<sub>Sno</sub>(Student) − Π<sub>Sno</sub>(SC)) )</div>
+          <p><strong>人话：</strong>全体学生里去掉至少在 SC 出现过的学生，剩下就是没有选课的人；最后回 Student 拿姓名。</p>
+        </div></details>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>11. 主观训练：先写人话，再看答案</h2>
+      <p class="muted">下面的输入框会自动保存在本机。你现在写得幼稚也没关系，关键是把词变成自己的话。</p>
+      <h3>训练 1</h3>
+      <p>用自己的话解释：表、列、行分别是什么？请用学生表举例。</p>
+      <textarea data-note="table_row_column"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>表是一类数据的集合，比如 Student 表保存学生信息；列是每个学生都有哪些字段，比如 Sno、Sname、Sdept；行是一个具体学生的记录，比如 95001、李勇、CS、20 这一整行。</p>
+      </details>
+
+      <h3>训练 2</h3>
+      <p>主键和外键分别解决什么问题？为什么外键会影响 JOIN？</p>
+      <textarea data-note="key_foreign_key"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>主键解决“一行怎么唯一识别”的问题，比如学号唯一确定一个学生。外键解决“两张表怎么联系”的问题，比如 SC.Sno 引用 Student.Sno。JOIN 要写两张表如何对齐，外键通常就是连接条件来源。</p>
+      </details>
+
+      <h3>训练 3</h3>
+      <p>题干说“统计每个系学生人数超过 2 的系名”，你会怎么拆？先不用追求 SQL 完美。</p>
+      <textarea data-note="group_having"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>“每个系”说明按 Sdept 分组；“学生人数”说明要 COUNT(*)；“超过 2”是分组后的条件，所以用 HAVING COUNT(*) > 2；最后输出系名 Sdept。</p>
+      </details>
+
+      <h3>训练 4</h3>
+      <p>为什么“各部门最高工资员工”不能只 GROUP BY dept 后 SELECT name？</p>
+      <textarea data-note="return_table"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>GROUP BY dept 后，每个部门会变成一组。MAX(salary) 能得到这个组里的最高工资值，但 name 不是分组字段，也不是聚合结果，数据库无法稳定知道你要哪个员工姓名。要拿员工编号和姓名，必须回到 emp 原表匹配那一行。</p>
+      </details>
+
+      <h3>训练 5</h3>
+      <p>看到一条 SQL 时，为什么建议你先读 FROM，而不是先读 SELECT？</p>
+      <textarea data-note="read_from_first"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>因为 FROM 决定数据来自哪张表。只有先知道打开哪张表，才知道有哪些列可以筛选和输出。SELECT 写在前面只是 SQL 的书写格式；做题理解时应先想 FROM，再想 WHERE/GROUP BY/HAVING，最后想 SELECT 输出什么。</p>
+      </details>
+
+      <h3>训练 6</h3>
+      <p>用自己的话读出这个关系代数表达式：<span class="mini-formula">Π<sub>Sname</sub>(σ<sub>Sdept='CS'</sub>(Student))</span>。它对应哪条简单 SQL？</p>
+      <textarea data-note="ra_read_expression"></textarea>
+      <details>
+        <summary>参考答案</summary>
+        <p>从里面往外读：先打开 Student 表；<span class="mini-formula">σ<sub>Sdept='CS'</sub></span> 表示只留下院系为 CS 的学生行；<span class="mini-formula">Π<sub>Sname</sub></span> 表示最后只输出学生姓名。对应 SQL 是：SELECT Sname FROM Student WHERE Sdept = 'CS';</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>12. 今天结束前的最小检查</h2>
+      <div class="check">
+        <div>我能用学生表解释：表、列、行、值。</div>
+        <div>我能解释：主键是找一行，外键是连两张表。</div>
+        <div>我知道 SQL 是向数据库提问：从哪找、筛哪些行、显示哪些列。</div>
+        <div>我能解释 WHERE 管单行，HAVING 管分组后的结果。</div>
+        <div>我能认出关系代数核心符号：σ 筛行，Π 选列，× 组合，⋈ 连接，− 表示没有/排除，÷ 处理所有/全部。</div>
+        <div>我能把 SELECT A,B FROM R,S WHERE R.C=S.C 翻译成 Π<sub>A,B</sub>(σ<sub>R.C=S.C</sub>(R×S)) 这一类骨架。</div>
+        <div>我知道“各部门最高工资员工”今天只要求理解为什么要回表，不要求熟练背长 SQL。</div>
+      </div>
+      <p><a href="./index.html">回到期末陪跑学习舱</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-finals-day1-db-sql-notes";
+    let savedNotes = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>离散真题混合交互卷：前 70 分稳住，证明 30 分能下笔</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #607081;
+      --line: #dbe5ee;
+      --paper: #fbfdff;
+      --blue: #1f6fb2;
+      --green: #237a57;
+      --red: #b9443e;
+      --yellow: #f5c35b;
+      --violet: #7259a8;
+      --soft-blue: #eef6ff;
+      --soft-green: #eefaf4;
+      --soft-red: #fff2f1;
+      --soft-yellow: #fff8e6;
+      --shadow: 0 14px 40px rgba(28, 50, 78, .10);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f5f8fb 0%, #eef4f8 100%);
+      line-height: 1.78;
+      letter-spacing: 0;
+    }
+    header {
+      padding: 38px 6vw 24px;
+      background:
+        linear-gradient(135deg, rgba(31,111,178,.10), rgba(35,122,87,.08)),
+        #ffffff;
+      border-bottom: 1px solid var(--line);
+    }
+    main { width: min(1180px, 94vw); margin: 24px auto 72px; }
+    h1 { margin: 0 0 12px; font-size: clamp(28px, 4vw, 46px); line-height: 1.18; }
+    h2 { margin: 0 0 16px; font-size: 25px; line-height: 1.3; }
+    h3 { margin: 18px 0 10px; font-size: 19px; }
+    p { margin: 8px 0 12px; }
+    a { color: var(--blue); font-weight: 700; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .muted { color: var(--muted); }
+    .deck { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #2d465e;
+    }
+    .hot { color: #8f342f; background: var(--soft-red); border-color: #f2c4bf; }
+    .good { color: var(--green); background: var(--soft-green); border-color: #bfe7d2; }
+    .info { color: var(--blue); background: var(--soft-blue); border-color: #c4def4; }
+    .warn { color: #856119; background: var(--soft-yellow); border-color: #efd587; }
+    .violet { color: var(--violet); background: #f4f1ff; border-color: #d8d0f4; }
+    .card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin: 18px 0;
+    }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+    .box strong { display: block; margin-bottom: 6px; }
+    .focus {
+      color: #0d4f84;
+      background: #e8f3ff;
+      padding: 1px 5px;
+      border-radius: 5px;
+      font-weight: 800;
+    }
+    mark {
+      background: linear-gradient(180deg, transparent 52%, rgba(245,195,91,.55) 52%);
+      padding: 0 2px;
+    }
+    .formula {
+      display: inline-block;
+      margin: 4px 0;
+      padding: 6px 10px;
+      border-radius: 7px;
+      background: #f7fafc;
+      border: 1px solid #dce7ef;
+      font-family: "Times New Roman", "STIX Two Text", serif;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      white-space: normal;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { text-align: left; background: #f0f5f9; font-weight: 900; }
+    tr:last-child td { border-bottom: 0; }
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 16px;
+      margin: 14px 0;
+      background: #ffffff;
+    }
+    .question h3 { margin-top: 0; }
+    .options { display: grid; gap: 9px; margin: 10px 0; }
+    label.option {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      background: #fbfdff;
+      cursor: pointer;
+    }
+    label.option:hover { border-color: #9fc7ea; background: #f2f8ff; }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 900;
+      color: white;
+      background: var(--blue);
+      cursor: pointer;
+    }
+    button.secondary { background: #526273; }
+    .score {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #c9d9e6;
+      background: #f8fbfe;
+      font-weight: 800;
+    }
+    details {
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 11px 13px;
+      margin-top: 12px;
+    }
+    summary { cursor: pointer; font-weight: 900; color: #235a8a; }
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      resize: vertical;
+      border-radius: 8px;
+      border: 1px solid #cfdce8;
+      padding: 12px;
+      font: inherit;
+      line-height: 1.7;
+      background: #fff;
+    }
+    .rubric {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .rubric span { padding: 10px 12px; border-bottom: 1px solid #dce7ef; }
+    .rubric span:nth-child(odd) { background: #f1f6fa; font-weight: 900; }
+    .rubric span:nth-last-child(-n+2) { border-bottom: 0; }
+    .checklist label {
+      display: block;
+      padding: 10px 12px;
+      margin: 8px 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .mini-map {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .mini-map div {
+      padding: 12px;
+      border-radius: 8px;
+      background: #f8fbfe;
+      border: 1px solid #dce7ef;
+      min-height: 86px;
+    }
+    @media (max-width: 820px) {
+      .grid, .two, .mini-map { grid-template-columns: 1fr; }
+      .rubric { grid-template-columns: 1fr; }
+      th, td { display: block; width: 100%; }
+      th { display: none; }
+      td { border-bottom: 1px solid var(--line); }
+      .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>离散真题混合交互卷</h1>
+    <p class="muted">使用时机：<strong>Day7 上场闸门达到 7/10 后</strong>，或 6/27-6/28 临考前。它不是 Day1 新课，而是把 2022、2020、2019、2018 真题结构和 2024 参考卷信号混成一套“卷面练手 + 变式识别”。</p>
+    <div class="deck">
+      <span class="pill hot">前 70 分：定义、语义、范式、翻译</span>
+      <span class="pill good">后 30 分：语义证明、公理证明</span>
+      <span class="pill info">选择/判断自动判分</span>
+      <span class="pill warn">每题先写题眼和第一句</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>0. 卷面地图：别被证明题吓得忘了前面能拿的分</h2>
+      <p>2020 和 2022 真题结构高度相似：<mark>简答 20 分、论述 20 分、判断 20 分、范式 10 分、证明 30 分</mark>。所以离散冲刺不是“只练证明”，而是先稳住前 70 分的流程题，再让证明题至少写出规范骨架。</p>
+      <div class="mini-map">
+        <div><strong>简答 20</strong><br>完备集、合式公式、可靠/完备、变量辖域。</div>
+        <div><strong>论述 20</strong><br>自然语言符号化、演绎定理、真值解释、等值演算。</div>
+        <div><strong>判断 20</strong><br>语义推论、量词分配、反例构造。</div>
+        <div><strong>范式 10</strong><br>主析取/主合取、前束范式、数字电路输出。</div>
+        <div><strong>证明 30</strong><br>语义方法、公理方法、证据链。</div>
+      </div>
+      <div class="grid">
+        <div class="box"><strong>先做什么</strong>先做第 1 节客观题，测你能不能识别题型盒子。</div>
+        <div class="box"><strong>再做什么</strong>做第 2-4 节主观题，只写骨架也可以，但必须写第一步。</div>
+        <div class="box"><strong>最后做什么</strong>证明题只要求把“题眼 -> 第一句 -> 推进链条”练熟。</div>
+      </div>
+    </section>
+
+    <section class="card" id="objective">
+      <h2>1. 客观题闸门：12 题先测“题眼反应”</h2>
+      <p>选择/判断题做得快，但不能傻。你每做一道都要问：它是在考<mark>定义边界、量词反例、语义推论、公理系统</mark>中的哪一个？</p>
+
+      <div class="question" data-q data-answer="C">
+        <h3>1. 下列哪组联结词可以作为命题逻辑联结词完备集？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q1" value="A"> A. {∧}</label>
+          <label class="option"><input type="radio" name="q1" value="B"> B. {∨}</label>
+          <label class="option"><input type="radio" name="q1" value="C"> C. {¬, →}</label>
+          <label class="option"><input type="radio" name="q1" value="D"> D. {↔}</label>
+        </div>
+        <details><summary>解析</summary><p>2020、2018 都考过完备集。完备集的意思是“靠这组联结词能表达任意真值函数”。常见可背：{¬,∧}、{¬,∨}、{¬,→}、{¬,∧,∨}。单独 {∧}/{∨}/{↔} 表达力不够。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="B">
+        <h3>2. 可靠性定理对应哪一个箭头？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q2" value="A"> A. Γ ⊨ Q ⇒ Γ ⊢ Q</label>
+          <label class="option"><input type="radio" name="q2" value="B"> B. Γ ⊢ Q ⇒ Γ ⊨ Q</label>
+          <label class="option"><input type="radio" name="q2" value="C"> C. Γ ⊢ Q ⇔ Γ 不可满足</label>
+          <label class="option"><input type="radio" name="q2" value="D"> D. Γ ⊨ Q ⇔ Q 是命题变元</label>
+        </div>
+        <details><summary>解析</summary><p><strong>可靠性</strong>是“不证明假东西”：形式系统能推出的东西，语义上一定成立，所以是 <span class="formula">Γ ⊢ Q ⇒ Γ ⊨ Q</span>。<strong>完备性</strong>才是另一边：语义上成立的东西，形式系统也能推出。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="A">
+        <h3>3. 若 Γ ⊨ ¬Q ∧ Q，则 Γ 是否可满足？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q3" value="A"> A. 不可满足</label>
+          <label class="option"><input type="radio" name="q3" value="B"> B. 一定可满足</label>
+          <label class="option"><input type="radio" name="q3" value="C"> C. 只要 Q 是原子公式就可满足</label>
+          <label class="option"><input type="radio" name="q3" value="D"> D. 与 Γ 无关</label>
+        </div>
+        <details><summary>解析</summary><p>如果 Γ 有模型，那么在这个模型中 Γ 全真；又因 Γ 推出矛盾式 ¬Q∧Q，矛盾式也要真，这是不可能的。所以 Γ 不可满足。这类题是 2020 判断题的典型。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="B">
+        <h3>4. ∃xQ(x) ∧ ∃xR(x) ⊨ ∃x(Q(x) ∧ R(x)) 是否成立？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q4" value="A"> A. 成立，因为左右都有存在量词</label>
+          <label class="option"><input type="radio" name="q4" value="B"> B. 不成立，两个存在见证可能不是同一个对象</label>
+          <label class="option"><input type="radio" name="q4" value="C"> C. 成立，因为 ∧ 可以随便进入量词</label>
+          <label class="option"><input type="radio" name="q4" value="D"> D. 只有论域为空时成立</label>
+        </div>
+        <details><summary>解析</summary><p>这是 2020/2018 高频反例。取论域 D={1,2}，其中 1∈D、2∈D；令 Q(1) 真、Q(2) 假，R(2) 真、R(1) 假。左边有一个 Q 见证 1∈D 和一个 R 见证 2∈D，但没有同一个对象同时满足 Q 和 R。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="A">
+        <h3>5. ∃x∀yP(x,y) ⊨ ∀y∃xP(x,y) 是否成立？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q5" value="A"> A. 成立</label>
+          <label class="option"><input type="radio" name="q5" value="B"> B. 不成立</label>
+          <label class="option"><input type="radio" name="q5" value="C"> C. 只有有限论域成立</label>
+          <label class="option"><input type="radio" name="q5" value="D"> D. 只有 P 是一元谓词成立</label>
+        </div>
+        <details><summary>解析</summary><p>左边说“存在一个万能 x，能对所有 y 成立”。既然有这样一个固定 x，那么对每个 y，当然都能找到一个 x 让 P(x,y) 成立，就找这个万能 x。注意反方向 <span class="formula">∀y∃xP(x,y) ⇒ ∃x∀yP(x,y)</span> 一般不成立。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="B">
+        <h3>6. ∀x(Q(x)∨R(x)) ⊨ ∀xQ(x)∨∀xR(x) 是否成立？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q6" value="A"> A. 成立，∀ 对 ∨ 总能分配</label>
+          <label class="option"><input type="radio" name="q6" value="B"> B. 不成立，每个对象可以分别靠 Q 或 R 成立</label>
+          <label class="option"><input type="radio" name="q6" value="C"> C. 成立，只要论域非空</label>
+          <label class="option"><input type="radio" name="q6" value="D"> D. 不成立，因为 ∨ 不能出现在谓词逻辑中</label>
+        </div>
+        <details><summary>解析</summary><p>经典反例：论域 D={1,2}，其中 1∈D、2∈D；Q(1) 真 Q(2) 假，R(1) 假 R(2) 真。每个 x∈D 都有 Q∨R 成立，但不是所有对象都 Q，也不是所有对象都 R。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="D">
+        <h3>7. 公式 ∃x∀y(P(x,y)∧Q(z)) 中，自由变元是？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q7" value="A"> A. x</label>
+          <label class="option"><input type="radio" name="q7" value="B"> B. y</label>
+          <label class="option"><input type="radio" name="q7" value="C"> C. x 和 y</label>
+          <label class="option"><input type="radio" name="q7" value="D"> D. z</label>
+        </div>
+        <details><summary>解析</summary><p>∃x 绑定 x，∀y 绑定 y；Q(z) 里的 z 没有被任何量词管住，所以 z 是自由变元。考试做这种题先画量词辖域括号，别靠眼熟。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="C">
+        <h3>8. Skolem 化时，∀x∃y∀z∃u A(x,y,z,u) 中 y 和 u 应替换为？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q8" value="A"> A. y=a，u=b</label>
+          <label class="option"><input type="radio" name="q8" value="B"> B. y=f(z)，u=g(y)</label>
+          <label class="option"><input type="radio" name="q8" value="C"> C. y=f(x)，u=g(x,z)</label>
+          <label class="option"><input type="radio" name="q8" value="D"> D. y=f(x,z)，u=g(x,y,z)</label>
+        </div>
+        <details><summary>解析</summary><p>一个存在变量依赖它左边已经出现的全称变量。y 左边只有 ∀x，所以 y=f(x)。u 左边有 ∀x 和 ∀z，所以 u=g(x,z)。不要让 Skolem 函数依赖另一个已经被消去的存在变量。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="A">
+        <h3>9. “用公理方法证明，不可用演绎定理”时，最重要的卷面动作是？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q9" value="A"> A. 写公式序列，并给出每一步证据：前提、公理实例、MP、UG 或给定定理</label>
+          <label class="option"><input type="radio" name="q9" value="B"> B. 直接假设前件，推出后件即可</label>
+          <label class="option"><input type="radio" name="q9" value="C"> C. 画真值表即可</label>
+          <label class="option"><input type="radio" name="q9" value="D"> D. 只写“显然成立”即可</label>
+        </div>
+        <details><summary>解析</summary><p>2020/2022 都明确写过“不可用演绎定理，使用演绎定理按比例扣分”。所以你可以先用自然骨架想思路，但卷面必须落到公式序列和证据。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="B">
+        <h3>10. 判断：若公理系统不可靠，通过扩充公理集合就可能恢复可靠性。</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q10" value="A"> A. 正确</label>
+          <label class="option"><input type="radio" name="q10" value="B"> B. 错误</label>
+        </div>
+        <details><summary>解析</summary><p>不可靠表示系统已经能推出语义上不成立的公式。扩充公理只会让可证明公式不减少，不能删除已经推出的错误公式，所以不能靠“加更多公理”修复可靠性。2024 参考卷也有这种味道。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="A">
+        <h3>11. (p∧¬p) ↔ (q∧¬q) 的类型是？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q11" value="A"> A. 永真式</label>
+          <label class="option"><input type="radio" name="q11" value="B"> B. 永假式</label>
+          <label class="option"><input type="radio" name="q11" value="C"> C. 可满足但不是永真</label>
+          <label class="option"><input type="radio" name="q11" value="D"> D. 不是公式</label>
+        </div>
+        <details><summary>解析</summary><p>p∧¬p 永远假，q∧¬q 也永远假；假 ↔ 假 为真，所以整个公式永真。2022 简答题就是这个形态。</p></details>
+      </div>
+
+      <div class="question" data-q data-answer="C">
+        <h3>12. 证明 Γ ⊨ Q 的语义方法第一句通常应写什么？</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q12" value="A"> A. 由公理 A1 可得</label>
+          <label class="option"><input type="radio" name="q12" value="B"> B. 任取一个 Skolem 函数</label>
+          <label class="option"><input type="radio" name="q12" value="C"> C. 反设存在解释/赋值使 Γ 中公式全真而 Q 为假</label>
+          <label class="option"><input type="radio" name="q12" value="D"> D. 先求主析取范式</label>
+        </div>
+        <details><summary>解析</summary><p>看到 ⊨，你在语义世界里。证明成立时，最稳的第一句就是“假设有一个反例世界：前提全真、结论假”，然后推出矛盾。</p></details>
+      </div>
+
+      <button id="scoreBtn">提交客观题</button>
+      <button class="secondary" id="clearBtn" type="button">清空本页选择</button>
+      <div class="score" id="scoreBox">先做题，再提交。</div>
+    </section>
+
+    <section class="card" id="short">
+      <h2>2. 简答/论述题：不是背一坨，而是写“定义 + 形式 + 例子”</h2>
+      <p>离散简答题经常很基础，但基础不等于白给。你要写得像考试答案：先给定义，再给符号表达，最后用一句人话解释。</p>
+
+      <div class="question">
+        <h3>题 1｜写出可靠性和完备性，并解释 ⊢ 与 ⊨ 的区别</h3>
+        <textarea data-save="short-sound" placeholder="先自己写：⊢ 是什么？⊨ 是什么？可靠性/完备性箭头分别是什么？"></textarea>
+        <details><summary>参考答案与解析</summary>
+          <p><span class="formula">可靠性：Γ ⊢ Q ⇒ Γ ⊨ Q</span><br><span class="formula">完备性：Γ ⊨ Q ⇒ Γ ⊢ Q</span></p>
+          <p><strong>⊢</strong> 是形式推导关系，意思是从 Γ 出发，按公理和推理规则可以推出 Q；<strong>⊨</strong> 是语义推论关系，意思是在所有使 Γ 全真的解释/赋值中，Q 也真。可靠性保证系统不会证明假东西；完备性保证语义上必然真的东西不会被形式系统漏掉。</p>
+          <div class="rubric"><span>得分点</span><span>两个箭头各 1 分；⊢/⊨ 区分 1-2 分；人话解释 1 分。</span><span>易错点</span><span>把可靠性和完备性箭头背反，或者只写箭头不解释符号含义。</span></div>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 2｜2022 风格自然语言符号化：蜥蜴四句话</h3>
+        <p>论域为所有蜥蜴。P(x)：x 是科莫多巨蜥；Q(x)：x 是小的；R(x)：x 会攻击人类；S(x)：x 是有毒的。写出：</p>
+        <p>a) 所有科莫多巨蜥都是有毒的。 b) 没有小型蜥蜴会攻击人类。 c) 不攻击人类的蜥蜴都是无毒的。 d) 科莫多巨蜥都是大型蜥蜴。</p>
+        <textarea data-save="short-lizard" placeholder="先写量词骨架：所有 = ∀x(...→...)；没有 = ∀x(...→¬...)。"></textarea>
+        <details><summary>参考答案与解析</summary>
+          <p><span class="formula">a) ∀x(P(x) → S(x))</span><br>
+          <span class="formula">b) ∀x(Q(x) → ¬R(x))</span><br>
+          <span class="formula">c) ∀x(¬R(x) → ¬S(x))</span><br>
+          <span class="formula">d) ∀x(P(x) → ¬Q(x))</span></p>
+          <p>这类题的关键是中文里的“都是、没有、凡是”通常用全称量词加蕴含。不要把“没有小型蜥蜴会攻击人类”写成 ¬∀x(...)；更稳的写法是“任意 x，如果它小，那么它不攻击人”。</p>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 3｜演绎定理怎么应用？</h3>
+        <textarea data-save="short-deduction" placeholder="先写定理形式，再解释：要证 Γ ⊢ A→B，可以改证什么？"></textarea>
+        <details><summary>参考答案与解析</summary>
+          <p><span class="formula">若 A 是句子，则 Γ ∪ {A} ⊢ B 当且仅当 Γ ⊢ A → B。</span></p>
+          <p>应用时，若目标长得像 Γ ⊢ A→B，就可以先把 A 临时加入前提，证明 B。证明完后再用演绎定理把临时前提“搬回箭头左边”。不过注意：如果题目明确写“不可用演绎定理”，这个只能作为草稿思路，不能直接写成正式证明。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="normal">
+      <h2>3. 范式与公式加工：能流程化的分一定要拿</h2>
+      <p>范式题不是靠灵感。主范式从真值表行来，前束范式按固定顺序加工：<mark>改名 -> 去箭头 -> 否定内移 -> 量词前移</mark>。</p>
+
+      <div class="question">
+        <h3>题 4｜2020 风格主析取范式</h3>
+        <p>求 <span class="formula">(¬p∨¬q) → (p↔¬q)</span> 的主析取范式。</p>
+        <textarea data-save="normal-dnf" placeholder="建议先列 p q 四行，找公式为 1 的行，再写极小项。"></textarea>
+        <details><summary>参考答案与解析</summary>
+          <table>
+            <tr><th>p</th><th>q</th><th>¬p∨¬q</th><th>p↔¬q</th><th>整体</th></tr>
+            <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+            <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          </table>
+          <p>所以主析取范式为 <span class="formula">(¬p∧q) ∨ (p∧¬q) ∨ (p∧q)</span>。</p>
+          <p><strong>考场第一步：</strong>别直接乱化简。先列 4 行，真值为 1 的行写极小项。</p>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 5｜2022 风格数字电路输出主析取范式</h3>
+        <p>输入 X,Y,Z 与输出 A 的真值为：111→1，110→0，101→0，100→1，011→0，010→0，001→0，000→1。写出 A 的主析取范式。</p>
+        <textarea data-save="normal-circuit" placeholder="只看 A=1 的行：111、100、000。"></textarea>
+        <details><summary>参考答案与解析</summary>
+          <p>A=1 的行是 111、100、000，对应极小项：</p>
+          <p><span class="formula">A = X∧Y∧Z ∨ X∧¬Y∧¬Z ∨ ¬X∧¬Y∧¬Z</span></p>
+          <p>数字电路题本质就是主析取范式题。看到表格别慌，只圈输出为 1 的行。</p>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 6｜2020 风格前束范式</h3>
+        <p>求 <span class="formula">∀x(A(x) → (∃zB(z) → ∃yC(x,y)))</span> 的前束范式。</p>
+        <textarea data-save="normal-prenex" placeholder="按顺序写：去箭头、否定内移、量词前移。"></textarea>
+        <details><summary>参考答案与解析</summary>
+          <p>一种规范过程：</p>
+          <p><span class="formula">∀x(A(x) → (∃zB(z) → ∃yC(x,y)))</span></p>
+          <p><span class="formula">≡ ∀x(¬A(x) ∨ (¬∃zB(z) ∨ ∃yC(x,y)))</span></p>
+          <p><span class="formula">≡ ∀x(¬A(x) ∨ (∀z¬B(z) ∨ ∃yC(x,y)))</span></p>
+          <p><span class="formula">≡ ∀x∃y∀z(¬A(x) ∨ ¬B(z) ∨ C(x,y))</span></p>
+          <p><strong>解析：</strong>前束题的重点不是背最后答案，而是顺序。每次前移量词前，确认变量没有被捕获；变量名冲突时先改名。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="semantic">
+      <h2>4. 语义推论与反例：证明成立和构造反例是一对动作</h2>
+      <p>看到 <span class="formula">⊨</span> 就进入“真假世界”。成立题写反证：前提全真、结论假；不成立题写反例：论域、谓词解释、前提真、结论假。</p>
+
+      <div class="two">
+        <div class="question">
+          <h3>题 7｜2022 证明题：语义方法</h3>
+          <p>证明或反驳：<span class="formula">P∧Q→R, ¬S, ¬R∨S ⊨ ¬P∨¬Q</span></p>
+          <textarea data-save="sem-proof" placeholder="先写第一句：反设存在赋值使三个前提全真，而结论 ¬P∨¬Q 为假。"></textarea>
+          <details><summary>参考证明</summary>
+            <p>反设存在赋值 v，使所有前提为真而结论 <span class="formula">¬P∨¬Q</span> 为假。结论为假说明 P 真且 Q 真，所以 P∧Q 真。由前提 P∧Q→R 得 R 真。又由 ¬S 得 S 假；前提 ¬R∨S 要为真，在 S 假时必须 ¬R 真，即 R 假。于是 R 真且 R 假，矛盾。因此不存在这样的赋值，推论成立。</p>
+            <div class="rubric"><span>第一句</span><span>反设前提全真、结论假。</span><span>推进</span><span>结论假 -> P,Q 真 -> R 真；¬S 和 ¬R∨S -> R 假。</span><span>扣分点</span><span>只写“显然矛盾”但没有指出矛盾来自 R 真且 R 假。</span></div>
+          </details>
+        </div>
+
+        <div class="question">
+          <h3>题 8｜2020/2018 高频反例</h3>
+          <p>判断 <span class="formula">∀x(Q(x)∨R(x)) ⊨ ∀xQ(x)∨∀xR(x)</span>，不成立请给反例。</p>
+          <textarea data-save="sem-counter" placeholder="写反例四件套：论域 D=...；Q 的解释；R 的解释；验证左真右假。"></textarea>
+          <details><summary>参考反例</summary>
+            <p>不成立。取论域 D={1,2}，其中 1∈D、2∈D。令 Q(1)=真、Q(2)=假；R(1)=假、R(2)=真。则对每个 x∈D，Q(x)∨R(x) 都为真，所以左边成立。但不是所有对象都满足 Q，也不是所有对象都满足 R，所以右边 <span class="formula">∀xQ(x)∨∀xR(x)</span> 为假。</p>
+            <p><strong>迁移口诀：</strong>要反驳“全体都靠 Q 或全体都靠 R”，就让一半靠 Q，一半靠 R。</p>
+          </details>
+        </div>
+      </div>
+
+      <div class="question">
+        <h3>题 9｜2022 判断题：由两个矛盾推回 Γ ⊨ Q</h3>
+        <p>判断：“Γ,¬Q ⊨ R，Γ,¬Q ⊨ ¬R，则 Γ ⊨ Q” 是否成立？</p>
+        <textarea data-save="sem-gamma" placeholder="先写：如果 Γ⊭Q，会出现什么赋值？再和两个前提推论矛盾。"></textarea>
+        <details><summary>参考答案</summary>
+          <p>成立。若 Γ ⊭ Q，则存在解释/赋值使 Γ 中所有公式为真而 Q 为假，因此 ¬Q 为真，于是 Γ 和 ¬Q 同时真。由 Γ,¬Q ⊨ R 得 R 真；又由 Γ,¬Q ⊨ ¬R 得 R 假，矛盾。因此不存在 Γ 真而 Q 假的解释/赋值，即 Γ ⊨ Q。</p>
+          <p><strong>题眼：</strong>它不是让你算真值表，而是在考“前提全真会推出矛盾，所以反例世界不存在”。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="axiom">
+      <h2>5. 公理证明：先会写证据链，别一上来追完美</h2>
+      <p>这部分最难，也最容易让人觉得“我不会数学”。你的保底目标是：看懂题目要求、写出可用定理、给出公式序列证据格式。2020/2022 都强调：<mark>不可用演绎定理时，直接套演绎定理会扣分</mark>。</p>
+
+      <div class="question">
+        <h3>题 10｜2020 风格公理证明骨架</h3>
+        <p>用公理方法证明：<span class="formula">R→¬Q, P→Q ⊢ R→¬P</span></p>
+        <textarea data-save="axiom-chain" placeholder="先写草稿链：P→Q 可转为 ¬Q→¬P；再和 R→¬Q 传递得到 R→¬P。正式答案要写每步证据。"></textarea>
+        <details><summary>参考证据链</summary>
+          <table>
+            <tr><th>步</th><th>公式</th><th>证据</th></tr>
+            <tr><td>1</td><td>(P→Q) → (¬Q→¬P)</td><td>公理 A3 或给定逆否定定理</td></tr>
+            <tr><td>2</td><td>P→Q</td><td>前提</td></tr>
+            <tr><td>3</td><td>¬Q→¬P</td><td>1,2 MP</td></tr>
+            <tr><td>4</td><td>(¬Q→¬P) → (R→(¬Q→¬P))</td><td>公理 A1</td></tr>
+            <tr><td>5</td><td>R→(¬Q→¬P)</td><td>3,4 MP</td></tr>
+            <tr><td>6</td><td>(R→(¬Q→¬P)) → ((R→¬Q)→(R→¬P))</td><td>公理 A2</td></tr>
+            <tr><td>7</td><td>(R→¬Q)→(R→¬P)</td><td>5,6 MP</td></tr>
+            <tr><td>8</td><td>R→¬Q</td><td>前提</td></tr>
+            <tr><td>9</td><td>R→¬P</td><td>7,8 MP</td></tr>
+          </table>
+          <p><strong>人话骨架：</strong>P 能推出 Q，所以非 Q 能推出非 P；R 又能推出非 Q，所以 R 能推出非 P。这就是“逆否 + 传递”，正式写法用 A1/A2/A3 和 MP 拼出来。</p>
+        </details>
+      </div>
+
+      <div class="question">
+        <h3>题 11｜公理证明上场检查</h3>
+        <p>如果题目写“不可用演绎定理”，你答题前要写下哪 3 个检查点？</p>
+        <textarea data-save="axiom-check" placeholder="提示：这是 ⊢ 题；每步证据来源；自然证明只能当草稿。"></textarea>
+        <details><summary>参考答案</summary>
+          <p>1. 这是形式推导题，目标是写出公式序列，而不是给语义反例。<br>2. 每一步证据必须来自前提、公理模式实例、已给定定理、MP、UG 等允许规则。<br>3. 若自然证明中“假设 A 推出 B”，不能直接当正式证明；题目禁止演绎定理时，必须把它转成公理/定理链。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>6. 整卷完成闸门：不是做完就算，是能复述错因</h2>
+      <div class="checklist">
+        <label><input type="checkbox" data-check="g1"> 我知道 2020/2022 的卷面结构：20 简答、20 论述、20 判断、10 范式、30 证明。</label>
+        <label><input type="checkbox" data-check="g2"> 我能区分 ⊢ 和 ⊨，并能默写可靠性/完备性两个箭头。</label>
+        <label><input type="checkbox" data-check="g3"> 我能给量词分配的经典反例：∀x(Q∨R) 不推出 ∀xQ∨∀xR。</label>
+        <label><input type="checkbox" data-check="g4"> 我能做主析取范式：先列真值表，找结果为 1 的行。</label>
+        <label><input type="checkbox" data-check="g5"> 我能写前束范式加工顺序，并判断 Skolem 函数依赖谁。</label>
+        <label><input type="checkbox" data-check="g6"> 我能写语义证明第一句：反设前提全真、结论假。</label>
+        <label><input type="checkbox" data-check="g7"> 我能写反例四件套：论域、解释、前提真、结论假。</label>
+        <label><input type="checkbox" data-check="g8"> 我知道公理证明要写公式序列和证据，不能随便套演绎定理。</label>
+      </div>
+      <div class="score" id="gateBox">勾选后会显示建议。</div>
+      <textarea data-save="final-wrong" placeholder="错题回炉：今天最卡的是哪一类？题眼误判是什么？下次第一句怎么写？"></textarea>
+      <p><a href="./index.html">回学习舱</a> · <a href="./day7_discrete_final_recall.html">回 Day7 最终速查</a> · <a href="./day6_discrete_proof_sprint.html">回 Day6 证明训练营</a> · <a href="./source_coverage_audit.html">回资料覆盖台账</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-discrete-final-mixed";
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+    function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+    $$("[data-save]").forEach(el => {
+      const key = el.dataset.save;
+      if (state[key]) el.value = state[key];
+      el.addEventListener("input", () => {
+        state[key] = el.value;
+        save();
+      });
+    });
+
+    $$("[data-check]").forEach(el => {
+      const key = "check-" + el.dataset.check;
+      el.checked = !!state[key];
+      el.addEventListener("change", () => {
+        state[key] = el.checked;
+        save();
+        renderGate();
+      });
+    });
+
+    function scoreObjective() {
+      let ok = 0;
+      const qs = $$("[data-q]");
+      qs.forEach((q, idx) => {
+        const picked = $("input[type=radio]:checked", q);
+        const right = q.dataset.answer;
+        q.style.borderColor = "#dbe5ee";
+        if (picked) {
+          state["obj-" + idx] = picked.value;
+          if (picked.value === right) {
+            ok++;
+            q.style.borderColor = "#8fd0b1";
+          } else {
+            q.style.borderColor = "#e7aaa5";
+          }
+        } else {
+          delete state["obj-" + idx];
+        }
+      });
+      save();
+      const box = $("#scoreBox");
+      const text = ok >= 10
+        ? "可以进入主观题和证明题。"
+        : ok >= 7
+          ? "先看错题解析，再做范式和语义题。"
+          : "先回 Day7 七类题眼和 Day3/Day4 工具页，不要急着整卷限时。";
+      box.textContent = `客观题得分：${ok}/${qs.length}。${text}`;
+    }
+
+    $$("[data-q]").forEach((q, idx) => {
+      const saved = state["obj-" + idx];
+      if (saved) {
+        const input = $(`input[value="${saved}"]`, q);
+        if (input) input.checked = true;
+      }
+    });
+    $("#scoreBtn").addEventListener("click", scoreObjective);
+    $("#clearBtn").addEventListener("click", () => {
+      $$("[data-q] input[type=radio]").forEach(i => i.checked = false);
+      $$("[data-q]").forEach((q, idx) => {
+        delete state["obj-" + idx];
+        q.style.borderColor = "#dbe5ee";
+      });
+      save();
+      $("#scoreBox").textContent = "已清空选择。";
+    });
+
+    function renderGate() {
+      const checks = $$("[data-check]");
+      const done = checks.filter(c => c.checked).length;
+      const msg = done >= 7
+        ? "可以把这页当整套限时卷二刷；错题再回 Day5/Day6/Day7。"
+        : done >= 5
+          ? "已经有基础了，但证明/反例/范式里还有短板，先补最弱两项。"
+          : "先别整套硬冲，回七类题眼，把第一句和反例四件套写熟。";
+      $("#gateBox").textContent = `离散整卷闸门：${done}/${checks.length} 项已确认。${msg}`;
+    }
+    renderGate();
+  </script>
+</body>
+</html>

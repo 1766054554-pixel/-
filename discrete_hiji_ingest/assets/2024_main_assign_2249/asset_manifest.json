@@ -1,0 +1,125 @@
+{
+  "assets": [
+    {
+      "contentType": "image/png",
+      "id": "393942a6b00bccf0",
+      "kind": "image",
+      "name": "logoCG4839196648.png",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/393942a6b00bccf0.png",
+      "url": "http://judge.buaa.edu.cn/userfiles/skin/logoCG4839196648.png"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "ba906198e82a8587",
+      "kind": "image",
+      "name": "stuside.svg#close",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/ba906198e82a8587.svg",
+      "url": "http://judge.buaa.edu.cn/images/nav/stuside.svg#close"
+    },
+    {
+      "contentType": "image/png",
+      "id": "1718e31dd568f2a9",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/1718e31dd568f2a9",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=b46ddb9793992ef61e2be0c090baa286.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "0e36e0cede80be4d",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/0e36e0cede80be4d",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=06b7a9a376cbd1b7922c87b0f17cd7fc.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "18805a8beea09e0b",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/18805a8beea09e0b",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=15714c88f3c825ab33827f97bb749d38.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "e2c8bf5e196011c9",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/e2c8bf5e196011c9",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=8faa96a01451059d118301c38efd619f.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "90a9ab121a5c0cfe",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/90a9ab121a5c0cfe",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=82f0adb8ac976d1c4f61a0d440a68d60.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "6fccd2083eb9c9d1",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/6fccd2083eb9c9d1",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=490c543a2acf86516df07120b9187049.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "0cff59eb8ef66745",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/0cff59eb8ef66745",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=aa294e800f13a00ebc016680bb7ccf44.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "f16177355585b300",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/f16177355585b300",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=3b9336f88eeca320ba0a787717ef0938.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "3ff1a107973b2fbd",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/3ff1a107973b2fbd",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=5ca2744f0bcfd5df7526cf0842af6037.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "f9a4a6404ab3633d",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/f9a4a6404ab3633d",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=0b434623ce72ae4effd7be758e223e51.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "6821474c016f4ba8",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/6821474c016f4ba8",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=b628ac251c995bb28a2c160e59896b8f.png"
+    },
+    {
+      "contentType": "image/png",
+      "id": "afab34a3719bf279",
+      "kind": "image",
+      "name": "cguserImages",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/afab34a3719bf279",
+      "url": "http://judge.buaa.edu.cn/cguserImages?_img=e203e653edf45c364adabb7b7e851fde.png"
+    }
+  ],
+  "directoryPath": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0",
+  "failures": [],
+  "manifestPath": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/e51ed434-8ea6-4f32-8935-210cc6dccfb0/manifest.json",
+  "summary": {
+    "downloadedCount": 14,
+    "elapsedMs": 6851.349125000008,
+    "failedCount": 0,
+    "requestedCount": 14
+  }
+}

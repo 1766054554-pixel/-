@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>离散多年题眼证明闸门：先写第一句，再补证据链</title>
+  <style>
+    :root {
+      --ink: #16212f;
+      --muted: #647384;
+      --line: #d9e3ee;
+      --paper: #fbfdff;
+      --card: #ffffff;
+      --blue: #1f6fb2;
+      --blue-soft: #e8f3ff;
+      --green: #1f8a63;
+      --green-soft: #e8f8f0;
+      --red: #b63b34;
+      --red-soft: #fff0ee;
+      --gold: #9a6a16;
+      --gold-soft: #fff7df;
+      --shadow: 0 16px 40px rgba(26, 43, 64, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f4f8fc 0%, #fbfdff 42%, #f6faf7 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0; }
+    h1 { font-size: 34px; letter-spacing: 0; }
+    h2 { font-size: 24px; margin-bottom: 12px; }
+    h3 { font-size: 18px; margin-bottom: 8px; }
+    p { margin: 0 0 12px; }
+    a { color: var(--blue); font-weight: 750; text-decoration: none; }
+    .hero, .card, .drill {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+    .hero { border-top: 8px solid var(--green); }
+    .muted { color: var(--muted); }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      margin: 0 8px 12px 0;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .pill.hot { color: var(--red); background: var(--red-soft); border-color: #f3b9b4; }
+    .pill.good { color: var(--green); background: var(--green-soft); border-color: #bde9d3; }
+    .pill.warn { color: var(--gold); background: var(--gold-soft); border-color: #efd691; }
+    .toc { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .toc a {
+      border: 1px solid #b9d8f2;
+      background: var(--blue-soft);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .focus {
+      color: #0f5d96;
+      font-weight: 850;
+      background: linear-gradient(180deg, transparent 55%, #cfe9ff 55%);
+      padding: 0 2px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: var(--paper);
+    }
+    .box strong { display: block; margin-bottom: 6px; }
+    .formula {
+      display: inline-block;
+      font-family: "Times New Roman", "Cambria Math", serif;
+      font-size: 1.04em;
+      line-height: 1.45;
+      background: #f8fbff;
+      border: 1px solid #d9e8f5;
+      border-radius: 8px;
+      padding: 2px 8px;
+      white-space: normal;
+    }
+    .route-list, .quiz-list { display: grid; gap: 12px; }
+    .route-card, .q-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 16px;
+    }
+    .tag {
+      display: inline-block;
+      color: var(--blue);
+      background: var(--blue-soft);
+      border: 1px solid #c4def4;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 13px;
+      font-weight: 850;
+      margin-bottom: 8px;
+    }
+    .choices { display: grid; gap: 8px; margin-top: 10px; }
+    button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+    button:hover { border-color: #8abce7; background: #f5fbff; }
+    button.correct { border-color: #72c497; background: var(--green-soft); color: #0f6647; font-weight: 800; }
+    button.wrong { border-color: #e19a92; background: var(--red-soft); color: #8d2d27; font-weight: 800; }
+    .explain { display: none; margin-top: 10px; color: var(--muted); border-left: 4px solid #a9cfee; padding-left: 10px; }
+    .q-card.done .explain { display: block; }
+    .score {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #bde9d3;
+      background: var(--green-soft);
+      color: #145f46;
+      font-weight: 850;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 850; color: var(--blue); }
+    .step {
+      display: grid;
+      grid-template-columns: 128px 1fr;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px dashed #d9e3ee;
+    }
+    .step:last-child { border-bottom: 0; }
+    .step span:first-child { color: var(--green); font-weight: 850; }
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font: inherit;
+      resize: vertical;
+      background: #fff;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #eef6ff; }
+    .note {
+      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid #efd691;
+      background: var(--gold-soft);
+      margin-top: 12px;
+    }
+    @media (max-width: 860px) {
+      main { width: min(100vw - 18px, 760px); padding-top: 12px; }
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      .step { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div>
+      <span class="pill hot">离散 6/28</span>
+      <span class="pill good">多年题眼变式</span>
+      <span class="pill warn">证明第一句</span>
+    </div>
+    <h1>离散多年题眼证明闸门</h1>
+    <p class="muted">这页不是让你一上来硬啃整张卷。它把 2012-2022 多年真题和复习题里反复出现的题眼，压成 <span class="focus">定义、量词反例、语义推论、主范式、前束/Skolem、可靠性/完备性、公理证明、关系函数证明</span> 八个盒子。你先学会分盒子，再写第一句，最后才去做整套卷。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./pastpaper_ingestion_radar.html#discrete">吞吐雷达</a>
+      <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>
+      <a href="./discrete_proof_chain_lab.html">证明链条工坊</a>
+      <a href="./day7_discrete_final_recall.html">Day7 最终速查</a>
+      <a href="./discrete_final_mixed_interactive.html">真题混合卷</a>
+      <a href="#route">八个盒子</a>
+      <a href="#quiz">12 题分流</a>
+      <a href="#starters">证明起手</a>
+      <a href="#gate">上场闸门</a>
+    </div>
+  </section>
+
+  <section class="card" id="route">
+    <h2>1. 先分八个盒子：离散不是一团雾</h2>
+    <p>多年卷面看着吓人，但常见题眼很稳定。你考试时不要先问“我会不会”，先问“它属于哪一盒”。分对盒子，至少第一步不会空白。</p>
+    <div class="grid">
+      <div class="box"><strong>定义简答</strong><span class="focus">完备集、合式公式、语义、谓词公理系统、永真/可满足/永假</span>。先写定义，再写关系或例子。</div>
+      <div class="box"><strong>量词反例</strong><span class="formula">∀x(Q(x) ∨ R(x)) ? ∀xQ(x) ∨ ∀xR(x)</span> 这类题常用两元素论域，让性质分摊到不同对象上。</div>
+      <div class="box"><strong>语义推论</strong><span class="formula">Γ ⊨ Q</span> 成立就证明“前提全真时结论真”；不成立就造“前提全真、结论假”的反例。</div>
+      <div class="box"><strong>主范式</strong>主析取看真值为 1 的行，主合取看真值为 0 的行。别凭感觉化简，先列真值表最稳。</div>
+      <div class="box"><strong>前束/Skolem</strong>先改名、去箭头、否定内移，再量词前移。Skolem 只看 <span class="focus">存在量词左边已经出现的全称变量</span>。</div>
+      <div class="box"><strong>可靠/完备</strong>可靠性：<span class="formula">Γ ⊢ Q ⇒ Γ ⊨ Q</span>。完备性：<span class="formula">Γ ⊨ Q ⇒ Γ ⊢ Q</span>。方向千万别反。</div>
+      <div class="box"><strong>公理证明</strong>先看题目能不能用演绎定理；若明确禁用，就只能列公理、前提、MP 或已给定定理。</div>
+      <div class="box"><strong>关系/函数证明</strong>最大元唯一、双射复合这类题，先写定义，再假设两个对象，最后用反对称/单射/满射收口。</div>
+    </div>
+    <div class="note"><strong>记忆句：</strong>离散考场第一反应不是“推到底”，而是“定义先落地，反例先造小模型，证明先写目标”。</div>
+  </section>
+
+  <section class="card" id="quiz">
+    <h2>2. 12 题分流小测：看到卷面先归类</h2>
+    <p>这些题专门练“题眼 -> 方法”。你不需要在这里算完大题，只要选出正确起手。解析会告诉你为什么这样开局。</p>
+    <div id="quizList" class="quiz-list"></div>
+    <div id="scoreBox" class="score">已完成 0/12，正确 0。先凭第一反应选，再看解析。</div>
+  </section>
+
+  <section class="card" id="starters">
+    <h2>3. 证明起手模板：考场先写第一句</h2>
+    <p>证明题最怕空白。下面每个模板都来自多年卷反复出现的证明类型。你先在文本框里写第一句，再展开参考骨架。</p>
+  </section>
+
+  <section class="drill">
+    <h3>模板 A｜语义推论：判断 <span class="formula">Γ ⊨ Q</span> 是否成立</h3>
+    <textarea data-save="discrete-gate-a" placeholder="先写第一句：若要证明成立，设任意赋值 v 使 Γ 中公式全真……若要反例，构造 v 使 Γ 全真而 Q 假。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="step"><span>证明成立</span><span>设任意解释/赋值 v，使 Γ 中所有公式为真。根据前提逐步推出 Q 为真，所以 Γ ⊨ Q。</span></div>
+      <div class="step"><span>证明不成立</span><span>给出一个解释/赋值 v，使所有前提为真，但结论 Q 为假。这样就直接否定语义推出。</span></div>
+      <div class="step"><span>常见扣分</span><span>只说“显然成立”；没有说明前提全真结论真；反例没有同时检查所有前提。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>模板 B｜量词反例：全称不能随便拆</h3>
+    <textarea data-save="discrete-gate-b" placeholder="先写第一句：取论域 D={1,2}，令 Q 和 R 分别只在不同元素上为真……"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="step"><span>典型题</span><span><span class="formula">∀x(Q(x)∨R(x)) ⇒ ∀xQ(x)∨∀xR(x)</span> 不成立。</span></div>
+      <div class="step"><span>小模型</span><span>取 D={1,2}，令 Q(1)=真、Q(2)=假，R(1)=假、R(2)=真。每个元素都满足 Q 或 R，所以左边真；但不是所有元素都满足 Q，也不是所有元素都满足 R，所以右边假。</span></div>
+      <div class="step"><span>迁移</span><span>遇到“同一个存在对象能否服务所有 y”时，也常用两元素论域或关系表反例。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>模板 C｜主析取/主合取：从真值表读答案</h3>
+    <textarea data-save="discrete-gate-c" placeholder="先写第一句：列出所有赋值行，标出公式为 1 的行写主析取，标出公式为 0 的行写主合取。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="step"><span>主析取</span><span>找公式为真的行。每一行写一个极小项，变量为 1 写原变量，变量为 0 写否定变量，再把这些极小项用 ∨ 连接。</span></div>
+      <div class="step"><span>主合取</span><span>找公式为假的行。每一行写一个极大项，变量为 0 写原变量，变量为 1 写否定变量，再把这些极大项用 ∧ 连接。</span></div>
+      <div class="step"><span>常见扣分</span><span>把主析取和主合取的 0/1 行反了；跳过真值表直接化简导致漏项。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>模板 D｜前束/Skolem：长公式按工序拆</h3>
+    <textarea data-save="discrete-gate-d" placeholder="先写第一句：先改名避免变量冲突，再消去 → 和 ↔，否定内移，最后移动量词。Skolem 化看 ∃ 左侧的 ∀。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="step"><span>前束步骤</span><span>变量改名 -> 去箭头和等价 -> 否定内移 -> 量词前移 -> 写出母式。</span></div>
+      <div class="step"><span>Skolem</span><span>若 ∃x 左边没有 ∀ 变量，用常量 a；若左边有 ∀y,∀z，则用函数 f(y,z)。只依赖左边已经出现的全称变量。</span></div>
+      <div class="step"><span>常见扣分</span><span>让 Skolem 函数依赖右边才出现的变量；没有先改名导致自由/约束变量混住。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>模板 E｜可靠性/完备性：两个箭头方向背牢</h3>
+    <textarea data-save="discrete-gate-e" placeholder="先写第一句：可靠性说明可证明推出语义有效；完备性说明语义有效推出可证明。"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="step"><span>可靠性</span><span><span class="formula">Γ ⊢ Q ⇒ Γ ⊨ Q</span>。证明系统不乱证明，能证明出来的东西语义上是真的。</span></div>
+      <div class="step"><span>完备性</span><span><span class="formula">Γ ⊨ Q ⇒ Γ ⊢ Q</span>。语义上必然成立的东西，证明系统也能证明出来。</span></div>
+      <div class="step"><span>常见扣分</span><span>把两个方向反写；把“可靠”和“完备”误理解成系统越大越好。</span></div>
+    </details>
+  </section>
+
+  <section class="drill">
+    <h3>模板 F｜最大元唯一：定义 + 反对称</h3>
+    <textarea data-save="discrete-gate-f" placeholder="先写第一句：设 b1,b2 都是 B 中最大元，则对任意 c∈B 有 c≤b1 且 c≤b2……"></textarea>
+    <details>
+      <summary>展开参考骨架</summary>
+      <div class="step"><span>定义</span><span>b 是 B 中最大元：对任意 c∈B，都有 c≤b。</span></div>
+      <div class="step"><span>证明</span><span>设 b1,b2 都是最大元。因为 b1∈B 且 b2 是最大元，所以 b1≤b2；因为 b2∈B 且 b1 是最大元，所以 b2≤b1。由偏序的反对称性，b1=b2。</span></div>
+      <div class="step"><span>迁移</span><span>唯一性证明常用“假设两个 -> 相互推出 -> 用定义/性质合并”。</span></div>
+    </details>
+  </section>
+
+  <section class="card" id="gate">
+    <h2>4. 上场闸门：什么时候做整套离散卷</h2>
+    <table>
+      <thead><tr><th>闸门</th><th>过关标准</th><th>没过怎么办</th></tr></thead>
+      <tbody>
+        <tr><td>分流</td><td>12 题至少对 9 题，且能说出每题第一步。</td><td>回本页八个盒子，重做错题。</td></tr>
+        <tr><td>证明第一句</td><td>6 个模板至少能默写 4 个第一句。</td><td>回 <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>；第一句会写但下一句卡住时，接 <a href="./discrete_proof_chain_lab.html">证明链条工坊</a>。</td></tr>
+        <tr><td>公式加工</td><td>看到主范式、前束、Skolem 能写步骤顺序。</td><td>回 <a href="./day4_discrete_prenex_skolem_axiom.html">Day4 长题入口</a> 和 <a href="./tips_discrete_formula_visual_handbook.html">公式视觉手册</a>。</td></tr>
+        <tr><td>整卷</td><td>Day7 至少勾 7/10，再做真题混合卷。</td><td>先做 <a href="./day7_discrete_final_recall.html">Day7 最终速查</a>，不要直接硬冲整卷。</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>给你打气：</strong>离散证明不是让你现场发明数学。短期冲刺要做的是把题目翻译成目标，把目标翻译成模板，再把模板补成证据链。你只要不空白，分数就会开始往你这边站。</div>
+  </section>
+</main>
+
+<script>
+  const quiz = [
+    {tag:"完备集", q:"题目问“任选一组完备的逻辑联结词并给真值表”，第一步最稳是什么？", choices:["写 {¬,∧} 或 {¬,∨}，再给对应真值表","直接写公理证明","先做 Skolem 化","先构造反例"], answer:0, explain:"完备集是定义简答题。先给一组能表达所有命题联结词的集合，再写真值表，别把它当证明题。"},
+    {tag:"可靠性", q:"可靠性定理对应哪个方向？", choices:["Γ ⊢ Q ⇒ Γ ⊨ Q","Γ ⊨ Q ⇒ Γ ⊢ Q","Γ ⊢ Q ⇒ Γ ⊢ ¬Q","Γ ⊨ Q ⇒ Γ ⊨ ¬Q"], answer:0, explain:"可靠性是证明系统不乱证明：能证明就语义上成立。完备性才是语义成立就能证明。"},
+    {tag:"量词反例", q:"看到 ∀x(Q(x)∨R(x)) 是否推出 ∀xQ(x)∨∀xR(x)，最该想到什么？", choices:["两元素论域，让 Q 和 R 分别覆盖不同元素","列公理 A1 A2 A3","求主析取范式","写双射证明"], answer:0, explain:"这类题的关键是“每个对象满足其中一个”不等于“所有对象都满足同一个”。用 D={1,2} 最快。"},
+    {tag:"语义推出", q:"要证明 Γ ⊨ Q 成立，标准开头是？", choices:["任取解释/赋值，使 Γ 全真，证明 Q 也真","先假设 Q 是公理","直接写 QED","先做变量改名"], answer:0, explain:"语义推出的定义就是前提全真时结论必真。不成立则造前提全真结论假的反例。"},
+    {tag:"主范式", q:"求主析取范式时先看真值表的哪些行？", choices:["公式为 1 的行","公式为 0 的行","只看第一行","只看变量最多的行"], answer:0, explain:"主析取由真行对应的极小项相析取；主合取由假行对应的极大项相合取。"},
+    {tag:"前束", q:"前束范式第一步通常不是直接搬量词，而是？", choices:["变量改名，避免自由/约束变量冲突","立刻写 Skolem 函数","先证明可靠性","先求最大元"], answer:0, explain:"长公式里同名变量非常危险。先改名，再去箭头、否定内移、量词前移。"},
+    {tag:"Skolem", q:"∃u 左边已经出现 ∀y，但右边才出现 ∀v，u 的 Skolem 项应依赖谁？", choices:["依赖 y，不依赖 v","依赖 v，不依赖 y","依赖 y 和 v","谁都不依赖"], answer:0, explain:"Skolem 函数只依赖该存在量词左边已经出现的全称变量，右边的变量还没进入选择环境。"},
+    {tag:"演绎定理", q:"题目明确“不可用演绎定理”，你最该警惕什么？", choices:["不能把前件直接加入前提后再把结论变成蕴含","必须只写真值表","必须只造反例","不用写证据"], answer:0, explain:"这类往年题会按比例扣分。禁用演绎定理时，必须按公理、前提、MP 或题目给的定理列证据。"},
+    {tag:"永真/可满足", q:"“可满足式一定是永真式”这句话对吗？", choices:["不对，可满足只要有一个解释为真","对，因为有真就永真","不对，可满足等于永假","对，但只在空论域"], answer:0, explain:"永真是所有解释都真；可满足是至少一个解释为真。永真一定可满足，可满足不一定永真。"},
+    {tag:"自然语言翻译", q:"“所有 P 都是 S”在论域中最常写成？", choices:["∀x(P(x) → S(x))","∃x(P(x) ∧ S(x))","∀x(P(x) ∧ S(x))","∃x(P(x) → S(x))"], answer:0, explain:"所有 A 都 B 是全称蕴含。存在某个既 A 又 B 是“有些 A 是 B”，不是所有。"},
+    {tag:"最大元唯一", q:"证明偏序集中最大元唯一，核心用哪个性质？", choices:["反对称性","传递闭包","Skolem 函数","真值表"], answer:0, explain:"两个最大元 b1,b2 会得到 b1≤b2 和 b2≤b1，偏序反对称性推出 b1=b2。"},
+    {tag:"双射复合", q:"证明 h∘g∘f 是双射，最稳结构是？", choices:["分别证明单射和满射","只证明有定义","只画关系图","只写可靠性"], answer:0, explain:"双射=单射+满射。复合函数证明通常拆开：相等推出原像相等证明单射，任取目标元素逐层找原像证明满射。"}
+  ];
+
+  const list = document.getElementById("quizList");
+  const scoreBox = document.getElementById("scoreBox");
+  const state = JSON.parse(localStorage.getItem("discrete-gate-quiz") || "{}");
+  function saveState(){ localStorage.setItem("discrete-gate-quiz", JSON.stringify(state)); }
+  function renderScore(){
+    const done = Object.keys(state).length;
+    const correct = Object.values(state).filter(Boolean).length;
+    scoreBox.textContent = `已完成 ${done}/${quiz.length}，正确 ${correct}。${done < quiz.length ? "先把题眼分盒子。" : (correct >= 9 ? "可以接 Day7 或混合卷。" : "先回八个盒子和证明起手模板。")}`;
+  }
+  quiz.forEach((item, index) => {
+    const card = document.createElement("article");
+    card.className = "q-card";
+    card.innerHTML = `
+      <div class="tag">${index + 1}. ${item.tag}</div>
+      <h3>${item.q}</h3>
+      <div class="choices">${item.choices.map((c,i)=>`<button type="button" data-choice="${i}">${String.fromCharCode(65+i)}. ${c}</button>`).join("")}</div>
+      <div class="explain"><strong>解析：</strong>${item.explain}</div>
+    `;
+    const buttons = [...card.querySelectorAll("button")];
+    function paint(selected){
+      card.classList.add("done");
+      buttons.forEach((btn,i)=>{
+        btn.classList.toggle("correct", i === item.answer);
+        btn.classList.toggle("wrong", i === selected && i !== item.answer);
+      });
+    }
+    if(state[index] !== undefined){
+      const selected = Number(localStorage.getItem(`discrete-gate-choice-${index}`));
+      paint(Number.isFinite(selected) ? selected : item.answer);
+    }
+    buttons.forEach((btn,i)=>{
+      btn.addEventListener("click", ()=>{
+        state[index] = i === item.answer;
+        localStorage.setItem(`discrete-gate-choice-${index}`, String(i));
+        saveState();
+        paint(i);
+        renderScore();
+      });
+    });
+    list.appendChild(card);
+  });
+  document.querySelectorAll("textarea[data-save]").forEach(area => {
+    const key = area.dataset.save;
+    area.value = localStorage.getItem(key) || "";
+    area.addEventListener("input", () => localStorage.setItem(key, area.value));
+  });
+  renderScore();
+</script>
+</body>
+</html>

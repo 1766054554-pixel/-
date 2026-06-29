@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散 Day5 2024 参考卷分块解析：把工具真正用到卷子上</title>
+  <style>
+    :root {
+      --bg: #f6f8f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6f7 0, rgba(246,248,248,0) 320px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .math-card {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .math-card .eq {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--blue);
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-bottom: 8px;
+    }
+    .math-card ul { margin: 8px 0 0 20px; padding: 0; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .purplebox { border-left-color: var(--purple); background: #f8f5ff; }
+    .mini-svg {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .mini-svg svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .rubric { grid-template-columns: 1fr; }
+      .mini-svg svg { min-width: 700px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>离散 Day5 2024 参考卷分块解析</h1>
+      <p class="muted">这页终于开始碰 2024 参考卷，但不把整卷直接砸给你。我们按题型分块：客观题先练题眼，填空题先练结构，简答题按 Day1-Day4 的工具逐题调用。目标是“看到题知道该启动哪个套路”，而不是背答案。</p>
+      <div class="strip">
+        <span class="pill hot">离散数学 6/28</span>
+        <span class="pill info">2024 参考卷桥接</span>
+        <span class="pill warn">不整卷硬啃</span>
+        <span class="pill good">按工具调用</span>
+        <span class="pill purple">依据助教发布粘贴文本</span>
+      </div>
+      <div class="toc">
+        <a href="#map">0. 整卷地图</a>
+        <a href="#objective">1. 客观题速判</a>
+        <a href="#blank">2. 填空题骨架</a>
+        <a href="#judge">3. 判断题陷阱</a>
+        <a href="#semantic">4. 语义计算</a>
+        <a href="#long">5. 长题桥接</a>
+        <a href="#drills">6. 作答题卡</a>
+        <a href="#wrong">7. 错题回炉</a>
+      </div>
+    </section>
+
+    <section class="card" id="map">
+      <h2>0. 整卷地图：21 题不是 21 个孤岛</h2>
+      <p>这张参考卷看起来很长，但题型其实能压成 6 组。你现在要做的是先分类，再调用已经学过的工具。</p>
+      <div class="mini-svg" aria-label="2024 离散参考卷题型地图">
+        <svg viewBox="0 0 980 360" role="img">
+          <rect width="980" height="360" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">2024 参考卷 = 客观辨析 + 公式计算 + 证明长题</text>
+            <rect x="60" y="88" width="190" height="68" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="107" y="120" font-weight="700">单选 5 题</text>
+            <text x="85" y="145" fill="#687581">概念辨析/复杂度</text>
+            <rect x="285" y="88" width="190" height="68" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="332" y="120" font-weight="700">填空 4 题</text>
+            <text x="310" y="145" fill="#687581">符号化/辖域/替换</text>
+            <rect x="510" y="88" width="190" height="68" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="557" y="120" font-weight="700">判断 5 题</text>
+            <text x="538" y="145" fill="#687581">定义边界/反例</text>
+            <rect x="735" y="88" width="190" height="68" rx="12" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="783" y="120" font-weight="700">简答 7 题</text>
+            <text x="760" y="145" fill="#687581">真值表/范式/证明</text>
+            <rect x="120" y="230" width="740" height="50" rx="12" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="170" y="262" fill="#687581">调用顺序：Day2 证明起手 -> Day3 计算/辖域/范式 -> Day4 前束/Skolem/语义构造/公理证明。</text>
+          </g>
+        </svg>
+      </div>
+      <table>
+        <thead><tr><th>题组</th><th>题号</th><th>调用工具</th><th>得分动作</th></tr></thead>
+        <tbody>
+          <tr><td>概念辨析</td><td>单选 1-3、5；判断 1-5</td><td>定义 + 反例</td><td>找关键词：可靠性/完全性/推演依据/完全集/命题/永真。</td></tr>
+          <tr><td>公式基础计算</td><td>单选 4；简答 1、3</td><td>复杂度、等值演算、永真判断</td><td>按语法树或等值步骤写，不凭感觉。</td></tr>
+          <tr><td>真值表与范式</td><td>简答 2</td><td>Day3 主范式流程</td><td>补表、识别 Delta、写主析取/主合取。</td></tr>
+          <tr><td>谓词翻译与辖域</td><td>填空 1-4</td><td>Day3 谓词/辖域/替换</td><td>先画括号，再写公式骨架。</td></tr>
+          <tr><td>前束/Skolem</td><td>简答 4</td><td>Day4 公式加工</td><td>改名、去箭头、否定内移、前移、Skolem 依赖。</td></tr>
+          <tr><td>语义构造/公理证明</td><td>简答 5-7</td><td>Day4 长题骨架</td><td>造 S 表、分情况证明、公理证明先写自然骨架。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="objective">
+      <h2>1. 单选题：别背选项，抓定义边界</h2>
+      <p>单选题最容易被一句“看起来对”骗走。做法是：先判断它属于哪类概念，再找反例或定义边界。</p>
+      <table>
+        <thead><tr><th>题号</th><th>题眼</th><th>建议答案</th><th>为什么</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>公理系统、完全性、可靠性</td><td>D</td><td>可靠性说“能推出的都语义有效”。如果系统本来不可靠，单纯扩充公理只会增加可推公式，通常不能修好不可靠，反而更危险。</td></tr>
+          <tr><td>2</td><td>判断公式序列是否为推演</td><td>A</td><td>推演每一步可以是前提、公理，或由前面公式按规则推出；“是否为永真式”不是每一步成为推演的必要依据。</td></tr>
+          <tr><td>3</td><td>联结词、完全集</td><td>A</td><td>B/C/D 都可用反例或计数排除；该题偏抽象，先记为完全集辨析题，考前可低成本复刷。</td></tr>
+          <tr><td>4</td><td>公式复杂度</td><td>B</td><td>左边复杂度为 2，右边存在式复杂度为 3，最外层蕴涵再加 1，总复杂度为 4。</td></tr>
+          <tr><td>5</td><td>命题定义</td><td>C</td><td>命题必须有确定真假。C 是排中式风格陈述，有真假值；命令句、疑问句和自指悖论句不适合作命题。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>注意：</strong>第 3 题这种完全集抽象辨析，短期目标不是深挖所有布尔函数理论，而是知道它属于“概念边界题”，考前用定义和反例复刷。
+      </div>
+    </section>
+
+    <section class="card" id="blank">
+      <h2>2. 填空题：四题其实是 Day3 的工具</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>填空 1：自然语言符号化</strong>
+          骨架是“若严格单调递减，则存在唯一最大值点”。严格递减写成“对任意 <code>x∈N,y∈N</code>，若 x&lt;y，则 f(y)&lt;f(x)”；唯一最大值点写成“存在 <code>m∈N</code>，所有 <code>x∈N</code> 都 f(x)≤f(m)，且任何最大值点都等于 m”。
+        </div>
+        <div class="box">
+          <strong>填空 2：y 的辖域</strong>
+          在 <code>forall y Q(y)</code> 中，y 的辖域是 <code>Q(y)</code>。不要把后面的 <code>P(x,z)</code> 也塞进去。
+        </div>
+        <div class="box">
+          <strong>填空 3：x 的辖域</strong>
+          最外层 <code>exists x</code> 管住后面的整个 <code>forall z exists w(...)</code>。
+        </div>
+        <div class="box">
+          <strong>填空 4：替换式</strong>
+          只替换完整出现的 <code>P∨R</code> 子公式。外层前件和最后结论替换为 <code>P↔R</code>；中间是否替换取决于括号和优先级解释。
+        </div>
+      </div>
+      <div class="math-card">
+        <div class="math-note">唯一最大值点骨架：</div>
+        <div class="display-eq">&exist;<span class="var">m</span><span class="op">(</span><span class="func">Max</span><span class="op">(</span><span class="var">m</span><span class="op">)</span> <span class="op">&and;</span> &forall;<span class="var">n</span><span class="op">(</span><span class="func">Max</span><span class="op">(</span><span class="var">n</span><span class="op">)</span> <span class="op">&rarr;</span> <span class="func">E</span><span class="op">(</span><span class="var">n</span>,<span class="var">m</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="func">Max</span><span class="op">(</span><span class="var">m</span><span class="op">)</span> <span class="op">:</span> &forall;<span class="var">x</span><span class="op">(</span><span class="func">P</span><span class="op">(</span><span class="var">f</span><span class="op">(</span><span class="var">x</span><span class="op">)</span>,<span class="var">f</span><span class="op">(</span><span class="var">m</span><span class="op">)</span><span class="op">)</span> <span class="op">&or;</span> <span class="func">E</span><span class="op">(</span><span class="var">f</span><span class="op">(</span><span class="var">x</span><span class="op">)</span>,<span class="var">f</span><span class="op">(</span><span class="var">m</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></div>
+        <ul>
+          <li><code>P(a,b)</code> 表示 <code>a&lt;b</code>，所以 <code>P(f(x),f(m)) or E(f(x),f(m))</code> 表示 <code>f(x)≤f(m)</code>。</li>
+          <li>这种题不要求你一眼写完，先定义 <code>Max(m)</code> 再展开，卷面更稳。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" id="judge">
+      <h2>3. 判断题：一律先想“定义”和“小反例”</h2>
+      <table>
+        <thead><tr><th>题号</th><th>判断</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>正确</td><td><code>Γ |= 0</code> 表示不存在使 Γ 全真的解释，等价于 Γ 不可满足；若课程用“不协调”指语法矛盾，在可靠/完全背景下对应。</td></tr>
+          <tr><td>2</td><td>正确</td><td>在整数论域中，数列收敛到 0 等价于最终恒等于 0；公式表达“存在 <code>N∈Z</code>，之后所有 <code>n∈Z</code> 都有 a_n=0”。</td></tr>
+          <tr><td>3</td><td>正确</td><td>命题逻辑重言式代入谓词公式可得到永真式，但谓词逻辑还有依赖量词结构的永真式，所以是真子集。</td></tr>
+          <tr><td>4</td><td>按题面“无前束范式”为错误</td><td>若题面实际想写“前束范式”，则应为正确：任意谓词公式都有等值前束范式。这里要按考试原文核对。</td></tr>
+          <tr><td>5</td><td>错误</td><td>取 A = P∧Q，对偶式 A* = P∨Q，A∨A* 等价 P∨Q；当 P=0,Q=0 时为假，不是永真式。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="semantic">
+      <h2>4. 语义计算题：从小题到主范式</h2>
+      <h3>题 1：永真判断</h3>
+      <div class="math-card">
+        <div class="display-eq"><span class="op">(</span><span class="var">P</span> <span class="op">&rarr;</span> <span class="op">(</span><span class="var">Q</span> <span class="op">&rarr;</span> <span class="var">R</span><span class="op">)</span><span class="op">)</span> <span class="op">&rarr;</span> <span class="op">(</span><span class="var">P</span> <span class="op">&and;</span> <span class="var">Q</span> <span class="op">&rarr;</span> <span class="var">R</span><span class="op">)</span></div>
+        <ul>
+          <li>这就是“如果 P 能推出 Q 推出 R，那么 P 和 Q 一起能推出 R”。</li>
+          <li>可用假设法：若前件真且 P∧Q 真，则 P 真、Q 真，由前件得 Q->R，再得 R，所以后件真。</li>
+          <li>因此该式为永真式。</li>
+        </ul>
+      </div>
+
+      <h3>题 2：F1 真值表与主范式</h3>
+      <p>题中给的 <code>p Δ r</code> 列刚好等于 <code>p</code>，所以 <code>p Δ q</code> 可写成 <code>p</code>。这一步不要想复杂，先看真值列。</p>
+      <table>
+        <thead><tr><th>p</th><th>q</th><th>r</th><th>pΔr</th><th>(q↔r)->p</th><th>¬(pΔr)∨q</th><th>r->...</th><th>F1</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="display-eq">主析取范式 <span class="op">:</span> <span class="var">m</span><sub>0</sub> <span class="op">&or;</span> <span class="var">m</span><sub>3</sub> <span class="op">&or;</span> <span class="var">m</span><sub>5</sub></div>
+        <div class="display-eq"><span class="op">=</span> <span class="op">(</span>&not;<span class="var">p</span><span class="op">&and;</span>&not;<span class="var">q</span><span class="op">&and;</span>&not;<span class="var">r</span><span class="op">)</span> <span class="op">&or;</span> <span class="op">(</span>&not;<span class="var">p</span><span class="op">&and;</span><span class="var">q</span><span class="op">&and;</span><span class="var">r</span><span class="op">)</span> <span class="op">&or;</span> <span class="op">(</span><span class="var">p</span><span class="op">&and;</span>&not;<span class="var">q</span><span class="op">&and;</span><span class="var">r</span><span class="op">)</span></div>
+        <div class="display-eq">主合取范式 <span class="op">:</span> <span class="var">M</span><sub>1</sub> <span class="op">&and;</span> <span class="var">M</span><sub>2</sub> <span class="op">&and;</span> <span class="var">M</span><sub>4</sub> <span class="op">&and;</span> <span class="var">M</span><sub>6</sub> <span class="op">&and;</span> <span class="var">M</span><sub>7</sub></div>
+        <div class="display-eq"><span class="op">=</span> <span class="op">(</span><span class="var">p</span><span class="op">&or;</span><span class="var">q</span><span class="op">&or;</span>&not;<span class="var">r</span><span class="op">)</span> <span class="op">&and;</span> <span class="op">(</span><span class="var">p</span><span class="op">&or;</span>&not;<span class="var">q</span><span class="op">&or;</span><span class="var">r</span><span class="op">)</span> <span class="op">&and;</span> <span class="op">(</span>&not;<span class="var">p</span><span class="op">&or;</span><span class="var">q</span><span class="op">&or;</span><span class="var">r</span><span class="op">)</span> <span class="op">&and;</span> <span class="op">(</span>&not;<span class="var">p</span><span class="op">&or;</span>&not;<span class="var">q</span><span class="op">&or;</span><span class="var">r</span><span class="op">)</span> <span class="op">&and;</span> <span class="op">(</span>&not;<span class="var">p</span><span class="op">&or;</span>&not;<span class="var">q</span><span class="op">&or;</span>&not;<span class="var">r</span><span class="op">)</span></div>
+      </div>
+
+      <h3>题 3：等值演算永真</h3>
+      <p>这题已经在 Day3 做过。考场写法不是只说“显然”，而是把箭头消掉、合并含 P 的项、最后化到 <code>¬P∨P</code>。</p>
+      <div class="math-card">
+        <div class="display-eq"><span class="var">P</span> <span class="op">&rarr;</span> <span class="op">(</span><span class="var">P</span><span class="op">&and;</span><span class="op">(</span><span class="var">Q</span><span class="op">&rarr;</span><span class="var">R</span><span class="op">)</span> <span class="op">&or;</span> <span class="op">(</span>&not;<span class="var">R</span><span class="op">&and;</span><span class="var">P</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="op">&equiv;</span> &not;<span class="var">P</span> <span class="op">&or;</span> <span class="op">(</span><span class="var">P</span><span class="op">&and;</span><span class="op">(</span>&not;<span class="var">Q</span><span class="op">&or;</span><span class="var">R</span><span class="op">)</span><span class="op">)</span> <span class="op">&or;</span> <span class="op">(</span><span class="var">P</span><span class="op">&and;</span>&not;<span class="var">R</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="op">&equiv;</span> &not;<span class="var">P</span> <span class="op">&or;</span> <span class="var">P</span><span class="op">&and;</span><span class="op">(</span><span class="op">(</span>&not;<span class="var">Q</span><span class="op">&or;</span><span class="var">R</span><span class="op">)</span><span class="op">&or;</span>&not;<span class="var">R</span><span class="op">)</span></div>
+        <div class="display-eq"><span class="op">&equiv;</span> &not;<span class="var">P</span> <span class="op">&or;</span> <span class="var">P</span><span class="op">&and;</span>1</div>
+        <div class="display-eq"><span class="op">&equiv;</span> &not;<span class="var">P</span> <span class="op">&or;</span> <span class="var">P</span> <span class="op">&equiv;</span> 1</div>
+      </div>
+    </section>
+
+    <section class="card" id="long">
+      <h2>5. 长题桥接：Day4 工具真正上场</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>简答 4：F2 -> F3 -> F4</strong>
+          调用 Day4：前束 6 步和 Skolem 依赖图。核心答案是量词串 <code>exists z forall y exists u forall v</code>，然后 <code>z->a</code>，<code>u->f(y)</code>。
+        </div>
+        <div class="box">
+          <strong>简答 5：S 表与公式 II</strong>
+          调用 Day4：让 exists 失败就逐个打掉所有 <code>x∈D,y∈D</code>；让析取假就两边都假。S 表取 A 的补表。
+        </div>
+        <div class="box">
+          <strong>简答 6：公理证明题 1</strong>
+          调用 Day4：假设 H 和 forall x Q(x)，任取 <code>y0∈D</code>，实例化出 Q(x0)->R(y0) 和 Q(x0)，其中 <code>x0∈D</code> 可任选；MP 得 R(y0)，再全称推广。
+        </div>
+        <div class="box">
+          <strong>简答 7：公理证明题 2</strong>
+          调用 Day4：假设 Q->¬(P∧Q)，再假设 P∧Q，由 P∧Q 得 Q，又得 ¬(P∧Q)，矛盾推出任意 R。
+        </div>
+      </div>
+      <div class="mark">
+        <strong>Day5 的价值：</strong>你不需要把 Day4 内容重新背一遍，而是看到卷面题就知道“这题去 Day4 哪个工具箱拿东西”。
+      </div>
+    </section>
+
+    <section class="card" id="drills">
+      <h2>6. 作答题卡：先写题眼，再展开答案</h2>
+
+      <article class="drill">
+        <h3>题卡 1：复杂度计算</h3>
+        <p>公式 <code>¬P(x)∨R(y)->∃x(Q(z)∧P(x)∧R(x))</code> 的复杂度是多少？</p>
+        <textarea data-key="d5-q1" placeholder="先算左边，再算右边，再算最外层箭头。"></textarea>
+        <details><summary>答案与解析</summary><div class="answer-block">
+          <p>左边 <code>¬P(x)</code> 复杂度 1，<code>R(y)</code> 为 0，所以 <code>¬P(x)∨R(y)</code> 为 2。右边三个原子合取先到 2，外面 <code>∃x</code> 加 1 得 3。最外层蕴涵取 max(2,3)+1=4。</p>
+        </div></details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 2：主范式</h3>
+        <p>如果 F1 的真值为 1 的行是 0、3、5，写主析取范式；真值为 0 的行是 1、2、4、6、7，写主合取范式。</p>
+        <textarea data-key="d5-q2" placeholder="先写行号对应的 p,q,r，再写极小项/极大项。"></textarea>
+        <details><summary>答案与解析</summary><div class="answer-block">
+          <p>主析取范式：<code>(¬p∧¬q∧¬r)∨(¬p∧q∧r)∨(p∧¬q∧r)</code>。</p>
+          <p>主合取范式：<code>(p∨q∨¬r)∧(p∨¬q∨r)∧(¬p∨q∨r)∧(¬p∨¬q∨r)∧(¬p∨¬q∨¬r)</code>。</p>
+          <p>记忆：主析取看 1 行，主合取看 0 行；极大项规则反过来。</p>
+        </div></details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 3：Skolem 依赖</h3>
+        <p>为什么 <code>exists z forall y exists u forall v</code> 中，z 替换成常量 a，而 u 替换成函数 f(y)？</p>
+        <textarea data-key="d5-q3" placeholder="写出每个 exists 左边有哪些 forall。"></textarea>
+        <details><summary>答案与解析</summary><div class="answer-block">
+          <p>Skolem 化时，一个存在变量只依赖它左边已经出现的全称变量。z 左边没有全称变量，所以 z 是固定见证，用常量 a。u 左边有 <code>forall y</code>，所以 u 可能随 y 变化，要写成函数 <code>f(y)</code>。</p>
+        </div></details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 4：S 补表构造</h3>
+        <p>为什么把 S 设成 A 的补表，可以让公式 I 为假？</p>
+        <textarea data-key="d5-q4" placeholder="按：exists 失败 -> 每对 x,y 失败 -> or 两边都假 来写。"></textarea>
+        <details><summary>答案与解析</summary><div class="answer-block">
+          <p>要让 <code>exists x exists y forall w(...)</code> 为假，就要让每一对 <code>x∈D,y∈D</code> 都找不到成功的 <code>forall w</code>。令 S 为 A 的补表，则 <code>A(x,y)∧S(x,y)</code> 总是假；又因为每行 S 至少有一个 1，可找到 <code>w∈D</code> 使 <code>S(x,w)=1</code>，于是 <code>¬S(x,w)</code> 假。析取两边都假，括号假，所有 <code>x∈D,y∈D</code> 都失败。</p>
+        </div></details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 5：公理证明骨架</h3>
+        <p>写出题 6 的自然骨架：从 <code>forall x forall y(Q(x)->R(y))</code> 和 <code>forall x Q(x)</code> 推出 <code>forall y R(y)</code>。</p>
+        <textarea data-key="d5-q5" placeholder="任取 y0∈D；由 H 得 Q(x0)->R(y0)；由 A 得 Q(x0)，其中 x0∈D；MP；推广。"></textarea>
+        <details><summary>答案与解析</summary><div class="answer-block">
+          <p>假设 H: <code>forall x forall y(Q(x)->R(y))</code>，假设 A: <code>forall x Q(x)</code>。任取 <code>y0∈D</code>，目标是 R(y0)。由 H 实例化得 <code>Q(x0)->R(y0)</code>，由 A 实例化得 <code>Q(x0)</code>，其中 <code>x0∈D</code> 可任选；MP 得 <code>R(y0)</code>。因 y0 任意，得 <code>forall y R(y)</code>，再用演绎定理收束。</p>
+        </div></details>
+      </article>
+    </section>
+
+    <section class="card" id="wrong">
+      <h2>7. 错题回炉：这张卷最该反复刷的不是全部题</h2>
+      <table>
+        <thead><tr><th>如果你错在</th><th>回炉哪一页</th><th>重刷动作</th></tr></thead>
+        <tbody>
+          <tr><td>复杂度、主范式、辖域、替换</td><td><a href="./day3_discrete_equiv_normal_predicate.html">Day3 等值范式谓词</a></td><td>重做题卡 1、3、4、5。</td></tr>
+          <tr><td>Γ |= Q、反例、证明第一句</td><td><a href="./day2_discrete_proof_starter.html">Day2 证明入口</a></td><td>闭眼复述：前提全真结论假。</td></tr>
+          <tr><td>前束和 Skolem</td><td><a href="./day4_discrete_prenex_skolem_axiom.html">Day4 前束 Skolem</a></td><td>重画 Skolem 依赖图。</td></tr>
+          <tr><td>语义构造和公理证明</td><td><a href="./day4_discrete_prenex_skolem_axiom.html">Day4 长题入口</a></td><td>先写自然骨架，再看形式答案。</td></tr>
+        </tbody>
+      </table>
+      <textarea data-key="d5-wrong" placeholder="今天错题记录：1. 我错在哪类题？2. 我当时误判了什么题眼？3. 下次第一句应该写什么？"></textarea>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day4_discrete_prenex_skolem_axiom.html">回离散 Day4</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-discrete-day5-2024-bridge";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-key]").forEach(area => {
+      const id = area.dataset.key;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

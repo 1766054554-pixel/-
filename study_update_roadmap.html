@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>期末陪跑讲义与学习舱同步路线</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1160px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .lane {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+      margin: 12px 0;
+    }
+    .lane > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+    }
+    .lane .head {
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    @media (max-width: 900px) {
+      .grid, .grid.three, .lane { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>期末陪跑讲义与学习舱同步路线</h1>
+      <p class="muted">这页用来防止复习材料散掉：主学习舱负责“今天学什么、板块过没过闸门”，独立讲义负责“把知识讲透、把题卡做透”。讲义成就册和后程 Day6/Day7 队列都放在主页“更新路线”标签里，不再挤占今日任务。</p>
+      <div class="strip">
+        <span class="pill hot">目标：85+</span>
+        <span class="pill info">学习舱 + 深学讲义配套</span>
+        <span class="pill good">先零基础，再真题</span>
+        <span class="pill warn">按考试时间滚动</span>
+      </div>
+      <div class="toc">
+        <a href="./final_two_subject_command_center.html">最后两科作战台</a>
+        <a href="./final_two_wrong_review.html">离散+马原错题回炉台</a>
+        <a href="./marx_openbook_final_sprint.html">马原开卷冲刺</a>
+        <a href="./exam_scope_master_map.html">考试重点总地图</a>
+        <a href="./exam_coverage_control_board.html">考点覆盖控制板</a>
+        <a href="./full_final_schedule_0616_0630.html">6.16-6.30 全程计划</a>
+        <a href="./day2_master_route.html">Day2 总路线</a>
+        <a href="#contract">0. 配套规则</a>
+        <a href="#achievements">1. 讲义成就册</a>
+        <a href="#current">2. 当前 Day1-Day3 状态</a>
+        <a href="#daily">3. 每日更新路线</a>
+        <a href="#phase">4. 阶段路线</a>
+        <a href="#subjects">5. 各科推进线</a>
+        <a href="#quality">6. 质量标准</a>
+        <a href="#next">7. 下一批内容</a>
+      </div>
+    </section>
+
+    <section class="card" id="final-two">
+      <h2>当前覆盖层：现在只剩离散和马原</h2>
+      <div class="mark danger">
+        <strong>2026-06-26 起的新主线：</strong>数据库、AI、软工、军理都已经退出今日任务。后面只按两条线走：6/28 离散先上岸，6/30 马原纸质开卷收口。历史讲义和成就册保留，但不再作为当前学习入口。
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>离散 6/26-6/28</strong>
+          路线：<a href="./final_two_subject_command_center.html">最后两科作战台</a> -> 分心时先打一局 <a href="./focus_dual_exam_game.html">离散+马原专注闯关</a> -> <a href="./final_two_wrong_review.html">错题回炉台</a> -> <a href="./discrete_last36_learning_ladder.html">离散先学后练阶梯</a> -> <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">希冀精练闸门</a> -> <a href="./final48_discrete_score_booster.html">最后48小时查漏</a> -> <a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">近三年真题</a> -> <a href="./day7_discrete_final_recall.html">Day7 最终速查</a>。主目标是题型分流、证明第一句、真题解析复述。
+        </div>
+        <div class="box">
+          <strong>马原 6/28 晚-6/30</strong>
+          路线：<a href="./marx_openbook_final_sprint.html#teacher">老师最后一课重点</a> -> <a href="./marx_openbook_final_sprint.html#surplus">剩余价值专项</a> -> 13 个页边钉子 -> <a href="./marx_openbook_final_sprint.html#case-walkthrough">材料题手把手拆题</a> -> <a href="./marx_openbook_final_sprint.html#locator">30秒开卷定位</a> -> 16 题分流小测 -> 材料题第一段 -> 考前定位表。离散考前马原每天只用 20-30 分钟做索引，不抢主时间。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>执行口令：</strong>离散题先分盒子，马原题先找原理。所有页面都服务这两句话，不再为了“内容多”开新坑。
+      </div>
+    </section>
+
+    <section class="card" id="contract">
+      <h2>0. 配套规则：学习舱管路线，讲义管深度</h2>
+      <div class="mark">
+        <strong>先看总地图，再走主线：</strong><a href="./exam_scope_master_map.html">考试重点总地图</a>负责考试日历、资料依据、每科重点、正式 Day 路线和 Tips 边界；<a href="./full_final_schedule_0616_0630.html">6.16-6.30 全程计划</a>负责每天的核心包/标准包/闸门；<a href="./source_coverage_audit.html">资料覆盖审计台账</a>负责记录资料读入、题卡化和整卷化状态；<a href="./pastpaper_ingestion_radar.html">软工&离散多年习题吞吐雷达</a>负责展示本轮批量抽取的 23 份离散文本和 12 份软工文本/OCR，以及高频题眼回灌路线；本页负责记录“讲义和学习舱是否同步”。这些导航页都不是新的 Day 讲义。
+      </div>
+      <div class="mark">
+        <strong>讲义成就册放哪：</strong>打开 <a href="./index.html">期末陪跑学习舱</a> 后切到“更新路线”标签，那里集中放长期打勾墙、滚动路线和 Day6/Day7 后程产出。今日任务页只保留当天要打开的少数入口。
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>主学习舱做什么</strong>
+          告诉你今天学哪几个板块、每板块过关标准是什么、错题回炉在哪里、真题桥接什么时候打开。它不应该塞满所有长讲解。
+        </div>
+        <div class="box">
+          <strong>独立讲义做什么</strong>
+          像一节课一样从零铺垫、讲概念、连知识、拆例题、给题卡、给解析。它负责让你从“没听过”走到“能自己下笔”。
+        </div>
+        <div class="box">
+          <strong>二者怎么配套</strong>
+          每个讲义必须在学习舱里有对应板块；每个学习舱重点板块必须能找到一份可深读的讲义或题卡页。
+        </div>
+        <div class="box">
+          <strong>什么情况下进入下一天</strong>
+          不是看完就算，而是能闭眼复述、能识别题眼、能写出第一步、能做至少一组题卡并解释错因。
+        </div>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <div class="box">
+          <strong>反重复规则 1：讲义像上课</strong>
+          讲义负责铺垫、推导、例题拆解、图解和完整解析。新概念第一次出现时，优先在讲义里讲透，不在学习舱里硬塞长文。
+        </div>
+        <div class="box">
+          <strong>反重复规则 2：学习舱像训练台</strong>
+          学习舱只保留题眼、第一步、作答模板、闸门、自测和错题回炉。它可以重复关键词，但不重复整段讲义正文。
+        </div>
+        <div class="box">
+          <strong>反重复规则 3：真题桥接像考场</strong>
+          真题桥接不重新教学全章，只拿真实题干训练“这是哪类题、第一步写什么、容易在哪扣分”。卡住再回讲义补。
+        </div>
+        <div class="box">
+          <strong>允许的重复</strong>
+          题眼、公式含义、证明第一句、SQL 第一步、画图扣分点可以重复，因为这些是考场触发器；长篇解释不重复。
+        </div>
+      </div>
+      <div class="mark">
+        <strong>实际读法：</strong>同一个知识点最多承担三种不同任务：在讲义里负责“学懂”，在学习舱里负责“被叫醒”，在真题桥接里负责“换问法也能识别”。如果两处文字只是换个地方复制一遍，就要删掉或改写成题眼、模板、错因、变式。
+      </div>
+      <div class="mark warnbox">
+        <strong>硬规则：</strong>后续 Day2/Day3 不直接上难题。每一页都必须保留“从零引入 -> 考试题眼 -> 标准模板 -> 变式识别 -> 作答区 -> 完整解析”的节奏。
+      </div>
+    </section>
+
+    <section class="card" id="achievements">
+      <h2>1. 讲义成就册：长期打勾墙放在更新路线，不挤占今日任务</h2>
+      <div class="mark">
+        <strong>入口：</strong>打开 <a href="./index.html">期末陪跑学习舱</a> 后切到“更新路线”标签，第一块就是讲义成就册。它记录主线讲义、题卡、考前复刷和 Tips 的完成情况；今日任务页只保留当天真正要打开的少数入口。
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>今天页只管执行</strong>
+          今天页不再展示完整仓库，也不把 Day6/Day7 全塞进任务卡。你只需要按“必看 -> 当场练 -> 漏洞补票”走完。
+        </div>
+        <div class="box">
+          <strong>成就册管长期完成感</strong>
+          数据库、AI、软工、离散、军理闭卷背诵和马原开卷包都在成就册里打勾。它回答“我已经拿下了哪些页面”。
+        </div>
+        <div class="box">
+          <strong>路线页管后程产出</strong>
+          Day6/Day7 不再随便新开坑，统一放在后程队列：数据库收口、AI 终局、软工 CodeArts 彩排、离散证明和最终速查。
+        </div>
+        <div class="box">
+          <strong>重复内容怎么处理</strong>
+          讲义讲透，学习舱叫醒，真题桥接换问法。只有题眼、第一步、公式含义、扣分点允许重复；长篇解释不重复。
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="current">
+      <h2>2. 当前 Day1-Day3 状态：哪些已经能用，哪些继续补</h2>
+      <table>
+        <thead><tr><th>科目</th><th>Day1 当前定位</th><th>Day2/Day3 当前定位</th><th>接下来补什么</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>数据库</td>
+            <td><a href="./day1_database_sql.html">SQL + 关系代数从零深学</a> 已回炉：表/键/SQL 顺序/WHERE/HAVING/基础题卡，并补入关系代数符号识字课，覆盖 σ、Π、×、⋈、∪、−、÷、ρ 和 SQL/关系代数互转。</td>
+            <td><a href="./day2_database_sql_join_nested.html">SQL 连接与嵌套</a> 已有；<a href="./day2_active_recall_arena.html">Day2 综合主动回忆</a> 已新增，用于把 SQL 连接、AI、软工、离散四科题眼叫醒；<a href="./day3_master_route.html">Day3 总路线</a> 已新增；<a href="./day3_database_fd_tx_er.html">Day3 范式事务 ER</a> 已新增为正式大题后半入口；<a href="./db_er_drawing_workshop.html">数据库 ER 作图工坊</a> 已补两张完整标准图、复画流程和 ER->关系表转换；<a href="./day3_database_big_four_arena.html">Day3 数据库大题后半主动回忆</a> 已新增，用于候选码/BCNF、事务、恢复、ER 图的题眼和第一步训练；<a href="./day3_database_exam_closure.html">Day3 考前闭环</a> 已用于速记和限时调用；<a href="./day4_database_full_exam_closure.html">Day4 全卷闭环</a> 已串起 SQL/关系代数/大题后半；<a href="./day5_database_exam_sprint.html">Day5 考前速查小测</a> 已补真题风味变式；<a href="./day6_database_final_rehearsal.html#past">Day6 最后排雷</a> 已作为考前往年题题眼矩阵、16 题极速分流、半套模拟和错题回炉页；<a href="./db_final_variant_drill.html">数据库临考变式训练营</a> 已新增，用 SQL1/SQL2、2020、事务恢复和 2023A 的题眼训练换问法；<a href="./db_oldpaper_edge_sweep.html#symbol-lab">数据库老卷边角排雷</a> 已补 2.5 关系代数卷面闯关，用 2014/13/09/12 旧卷补符号、SQL 语法坑、锁协议、索引/安全和 ER 计数盲区；<a href="./db_2023a_full_interactive.html">2023A 整卷交互</a> 已补为临考完整卷面练手。</td>
+            <td>数据库不再盲目开新概念，后续只做变式训练、旧卷边角扫雷、极速分流诊断、错题回炉、2023A 原卷骨架和考试当天速查。</td>
+          </tr>
+          <tr>
+            <td>AI</td>
+            <td><a href="./day1_ai_se_visual.html">AI 从零深学</a> 已回炉：考试地图、术语人话、监督/无监督/强化学习、线性模型、决策树入门和评价指标；<a href="./day1_ai_reference_bridge.html">参考习题第 1 页</a> 已题卡化。</td>
+            <td><a href="./day2_ai_model_storyline.html">Day2 AI 模型故事线</a>、<a href="./day2_ai_reference_ml_cards.html">机器学习题卡</a>、<a href="./day2_ai_reference_nn_cards.html">神经网络题卡</a>、<a href="./day3_ai_formula_model_closure.html">AI Day3 公式与模型闭环</a>、<a href="./day4_ai_unsupervised_rl_closure.html">AI Day4 无监督与强化学习</a>、<a href="./ai_deep_generation_exam_bridge.html">AI 深度/生成桥接</a>、<a href="./day5_ai_exam_sprint_mixed.html#ref-triage">AI Day5 参考题眼闯关与考前小测</a>、<a href="./day7_ai_teacher_summary_final.html">AI Day7 老师总纲终局闭环</a> 已覆盖主线；<a href="./ai_reference_final_interactive.html">AI 参考习题综合交互卷</a> 已补为 6/22 晚/6/23 早整套练手；<a href="./ai_exam_storyline_master_map.html#families">AI 总纲 0.5 方法谱系</a> 已补符号主义、搜索、机器学习、强化学习、博弈决策的零基础桥接；<a href="./ai_lecture_coverage_map.html#radar">AI 防漏雷达</a>、<a href="./tips_ai_visual_model_masterclass.html">图解 Tips</a>、<a href="./tips_ai_model_gate_practice.html">闯关 Tips</a> 改为辅助层，不再和 Day 正课并列当任务。</td>
+            <td>AI 下一步优先做现有页润色、错题回炉和参考习题逐页题卡化；<a href="./ai_lecture_coverage_map.html#radar">8 项防漏雷达</a>负责确认 PPT 核心板块是否能上场，<a href="./ai_lecture_coverage_map.html#reference-pages">参考习题逐页覆盖表</a>已经把 OCR 第 1-15 页接到 Day1/Day2/Day4/Day5/Day7。Day1 参考习题遇到“符号主义/搜索/强化学习/博弈决策”先回 <a href="./ai_exam_storyline_master_map.html#families">AI 总纲 0.5 方法谱系</a> 补坐标；Day2 顺序固定为“模型故事线 -> ML 题卡 -> 必要时 NN 题卡”，其中 ML/NN 选择题已升级为可点击校验，但仍要求先写题眼。Day3 先深读 <a href="./day3_ai_formula_model_closure.html">AI 公式模型闭环</a>，再回主页做“AI Day3 公式调用”学习舱闸门；主页 `真题桥接/套路识别` 已补 SVM 图题、决策树信息增益率、AdaBoost、Q-learning 等参考习题高频模板；Day5 先做 <a href="./day5_ai_exam_sprint_mixed.html#ref-triage">18 题参考习题高频信号闯关</a>，覆盖 A*、AlphaGo、Pearl 三层、监督/强化反馈、SVM、信息增益率、AdaBoost、BP、GAN、PCA、Q-learning/Sarsa 等，再进入混合题拆法和限时小测。第 14 讲/最后一课进入 <a href="./day7_ai_teacher_summary_final.html">Day7 终局闭环</a>，最终用 <a href="./ai_reference_final_interactive.html">AI 综合交互卷</a>按选择、填空、计算、简答、综合混排收口。</td>
+          </tr>
+          <tr>
+            <td>软工</td>
+            <td><a href="./day1_se_diagram_zero.html">画图从零深学</a> 已回炉：Day1 过关线、四支笔、图链路、第一笔怎么下；PDF 截图改为来源核对，不再抢正文。</td>
+            <td><a href="./day2_se_2020_diagram_workshop.html">2020 画图题手把手</a> 已二次打磨：补用例关系、类图关系、顺序图生命线和阅卷视角；<a href="./day3_se_openbook_diagram_index.html">Day3 纸质开卷索引与 CodeArts 画图模板</a> 已按 6/18 正式通知回炉；<a href="./day4_se_diagram_microclass.html">Day4 同题干画图微课</a> 已补“一个题干拆用例图/顺序图/类图/状态图”；<a href="./day5_se_official_types_closure.html">Day5 官方五类题型闭环</a> 已补客观题专项，覆盖单选/多选/判断中的过程模型、项目管理对象、黑盒/白盒、需求/概要/详细、故障/错误/失效和测试层次；<a href="./se_concept_boundary_sprint.html">软工概念边界强化营</a> 已新增，用十讲主线补过程/需求/概要/详细/实现/测试六条线、18 题客观检测和 4 个简答模板；<a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 CodeArts 综合闭环</a> 已补 14 题官方题型/图型分流诊断、正式约束、案例建模、CodeArts 提交检查和 8 项考前闸门；<a href="./pastpaper_ingestion_radar.html#se">多年习题吞吐雷达</a>已确认 2020、12/14 级、2016 图片卷、朱辉参考答案等高频图题/测试题眼；<a href="./se_pastpaper_variant_drill.html">软工往年题变式训练营</a>已把这些题眼落成 18 道客观分流、5 类材料变式和测试设计模板；<a href="./se_official_final_interactive.html">软工官方五类题型综合交互卷</a>已补为 6/24-6/25 整套练手；<a href="./se_last24_command_center.html">软工最后24小时作战舱</a>已新增为收束入口，负责今晚/明天/进场前三段路线、纸质十讲定位、24题临考小测和上场闸门。</td>
+            <td>下一步不再继续堆同类软工讲义，优先按“最后24小时作战舱 -> 概念边界 -> 官方五类题型 -> 往年题变式 -> 综合卷 -> 纸质边注”走；主页 `真题桥接/套路识别` 已补故障-错误-失效简答、综合题需求/概要/详细/测试四层产物分流；Git、前端、后端、云平台放进实现与协作背景，不抢需求/设计/测试主线。</td>
+          </tr>
+          <tr>
+            <td>离散</td>
+            <td><a href="./day1_discrete_logic_proof.html">基础地图</a> 已覆盖命题、联结词、真值表、谓词、量词、辖域和证明第一句。</td>
+            <td><a href="./day2_discrete_proof_starter.html">证明入口</a> 已回炉：证明目标导航图、语义蕴含反例图、公式卡；<a href="./day3_discrete_equiv_normal_predicate.html">Day3 等值范式谓词</a> 已回炉：主范式流程图、辖域括号图、公式卡；<a href="./day4_discrete_prenex_skolem_axiom.html">Day4 前束 Skolem 公理证明</a> 已回炉：前束结构图、Skolem 依赖图、语义构造图、公理证明骨架图和长公式卡；<a href="./day5_discrete_2024_exam_bridge.html">Day5 2024 参考卷分块解析</a> 已新增；<a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> 已接入 2020/2022 往年题的语义证明、反例、量词顺序、可靠性/完备性和公理证明起手；<a href="./discrete_pastpaper_proof_gate.html">离散多年题眼证明闸门</a>已把 2012-2022 高频题眼压成 12 题分流和 6 个证明起手模板；<a href="./discrete_proof_chain_lab.html">离散证明链条工坊</a>已补强为 14 题“下一句”训练，专练语义、量词、Skolem、公理证明、可靠性/完全性、辖域、唯一性和函数复合的证据链；<a href="./day7_discrete_final_recall.html">Day7 最终速查</a> 已补 2020/2022 分值结构、2024 题型信号、定义/范式/语义/证明上场闸门；<a href="./final48_discrete_score_booster.html">离散最后48小时高分训练</a> 已新增，用 12 道真题风味查漏题把可靠性/完全性、主范式、Skolem、语义推论、反例、公理证明和考场策略压成可点击检测；<a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a> 已补 2022/2020/2019/2018 真题结构与 2024 信号；<a href="./discrete_hiji_ingest/discrete_hiji_tactics_map.html">希冀三年题型作战地图</a> 已新增，明确 2024/2025/2023 三套卷分工、第一动作和错题回炉；<a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">希冀真题精练闸门</a> 已新增，整卷前先练 8 个题型盒子、2024 十个主战动作、18 题识别闸门和证明第一句；<a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">希冀近三年真题交互卷</a> 已新增，覆盖 2025/2024/2023 原题、客观判分、主观答题框、参考答案和图片核对；<a href="./tips_discrete_formula_visual_handbook.html">离散 Tips 公式视觉手册</a> 已补公式可读性和证明动作；<a href="./pastpaper_ingestion_radar.html#discrete">多年习题吞吐雷达</a>已确认 2012-2022 多年结构和证明/范式/定义高频题眼。</td>
+            <td>下一步优先用希冀近三年真题做真题驱动：先看 <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">真题精练闸门</a> 和 <a href="./discrete_hiji_ingest/discrete_hiji_tactics_map.html">题型作战地图</a>，再按 2024 主战、2025 查漏、2023 补表达走；错题再回 Day5/Day6、证明链条工坊和 Day7。公式翻译和证明动作断裂时回看 Tips。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="daily">
+      <h2>3. 每日更新路线：不是一次性堆完，而是滚动补齐</h2>
+      <p>按你实际复习日顺延。原则是最近考试优先，但每天至少保持 AI/软工/离散的低成本推进，防止后面裸奔。</p>
+      <div class="callout">
+        <strong>6/24 离散希冀近三年真题已接入：</strong>Chrome 中打开的 2025/2024/2023 三套希冀题已提取为 <a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">近三年真题交互卷</a>，并新增 <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">真题精练闸门</a> 和 <a href="./discrete_hiji_ingest/discrete_hiji_tactics_map.html">三年题型作战地图</a>。现在离散复习优先“先过精练闸门 -> 看地图分工 -> 做真题 -> 写第一步 -> 看解析 -> 错题回 Day5/Day6/Day7”，不要再只看讲义。
+      </div>
+      <div class="callout">
+        <strong>6/24 软工最后 24 小时入口已切换：</strong>主页今天按“<a href="./se_last24_command_center.html">最后24小时作战舱</a> -> 概念边界 -> 官方五类题型 -> 往年题变式 -> 综合交互卷 -> CodeArts 彩排 -> 纸质边注 6 行”走。软工考前最后半小时打开 <a href="./day6_se_final_codearts_rehearsal.html#exam-day">Day6 软工上场卡</a>，不要再散翻旧页。
+      </div>
+      <div class="callout">
+        <strong>6/21 数据库最后 24 小时入口已切换：</strong>主页今天不再让你重走 Day4，而是按“Day6 最后排雷 -> 30 分钟上场卡 -> 关系代数符号闯关 -> ER 完整图复画 -> 2023A 整卷骨架 -> 错题只回对应页”走。AI/软工/离散只做保温，不抢数据库主线。
+      </div>
+      <div class="callout">
+        <strong>6/20 学习舱临考作战台已补：</strong>主页把 6/20-6/23 切成三格：数据库收口、AI 五类题型收口、累时保命包；并新增数据库/AI 错题精确回流路线。以后临考前先看主页作战台，再进入对应讲义或整卷，不需要在所有文件里乱找。
+      </div>
+      <div class="callout">
+        <strong>数据库关系代数补漏已再加固：</strong><a href="./db_oldpaper_edge_sweep.html#symbol-lab">老卷边角排雷 2.5</a> 新增“符号闯关”，专门练 σ、Π、×、⋈、÷ 在试卷上的长相、人话翻译和 SQL/关系代数骨架，不再只停留在“知道 sigma/pi 叫什么”。
+      </div>
+      <div class="callout">
+        <strong>AI 6/22 晚三段式已补：</strong>主页作战台新增“AI 总纲叫醒 -> 参考题眼 -> 卷面练手 -> 错题只回一页”的短路线。它不新增讲义负担，只告诉你考前该先打开 <a href="./day7_ai_teacher_summary_final.html#types">五类题型雷达</a>，再做 <a href="./day5_ai_exam_sprint_mixed.html#ref-triage">参考题眼闯关</a>，最后进 <a href="./ai_reference_final_interactive.html">综合交互卷</a>。
+      </div>
+      <div class="lane">
+        <div class="head">Day1 已完成</div>
+        <div><strong>学习舱</strong><br>建立今日任务、板块学习、真题桥接、套路识别、错题回炉。</div>
+        <div><strong>深学讲义</strong><br>数据库、AI、软工、离散四科从零入口已建立。</div>
+        <div><strong>过关标准</strong><br>能说出每科主线和第一批题眼，不直接刷整卷。</div>
+      </div>
+      <div class="lane">
+        <div class="head">Day2 重点</div>
+        <div><strong>数据库</strong><br>SQL JOIN/嵌套/全部/每组最高；学习舱同步指向 SQL 连接与嵌套，并用 Day2 综合主动回忆做收束。</div>
+        <div><strong>AI/软工/离散</strong><br>AI 参考题 ML/NN；软工 2020 三图；离散证明入口。</div>
+        <div><strong>过关标准</strong><br>能独立做 SQL 连接题；能判断软工图；能写离散证明第一段。</div>
+      </div>
+      <div class="lane">
+        <div class="head">Day3 重点</div>
+        <div><strong>数据库大题后半</strong><br><a href="./day3_database_fd_tx_er.html">Day3 范式事务 ER</a>：函数依赖/候选键/事务/恢复/ER 图从零深学；<a href="./db_er_drawing_workshop.html">ER 作图工坊</a>：用诊所和选课两张完整图练主键、属性、联系、基数、M:N 实体化和转关系表；<a href="./day3_database_exam_closure.html">考前闭环</a>：把这些内容压成速记和限时题卡。</div>
+        <div><strong>AI 公式与模型故事线</strong><br>Day3 正课只打开 <a href="./day3_ai_formula_model_closure.html">AI 公式模型闭环</a>，把线性模型、SVM、树/集成、指标、Attention、Q-learning 的公式和题眼练稳；学完后回主页打开“AI Day3 公式调用”模块做短闸门，确认能写第一句、能解释符号、能排除相邻模型。后续再接 <a href="./day4_ai_unsupervised_rl_closure.html">无监督/生成/强化学习闭环</a>、<a href="./day5_ai_exam_sprint_mixed.html#ref-triage">Day5 参考题眼闯关与考前混合小测</a> 和 6.22 晚使用的 <a href="./day7_ai_teacher_summary_final.html">老师总纲终局闭环</a>。<a href="./ai_exam_storyline_master_map.html">AI 总纲</a>、<a href="./tips_ai_visual_model_masterclass.html">图解 Tips</a>、<a href="./tips_ai_model_gate_practice.html">模型闯关 Tips</a> 只在迷路或卡住时回看。</div>
+        <div><strong>过关标准</strong><br>能做数据库 2023A 后半基础变式；AI 能默写核心公式含义。</div>
+      </div>
+      <div class="lane">
+        <div class="head">Day4-5</div>
+        <div><strong>数据库考前闭环</strong><br><a href="./day3_database_exam_closure.html">范式/事务/ER 限时调用</a> 已有；<a href="./day4_database_full_exam_closure.html">全卷闭环</a> 已混合 SQL、关系代数和大题后半；<a href="./day5_database_exam_sprint.html">考前速查小测</a> 已加入 2020/SQL/事务恢复真题风味；<a href="./day6_database_final_rehearsal.html#exam-day">30 分钟上场卡</a> 已补为考试当天最后一眼；<a href="./day6_database_final_rehearsal.html#past">最后排雷</a> 已按 2023A 分值结构和 SQL1/SQL2/2020/Transaction 往年题信号做题眼矩阵、16 题极速分流、半套模拟和错题压缩；<a href="./db_er_drawing_workshop.html">ER 作图工坊</a>负责把文字分类推进到完整图和关系表；<a href="./db_final_variant_drill.html">临考变式训练营</a>负责把这些题眼改成 20 题分流和 8 个大题骨架；<a href="./db_oldpaper_edge_sweep.html#symbol-lab">老卷边角排雷</a>负责 2014/13/09/12 旧卷里的卷面符号闯关、SQL 语法坑、三值逻辑、锁协议和 ER 计数；<a href="./db_2023a_full_interactive.html">2023A 整卷交互</a>用于 6/21-6/22 先写骨架再看答案。</div>
+        <div><strong>软工/离散预热</strong><br><a href="./day3_se_openbook_diagram_index.html">软工纸质开卷索引与 CodeArts 模板</a>、<a href="./day4_se_diagram_microclass.html">同题干画图微课</a>、<a href="./day5_se_official_types_closure.html">官方五类题型闭环</a>、<a href="./se_pastpaper_variant_drill.html">软工往年题变式训练营</a> 和 <a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 官方题型/图型分流 + CodeArts 综合闭环</a> 已有；离散 <a href="./day3_discrete_equiv_normal_predicate.html">等值演算/谓词翻译</a>、<a href="./day4_discrete_prenex_skolem_axiom.html">前束/Skolem/语义构造/公理证明</a>、<a href="./day5_discrete_2024_exam_bridge.html">2024 参考卷分块解析</a> 和 <a href="./tips_discrete_formula_visual_handbook.html">公式视觉手册</a> 已接上。</div>
+        <div><strong>过关标准</strong><br>数据库至少 B+；AI/软工/离散都有可继续接的题卡记录；离散能写长题第一步。</div>
+      </div>
+      <div class="lane">
+        <div class="head">Day6-7 后程产出</div>
+        <div><strong>Day6/Day7 数据库/离散</strong><br><a href="./day6_database_final_rehearsal.html#exam-day">数据库 30 分钟上场卡</a>负责考试当天最后一眼；<a href="./day6_database_final_rehearsal.html#past">数据库最后排雷</a>负责考前往年题题眼矩阵、16 题极速分流、半套模拟、错题压缩和题型分流；<a href="./db_final_variant_drill.html">数据库临考变式训练营</a>负责把 SQL1/SQL2/2020/Transaction/2023A 的题眼换成多样问法；<a href="./db_er_drawing_workshop.html">ER 作图工坊</a>负责在整卷前补完整图和复画；<a href="./db_2023a_full_interactive.html">2023A 整卷交互</a>负责完整卷面练手；<a href="./day6_discrete_proof_sprint.html">离散证明训练营</a>把语义证明、反例构造、量词顺序和公理证明起手练成动作；<a href="./discrete_pastpaper_proof_gate.html">离散多年题眼证明闸门</a>负责把 2012-2022 老题信号压成分盒子和第一句；<a href="./discrete_proof_chain_lab.html">离散证明链条工坊</a>负责用 14 题把第一句推进成“结论 + 证据 + 理由”的证据链；<a href="./day7_discrete_final_recall.html">离散最终速查</a>把定义、范式、语义、证明压成 10 项上场闸门。</div>
+        <div><strong>Day7 AI / Day6 软工</strong><br><a href="./day7_ai_teacher_summary_final.html">AI 老师总纲终局闭环</a>只在 6.22 晚/6.23 早使用，按第14讲课程总结查漏；<a href="./ai_reference_final_interactive.html">AI 综合交互卷</a>随后用于五类题型整套练手；软工先用 <a href="./se_concept_boundary_sprint.html">概念边界强化营</a>把过程/需求/设计/实现/测试客观题底座叫醒，再用 <a href="./se_pastpaper_variant_drill.html">往年题变式训练营</a>把 2020/12级/14级/2016 的老题题眼练成动作，之后用 <a href="./se_official_final_interactive.html">软工综合交互卷</a>做 6.24 五类题型整套练手；<a href="./day6_se_final_codearts_rehearsal.html#exam-day">软工 Day6 上场卡</a>负责 6.25 考前最后一眼，<a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 分流诊断</a>负责 14 题官方题型/图型分流，再按正式通知核对纸质开卷、五类题型和平台纪律，最后用案例练需求/概要/详细/测试分层。</div>
+        <div><strong>军理闭卷正式化</strong><br><a href="./day8_military_closed_book_sprint.html">军理闭卷背诵舱</a> 已补：按五章重点讲义、49 张闪卡、36 道闭卷小测和简答/论述模板来背；<a href="./military_recall_gate.html">军理闭卷召回闸门</a> 已补：软工考后用数字雷达、五章默写、30问速测和简答骨架做闭卷自查。</div>
+      </div>
+      <div class="lane">
+        <div class="head">考间滚动</div>
+        <div><strong>AI/软工窗口</strong><br>AI 考前公式与参考题；考后立刻切软工画图、客观题概念边界、纸质开卷索引和 <a href="./day6_se_final_codearts_rehearsal.html#triage">官方题型/图型分流 + CodeArts 综合闭环</a>。</div>
+        <div><strong>离散主战场</strong><br>逻辑、范式、谓词、2024 参考卷分块桥接，再接 <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>、<a href="./discrete_pastpaper_proof_gate.html">多年题眼证明闸门</a> 和 <a href="./discrete_proof_chain_lab.html">证明链条工坊</a>，把语义证明、反例、量词顺序、Skolem 依赖和公理证明起手练成考场动作；Day7 闸门过后，用 <a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>做整套卷面练手。</div>
+        <div><strong>离散先学后练</strong><br><a href="./discrete_last36_learning_ladder.html">离散最后36小时先学后练阶梯</a> 已新增：把 8 个知识盒子、12 道题眼小测、过关闸门和希冀 2024/2025/2023 真题顺序串起来，解决“直接上真题但知识没叫醒”的问题。</div>
+        <div><strong>分心急救小游戏</strong><br><a href="./focus_dual_exam_game.html">离散+马原专注闯关</a> 已新增：8 题一局，离散练“下一句怎么写”，马原练“题干信号到原理”。它不替代讲义和真题，只在注意力散掉时把你拉回考试动作。</div>
+        <div><strong>最后两科错题回炉</strong><br><a href="./final_two_wrong_review.html">离散+马原错题回炉台</a> 已新增：收拢先学后练、证明链条、48小时查漏、希冀三年、马原定位和小游戏错题，只显示待补项和最短回炉入口。</div>
+        <div><strong>最后两科先学再真题闸门</strong><br><a href="./final_two_subject_command_center.html">最后两科作战台</a> 已补 2.5 闸门：离散按符号识字、计算范式、证明入口、真题进入条件走；马原按开卷定位和材料题第一段走。目的不是增加页面，而是防止没学会就硬刷整卷。</div>
+        <div><strong>马原开卷定位</strong><br><a href="./marx_openbook_final_sprint.html#locator">30秒开卷定位训练</a> 已新增：10 道材料信号题，要求先选页边钉子，再读第一段开头和避坑点。它补的是“考场翻哪块资料”的能力。</div>
+        <div><strong>马原材料题手把手拆解</strong><br><a href="./marx_openbook_final_sprint.html#case-walkthrough">材料题拆题模块</a> 已补：新质生产力、剩余价值、实践认识、矛盾分析、人与自然、共产主义实践运动 6 类高频材料题，每类都按“题干信号 -> 资料定位 -> 30秒开头 -> 避坑”讲清楚。</div>
+        <div><strong>文科分流</strong><br>军理已退出当前任务；马原改用 <a href="./marx_openbook_final_sprint.html">新版纸质开卷冲刺页</a> 做老师重点、剩余价值专项、13 个页边钉子、30秒定位、原理分流小测、材料题第一段和考前 30 分钟清单。</div>
+      </div>
+    </section>
+
+    <section class="card" id="phase">
+      <h2>4. 6/16-6/30 阶段路线：学习到应考怎么走</h2>
+      <p>总共按 15 天滚动准备，但不是每天死卡一页。每科会经历四个阶段：从零深学、题型加厚、真题桥接、考前闭环。实习日就做核心包，状态好就加题卡。</p>
+      <table>
+        <thead><tr><th>日期窗口</th><th>主目标</th><th>我会继续补的材料</th><th>你学到什么程度算过关</th></tr></thead>
+        <tbody>
+          <tr><td>6/16-6/21</td><td>数据库主战场，同时给 AI/软工/离散预热。</td><td>数据库 Day5 考前速查小测、<a href="./day6_database_final_rehearsal.html#past">Day6 最后排雷</a>、<a href="./db_final_variant_drill.html">临考变式训练营</a>、<a href="./db_oldpaper_edge_sweep.html">老卷边角排雷</a> 和 <a href="./db_2023a_full_interactive.html">2023A 整卷交互</a> 已补；后续主做往年题题眼矩阵、20 题变式分流、旧卷客观题扫雷、8 个大题骨架、错题回炉和原卷骨架。AI 公式/模型闭环、软工画图加厚、离散 Day5 参考卷桥接已补。</td><td>数据库 SQL/关系代数/范式/事务/ER 至少 B+；能独立完成 2023A 的大题骨架；AI 能识别题型；软工/离散不再完全陌生。</td></tr>
+          <tr><td>6/22</td><td>数据管理技术考试日，考后立刻切 AI。</td><td>数据库最后速查清单；AI 公式表、参考习题后半、<a href="./day5_ai_exam_sprint_mixed.html#ref-triage">Day5 参考题眼闯关与考前混合小测</a>、<a href="./day7_ai_teacher_summary_final.html">老师总纲终局闭环</a> 和 <a href="./ai_reference_final_interactive.html">AI 综合交互卷</a> 已完成。</td><td>数据库考前只看清单和错题；AI 晚上按老师最后一课总纲做题眼核查，再用综合卷做五类题型混排。</td></tr>
+          <tr><td>6/23</td><td>人工智能考试日，考后切软工。</td><td>AI 考前速查、模型对比、公式闪卡、<a href="./ai_reference_final_interactive.html">综合交互卷错题</a>；软工 <a href="./day3_se_openbook_diagram_index.html">纸质开卷索引与 CodeArts 画图模板</a> 已可用。</td><td>AI 能解释核心公式和模型差异，五类题型都能写第一步；软工知道客观题考概念边界，综合题考 UML 需求分析/设计建模。</td></tr>
+          <tr><td>6/24-6/25</td><td>软工主战场。</td><td><a href="./se_last24_command_center.html">软工最后24小时作战舱</a>、软工十讲纸质索引、用例/类图/顺序图/状态图/活动图模板、测试题、简答题、<a href="./se_pastpaper_variant_drill.html">软工往年题变式训练营</a>、<a href="./se_official_final_interactive.html">软工官方五类题型综合交互卷</a> 和 <a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 官方题型/图型分流 + CodeArts 综合闭环</a>。</td><td>看到场景能判断画什么图，能写元素、关系、箭头和边界；客观题能解释为什么选/不选；知道考场只能用纸质 PPT/装订笔记/指定教材和 CodeArts Modeling；综合题能按需求/概要/详细/测试分层。</td></tr>
+          <tr><td>6/26</td><td>军理闭卷正式背诵，同时离散升温。</td><td><a href="./day8_military_closed_book_sprint.html">军理五章闪卡和闭卷小测</a>、<a href="./military_recall_gate.html">军理闭卷召回闸门</a>；离散等值演算/主范式/谓词翻译。</td><td>军理能主动回忆定义、数字和简答骨架，并完成 30 问速测；离散进入证明和真题桥接。</td></tr>
+          <tr><td>6/27-6/28</td><td>离散主战场。</td><td>离散证明骨架、<a href="./day4_discrete_prenex_skolem_axiom.html">2024 后半长题入口</a>、<a href="./day5_discrete_2024_exam_bridge.html">2024 参考卷分块解析</a>、<a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a>、<a href="./discrete_pastpaper_proof_gate.html">多年题眼证明闸门</a>、<a href="./discrete_proof_chain_lab.html">证明链条工坊</a>、<a href="./day7_discrete_final_recall.html">Day7 最终速查</a>、<a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>、<a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">希冀真题精练闸门</a>、<a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">希冀近三年真题交互卷</a>、<a href="./final_two_wrong_review.html">最后两科错题回炉台</a>。</td><td>不求所有证明原创，但能识别定义/范式/语义/反例/前束/Skolem/公理证明，并能写证明第一句和下一步证据；希冀卷至少先完成精练闸门、2024 题型分流、2025 客观题查漏和 2023 主观题表达。</td></tr>
+          <tr><td>6/27-6/28</td><td>离散最后上岸。</td><td><a href="./discrete_last36_learning_ladder.html">先学后练阶梯</a>：8 个知识盒子、12 道题眼小测、过关闸门，然后接 2024/2025/2023 希冀真题。</td><td>先能分型和写第一动作，再刷整卷；错题回对应讲义。</td></tr>
+          <tr><td>6/29-6/30</td><td>马原纸质开卷收尾。</td><td><a href="./marx_openbook_final_sprint.html">马原新版开卷冲刺页</a>：老师最后一课重点、剩余价值专项、13 个页边钉子、<a href="./marx_openbook_final_sprint.html#case-walkthrough">材料题手把手拆题</a>、10 题30秒定位、16 题小测、材料题第一段和开卷定位清单。</td><td>资料能快速定位，材料题能先判断原理，再写出“原理-材料-分析-结论”。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>预计材料数量：</strong>数据库 5-6 份，AI 5-7 份，软工 6 份左右，离散 6 份左右，军理/马原各 1-2 份低成本清单。实际会按你完成情况动态加厚，不为了凑页数。
+      </div>
+    </section>
+
+    <section class="card" id="subjects">
+      <h2>5. 各科推进线：学习舱板块必须对应讲义</h2>
+      <table>
+        <thead><tr><th>科目</th><th>学习舱先后顺序</th><th>独立讲义/题卡顺序</th><th>真题进入条件</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>数据库</td>
+            <td>零基础地图 -> SQL 查询 -> 条件聚合 -> 连接嵌套 -> 范式/事务/ER。</td>
+            <td>Day1 SQL -> Day2 SQL 连接嵌套 -> Day3 范式事务 ER -> Day4 全卷闭环 -> Day5 考前速查小测。</td>
+            <td>SQL 顺序和 WHERE/HAVING 过 B 后，才做往年题整段 SQL。</td>
+          </tr>
+          <tr>
+            <td>AI</td>
+            <td>零基础地图 -> 线性/分类 -> SVM/树/集成 -> 神经网络 -> 强化/生成/Transformer。</td>
+            <td>Day1 AI -> 参考习题第 1 页 -> ML 题卡 -> NN 题卡 -> AI 公式模型闭环 -> 主页“AI Day3 公式调用”闸门 -> 无监督/生成/强化学习闭环 -> <a href="./day5_ai_exam_sprint_mixed.html#ref-triage">Day5 18 题参考题眼闯关</a> -> Day5 考前混合小测 -> <a href="./day7_ai_teacher_summary_final.html">Day7 老师总纲终局闭环</a>。模型名词糊住时，先看 <a href="./ai_exam_storyline_master_map.html">AI 总纲</a> 建立全局路线，再穿插回看 <a href="./tips_ai_visual_model_masterclass.html">Tips 图解模型主线课</a>；题干分流不稳时做 <a href="./tips_ai_model_gate_practice.html">Tips 模型闯关训练</a>。</td>
+            <td>能解释样本/特征/标签/损失/训练后，再做参考习题整页。</td>
+          </tr>
+          <tr>
+            <td>软工</td>
+            <td>零基础地图 -> 用例/合约 -> 顺序/类图 -> 测试 -> 纸质开卷索引 -> 官方五类题型 -> 真题场景。</td>
+            <td>Day1 画图从零 -> Day2 2020 三图 -> Day3 纸质开卷索引与 CodeArts 模板 -> <a href="./day4_se_diagram_microclass.html">Day4 同题干画图微课</a> -> <a href="./se_concept_boundary_sprint.html">软工概念边界强化营</a> -> <a href="./day5_se_official_types_closure.html">Day5 官方五类题型闭环</a> -> <a href="./se_pastpaper_variant_drill.html">往年题变式训练营</a> -> <a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 官方题型/图型分流 + CodeArts 综合闭环</a> -> 纸质边注和错题回炉。</td>
+            <td>能用四支笔拆题后，先用概念边界页确认过程/需求/设计/实现/测试不混；再做完整画图题；变式训练营先练 18 道客观边界和 5 类材料拆题；Day6 再完成 14 题分流诊断，勾 6/8 项上场闸门后做考前限时综合题。</td>
+          </tr>
+          <tr>
+            <td>离散</td>
+            <td>命题/联结词 -> 真值表/范式 -> 谓词/量词 -> 证明骨架 -> 真题桥接。</td>
+            <td>Day1 基础地图 -> Day2 证明入口 -> Day3 等值/范式/谓词 -> Day4 前束/Skolem/公理证明 -> <a href="./day5_discrete_2024_exam_bridge.html">Day5 2024 分块解析</a> -> <a href="./day6_discrete_proof_sprint.html">Day6 证明训练营</a> -> <a href="./discrete_pastpaper_proof_gate.html">多年题眼证明闸门</a> -> <a href="./discrete_proof_chain_lab.html">证明链条工坊</a> -> <a href="./day7_discrete_final_recall.html">Day7 最终速查</a> -> <a href="./discrete_final_mixed_interactive.html">离散真题混合交互卷</a>。公式看不顺或证明动作断裂时，穿插回看 <a href="./tips_discrete_formula_visual_handbook.html">Tips 公式视觉手册</a>。</td>
+            <td>先用 Day6 的“三分钟启动流程”把白屏题变成第一句；再用多年题眼证明闸门练 12 题分流和 6 个证明起手；接着用证明链条工坊 14 题专练“下一句为什么成立”；Day7 勾到 7/10 后，再做真题混合卷；错题回 Day5/Day6。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="quality">
+      <h2>6. 质量标准：以后每页都按这个验收</h2>
+      <div class="grid three">
+        <div class="box"><strong>零基础</strong>新术语必须先做人话解释，再给考试表达。</div>
+        <div class="box"><strong>考试相关</strong>每个知识点要标题眼、常考问法、常见坑。</div>
+        <div class="box"><strong>资料依据</strong>优先使用学长 PDF、课程 PPT、参考习题、往年题；截图只作来源核对。</div>
+        <div class="box"><strong>题卡质量</strong>题目要先作答再看解析；解析要含题眼、步骤、干扰项、迁移。</div>
+        <div class="box"><strong>图解必要性</strong>AI/软工/离散需要图时，图必须帮助理解结构或作图，不做装饰。</div>
+        <div class="box"><strong>闸门明确</strong>每页必须说学到什么程度能进入下一页。</div>
+      </div>
+      <div class="mark danger">
+        <strong>禁止事项：</strong>不再把整页扫描题直接丢给你做；不再让选择题靠选项位置猜；不再只有一句解析；不再跳过术语铺垫。
+      </div>
+    </section>
+
+    <section class="card" id="next">
+      <h2>7. 下一批内容：从现在起优先补这些</h2>
+      <table>
+        <thead><tr><th>优先级</th><th>要新增/打磨的内容</th><th>为什么现在做</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>数据库考前闭环：<a href="./day4_database_full_exam_closure.html">Day4 全卷闭环</a>、<a href="./day5_database_exam_sprint.html">Day5 考前速查小测</a>、<a href="./day6_database_final_rehearsal.html#past">Day6 最后排雷</a>、<a href="./db_oldpaper_edge_sweep.html">老卷边角排雷</a> 和 <a href="./db_2023a_full_interactive.html">2023A 整卷交互</a> 已完成，下一步只做往年题题眼矩阵、旧卷客观题扫雷、极速分流诊断、错题回炉、原卷骨架和考前速查。</td>
+            <td>SQL、关系代数、范式、事务、ER 已进入同一套混合训练；Day5 已补 2020/SQL/事务恢复真题风味；2014/13/09/12 旧卷边角已补为符号与客观题排雷；2023A 已按原卷六大板块整卷化。</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>AI 参考习题后半和 PPT 主线已经有 Day2-Day5 承接；第 14 讲/最后一课已经沉淀进 <a href="./day7_ai_teacher_summary_final.html">Day7 终局闭环</a>。<a href="./ai_lecture_coverage_map.html#radar">防漏雷达</a>已把机器学习、树/Boosting、LDA/SVM、BP、CNN/Attention、生成模型、强化学习、混合题 8 项列成可勾选闸门；<a href="./ai_lecture_coverage_map.html#reference-pages">逐页覆盖表</a>已标明每组参考习题何时做、最低闸门是什么；<a href="./ai_reference_final_interactive.html">AI 综合交互卷</a>已按五类题型混排。下一步不再开同类大课，而是做错题回炉、参考习题重点页题卡加厚和现有页面润色。</td>
+            <td>AI 无往年题时，参考习题 PDF、PPT 总结和老师最后一课价值更高；总纲/Tips 只做导航和补课，Day5/Day7/综合交互卷把分散页面压成考前可调用能力。</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>软工纸质开卷与五类题型：<a href="./day3_se_openbook_diagram_index.html">纸质开卷索引与 CodeArts 画图模板</a> 已完成；<a href="./day4_se_diagram_microclass.html">同题干画图微课</a> 已补；<a href="./se_concept_boundary_sprint.html">软工概念边界强化营</a> 已补十讲主线和客观/简答底座；<a href="./day5_se_official_types_closure.html">官方五类题型闭环</a> 已补客观题概念边界、故障/错误/失效简答和综合题分流；<a href="./se_pastpaper_variant_drill.html">软工往年题变式训练营</a>已补 2020/12级/14级/2016 老题风味变式；<a href="./day6_se_final_codearts_rehearsal.html#triage">Day6 官方题型/图型分流 + CodeArts 综合闭环</a> 已补考前上场彩排；<a href="./se_official_final_interactive.html">软工官方五类题型综合交互卷</a>已补选课/库存两类老题风格案例；<a href="./se_last24_command_center.html">软工最后24小时作战舱</a>已补纸质定位、24题临考小测、往年题迁移和上场闸门。</td>
+            <td>软工正式要求已经明确：只能带纸质 PPT、装订笔记和指定教材，平台是希冀 + CodeArts Modeling；概念边界页训练“十讲主线 -> 客观题/简答题”；Day4 训练“问法 -> 图类型 -> 第一笔”，Day5 训练“五类题型 -> 答题动作 -> 纸质边注”，变式训练营训练“老题换问法 -> 客观边界/材料拆题/测试设计”，综合卷训练“客观题 -> 简答 -> 老题案例”，Day6 训练“案例材料 -> 需求/概要/详细/测试 -> CodeArts 检查”。</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>离散 Day4-7：<a href="./day4_discrete_prenex_skolem_axiom.html">前束范式、Skolem 范式、语义构造、公理证明骨架</a> 已完成；<a href="./day5_discrete_2024_exam_bridge.html">2024 参考卷分块解析</a> 已新增；<a href="./day6_discrete_proof_sprint.html">证明训练营</a>、<a href="./discrete_pastpaper_proof_gate.html">多年题眼证明闸门</a>、<a href="./discrete_proof_chain_lab.html">证明链条工坊</a>、<a href="./day7_discrete_final_recall.html">最终速查</a> 和 <a href="./discrete_final_mixed_interactive.html">真题混合交互卷</a> 已补；<a href="./tips_discrete_formula_visual_handbook.html">公式视觉手册</a> 作为 Tips 辅助课。</td>
+            <td>离散证明难，需要早预热，但不能一上来整卷；证明闸门专门把多年老题变成“分盒子、写第一句”，链条工坊专门补“第一句之后怎么接证据”，Day7 专门避免“只练证明忘了前 70 分”，混合卷专门处理完整卷面，Tips 专门解决公式看不舒服、符号到证明动作断裂的问题。</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><a href="./index.html">回到期末陪跑学习舱</a> · <a href="./day2_master_route.html">回到 Day2 总路线</a> · <a href="./full_final_schedule_0616_0630.html">查看全程每日计划</a></p>
+    </section>
+  </main>
+</body>
+</html>

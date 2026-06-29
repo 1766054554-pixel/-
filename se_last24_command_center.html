@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>软工最后24小时作战舱：五类题型、纸质开卷与CodeArts</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --ink: #1d2835;
+      --muted: #657386;
+      --line: #d8e3ec;
+      --blue: #1f66b3;
+      --green: #15704f;
+      --orange: #ad5b15;
+      --red: #a73737;
+      --purple: #6548a7;
+      --soft-blue: #eef6ff;
+      --soft-green: #f1faf5;
+      --soft-orange: #fff8eb;
+      --soft-red: #fff4f2;
+      --shadow: 0 16px 36px rgba(29, 40, 53, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #edf5fb 0, #f5f7fa 320px, #ffffff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+      letter-spacing: 0;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 72px; }
+    header, section {
+      background: rgba(255, 255, 255, .98);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+    header { padding: 30px; }
+    section { padding: 24px; margin-top: 18px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.24; letter-spacing: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 25px; }
+    h3 { font-size: 18px; margin-top: 16px; }
+    p { margin: 8px 0 0; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .key {
+      color: var(--red);
+      font-weight: 850;
+      background: linear-gradient(transparent 58%, #ffe7dd 58%);
+      padding: 0 2px;
+    }
+    .mark {
+      color: var(--blue);
+      font-weight: 850;
+      background: linear-gradient(transparent 58%, #dff0ff 58%);
+      padding: 0 2px;
+    }
+    nav, .pillrow, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+    nav a, .pill, .btn {
+      border: 1px solid #c8d9e8;
+      border-radius: 6px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 6px 11px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .pill { border-radius: 999px; }
+    .btn {
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+    }
+    .primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .good { color: var(--green); border-color: #acd8c1; background: var(--soft-green); }
+    .warn { color: var(--orange); border-color: #e2c18f; background: var(--soft-orange); }
+    .hot { color: var(--red); border-color: #e4b2ad; background: var(--soft-red); }
+    .purple { color: var(--purple); border-color: #cbbdea; background: #f7f3ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .note.warn { border-left-color: var(--orange); background: var(--soft-orange); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .table-scroll { overflow-x: auto; }
+    .route {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfdff;
+      margin-top: 10px;
+    }
+    .route .time {
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+    .route ul { margin: 4px 0 0; padding-left: 20px; }
+    .figure {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .figure svg { width: 100%; min-width: 820px; height: auto; display: block; }
+    .caption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    .quiz-list { display: grid; gap: 12px; margin-top: 12px; }
+    .quiz-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+    }
+    .quiz-card.done {
+      border-color: #acd8c1;
+      background: #f1faf5;
+    }
+    .quiz-head {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .tag {
+      display: inline-block;
+      border: 1px solid #c8d9e8;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--blue);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .option:hover { border-color: var(--blue); background: var(--soft-blue); }
+    .option.correct { border-color: #64b083; background: var(--soft-green); }
+    .option.wrong { border-color: #d38c84; background: var(--soft-red); }
+    .multi-option {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 8px;
+      align-items: start;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .multi-option input { width: 18px; height: 18px; margin-top: 5px; }
+    .explain {
+      display: none;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    .explain.show { display: block; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 850; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      margin-top: 8px;
+    }
+    .checkrow {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+    .checkrow input { width: 18px; height: 18px; margin-top: 5px; }
+    .progress {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #f7fbff;
+      padding: 10px 12px;
+      font-weight: 850;
+      color: var(--blue);
+      margin-top: 10px;
+    }
+    .footer { color: var(--muted); font-size: 14px; margin-top: 18px; }
+    @media (max-width: 860px) {
+      .grid, .grid.three, .grid.four, .options { grid-template-columns: 1fr; }
+      .route { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      header, section { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>软工最后24小时作战舱</h1>
+      <p class="muted">目标不是再学一遍软工，而是把 <span class="key">五类题型</span>、<span class="key">纸质开卷定位</span>、<span class="key">UML综合题</span> 和 <span class="key">CodeArts Modeling交付</span> 收束成明天能直接调用的动作。</p>
+      <div class="pillrow">
+        <span class="pill hot">6/25 18:30-20:30</span>
+        <span class="pill">希冀平台</span>
+        <span class="pill">CodeArts Modeling</span>
+        <span class="pill good">30分，两小时</span>
+        <span class="pill warn">纸质PPT/装订笔记/指定教材</span>
+      </div>
+      <nav>
+        <a href="#route">使用路线</a>
+        <a href="#paper">纸质定位</a>
+        <a href="#paper-drill">边注清单</a>
+        <a href="#types">五类题型</a>
+        <a href="#case">往年题迁移</a>
+        <a href="#quiz">临考小测</a>
+        <a href="#templates">简答模板</a>
+        <a href="#gate">上场闸门</a>
+        <a href="./index.html">回主页</a>
+      </nav>
+    </header>
+
+    <section id="route">
+      <h2>今晚到明天：只走三段，不再乱翻</h2>
+      <div class="note hot">
+        <strong>考前最危险的不是不会，而是“知道一点但不知道题目在问哪一层”。</strong>
+        软工综合题会把需求、概要设计、详细设计、测试混在一段材料里。你先分层，再作答；先写骨架，再补细节。
+      </div>
+      <div class="route">
+        <div class="time">今晚<br>90-120分钟</div>
+        <div>
+          <strong>目标：把卷面五类题型叫醒。</strong>
+          <ul>
+            <li>先做本页 <a href="#quiz">临考小测</a>，错题只看解析里的“题眼”。</li>
+            <li>再打开 <a href="./se_official_final_interactive.html">软工官方五类题型综合交互卷</a>，只做客观题和简答题。</li>
+            <li>最后看 <a href="./day6_se_final_codearts_rehearsal.html#flow">综合题四层流程</a>，记住需求/概要/详细/测试分别产出什么。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="route">
+        <div class="time">明天白天<br>60-90分钟</div>
+        <div>
+          <strong>目标：把纸质资料变成索引，不是重读。</strong>
+          <ul>
+            <li>按本页 <a href="#paper">纸质定位表</a> 给十讲纸质PPT加边注：题眼 -> 位置 -> 第一句答案。</li>
+            <li>用 <a href="./se_pastpaper_variant_drill.html">往年题变式训练营</a> 做“实验排课/选课/库存”三类材料题迁移。</li>
+            <li>每道图题都问自己：这是 <span class="mark">需求图</span>、<span class="mark">概要图</span> 还是 <span class="mark">详细设计图</span>？</li>
+          </ul>
+        </div>
+      </div>
+      <div class="route">
+        <div class="time">进场前<br>10-15分钟</div>
+        <div>
+          <strong>目标：只看上场卡，不再吸新知识。</strong>
+          <ul>
+            <li>打开 <a href="./day6_se_final_codearts_rehearsal.html#exam-day">30分钟上场卡</a>，核对官方限制和CodeArts提交动作。</li>
+            <li>默念一句：<span class="key">客观题判边界，简答题写链条，综合题先分层，图题先画边界。</span></li>
+            <li>如果紧张，只看本页 <a href="#gate">上场闸门</a>，勾完就够。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="paper">
+      <h2>纸质开卷定位表：翻资料时找“题眼”，不是找整页</h2>
+      <p>你带的是打印的十讲和纸质笔记，所以边注要短。十讲合集共 <span class="key">143 页</span>，其中前面已经有“考前快速定位目录”；下面这张表把它重新按 <span class="key">考试问法</span> 排列。每个位置旁边写 <span class="key">题眼词</span> 和 <span class="key">第一句话</span>，考场看到题就能立刻翻到对应页段。</p>
+      <div class="note warn">
+        <strong>先说明页码：</strong>这里的“第X页附近”按你这份《2026-软工十讲-合集-杨任宇 2.pdf》里的快速定位目录整理，和打印机实际纸张页码可能有 1-2 页偏差。明天白天只做一件事：把这些题眼写到你纸质 PPT 对应页边上。
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>题眼</th>
+              <th>十讲位置</th>
+              <th>第一反应</th>
+              <th>卷面常见问法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>软件 = 程序？文档？数据？软件危机</td>
+              <td>第9-18页附近，软件工程概述</td>
+              <td>先把“软件”说成 <span class="key">程序 + 数据 + 文档</span>，再讲为什么大规模系统需要工程方法。</td>
+              <td>单选/判断：软件是否等于程序；简答：软件危机表现、软件工程三要素。</td>
+            </tr>
+            <tr>
+              <td>生命周期、瀑布、快速原型、增量/迭代</td>
+              <td>第22-24页附近，软件过程概述</td>
+              <td>先判断是不是 <span class="key">过程模型</span>。瀑布是阶段线性；原型用于需求不清；增量是逐步加功能；迭代是多轮改进。</td>
+              <td>单选/判断：哪个不是过程模型；简答：某项目需求不稳定适合什么模型。</td>
+            </tr>
+            <tr>
+              <td>风险、WBS、估算、进度控制</td>
+              <td>第25-31页附近，项目管理</td>
+              <td>项目管理管 <span class="key">过程、产品、人员</span>，风险有不确定性和损失性。</td>
+              <td>多选：哪些属于项目管理对象；判断：风险识别/监控/化解。</td>
+            </tr>
+            <tr>
+              <td>需求层次、功能/非功能、用户故事、EARS</td>
+              <td>第32-44页附近，需求工程</td>
+              <td>需求回答 <span class="key">What</span>。功能需求说系统做什么；非功能需求说性能、可靠性、安全性、易用性等质量约束。</td>
+              <td>判断：响应时间属于功能需求吗；综合题：从材料抽参与者和用例。</td>
+            </tr>
+            <tr>
+              <td>用例图、系统顺序图、概念类图、操作合约</td>
+              <td>第44-55页附近，OO需求模型</td>
+              <td>需求阶段的图回答“用户与系统如何交互、领域里有什么概念”。系统顺序图只画 <span class="key">外部参与者 + 系统黑盒</span>，不要展开内部类。</td>
+              <td>综合题：画用例图/顺序图；问“系统操作发生后后置条件是什么”。</td>
+            </tr>
+            <tr>
+              <td>需求确认、需求验证、SRS、基线</td>
+              <td>第57-58页附近，需求确认与验证</td>
+              <td><span class="key">确认 Validation</span> 问“是不是正确的系统”；<span class="key">验证 Verification</span> 问“是不是正确地做系统”。SRS 是需求阶段核心文档。</td>
+              <td>判断/简答：确认和验证的区别；问需求规格说明为什么重要。</td>
+            </tr>
+            <tr>
+              <td>概要设计、组件图、接口、MVC/MVP/MVVM</td>
+              <td>第59-71页附近，概要设计</td>
+              <td>概要设计回答 <span class="key">高层How</span>：系统如何拆成子系统/组件/接口。</td>
+              <td>综合题：给平台材料，画组件/包/接口；简答：如何降低循环依赖。</td>
+            </tr>
+            <tr>
+              <td>详细设计、设计类图、顺序图、活动图、状态图</td>
+              <td>第72-80页附近，详细设计</td>
+              <td>详细设计回答模块内部如何协作：类职责、属性、方法、消息、状态转移。状态图的转移五要素是 <span class="key">源状态、事件、守卫、动作、目标状态</span>。</td>
+              <td>综合题：根据某个用例画类图/顺序图/状态图；判断转移五要素。</td>
+            </tr>
+            <tr>
+              <td>实现原则、分层、代码审查、Git/前后端</td>
+              <td>第85-101页附近，实现与结构化补充</td>
+              <td>实现不是只写代码，还包括编码、单元测试、调试、部署；分层常见 View -> Controller -> Service -> DAO/Entity。</td>
+              <td>客观题：Git/框架/分层为什么属于实现或协作质量保障。</td>
+            </tr>
+            <tr>
+              <td>白盒、黑盒、灰盒、V模型、等价类、边界值</td>
+              <td>第108-115页附近，软件测试</td>
+              <td>黑盒看规格，白盒看代码结构。V模型：需求↔验收，概要↔系统，详细↔集成，编码↔单元。</td>
+              <td>简答/综合：设计等价类测试；算基本路径；写测试用例四元组。</td>
+            </tr>
+            <tr>
+              <td>部署、维护、演化、维护副作用</td>
+              <td>第124-131页附近，部署维护</td>
+              <td>部署是把软件放到目标环境运行；维护要防 <span class="key">代码、数据、文档/模型</span> 三类副作用。</td>
+              <td>客观题：容器/虚拟机/云原生；判断：维护只改代码是否正确。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note good">
+        纸质边注建议每页只写 6-10 个字，例如“功能/非功能”“系统顺序图=黑盒”“V模型四对”。太长等于没有索引。
+      </div>
+      <h3 id="paper-drill">明天白天 20 分钟：纸质边注迁移清单</h3>
+      <p>这不是新知识，是把网页变成你能带进考场的纸质抓手。每勾一项，就在对应打印页边上写一个短边注。</p>
+      <div class="progress" id="paperProgress">已迁移 0 / 12</div>
+      <div class="grid">
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">软件≠程序</span>：在概述页边写“程序+数据+文档；工程=过程+方法+工具”。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">过程模型</span>：在瀑布/原型/增量/迭代页边写“需求清不清？能不能分批交付？”。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">项目管理三对象</span>：人员、产品、过程；风险=不确定性+损失。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">需求三层</span>：业务需求、用户需求、系统需求；功能 vs 非功能。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">用例图</span>：系统边界、参与者、用例、关联、include/extend/泛化。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">系统顺序图</span>：系统是黑盒；只画参与者和系统事件，不展开内部类。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">概要设计</span>：组件、接口、包、架构；循环依赖要拆接口或重划分。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">详细设计</span>：设计类图写属性/方法/可见性；顺序图写对象消息。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">状态/活动图</span>：状态图看对象生命周期；活动图看业务流程和分支并发。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">测试</span>：黑盒=规格；白盒=代码结构；等价类/边界值/基本路径。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">V模型</span>：需求-验收，概要-系统，详细-集成，编码-单元。</span></label>
+        <label class="checkrow"><input type="checkbox" data-paper><span><span class="key">CodeArts</span>：进场只用 Modeling，图型先选对，再查箭头、多重性、图旁说明。</span></label>
+      </div>
+    </section>
+
+    <section id="types">
+      <h2>五类题型的第一动作</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>单选题</strong>
+          <p>先找“不是/属于/最适合”。单选常考 <span class="key">概念边界</span>：过程模型 vs OO模型，黑盒 vs 白盒，需求 vs 设计。</p>
+        </div>
+        <div class="card">
+          <strong>多选题</strong>
+          <p>不要凭感觉全选。先在草稿上写同类集合，例如项目管理对象=过程/产品/人员；黑盒方法=等价类/边界值/错误推测/因果图/场景。</p>
+        </div>
+        <div class="card">
+          <strong>判断题</strong>
+          <p>判断题常把“阶段、对象、方法”换位。看到绝对词如“只能、必须、一定、全部”，特别小心。</p>
+        </div>
+        <div class="card">
+          <strong>简答题</strong>
+          <p>用三段式：<span class="key">定义一句</span> -> <span class="key">关系一句</span> -> <span class="key">例子/后果一句</span>。例如故障、错误、失效就写传播链。</p>
+        </div>
+        <div class="card">
+          <strong>综合题</strong>
+          <p>先标四层：需求分析、概要设计、详细设计、测试。材料题不是让你一口气画所有图，而是问哪层就交哪层产物。</p>
+        </div>
+        <div class="card">
+          <strong>图题</strong>
+          <p>先写图的范围：系统边界、参与者/类/对象、关系、箭头、多重性。图旁必须有必要文字说明，别只丢一张图。</p>
+        </div>
+      </div>
+
+      <div class="figure" aria-label="软工综合题四层分流图">
+        <svg viewBox="0 0 980 260" role="img">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="#1f66b3"></path>
+            </marker>
+          </defs>
+          <rect x="20" y="30" width="180" height="170" rx="8" fill="#eef6ff" stroke="#9bc3e8"></rect>
+          <text x="110" y="65" text-anchor="middle" font-size="20" font-weight="800" fill="#1f66b3">题干材料</text>
+          <text x="110" y="102" text-anchor="middle" font-size="15" fill="#1d2835">用户、功能、规则</text>
+          <text x="110" y="130" text-anchor="middle" font-size="15" fill="#1d2835">平台、角色、流程</text>
+          <text x="110" y="158" text-anchor="middle" font-size="15" fill="#1d2835">异常、性能、权限</text>
+
+          <line x1="200" y1="115" x2="260" y2="115" stroke="#1f66b3" stroke-width="3" marker-end="url(#arrow)"></line>
+          <rect x="270" y="20" width="155" height="70" rx="8" fill="#fff4f2" stroke="#d38c84"></rect>
+          <text x="347" y="50" text-anchor="middle" font-size="18" font-weight="800" fill="#a73737">需求分析</text>
+          <text x="347" y="74" text-anchor="middle" font-size="13" fill="#1d2835">用例/系统顺序/概念类</text>
+
+          <rect x="450" y="20" width="155" height="70" rx="8" fill="#fff8eb" stroke="#d9b476"></rect>
+          <text x="527" y="50" text-anchor="middle" font-size="18" font-weight="800" fill="#ad5b15">概要设计</text>
+          <text x="527" y="74" text-anchor="middle" font-size="13" fill="#1d2835">组件/包/接口/架构</text>
+
+          <rect x="630" y="20" width="155" height="70" rx="8" fill="#f1faf5" stroke="#8ac7a6"></rect>
+          <text x="707" y="50" text-anchor="middle" font-size="18" font-weight="800" fill="#15704f">详细设计</text>
+          <text x="707" y="74" text-anchor="middle" font-size="13" fill="#1d2835">设计类/顺序/状态</text>
+
+          <rect x="810" y="20" width="150" height="70" rx="8" fill="#f7f3ff" stroke="#b7a5df"></rect>
+          <text x="885" y="50" text-anchor="middle" font-size="18" font-weight="800" fill="#6548a7">测试</text>
+          <text x="885" y="74" text-anchor="middle" font-size="13" fill="#1d2835">黑盒/白盒/用例</text>
+
+          <line x1="425" y1="55" x2="450" y2="55" stroke="#1f66b3" stroke-width="2.5" marker-end="url(#arrow)"></line>
+          <line x1="605" y1="55" x2="630" y2="55" stroke="#1f66b3" stroke-width="2.5" marker-end="url(#arrow)"></line>
+          <line x1="785" y1="55" x2="810" y2="55" stroke="#1f66b3" stroke-width="2.5" marker-end="url(#arrow)"></line>
+
+          <rect x="270" y="130" width="690" height="95" rx="8" fill="#fbfdff" stroke="#d8e3ec"></rect>
+          <text x="615" y="160" text-anchor="middle" font-size="18" font-weight="800" fill="#1f66b3">卷面翻译口诀</text>
+          <text x="615" y="190" text-anchor="middle" font-size="16" fill="#1d2835">谁使用系统 -> 用例图；系统如何回应 -> 系统顺序图；有哪些领域名词 -> 概念类图</text>
+          <text x="615" y="216" text-anchor="middle" font-size="16" fill="#1d2835">系统怎么拆 -> 组件图；对象怎么协作 -> 顺序图；输入怎么测 -> 等价类/边界值</text>
+        </svg>
+        <div class="caption">看综合题先做这张图里的分流。问法变了，答案层次就要变。</div>
+      </div>
+    </section>
+
+    <section id="case">
+      <h2>往年题迁移：三类材料题要会“换壳识别”</h2>
+      <div class="grid three">
+        <div class="card">
+          <strong>2020 实验上机安排系统</strong>
+          <p>题眼：教师提交实验项目、安排机房、学生查询安排、管理员维护基础信息和新闻公告。常考 <span class="key">用例图、类图、顺序图</span>。</p>
+          <p>迁移动作：角色先圈教师/学生/管理员/未登录用户；实体再圈课程实验项目、机房、安排、报表、新闻。</p>
+        </div>
+        <div class="card">
+          <strong>12级 选课管理系统</strong>
+          <p>题眼：学生选课、教师登记成绩、教务管理员维护信息、开启/关闭课程注册。常考 <span class="key">用例图、事件流、等价类</span>。</p>
+          <p>迁移动作：基本流写正常选课；扩展流写未开启、超3门、人数已满、人数不足取消。</p>
+        </div>
+        <div class="card">
+          <strong>14级 库存/仓库类系统</strong>
+          <p>题眼：库存、入库、出库、状态变化、分支覆盖、电话号码/标识符等输入规则。常考 <span class="key">状态图、类图、测试用例</span>。</p>
+          <p>迁移动作：状态图看对象生命周期；白盒题看判定分支；黑盒题按输入条件列等价类。</p>
+        </div>
+      </div>
+      <details>
+        <summary>2020 实验排课题：类图、用例图、顺序图最小交卷骨架</summary>
+        <div class="note">
+          <strong>用例图：</strong>系统边界写“实验上机安排系统”。参与者至少有教师、学生、管理员、未登录用户。教师用例：提交课程实验项目、安排实验机房、查询安排结果、打印报表。学生用例：查询课程实验项目、查询课程实验安排。管理员用例：管理教师/学生/课程实验、管理新闻公告、查询机房时间安排。所有登录用户有修改密码、查看新闻公告。
+        </div>
+        <div class="note good">
+          <strong>类图：</strong>优先抽实体类：User、Teacher、Student、Admin、Course、ExperimentProject、LabRoom、ExperimentSchedule、News、Report。关系别忘多重性：一个教师可提交多个实验项目，一个实验项目对应一个课程，一次安排关联一个实验项目和一个机房，一个管理员管理多条新闻。
+        </div>
+        <div class="note warn">
+          <strong>顺序图：</strong>学生查询安排：Student -> System/Boundary -> ScheduleController -> ScheduleService -> ScheduleRepository -> ExperimentSchedule。管理员管理新闻：Admin -> NewsController -> NewsService -> NewsRepository -> News。顺序图重点是时间顺序和消息，不是把所有类都塞进去。
+        </div>
+      </details>
+      <details>
+        <summary>12级 选课题：事件流和等价类怎么写</summary>
+        <div class="note">
+          <strong>课程注册基本流：</strong>学生登录 -> 进入课程注册 -> 系统显示课程目录 -> 学生选择课程 -> 系统检查人数/数量/条件 -> 保存选课记录 -> 提示成功。
+        </div>
+        <div class="note hot">
+          <strong>课程注册扩展流：</strong>管理员未开启注册；学生选择超过3门；课程人数已满；课程人数低于5人被取消；开学两周后关闭注册。扩展流不是废话，它就是综合题的得分点。
+        </div>
+        <div class="note good">
+          <strong>用户名等价类：</strong>有效类=8-12位、英文字母和数字组合、不能全字母、不能全数字；无效类=少于8位、多于12位、全字母、全数字、含非英文字母/数字字符。
+        </div>
+      </details>
+    </section>
+
+    <section id="quiz">
+      <h2>临考小测：24题把五类题型叫醒</h2>
+      <p>题目不追求刁钻，追求 <span class="key">会识别题眼</span>。做完看解析，重点看“为什么其他选项不对”和“考场怎么迁移”。</p>
+      <div class="actions">
+        <button class="btn primary" id="resetQuiz">重置本页小测</button>
+        <span class="pill good" id="quizProgress">已完成 0 / 24</span>
+      </div>
+      <div class="quiz-list" id="quizList"></div>
+    </section>
+
+    <section id="templates">
+      <h2>简答题模板：别背长段，背骨架</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>故障、错误、失效三者关系</strong>
+          <textarea placeholder="先自己写三句话：定义一句、传播链一句、例子一句。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p>故障是软件内部存在的缺陷或问题根源，错误是程序执行时产生的错误状态，失效是软件外部表现出的功能不符合需求。三者通常形成传播链：故障被触发后导致错误状态，错误状态继续传播就可能表现为失效。例如数组越界缺陷是故障，运行时数据被破坏是错误，用户看到系统崩溃就是失效。</p>
+          </details>
+        </div>
+        <div class="card">
+          <strong>黑盒测试与白盒测试区别</strong>
+          <textarea placeholder="先自己写：依据、关注点、典型方法。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p>黑盒测试依据需求规格说明，不关心程序内部结构，重点检查输入输出和功能行为，常用等价类划分、边界值、错误推测、因果图和场景法。白盒测试依据程序内部结构和控制流，重点检查语句、判定、条件、路径等覆盖情况。考试看到“代码流程图、分支、路径”想到白盒；看到“输入规则、业务场景、规格说明”想到黑盒。</p>
+          </details>
+        </div>
+        <div class="card">
+          <strong>需求分析、概要设计、详细设计区别</strong>
+          <textarea placeholder="先自己写：What、High-level How、Low-level How。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p>需求分析回答系统要做什么，关注用户目标、功能、非功能约束和领域概念，产出需求模型和需求规格。概要设计回答系统高层如何实现，关注架构、子系统、组件、接口和数据组织。详细设计回答模块内部如何实现，关注类职责、属性、方法、对象交互、状态转移和算法细节。</p>
+          </details>
+        </div>
+        <div class="card">
+          <strong>综合题开头第一段</strong>
+          <textarea placeholder="拿到案例材料时，先写一句分层定位。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p>本题先按软件生命周期和面向对象建模流程分层处理：需求分析阶段识别参与者、用例、系统边界和领域概念；概要设计阶段将系统划分为组件/子系统并明确接口；详细设计阶段给出关键类、对象交互和状态变化；测试阶段根据需求和设计选择黑盒或白盒方法设计测试用例。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="gate">
+      <h2>上场闸门：勾完就收手</h2>
+      <div class="progress" id="gateProgress">已勾 0 / 10</div>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我知道明天只能用纸质PPT、装订在一起的个人笔记、指定教材；不能用电子资料和其他工具。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我知道五类题型是单选、多选、判断、简答、综合题，不会只准备画图。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我能说出生命周期主线：立项、需求分析、概要设计、详细设计、编码、测试、发布、维护、退役。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我能区分需求分析、概要设计、详细设计分别回答什么问题。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我能看到材料先圈参与者、用例、领域名词、业务规则、异常条件。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我知道用例图、系统顺序图、概念类图、组件图、设计类图、状态图、活动图分别什么时候用。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我能解释故障、错误、失效的传播链。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我能区分黑盒、白盒、灰盒，并能列出等价类/边界值和基本路径测试。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我知道V模型四对关系：需求-验收，概要-系统，详细-集成，编码-单元。</span></label>
+      <label class="checkrow"><input type="checkbox" data-gate><span>我会在CodeArts Modeling里先选图类型，再检查边界、关系、箭头、多重性和图旁说明。</span></label>
+      <div class="footer">资料依据：2026软工十讲合集、6/18课程群正式考试通知、2020软件工程上机题、12级选课管理题、软工参考答案片段。本页是考前收束页，不替代前面的系统讲义。</div>
+    </section>
+  </div>
+
+  <script>
+    const quiz = [
+      {
+        type: "single",
+        tag: "单选",
+        q: "以下哪一项不属于软件过程模型？",
+        options: ["瀑布模型", "增量模型", "面向对象模型", "快速原型模型"],
+        answer: [2],
+        exp: "过程模型描述软件开发活动如何组织，例如瀑布、增量、迭代、快速原型。面向对象模型是分析/设计范式，不是过程模型。考试常把“开发过程”和“建模方法”混在一起考。"
+      },
+      {
+        type: "multi",
+        tag: "多选",
+        q: "下面哪些属于软件项目管理关注的对象？",
+        options: ["过程管理", "人员管理", "产品管理", "对象管理"],
+        answer: [0, 1, 2],
+        exp: "项目管理通常围绕过程、产品、人员展开。对象管理听起来像面向对象里的对象，不是项目管理对象。多选题遇到这种题，先在脑中建立同类集合。"
+      },
+      {
+        type: "single",
+        tag: "判断边界",
+        q: "“系统登录响应时间不超过1秒”最准确地属于哪类需求？",
+        options: ["功能性需求", "非功能性需求", "概要设计约束", "详细设计类职责"],
+        answer: [1],
+        exp: "功能性需求说系统做什么，非功能性需求说做得怎么样，例如性能、可靠性、安全性、易用性。响应时间属于性能约束，因此是非功能性需求。"
+      },
+      {
+        type: "single",
+        tag: "分层",
+        q: "题目要求“将系统划分为若干组件并明确组件间接口”，它主要考哪一层？",
+        options: ["需求分析", "概要设计", "详细设计", "编码实现"],
+        answer: [1],
+        exp: "组件、子系统、接口、架构是概要设计关键词。详细设计才关心类、方法、对象消息和状态转移。"
+      },
+      {
+        type: "single",
+        tag: "UML",
+        q: "如果题目问“学生查询实验安排时，学生、系统、服务对象之间消息如何按时间发生”，最适合画什么图？",
+        options: ["用例图", "顺序图", "组件图", "部署图"],
+        answer: [1],
+        exp: "顺序图表达对象/参与者之间的时间顺序消息。用例图表达参与者和系统功能关系，不表达一步步消息。"
+      },
+      {
+        type: "single",
+        tag: "UML",
+        q: "如果题目问“系统有哪些参与者，每类参与者能使用哪些功能”，最适合画什么图？",
+        options: ["用例图", "状态图", "类图", "活动图"],
+        answer: [0],
+        exp: "参与者、系统边界、用例是用例图的三件套。状态图看一个对象生命周期，类图看结构，活动图看流程。"
+      },
+      {
+        type: "multi",
+        tag: "UML",
+        q: "画类图时，下面哪些信息通常是需要检查的？",
+        options: ["类名、属性、操作", "类之间关系", "多重性", "每个按钮的像素颜色"],
+        answer: [0, 1, 2],
+        exp: "类图关注静态结构：类、属性、方法、关系、多重性。按钮颜色属于界面细节，不是类图核心。2020题明确提醒要标注类间关系和数量关系。"
+      },
+      {
+        type: "single",
+        tag: "关系",
+        q: "“订单由订单项组成，订单项通常不能脱离订单独立存在”更接近哪种类间关系？",
+        options: ["依赖", "普通关联", "聚合", "组合"],
+        answer: [3],
+        exp: "组合表示强整体-部分关系，部分对象依赖整体生命周期。聚合更弱，部分可以相对独立存在。"
+      },
+      {
+        type: "single",
+        tag: "测试",
+        q: "根据输入规则划分有效输入和无效输入，再为每类设计测试用例，这是什么方法？",
+        options: ["基本路径测试", "等价类划分", "语句覆盖", "代码审查"],
+        answer: [1],
+        exp: "等价类划分是黑盒测试方法，12级用户名题就是典型：长度、组成、全字母/全数字/非法字符分别列有效类和无效类。"
+      },
+      {
+        type: "single",
+        tag: "测试",
+        q: "若规格要求 8 到 12 位用户名，边界值测试最应优先覆盖哪些长度？",
+        options: ["1、2、3、4", "7、8、9、11、12、13", "8、9、10、11、12", "0、100、1000"],
+        answer: [1],
+        exp: "边界值围绕边界内外取值。8和12是边界，7和13是刚越界，9和11是边界内邻近值。"
+      },
+      {
+        type: "multi",
+        tag: "测试",
+        q: "下列哪些属于黑盒测试方法？",
+        options: ["等价类划分", "边界值分析", "语句覆盖", "因果图法"],
+        answer: [0, 1, 3],
+        exp: "黑盒根据规格设计测试，包括等价类、边界值、错误推测、因果图、场景法。语句覆盖是白盒覆盖标准。"
+      },
+      {
+        type: "single",
+        tag: "测试",
+        q: "基本路径测试中常用的环形复杂度公式是？",
+        options: ["V(G)=E-N+2", "V(G)=N-E+2", "V(G)=E+N", "V(G)=E/N"],
+        answer: [0],
+        exp: "基本路径测试先画控制流图，再用 V(G)=E-N+2 求独立路径数。E是边数，N是节点数。"
+      },
+      {
+        type: "single",
+        tag: "V模型",
+        q: "V模型中，概要设计最直接对应哪类测试？",
+        options: ["单元测试", "集成测试", "系统测试", "验收测试"],
+        answer: [2],
+        exp: "本课程十讲摘录中的对应关系是：需求分析对应验收/确认测试，概要设计对应系统测试，详细设计对应集成测试，编码对应单元测试。不同教材表述可能有细微差异，按本课程材料记。"
+      },
+      {
+        type: "single",
+        tag: "简答",
+        q: "“故障、错误、失效”的正确传播关系更接近哪一项？",
+        options: ["失效触发错误，错误导致故障", "故障被触发导致错误，错误传播可能导致失效", "错误和失效完全相同", "故障只存在于硬件中"],
+        answer: [1],
+        exp: "故障是内部缺陷，错误是运行时错误状态，失效是外部可见的不符合需求。简答题写出这条传播链就有骨架分。"
+      },
+      {
+        type: "single",
+        tag: "往年题",
+        q: "2020实验上机安排系统中，“管理员管理新闻公告(增删改)”如果画顺序图，核心对象链最合理的是？",
+        options: ["Admin -> News界面/控制器 -> News服务 -> News数据对象", "Student -> Course -> LabRoom -> Report", "Teacher -> Git -> Branch -> Commit", "Admin -> CPU -> Memory -> Disk"],
+        answer: [0],
+        exp: "顺序图要围绕一个场景的消息链。管理新闻是管理员触发，经过边界/控制对象、业务服务、数据对象。不要把无关实体硬塞进去。"
+      },
+      {
+        type: "multi",
+        tag: "往年题",
+        q: "2020实验上机安排系统的用例图中，哪些参与者比较自然？",
+        options: ["教师", "学生", "管理员", "数据库表"],
+        answer: [0, 1, 2],
+        exp: "参与者是系统外部与系统交互的角色，可以是人或外部系统。数据库表是系统内部实现元素，不是用例图参与者。"
+      },
+      {
+        type: "single",
+        tag: "往年题",
+        q: "12级选课题中，“课程注册未开启”在用例描述里应放在哪里？",
+        options: ["基本事件流", "扩展/异常事件流", "类图属性", "部署节点"],
+        answer: [1],
+        exp: "基本流写正常成功路径；未开启、人数已满、超过3门这类偏离正常路径的情况写扩展流或异常流。"
+      },
+      {
+        type: "multi",
+        tag: "用户名测试",
+        q: "对“用户名8-12位，由英文字母和数字组成，不能全字母，不能全数字”划分等价类，下面哪些是无效类？",
+        options: ["长度小于8", "长度大于12", "只包含字母", "字母和数字混合且长度10"],
+        answer: [0, 1, 2],
+        exp: "有效类需要同时满足长度、字符组成、混合要求。只要违反任一条件就是无效类。字母数字混合且长度10是有效类。"
+      },
+      {
+        type: "single",
+        tag: "判断",
+        q: "“系统顺序图只把整个系统看成黑盒，不展开内部类之间协作。”这句话在需求分析语境下通常是？",
+        options: ["正确", "错误"],
+        answer: [0],
+        exp: "系统顺序图强调外部参与者与系统之间的系统事件。内部对象协作一般到详细设计的顺序图再展开。"
+      },
+      {
+        type: "single",
+        tag: "判断",
+        q: "“活动图和状态图都能画流程，所以考试中可以完全互相替代。”这句话是？",
+        options: ["正确", "错误"],
+        answer: [1],
+        exp: "活动图偏业务流程/控制流，状态图偏一个对象生命周期中的状态和转移。它们都动态，但回答的问题不同。"
+      },
+      {
+        type: "single",
+        tag: "实现",
+        q: "Java EE分层中，处理页面请求并调用业务逻辑的一层通常是？",
+        options: ["View", "Controller", "Service", "Entity"],
+        answer: [1],
+        exp: "常见链路是 View -> Controller -> Service -> DAO/EntityManager -> Entity。Controller接收请求并分发给业务服务。"
+      },
+      {
+        type: "multi",
+        tag: "实现",
+        q: "下面哪些更接近软件实现阶段的质量原则？",
+        options: ["可读性", "简洁性", "编程规范", "永远不做测试"],
+        answer: [0, 1, 2],
+        exp: "十讲中实现原则包括可读性、简洁性、编程规范、异常处理与容错性、代码重构。实现阶段仍包含单元测试和调试，不是不做测试。"
+      },
+      {
+        type: "single",
+        tag: "CodeArts",
+        q: "本次考试平台要求最关键的一点是？",
+        options: ["可以用任何CodeArts组件", "只使用CodeArts Modeling等允许工具", "可以登录云盘查资料", "可以用聊天工具辅助建模"],
+        answer: [1],
+        exp: "官方通知强调希冀平台 + CodeArts Modeling，禁止使用其他工具或CodeArts其他组件。考前要提前建干净项目，避免误操作。"
+      },
+      {
+        type: "single",
+        tag: "综合题",
+        q: "拿到“为软件学院开发一个平台”的综合材料，第一步最稳妥的是？",
+        options: ["马上画类图", "先按需求/概要/详细/测试分层并圈题眼", "先写Git命令", "先背所有设计模式"],
+        answer: [1],
+        exp: "官方样题说明综合题重点是UML需求分析与建模、系统概要设计与详细设计。第一步先分层，避免把需求图、概要图、详细设计图混画。"
+      }
+    ];
+
+    const list = document.getElementById("quizList");
+    const progress = document.getElementById("quizProgress");
+    const storeKey = "se_last24_quiz_done_v1";
+    const done = new Set(JSON.parse(localStorage.getItem(storeKey) || "[]"));
+
+    function sameAnswer(a, b) {
+      return a.length === b.length && [...a].sort().every((v, i) => v === [...b].sort()[i]);
+    }
+
+    function saveDone() {
+      localStorage.setItem(storeKey, JSON.stringify([...done]));
+      progress.textContent = `已完成 ${done.size} / ${quiz.length}`;
+    }
+
+    function renderQuiz() {
+      list.innerHTML = "";
+      quiz.forEach((item, idx) => {
+        const card = document.createElement("article");
+        card.className = "quiz-card" + (done.has(idx) ? " done" : "");
+        card.innerHTML = `
+          <div class="quiz-head">
+            <h3>${idx + 1}. ${item.q}</h3>
+            <span class="tag">${item.tag}</span>
+          </div>
+          <div class="options"></div>
+          <div class="actions"></div>
+          <div class="explain"><strong>解析：</strong>${item.exp}</div>
+        `;
+        const opts = card.querySelector(".options");
+        const actions = card.querySelector(".actions");
+        const explain = card.querySelector(".explain");
+        if (item.type === "single") {
+          item.options.forEach((text, optIdx) => {
+            const btn = document.createElement("button");
+            btn.className = "option";
+            btn.textContent = `${String.fromCharCode(65 + optIdx)}. ${text}`;
+            btn.addEventListener("click", () => {
+              opts.querySelectorAll(".option").forEach((node, nodeIdx) => {
+                node.classList.remove("correct", "wrong");
+                if (item.answer.includes(nodeIdx)) node.classList.add("correct");
+              });
+              if (!item.answer.includes(optIdx)) btn.classList.add("wrong");
+              explain.classList.add("show");
+              done.add(idx);
+              card.classList.add("done");
+              saveDone();
+            });
+            opts.appendChild(btn);
+          });
+        } else {
+          item.options.forEach((text, optIdx) => {
+            const label = document.createElement("label");
+            label.className = "multi-option";
+            label.innerHTML = `<input type="checkbox" value="${optIdx}"><span>${String.fromCharCode(65 + optIdx)}. ${text}</span>`;
+            opts.appendChild(label);
+          });
+          const submit = document.createElement("button");
+          submit.className = "btn primary";
+          submit.textContent = "提交多选";
+          submit.addEventListener("click", () => {
+            const selected = [...opts.querySelectorAll("input:checked")].map(input => Number(input.value));
+            opts.querySelectorAll(".multi-option").forEach((node, nodeIdx) => {
+              node.classList.remove("correct", "wrong");
+              if (item.answer.includes(nodeIdx)) node.classList.add("correct");
+              if (selected.includes(nodeIdx) && !item.answer.includes(nodeIdx)) node.classList.add("wrong");
+            });
+            explain.classList.add("show");
+            if (sameAnswer(selected, item.answer)) {
+              done.add(idx);
+              card.classList.add("done");
+              saveDone();
+            }
+          });
+          actions.appendChild(submit);
+        }
+        list.appendChild(card);
+      });
+      saveDone();
+    }
+
+    document.getElementById("resetQuiz").addEventListener("click", () => {
+      done.clear();
+      localStorage.removeItem(storeKey);
+      renderQuiz();
+    });
+    renderQuiz();
+
+    const paperKey = "se_last24_paper_notes_v2";
+    const paperBoxes = [...document.querySelectorAll("[data-paper]")];
+    const paperProgress = document.getElementById("paperProgress");
+    const paperState = JSON.parse(localStorage.getItem(paperKey) || "[]");
+    paperBoxes.forEach((box, idx) => {
+      box.checked = Boolean(paperState[idx]);
+      box.addEventListener("change", updatePaper);
+    });
+    function updatePaper() {
+      const state = paperBoxes.map(box => box.checked);
+      localStorage.setItem(paperKey, JSON.stringify(state));
+      const count = state.filter(Boolean).length;
+      paperProgress.textContent = `已迁移 ${count} / ${paperBoxes.length}`;
+    }
+    updatePaper();
+
+    const gateKey = "se_last24_gate_v1";
+    const gates = [...document.querySelectorAll("[data-gate]")];
+    const gateProgress = document.getElementById("gateProgress");
+    const gateState = JSON.parse(localStorage.getItem(gateKey) || "[]");
+    gates.forEach((box, idx) => {
+      box.checked = Boolean(gateState[idx]);
+      box.addEventListener("change", updateGate);
+    });
+    function updateGate() {
+      const state = gates.map(box => box.checked);
+      localStorage.setItem(gateKey, JSON.stringify(state));
+      const count = state.filter(Boolean).length;
+      gateProgress.textContent = `已勾 ${count} / ${gates.length}`;
+    }
+    updateGate();
+  </script>
+</body>
+</html>

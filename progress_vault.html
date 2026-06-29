@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>星光存档室｜Starlight Study Island</title>
+  <meta name="description" content="导出、导入和管理星光学习岛的本地学习进度。">
+  <style>
+    :root {
+      --ink: #263247;
+      --muted: #68738b;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 28px rgba(79, 93, 126, .10);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 10% 14%, rgba(246, 185, 207, .45), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(155, 201, 236, .42), transparent 26%),
+        radial-gradient(circle at 78% 86%, rgba(159, 218, 203, .32), transparent 30%),
+        linear-gradient(135deg, #fff8fb, #f1fbff 48%, #fff9ec);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: .5;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.96) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .24) 0 1px, transparent 3px);
+      background-size: 120px 120px, 84px 84px;
+      animation: drift 36s linear infinite;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-100px, 80px, 0); }
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 56px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .btn, button, label.file {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: #31516f;
+      font: inherit;
+      font-weight: 850;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .btn:hover, button:hover, label.file:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.95);
+    }
+    .primary {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .dark {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #46506f, #6c5f98);
+    }
+    .danger {
+      color: #8d3655;
+      border-color: rgba(205, 112, 145, .35);
+      background: linear-gradient(135deg, #fff0f7, #fff8ee);
+    }
+    .hero, .panel, .card { animation: rise .5s ease both; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .82fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 16px;
+    }
+    .panel, .card {
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .card { box-shadow: var(--soft-shadow); }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      padding: 5px 10px;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      margin: 14px 0 12px;
+      font-size: clamp(42px, 6vw, 76px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 { margin: 0 0 12px; font-size: 28px; line-height: 1.2; }
+    h3 { margin: 0 0 6px; font-size: 19px; }
+    p { margin: 0; color: var(--muted); }
+    .key {
+      color: #493d6c;
+      font-weight: 950;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .metric strong {
+      display: block;
+      color: #2c3850;
+      font-size: 34px;
+      line-height: 1.1;
+      margin: 2px 0 4px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-weight: 850;
+    }
+    .vault-art {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 22% 20%, rgba(255, 224, 139, .52), transparent 20%),
+        linear-gradient(135deg, rgba(255,255,255,.82), rgba(237,248,255,.7));
+    }
+    .vault-art svg {
+      width: 100%;
+      max-width: 430px;
+      display: block;
+    }
+    .section {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid rgba(104,122,154,.26);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: var(--ink);
+      font: inherit;
+      padding: 12px;
+      resize: vertical;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    textarea { min-height: 210px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.6; }
+    input[type="file"] { display: none; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px;
+      border-bottom: 1px solid rgba(104,122,154,.18);
+      font-size: 14px;
+    }
+    th { color: #59647d; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: #67507f;
+      background: rgba(255,255,255,.72);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .note {
+      border-left: 4px solid var(--mint);
+      background: rgba(255,255,255,.56);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9;
+      max-width: min(420px, calc(100vw - 36px));
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      color: #3d4862;
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      font-weight: 850;
+      transform: translateY(16px);
+      opacity: 0;
+      transition: .2s ease;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    @media (max-width: 900px) {
+      .hero, .section, .grid { grid-template-columns: 1fr; }
+      .top { align-items: flex-start; flex-direction: column; }
+      .panel, .card { padding: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="30" height="30">
+            <path d="M32 7l6.8 13.8L54 23l-11 10.7 2.6 15.1L32 41.6 18.4 48.8 21 33.7 10 23l15.2-2.2L32 7Z" fill="#ffd76f" stroke="#6b5a92" stroke-width="2"/>
+          </svg>
+        </span>
+        <span>星光学习岛</span>
+      </a>
+      <div class="actions" style="margin-top:0;">
+        <a class="btn" href="./index.html">回首页</a>
+        <a class="btn" href="./start_here.html">新手向导</a>
+        <a class="btn" href="./dashboard.html">继续学习</a>
+        <a class="btn" href="./practice_lab.html">训练台</a>
+        <a class="btn" href="./resources.html">资源库</a>
+        <a class="btn" href="./docs/course_pack_spec.md">课程包规范</a>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="panel">
+        <span class="eyebrow">Progress Vault</span>
+        <h1>星光存档室</h1>
+        <p>这里管理浏览器里的本地学习记录。你可以把进度导出成一个 JSON 存档，换电脑、换浏览器或发给未来的自己时再导入回来。</p>
+        <div class="actions">
+          <button class="primary" id="downloadBtn">下载星光存档</button>
+          <button id="copyBtn">复制存档文本</button>
+          <button class="danger" id="refreshBtn">重新扫描</button>
+        </div>
+        <div class="note">
+          <strong>隐私说明：</strong>
+          <p>当前只导出星光学习岛相关 localStorage key，包括资源库完成状态、今日学习包偏好、闯关、真题、背诵和错题记录；不读取浏览器其他网站数据，也不会上传到网络。</p>
+        </div>
+      </div>
+      <div class="panel vault-art" aria-label="星光存档室插画">
+        <svg viewBox="0 0 520 380" aria-hidden="true">
+          <defs>
+            <linearGradient id="box" x1="0" x2="1"><stop offset="0" stop-color="#ffe1ef"/><stop offset=".55" stop-color="#e3f8ff"/><stop offset="1" stop-color="#fff1c5"/></linearGradient>
+            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <rect x="36" y="42" width="448" height="286" rx="34" fill="rgba(255,255,255,.54)"/>
+          <path d="M116 158h288v128a34 34 0 0 1-34 34H150a34 34 0 0 1-34-34Z" fill="url(#box)" stroke="#7a6a94" stroke-width="5"/>
+          <path d="M160 158l36-62h128l36 62" fill="none" stroke="#7a6a94" stroke-width="5" stroke-linecap="round"/>
+          <path d="M260 178l18 38 42 6-30 30 7 42-37-20-37 20 7-42-30-30 42-6Z" fill="#ffd76f" stroke="#7a6a94" stroke-width="4" filter="url(#glow)"/>
+          <g fill="#fff" filter="url(#glow)">
+            <circle cx="96" cy="86" r="7"/><circle cx="422" cy="86" r="8"/><circle cx="438" cy="256" r="6"/><circle cx="78" cy="256" r="5"/>
+          </g>
+          <path d="M82 124 C130 88 186 94 224 132M334 116 C384 76 438 90 466 142" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" opacity=".72"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="grid" id="metrics"></section>
+
+    <section class="section">
+      <article class="card">
+        <h2>当前可导出的记录</h2>
+        <p>如果这里是 0，说明你还没在这个浏览器里产生学习记录。</p>
+        <div style="margin-top:12px; overflow:auto;">
+          <table>
+            <thead><tr><th>key</th><th>大小</th><th>类型</th></tr></thead>
+            <tbody id="keyRows"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>存档文本</h2>
+        <p>导出后可以保存这段文本；导入时把 JSON 粘贴回来即可。</p>
+        <textarea id="archiveText" spellcheck="false" placeholder="这里会显示导出的星光存档 JSON。"></textarea>
+      </article>
+    </section>
+
+    <section class="section">
+      <article class="card">
+        <h2>导入存档</h2>
+        <p>支持粘贴 JSON 或选择文件。默认合并写入，不会影响其他网站数据。</p>
+        <div class="actions">
+          <label class="file">选择存档文件<input id="fileInput" type="file" accept="application/json,.json"></label>
+          <button class="primary" id="importMergeBtn">合并导入</button>
+          <button class="danger" id="importReplaceBtn">替换星光记录</button>
+        </div>
+        <textarea id="importText" spellcheck="false" placeholder="把 starlight-study-island-progress.json 的内容粘贴到这里。"></textarea>
+      </article>
+
+      <article class="card">
+        <h2>清理本地记录</h2>
+        <p>只清理星光学习岛相关 key。为了防止误触，需要输入“清空星光”。</p>
+        <input id="clearConfirm" type="text" placeholder="输入：清空星光">
+        <div class="actions">
+          <button class="danger" id="clearBtn">清空星光学习岛记录</button>
+        </div>
+        <div class="note">
+          <strong>建议：</strong>
+          <p>清理前先下载一份存档。这样你可以放心试用，也能随时恢复。</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">已完成</div>
+
+  <script>
+    const STORAGE_PREFIXES = [
+      "starlight",
+      "focus-game",
+      "discrete-hiji",
+      "discrete-last36",
+      "discrete_hiji_precision",
+      "buaa-finals-discrete",
+      "marx"
+    ];
+    const STORAGE_EXACT = [
+      "starlight-island-state-v2",
+      "focus-game-last-wrong",
+      "focus-game-history",
+      "focus-game-rewards",
+      "starlight-resource-done-v1",
+      "starlight-today-plan-v1",
+      "starlight-start-route-v1",
+      "starlight-course-pack-draft-v1",
+      "starlight-quality-audit-v1",
+      "marxLocatorStateV1",
+      "marxQuizStateV2"
+    ];
+    const STORAGE_CONTAINS = [
+      "marx-gate",
+      "marx-write",
+      "marxTodoV2"
+    ];
+
+    const $ = (sel) => document.querySelector(sel);
+    let currentArchive = null;
+
+    function isProjectKey(key) {
+      return STORAGE_EXACT.includes(key)
+        || STORAGE_PREFIXES.some(prefix => key.startsWith(prefix))
+        || STORAGE_CONTAINS.some(part => key.includes(part));
+    }
+
+    function collectState() {
+      const state = {};
+      for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i);
+        if (key && isProjectKey(key)) state[key] = localStorage.getItem(key);
+      }
+      return {
+        meta: {
+          product: "starlight-study-island",
+          version: "1.3.6",
+          exportedAt: new Date().toISOString(),
+          storage: "localStorage",
+          keyCount: Object.keys(state).length
+        },
+        state
+      };
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+    }
+
+    function classifyKey(key) {
+      if (key.includes("resource-done")) return "资源库";
+      if (key.includes("today-plan")) return "今日学习包";
+      if (key.includes("start-route")) return "新手向导";
+      if (key.includes("course-pack-draft")) return "课程包草稿";
+      if (key.includes("quality-audit")) return "质量校对";
+      if (key.includes("hiji") || key.includes("discrete")) return "离散/真题";
+      if (key.includes("marx")) return "马原";
+      if (key.includes("focus") || key.includes("starlight-island")) return "小游戏";
+      if (key.includes("buaa-finals")) return "闸门";
+      return "星光记录";
+    }
+
+    function render() {
+      currentArchive = collectState();
+      const entries = Object.entries(currentArchive.state).sort(([a], [b]) => a.localeCompare(b));
+      const totalBytes = entries.reduce((sum, [key, value]) => sum + key.length + String(value || "").length, 0);
+      const groups = entries.reduce((acc, [key]) => {
+        const type = classifyKey(key);
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
+
+      $("#metrics").innerHTML = [
+        ["记录数量", entries.length, "个 localStorage key"],
+        ["存档大小", formatBytes(totalBytes), "适合直接复制或下载"],
+        ["覆盖模块", Object.keys(groups).length, Object.keys(groups).join("、") || "暂无记录"]
+      ].map(([title, value, sub]) => `
+        <article class="card metric">
+          <span>${title}</span>
+          <strong>${value}</strong>
+          <p>${sub}</p>
+        </article>
+      `).join("");
+
+      $("#keyRows").innerHTML = entries.length
+        ? entries.map(([key, value]) => `
+            <tr>
+              <td><code>${escapeHtml(key)}</code></td>
+              <td>${formatBytes(String(value || "").length)}</td>
+              <td><span class="pill">${escapeHtml(classifyKey(key))}</span></td>
+            </tr>
+          `).join("")
+        : `<tr><td colspan="3">还没有可导出的星光学习记录。</td></tr>`;
+      $("#archiveText").value = JSON.stringify(currentArchive, null, 2);
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function toast(text) {
+      const el = $("#toast");
+      el.textContent = text;
+      el.classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    function downloadArchive() {
+      const archive = collectState();
+      const blob = new Blob([JSON.stringify(archive, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `starlight-study-island-progress-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast("星光存档已开始下载");
+    }
+
+    async function copyArchive() {
+      const text = JSON.stringify(collectState(), null, 2);
+      $("#archiveText").value = text;
+      try {
+        await navigator.clipboard.writeText(text);
+        toast("存档文本已复制");
+      } catch {
+        $("#archiveText").focus();
+        $("#archiveText").select();
+        toast("已选中文本，可以手动复制");
+      }
+    }
+
+    function parseImportText() {
+      const text = $("#importText").value.trim();
+      if (!text) throw new Error("请先粘贴或选择一个存档文件。");
+      const archive = JSON.parse(text);
+      if (!archive || archive.meta?.product !== "starlight-study-island" || typeof archive.state !== "object") {
+        throw new Error("这不是星光学习岛的有效存档。");
+      }
+      return archive;
+    }
+
+    function clearProjectState() {
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i);
+        if (key && isProjectKey(key)) keys.push(key);
+      }
+      keys.forEach(key => localStorage.removeItem(key));
+      return keys.length;
+    }
+
+    function importArchive(replace = false) {
+      try {
+        const archive = parseImportText();
+        if (replace) clearProjectState();
+        Object.entries(archive.state).forEach(([key, value]) => {
+          if (isProjectKey(key)) localStorage.setItem(key, String(value ?? ""));
+        });
+        render();
+        toast(`${replace ? "替换" : "合并"}导入完成，共 ${Object.keys(archive.state).length} 条`);
+      } catch (error) {
+        toast(error.message || "导入失败，请检查 JSON");
+      }
+    }
+
+    $("#downloadBtn").addEventListener("click", downloadArchive);
+    $("#copyBtn").addEventListener("click", copyArchive);
+    $("#refreshBtn").addEventListener("click", () => { render(); toast("已重新扫描本地记录"); });
+    $("#importMergeBtn").addEventListener("click", () => importArchive(false));
+    $("#importReplaceBtn").addEventListener("click", () => importArchive(true));
+    $("#clearBtn").addEventListener("click", () => {
+      if ($("#clearConfirm").value.trim() !== "清空星光") {
+        toast("需要先输入：清空星光");
+        return;
+      }
+      const count = clearProjectState();
+      $("#clearConfirm").value = "";
+      render();
+      toast(`已清空 ${count} 条星光记录`);
+    });
+    $("#fileInput").addEventListener("change", async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      $("#importText").value = await file.text();
+      toast("存档文件已载入，确认后可导入");
+    });
+
+    render();
+  </script>
+</body>
+</html>

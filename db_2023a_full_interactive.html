@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据库 2023A 参考卷整卷交互练习</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #617181;
+      --paper: #fbfdff;
+      --card: #ffffff;
+      --line: #dbe4ec;
+      --blue: #1f6fa8;
+      --green: #1d7b55;
+      --red: #b43b33;
+      --amber: #a86a16;
+      --soft: #eef6fc;
+      --cream: #fff8ed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #eef4f8 0%, #f7fafc 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 26px 18px 72px; }
+    .hero, .card {
+      background: rgba(255,255,255,.97);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 12px 34px rgba(32, 54, 76, .08);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { margin: 8px 0 10px; font-size: clamp(28px, 4vw, 44px); line-height: 1.14; }
+    h2 { margin: 0 0 12px; font-size: 25px; }
+    h3 { margin: 18px 0 8px; font-size: 20px; }
+    p { margin: 8px 0; }
+    .muted { color: var(--muted); }
+    .strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; padding: 6px 10px;
+      background: var(--soft); color: #31566f; font-weight: 900; font-size: 13px;
+      border: 1px solid #d7e5ef;
+    }
+    .hot { background: #fff0ed; color: var(--red); border-color: #f4c6be; }
+    .good { background: #effaf4; color: var(--green); border-color: #bfe4cc; }
+    .warn { background: #fff7e8; color: var(--amber); border-color: #f0d59f; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .toc a, .btn {
+      color: var(--blue); text-decoration: none; font-weight: 900;
+      background: #eef7ff; border: 1px solid #cfe3f4; border-radius: 8px; padding: 8px 10px;
+      cursor: pointer;
+    }
+    .btn.primary { background: #1f6fa8; color: #fff; border-color: #1f6fa8; }
+    .btn.ghost { background: #fff; color: #1f6fa8; }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fbfe;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .paper-map {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .map-cell {
+      background: #f7fbfe;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      min-height: 92px;
+    }
+    .map-cell strong { display: block; color: #254b64; }
+    .key {
+      font-weight: 900;
+      color: #14364c;
+      background: linear-gradient(transparent 58%, #fff1aa 58%);
+      padding: 0 2px;
+    }
+    .exam {
+      border: 1px solid #d5e2eb;
+      border-radius: 12px;
+      background: #fff;
+      padding: 18px;
+      margin: 14px 0;
+    }
+    .question {
+      border: 1px solid #dce7ef;
+      background: #fcfeff;
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .question h3 { margin-top: 0; }
+    .options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      margin: 10px 0;
+    }
+    label.option {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: #fff;
+    }
+    label.option input { margin-top: 6px; }
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #dce7ef;
+      background: #f6fbff;
+    }
+    .feedback.show { display: block; }
+    .feedback.ok { border-color: #bfe4cc; background: #effaf4; }
+    .feedback.bad { border-color: #f2c2ba; background: #fff2ef; }
+    textarea {
+      width: 100%;
+      min-height: 126px;
+      resize: vertical;
+      border: 1px solid #cfdde8;
+      border-radius: 10px;
+      padding: 12px;
+      font: 15px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, "Microsoft YaHei", monospace;
+      color: #18232e;
+      background: #fbfdff;
+    }
+    .short textarea { min-height: 92px; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    summary { cursor: pointer; color: #244a63; font-weight: 900; }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #f4f8fb;
+      border: 1px solid #dce7ef;
+      border-radius: 10px;
+      padding: 12px;
+      overflow: auto;
+      font-size: 14px;
+    }
+    code, .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      background: #f2f7fb;
+      border: 1px solid #d9e6ef;
+      border-radius: 7px;
+      padding: 1px 5px;
+      font-size: .96em;
+    }
+    .formula {
+      display: inline-block;
+      margin: 2px 0;
+      color: #17384f;
+      line-height: 1.55;
+    }
+    .answer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .rubric {
+      background: var(--cream);
+      border: 1px solid #efd6a9;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+    .rubric strong { color: #7a4c10; }
+    .scorebar {
+      position: sticky;
+      bottom: 12px;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #cfe0ec;
+      border-radius: 12px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 10px 30px rgba(26, 50, 74, .14);
+      padding: 10px 12px;
+      margin-top: 18px;
+    }
+    .mini { font-size: 13px; color: var(--muted); }
+    .checklist li { margin: 6px 0; }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 920px) {
+      main { padding: 16px 10px 56px; }
+      .hero, .card { padding: 18px; }
+      .paper-map, .answer-grid, .split { grid-template-columns: 1fr; }
+      .scorebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="strip">
+      <span class="pill hot">数据库 2023A</span>
+      <span class="pill good">完整卷面练手</span>
+      <span class="pill warn">先做后看答案</span>
+    </div>
+    <h1>数据库 2023A 参考卷整卷交互练习</h1>
+    <p class="muted">这页不是新知识讲义，而是考前“我到底能不能把知识调出来”的整卷模拟。你可以先只写骨架，写完再展开解析。页面会保存你的主观题草稿。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="./source_coverage_audit.html">资料覆盖台账</a>
+      <a href="./day6_database_final_rehearsal.html">数据库最后排雷</a>
+      <a href="#mcq">一、选择题</a>
+      <a href="#short">二、问答题</a>
+      <a href="#sql">三、SQL/关系代数</a>
+      <a href="#tx">四、事务恢复</a>
+      <a href="#nf">五、规范化</a>
+      <a href="#er">六、ER 设计</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>0. 开卷前先看卷面：这张卷真正考什么</h2>
+    <div class="paper-map">
+      <div class="map-cell"><strong>选择 20</strong>DBMS、索引、权限、约束、触发器。<span class="key">快准</span>，别纠缠。</div>
+      <div class="map-cell"><strong>问答 10</strong>数据库设计步骤、视图作用。<span class="key">背框架</span>。</div>
+      <div class="map-cell"><strong>SQL 20</strong>含关系代数。<span class="key">FROM/WHERE/SELECT</span>顺序。</div>
+      <div class="map-cell"><strong>事务 20</strong>冲突图、2PL、严格 2PL、Undo 恢复。<span class="key">画图</span>。</div>
+      <div class="map-cell"><strong>范式 20</strong>候选键、BCNF、保持依赖、无损连接。<span class="key">算法步骤</span>。</div>
+      <div class="map-cell"><strong>ER 10</strong>抽实体、联系、基数、关系表。<span class="key">别漏多值项</span>。</div>
+    </div>
+    <div class="rubric">
+      <strong>做题顺序建议：</strong>选择题 12 分钟，问答 8 分钟，SQL/关系代数 25 分钟，事务 25 分钟，范式 25 分钟，ER 15 分钟，最后 10 分钟补关键词。你现在从零冲刺，不要求第一次就满分，目标是每题都知道“第一动作”。
+    </div>
+  </section>
+
+  <section class="card" id="mcq">
+    <h2>一、多项选择题（20 分）</h2>
+    <p class="muted">每题先自己选，再点检查。多选题最怕“看起来都像”，所以解析里会告诉你为什么其它项不该选。</p>
+    <div id="mcqBox"></div>
+    <button class="btn primary" id="checkMcq">检查选择题</button>
+    <button class="btn ghost" id="resetMcq">清空选择</button>
+    <div class="panel" id="mcqScore">还没检查。</div>
+  </section>
+
+  <section class="card short" id="short">
+    <h2>二、问答题（10 分）</h2>
+    <div class="question">
+      <h3>1. 简述数据库设计（新奥尔良法）的基本步骤。</h3>
+      <textarea data-save="db2023-short-1" placeholder="先自己写：需求分析、概念结构、逻辑结构、物理结构、实施运行维护……每步一句话。"></textarea>
+      <details>
+        <summary>展开参考答案和得分点</summary>
+        <p><span class="key">标准骨架：</span>需求分析 -> 概念结构设计 -> 逻辑结构设计 -> 物理结构设计 -> 数据库实施 -> 运行和维护。</p>
+        <ul class="checklist">
+          <li><strong>需求分析：</strong>搞清楚系统要管理什么数据、谁使用、有哪些业务规则。这里会产出数据字典、数据流图、需求说明。</li>
+          <li><strong>概念结构设计：</strong>把现实世界抽象成 ER 模型，找实体、属性、联系、基数。</li>
+          <li><strong>逻辑结构设计：</strong>把 ER 图转成关系模式，确定主键、外键、完整性约束，并做必要规范化。</li>
+          <li><strong>物理结构设计：</strong>考虑索引、存储、访问路径、性能，不再是“业务长什么样”，而是“数据库怎么放更快”。</li>
+          <li><strong>实施/运行维护：</strong>建库、装载数据、测试、备份、调优、权限管理。</li>
+        </ul>
+        <p><strong>考试提醒：</strong>如果题目问“需求分析阶段工作”，不要把数据抽象、物理存储混进去；它们分别更偏概念设计和物理设计。</p>
+      </details>
+    </div>
+    <div class="question">
+      <h3>2. 简述视图的定义和主要作用。</h3>
+      <textarea data-save="db2023-short-2" placeholder="先自己写：视图是由查询定义的虚表；作用是简化查询、安全控制、逻辑独立性、个性化数据视图……"></textarea>
+      <details>
+        <summary>展开参考答案和得分点</summary>
+        <p><span class="key">视图是由查询语句定义的虚表。</span>它本身通常不独立存储完整数据，而是在使用时根据基表查询得到结果。</p>
+        <ul class="checklist">
+          <li><strong>简化查询：</strong>把复杂连接、筛选、聚合封装成一个“看起来像表”的对象。</li>
+          <li><strong>安全控制：</strong>只暴露允许用户看的列或行，例如不让普通用户看到 salary。</li>
+          <li><strong>逻辑数据独立性：</strong>基表结构变化时，可以用视图保持外部接口相对稳定。</li>
+          <li><strong>个性化外模式：</strong>不同角色看到不同视图。</li>
+        </ul>
+        <p><strong>和本卷 SQL 第 6 小题的联系：</strong><code>WITH CHECK OPTION</code> 用来限制通过视图更新后的数据仍满足视图条件。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="sql">
+    <h2>三、SQL 题与关系代数（20 分）</h2>
+    <div class="panel">
+      <p><strong>题目背景：</strong>表 <code>emp(num, name, dept, salary, boss)</code>，<code>boss</code> 是指向 <code>emp(num)</code> 的外键。总经理的 <code>boss</code> 指向自己，其它人的 <code>boss</code> 指向别人。</p>
+      <pre>create table emp (
+  num integer not null,
+  name varchar(20) not null,
+  dept varchar(20) not null,
+  salary integer not null,
+  boss integer not null,
+  primary key (num),
+  foreign key (boss) references emp(num)
+);</pre>
+    </div>
+
+    <h3>3.1 关系代数：先认清卷面符号</h3>
+    <div class="split">
+      <div class="panel">
+        <p><span class="formula">σ<sub>条件</sub>(R)</span>：选择，筛行，对应 SQL 的 <code>WHERE</code>。读作“在 R 中筛出满足条件的行”。</p>
+        <p><span class="formula">Π<sub>列名</sub>(R)</span>：投影，筛列，对应 SQL 的 <code>SELECT</code>。有些资料也写成小写 <span class="formula">π</span>，但本页统一用卷面更醒目的大写 <span class="formula">Π</span>，防止你考试时认不出来。</p>
+        <p><span class="formula">R × S</span>：笛卡尔积，把两张表暴力两两组合。</p>
+        <p><span class="formula">R ⋈<sub>条件</sub> S</span>：连接，等价于先 <span class="formula">R × S</span> 再 <span class="formula">σ</span>。</p>
+      </div>
+      <div class="panel">
+        <p><span class="formula">R ∪ S</span>：并集，两边关系结构要兼容。</p>
+        <p><span class="formula">R - S</span>：差集，在 R 里但不在 S 里。</p>
+        <p><span class="formula">R ÷ S</span>：除法，专门表达“全部/所有/每一个”。比如“选修了全部课程的学生”，先找 <span class="formula">(SID, CID)</span>，再除以全部 <span class="formula">CID</span>。</p>
+        <p><span class="formula">ρ<sub>新名</sub>(R)</span>：重命名，自连接时给同一张表起别名。</p>
+        <p><span class="key">卷面翻译顺序：</span>先 FROM/连接，再 WHERE/选择，最后 SELECT/投影。</p>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>1. 用关系代数查找不是其他人的 boss 的员工，列出编号、姓名、部门。</h3>
+      <textarea data-save="db2023-ra-1" placeholder="提示：这题是差集。所有员工 - 出现在别人 boss 字段里的员工。注意排除总经理 boss 指向自己的情况。"></textarea>
+      <details>
+        <summary>展开参考答案和解析</summary>
+        <p><strong>第一动作：</strong>“不是其他人的 boss” = <span class="key">所有员工</span> 减去 <span class="key">当过别人 boss 的员工</span>。</p>
+        <p>设 <span class="formula">E = ρ<sub>E</sub>(emp)</span> 表示员工，<span class="formula">B = ρ<sub>B</sub>(emp)</span> 表示可能的 boss。</p>
+        <p>当过别人 boss 的人：</p>
+        <p><span class="formula">Π<sub>B.num,B.name,B.dept</sub>(σ<sub>E.boss = B.num ∧ E.num ≠ B.num</sub>(E × B))</span></p>
+        <p>所以答案可写为：</p>
+        <p><span class="formula">Π<sub>num,name,dept</sub>(emp) - Π<sub>B.num,B.name,B.dept</sub>(σ<sub>E.boss = B.num ∧ E.num ≠ B.num</sub>(ρ<sub>E</sub>(emp) × ρ<sub>B</sub>(emp)))</span></p>
+        <p><strong>为什么要有 <span class="formula">E.num ≠ B.num</span>：</strong>总经理的 boss 指向自己，但题目说“不是其他人的 boss”，自己指向自己不算“其他人”。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>2. 用关系代数查找张三的直属领导和直属下级的员工编号。</h3>
+      <textarea data-save="db2023-ra-2" placeholder="提示：张三本人 Z；领导 B 满足 Z.boss = B.num；下级 S 满足 S.boss = Z.num。可以写两条表达式，也可以并起来并加角色标记。"></textarea>
+      <details>
+        <summary>展开参考答案和解析</summary>
+        <p><strong>第一动作：</strong>把同一张 <code>emp</code> 拆成三种角色：张三 <span class="formula">Z</span>、领导 <span class="formula">B</span>、下级 <span class="formula">S</span>。</p>
+        <p>直属领导编号：</p>
+        <p><span class="formula">Π<sub>B.num</sub>(σ<sub>Z.name='张三' ∧ Z.boss=B.num</sub>(ρ<sub>Z</sub>(emp) × ρ<sub>B</sub>(emp)))</span></p>
+        <p>直属下级编号：</p>
+        <p><span class="formula">Π<sub>S.num</sub>(σ<sub>Z.name='张三' ∧ S.boss=Z.num ∧ S.num≠Z.num</sub>(ρ<sub>Z</sub>(emp) × ρ<sub>S</sub>(emp)))</span></p>
+        <p><strong>考试可接受写法：</strong>如果题目没有要求合并成一个关系，分成“直属领导”“直属下级”两条表达式最清楚。如果要合并，记得两边列结构要一致。</p>
+      </details>
+    </div>
+
+    <h3>3.2 SQL 六问</h3>
+    <div class="question">
+      <h3>1. 查找姓张的员工的薪水平均值。</h3>
+      <textarea data-save="db2023-sql-1" placeholder="写 SQL。注意中文姓氏用 LIKE '张%'。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <pre>SELECT AVG(salary) AS avg_salary
+FROM emp
+WHERE name LIKE '张%';</pre>
+        <p><strong>易错点：</strong>不要写 <code>name = '张%'</code>。等号是精确匹配，<code>LIKE</code> 才能配合通配符。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>2. 查找各部门薪水最高的员工编号、姓名和部门号。</h3>
+      <textarea data-save="db2023-sql-2" placeholder="提示：先按部门求 MAX(salary)，再回 emp 表找同工资员工。要保留并列最高。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <pre>SELECT e.num, e.name, e.dept
+FROM emp e
+JOIN (
+  SELECT dept, MAX(salary) AS max_salary
+  FROM emp
+  GROUP BY dept
+) m
+ON e.dept = m.dept AND e.salary = m.max_salary;</pre>
+        <p><strong>为什么不能只写 GROUP BY dept 后 SELECT num,name：</strong>分组后一个部门可能有多人并列最高，非分组列不能随便拿；正确做法是“聚合结果回表”。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>3. 查找除总经理之外每个员工及其 boss 的编号和姓名，先按 boss 姓名，再按员工姓名排序。</h3>
+      <textarea data-save="db2023-sql-3" placeholder="提示：自连接。员工 e 的 boss 编号 = 上级 b 的 num。总经理特征是 e.num = e.boss。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <pre>SELECT e.num AS emp_num, e.name AS emp_name,
+       b.num AS boss_num, b.name AS boss_name
+FROM emp e
+JOIN emp b ON e.boss = b.num
+WHERE e.num <> e.boss
+ORDER BY b.name, e.name;</pre>
+        <p><strong>卷面信号：</strong>同一张表既表示员工又表示上级，就是自连接，必须起别名。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>4. 查找员工平均薪资最高的部门，可能有多个。</h3>
+      <textarea data-save="db2023-sql-4" placeholder="提示：部门平均薪资最高 = 该部门 AVG >= 所有部门 AVG。可以用 ALL 或嵌套 MAX。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <pre>SELECT dept
+FROM emp
+GROUP BY dept
+HAVING AVG(salary) >= ALL (
+  SELECT AVG(salary)
+  FROM emp
+  GROUP BY dept
+);</pre>
+        <p>也可以把部门平均薪资先做成子查询，再找最大值。<strong>关键是保留并列最高</strong>，所以不要只取一行。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>5. 查找归总经理直接领导的员工的最低薪水。</h3>
+      <textarea data-save="db2023-sql-5" placeholder="提示：总经理 g 满足 g.num = g.boss；员工 e 满足 e.boss = g.num 且 e 不是 g 自己。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <pre>SELECT MIN(e.salary) AS min_salary
+FROM emp e
+JOIN emp g ON e.boss = g.num
+WHERE g.num = g.boss
+  AND e.num <> g.num;</pre>
+        <p><strong>为什么加 <code>e.num <> g.num</code>：</strong>总经理自己也满足 boss 指向总经理，如果不排除，可能把总经理自己的工资算进去。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>6. 创建视图：所有薪水小于 5000 的员工，且不能通过视图把薪水调到 5000 以上。</h3>
+      <textarea data-save="db2023-sql-6" placeholder="提示：视图 + WHERE salary < 5000 + WITH CHECK OPTION。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <pre>CREATE VIEW low_salary_emp AS
+SELECT num, name, salary
+FROM emp
+WHERE salary < 5000
+WITH CHECK OPTION;</pre>
+        <p><strong><code>WITH CHECK OPTION</code> 的作用：</strong>通过视图插入或更新后的记录仍必须满足 <code>salary &lt; 5000</code>。这就是“视图不只会看，还会管更新边界”。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="tx">
+    <h2>四、事务管理与恢复（20 分）</h2>
+    <div class="panel">
+      <pre>T1: r(B), w(B: 11 -> 12)
+T2: r(B), w(B: 12 -> 13), r(A), w(A: 30 -> 31), COMMIT
+T3: r(A), w(A: 29 -> 30), COMMIT
+T1: r(D), w(D: 44 -> 45) *** , COMMIT</pre>
+      <p class="muted">实际顺序是：T1 对 B，T2 对 B，T3 对 A，T2 对 A 并提交，T1 对 D，星号处故障，后面 T3/T1 尚未来得及提交。</p>
+    </div>
+
+    <div class="question">
+      <h3>1. 这个调度等价于什么串行调度？</h3>
+      <textarea data-save="db2023-tx-1" placeholder="先画冲突图：同一数据项、不同事务、至少一个写。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>第一动作：</strong>画优先图。只看不同事务对同一数据项的冲突。</p>
+        <ul>
+          <li>在 B 上，T1 先写 B，T2 后读/写 B，所以有边 <span class="formula">T1 -> T2</span>。</li>
+          <li>在 A 上，T3 先写 A，T2 后读/写 A，所以有边 <span class="formula">T3 -> T2</span>。</li>
+          <li>T1 和 T3 没有共同数据项冲突。</li>
+        </ul>
+        <p>图无环，所以冲突可串行化。等价串行顺序中 <span class="key">T2 必须在 T1、T3 后面</span>，因此可写为 <span class="formula">T1, T3, T2</span> 或 <span class="formula">T3, T1, T2</span>。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>2. 这些事务遵守两阶段锁协议吗？请证明。</h3>
+      <textarea data-save="db2023-tx-2" placeholder="先写 2PL 定义：加锁阶段只能加锁，释放第一个锁后进入收缩阶段，不能再加新锁。再对两种加减锁策略分析。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><span class="key">2PL 判断口诀：</span>只要“释放过锁之后又申请新锁”，就违反两阶段锁协议。</p>
+        <p>题目给了两种策略：</p>
+        <ul>
+          <li><strong>策略 1：</strong>事务一开始先获得本事务所有操作需要的锁，随后每个操作完成后释放对应锁。这种策略下，锁都在开头拿完，后面只释放，不再申请新锁，所以每个事务自身满足 2PL。</li>
+          <li><strong>策略 2：</strong>每次读/写前才申请对应锁，操作完成后、提交前释放。若一个事务先释放了某个数据项的锁，后面又为了读/写另一个数据项申请新锁，就违反 2PL。T1 做完 B 后如果释放 B，后面又申请 D；T2 做完 B 后如果释放 B，后面又申请 A；它们都会违反。T3 只操作 A，不存在释放后再申请新锁的问题。</li>
+        </ul>
+        <p><strong>考试写法：</strong>先给定义，再指出具体“释放后再加锁”的位置，别只写结论。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>3. 若不符合 2PL，去除最少操作使其符合 2PL；分别按两种策略分析。</h3>
+      <textarea data-save="db2023-tx-3" placeholder="提示：策略1本身拿全锁，不用删；策略2要避免释放后再申请新锁，最小删除通常删掉后续新数据项操作。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>策略 1：</strong>每个事务开始时一次性拿到所需锁，因此不需要删除操作即可满足 2PL。</p>
+        <p><strong>策略 2：</strong>T1 的 B 操作之后又去操作 D，T2 的 B 操作之后又去操作 A，都会形成“释放后再申请”。为了最少删除，可以删除导致第二次申请新锁的后续数据项操作，例如：</p>
+        <ul>
+          <li>删除 T1 对 D 的读写操作，避免 T1 后续再申请 D 锁。</li>
+          <li>删除 T2 对 A 的读写操作，避免 T2 后续再申请 A 锁。</li>
+        </ul>
+        <p><strong>注意：</strong>这类题重点不是机械给唯一答案，而是说明“删掉哪些操作后，每个事务的加锁都集中在释放之前”。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>4. 改造后是否为严格两阶段锁协议？为什么？</h3>
+      <textarea data-save="db2023-tx-4" placeholder="先写 strict 2PL：写锁必须持有到提交/中止；再看题目策略是否操作后立即释放。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><span class="key">严格 2PL：</span>不仅要满足 2PL，还要求至少所有排它锁/写锁一直持有到事务提交或中止。</p>
+        <p>如果题目策略是“操作完成后立即释放该操作的锁”或“提交前释放锁”，通常就不是严格 2PL，因为写过 B/A/D 的锁可能在提交前被释放，其他事务可能读到未提交数据，导致级联回滚风险。</p>
+        <p><strong>答题句式：</strong>该调度可以通过删操作满足普通 2PL，但不是严格 2PL；原因是写锁没有保持到 commit/abort，不能阻止其它事务读取未提交结果。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>5. 星号处故障，Undo 日志恢复：回滚谁？是否级联？哪些结果能确定持久化？</h3>
+      <textarea data-save="db2023-tx-5" placeholder="先分清：星号时 T2 已提交，T1/T3 未提交。Undo 日志只负责撤销未提交事务；是否持久化还和 force/steal 策略相关。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>第一层：谁提交了？</strong>星号处 T2 已经 commit，T1 和 T3 尚未 commit。</p>
+        <ul>
+          <li><strong>需要回滚：</strong>T1、T3。</li>
+          <li><strong>不回滚：</strong>T2，原则上已提交事务不能随便撤销。</li>
+        </ul>
+        <p><strong>第二层：是否有级联风险？</strong>T2 读了 T3 写出的 A=30，并把 A 写成 31 后提交；而 T3 在星号处还没提交。这说明原调度存在脏读/不可恢复风险。若系统真的允许这样执行，就会出现“已提交 T2 依赖未提交 T3”的麻烦；正规系统会用严格 2PL 或恢复协议避免它。</p>
+        <p><strong>第三层：哪些结果能确定持久化？</strong>在纯 Undo 日志语境中，如果采用 force-at-commit，T2 的提交结果应已持久化；未提交的 T1/T3 修改不能视为最终有效，恢复时要撤销。若题目要求讨论 steal/force，应写清假设：</p>
+        <ul>
+          <li><strong>force：</strong>提交时强制写盘，T2 的提交结果可以确定持久保存。</li>
+          <li><strong>no-force：</strong>提交不一定立即写盘，仅凭题干不能确定 T2 修改是否已经落盘。</li>
+          <li><strong>steal：</strong>未提交事务修改可能已经写盘，所以 Undo 日志需要能撤销 T1/T3。</li>
+          <li><strong>no-steal：</strong>未提交修改不会写盘，未提交结果可确定没有持久保存。</li>
+        </ul>
+        <p><strong>这题拿分点：</strong>不要只写“回滚 T1/T3”。必须把 T2 读 T3 未提交 A 的依赖关系指出来，说明恢复和可恢复调度之间的关系。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="nf">
+    <h2>五、规范化理论（20 分）</h2>
+    <div class="panel">
+      <p>关系模式 <span class="formula">R(A,B,C,D,E)</span>，函数依赖：</p>
+      <p><span class="formula">ABC -> D</span>，<span class="formula">E -> B</span>，<span class="formula">AD -> C</span></p>
+    </div>
+
+    <div class="question">
+      <h3>1. 求 R 的候选键。</h3>
+      <textarea data-save="db2023-nf-1" placeholder="提示：先找从不出现在右部的属性，它们必须进每个候选键。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>第一动作：</strong>看右部出现过哪些属性。右部有 B、C、D；没有出现在右部的是 <span class="formula">A,E</span>，所以任何候选键都必须包含 A 和 E。</p>
+        <p>求闭包：</p>
+        <ul>
+          <li><span class="formula">(A,E,C)<sup>+</sup></span>：E -> B，所以有 A,E,C,B；再由 ABC -> D 得到 D。覆盖 A,B,C,D,E，所以 AEC 是键。</li>
+          <li><span class="formula">(A,E,D)<sup>+</sup></span>：E -> B，所以有 A,E,D,B；再由 AD -> C 得到 C。覆盖 A,B,C,D,E，所以 AED 是键。</li>
+        </ul>
+        <p><strong>候选键：</strong><span class="formula">AEC</span> 和 <span class="formula">AED</span>。</p>
+        <p><strong>为什么 AE 不是键：</strong>AE 只能推出 B，推不出 C/D；还差一个 C 或 D 来启动后续依赖。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>2. 将 R 分解为 BCNF。</h3>
+      <textarea data-save="db2023-nf-2" placeholder="提示：BCNF 要求每个非平凡依赖 X->Y 的 X 必须是超键。找违反项 E->B、AD->C 等。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><span class="key">BCNF 分解算法：</span>找到违反 BCNF 的依赖 <span class="formula">X -> Y</span>，分成 <span class="formula">R1 = X ∪ Y</span> 和 <span class="formula">R2 = R - (Y - X)</span>，继续检查。</p>
+        <p>一种可行分解：</p>
+        <ol>
+          <li>依赖 <span class="formula">E -> B</span> 中 E 不是 R 的超键，违反 BCNF。分解为 <span class="formula">R1(E,B)</span> 和 <span class="formula">R2(A,C,D,E)</span>。</li>
+          <li>在 <span class="formula">R2(A,C,D,E)</span> 中，依赖 <span class="formula">AD -> C</span> 仍成立，AD 在 R2 中能推出 C，但推不出 E，因此 AD 不是 R2 超键，继续分解为 <span class="formula">R21(A,D,C)</span> 和 <span class="formula">R22(A,D,E)</span>。</li>
+        </ol>
+        <p>最终得到：<span class="formula">{ R1(E,B), R21(A,D,C), R22(A,D,E) }</span>。这些子关系中保留下来的非平凡依赖左部都是超键，因此满足 BCNF。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>3. 分解结果是否保持函数依赖？请证明。</h3>
+      <textarea data-save="db2023-nf-3" placeholder="提示：把原依赖投影到各子模式，再看能否推出原 F。重点检查 ABC->D 是否还能推出。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>判断方法：</strong>把原函数依赖投影到每个子关系上，再看投影依赖的并集能不能推出原 F。</p>
+        <ul>
+          <li>在 <span class="formula">R1(E,B)</span> 中保留 <span class="formula">E -> B</span>。</li>
+          <li>在 <span class="formula">R21(A,D,C)</span> 中保留 <span class="formula">AD -> C</span>，同时因为有 <span class="formula">AD -> C</span>，在这个子关系里 AD 是键。</li>
+          <li><span class="formula">ABC -> D</span> 涉及 A、B、C、D，分散在多个子关系中，不能在单个子关系中检查。</li>
+        </ul>
+        <p>用投影依赖尝试求 <span class="formula">(ABC)<sup>+</sup></span>：由 <span class="formula">E -> B</span> 不能反推 E；由 <span class="formula">AD -> C</span> 需要 D 才能用。无法推出 D，所以 <span class="formula">ABC -> D</span> 不被保持。</p>
+        <p><strong>结论：</strong>该 BCNF 分解无损，但不保持所有函数依赖。考试里这很常见：BCNF 和依赖保持不一定同时得到。</p>
+      </details>
+    </div>
+
+    <div class="question">
+      <h3>4. 该分解是不是无损连接？请证明。</h3>
+      <textarea data-save="db2023-nf-4" placeholder="提示：二元分解无损判据：R 分成 R1、R2，如果交集 -> R1 或 交集 -> R2，则无损。"></textarea>
+      <details>
+        <summary>展开参考答案</summary>
+        <p><strong>二元分解无损判据：</strong>把 R 分解成 R1、R2，若 <span class="formula">(R1 ∩ R2) -> R1</span> 或 <span class="formula">(R1 ∩ R2) -> R2</span>，则无损。</p>
+        <ol>
+          <li>第一次分解：<span class="formula">R -> R1(E,B)</span> 和 <span class="formula">R2(A,C,D,E)</span>。交集是 E，且有 <span class="formula">E -> B</span>，所以 <span class="formula">E -> EB</span>，第一次无损。</li>
+          <li>第二次分解：<span class="formula">R2(A,C,D,E) -> R21(A,D,C)</span> 和 <span class="formula">R22(A,D,E)</span>。交集是 AD，且有 <span class="formula">AD -> C</span>，所以 <span class="formula">AD -> ADC</span>，第二次无损。</li>
+        </ol>
+        <p><strong>结论：</strong>连续两次无损分解，因此整体无损连接。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card" id="er">
+    <h2>六、数据库设计：诊所管理系统 ER 图（10 分）</h2>
+    <div class="question">
+      <h3>根据需求画 ER 图。你认为不确定的地方可以注释说明。</h3>
+      <textarea data-save="db2023-er" placeholder="先写实体：患者、医生、门诊记录、检查项目、药品、检查单/药品单。再写联系和基数：患者1-N门诊，医生1-N门诊，门诊1-N检查项目，门诊1-N药品……"></textarea>
+      <details>
+        <summary>展开参考答案和画图检查清单</summary>
+        <p><strong>第一动作：</strong>先抽“名词”做实体，再看“每次/多项/多种”决定联系和基数。</p>
+        <div class="answer-grid">
+          <div class="panel">
+            <h3>实体与属性</h3>
+            <ul>
+              <li><strong>患者 Patient：</strong>患者编号 PID，姓名，年龄。</li>
+              <li><strong>医生 Doctor：</strong>姓名（题目指定为标识），年龄，科室，职称，职位。</li>
+              <li><strong>门诊记录 Visit：</strong>门诊编号 VID，门诊时间，诊断。</li>
+              <li><strong>检查项目 CheckItem：</strong>检查名称，价格，检查说明。</li>
+              <li><strong>药品 Drug：</strong>药品名称，价格。</li>
+              <li><strong>检查单/检查明细 VisitCheck：</strong>门诊编号，检查名称，检查时间。</li>
+              <li><strong>药品单/用药明细 VisitDrug：</strong>门诊编号，药品名称。</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>联系与基数</h3>
+            <ul>
+              <li>患者 <span class="formula">1 : N</span> 门诊记录：一位患者可以多次就诊，每次门诊属于一位患者。</li>
+              <li>医生 <span class="formula">1 : N</span> 门诊记录：一位医生可接诊多次，每次门诊对应一位医生。</li>
+              <li>门诊记录 <span class="formula">1 : N</span> 检查明细，检查明细 <span class="formula">N : 1</span> 检查项目。</li>
+              <li>门诊记录 <span class="formula">1 : N</span> 用药明细，用药明细 <span class="formula">N : 1</span> 药品。</li>
+            </ul>
+          </div>
+        </div>
+        <p><strong>容易漏的点：</strong>检查项目和药品不是普通字符串，因为系统要记录“每种检查/每种药品”的价格和说明，所以它们应作为实体。检查单、药品单里出现“可能有多项/多种”，通常要用明细关系表承接多值。</p>
+        <p><strong>卷面注释可以写：</strong>若一次门诊最多只有一个检查单和一个药品单，则检查单/药品单可作为弱实体或明细集合；若题目只要求概念 ER，画 Visit 与 CheckItem/Drug 的多对多联系并给联系属性也可接受，但要说明检查时间属于检查联系。</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>考后复盘格：不要只看答案，要把错因写下来</h2>
+    <textarea data-save="db2023-review" placeholder="写三句话：1. 我最卡的是哪一类题？2. 我错在概念、第一步、公式/符号，还是表达？3. 明天看到同类题我要先做什么？"></textarea>
+    <div class="rubric">
+      <strong>最低达标：</strong>选择题不低于 14/20；SQL 六问至少能写出 4 问完整答案；事务能画出冲突图；范式能求出候选键和无损证明；ER 能列全实体和基数。没达标就回 <a href="./day6_database_final_rehearsal.html">数据库最后排雷</a>。
+    </div>
+  </section>
+
+  <div class="scorebar">
+    <div>
+      <strong id="progressText">主观题草稿保存：0 项</strong>
+      <div class="mini">选择题自动判分；主观题按“第一动作 + 关键步骤 + 规范表达”自查。</div>
+    </div>
+    <div>
+      <button class="btn primary" id="saveAll">保存当前草稿</button>
+      <button class="btn ghost" id="clearDrafts">清空本页草稿</button>
+    </div>
+  </div>
+</main>
+
+<script>
+  const questions = [
+    {
+      id: "q1",
+      title: "R 表的 A、B 字段上建立了一个联合索引，哪些查询语句可以用上该索引？",
+      options: {
+        A: "select * from R where A = 10",
+        B: "select * from R where B = 10",
+        C: "select * from R where A*2 = 10",
+        D: "select * from R where A = 10 and C = 10"
+      },
+      answer: ["A", "D"],
+      explain: "联合索引 (A,B) 通常遵循最左前缀。只用 A 可以；A 和其它条件一起也可以先用 A。只用 B 跳过最左列，一般不能直接利用该联合索引。对 A 做表达式 A*2 会破坏普通索引可用性。"
+    },
+    {
+      id: "q2",
+      title: "下列关于数据库管理系统的说法，不正确的是：",
+      options: {
+        A: "DBMS 是位于用户与操作系统之间的一层数据管理软件",
+        B: "DBMS 是科学地组织和管理数据的软件系统",
+        C: "DBMS 是一个大型软件系统，包括数据库管理、存取、安全、恢复等功能",
+        D: "DBMS 是一个长期存储在计算机内、有组织的、可共享的大量数据的集合"
+      },
+      answer: ["D"],
+      explain: "D 描述的是数据库 Database，不是数据库管理系统 DBMS。DBMS 是管理数据库的软件。"
+    },
+    {
+      id: "q3",
+      title: "下列关于数据库事务处理的说法，不正确的是：",
+      options: {
+        A: "事务处理是指将一组相关操作看成一个整体进行处理",
+        B: "事务处理应该具有原子性、一致性、隔离性和持久性等特征",
+        C: "事务处理应该遵循 ACID 原则",
+        D: "事务处理应该遵循 CAP 原则"
+      },
+      answer: ["D"],
+      explain: "事务的核心是 ACID。CAP 是分布式系统一致性、可用性、分区容错性的权衡，不是数据库事务的一般原则。"
+    },
+    {
+      id: "q4",
+      title: "哪种用户在任何时候都可以授予别的用户某个表的权限？",
+      options: {
+        A: "数据库管理员 DBA",
+        B: "表的创建者",
+        C: "表的普通用户",
+        D: "已经获得该表传播权限的用户（with grant option）"
+      },
+      answer: ["A", "B"],
+      explain: "DBA 和表创建者拥有最高授权能力。with grant option 用户能传播已获得的权限，但并非任何时候、任何权限都可以授予。普通用户不能授权。"
+    },
+    {
+      id: "q5",
+      title: "以下不属于需求分析阶段工作内容的是：",
+      options: {
+        A: "进行数据抽象",
+        B: "绘制数据流图",
+        C: "编写数据字典",
+        D: "确定数据的物理存储结构"
+      },
+      answer: ["A", "D"],
+      explain: "需求分析阶段偏“问清楚系统要什么”，常见产物包括数据流图和数据字典。数据抽象更偏概念设计，物理存储结构属于物理设计。"
+    },
+    {
+      id: "q6",
+      title: "工资表（职工号，职务级别，工资）中，职务级别低的职工工资应低于职务级别高的职工工资。这属于什么约束？",
+      options: {
+        A: "静态列级约束",
+        B: "动态列级约束",
+        C: "静态元组约束",
+        D: "动态元组约束",
+        E: "静态关系约束",
+        F: "动态关系约束"
+      },
+      answer: ["E"],
+      explain: "它不是看单个列、单个元组，而是比较同一关系中多行之间的职务级别和工资关系；且描述的是某一时刻数据库状态必须满足的规则，所以是静态关系约束。"
+    },
+    {
+      id: "q7",
+      title: "5 个实体，5 个二元联系，其中 2 个为 1:1，3 个为 M:N，转换出的关系表个数不可能是：",
+      options: {
+        A: "7 个",
+        B: "8 个",
+        C: "9 个",
+        D: "10 个"
+      },
+      answer: ["A"],
+      explain: "5 个实体至少 5 张表。3 个 M:N 联系必须各转一张表，所以至少 8 张。1:1 联系可以合并进实体表，也可以单独成表，因此可能是 8、9、10，但不可能是 7。"
+    },
+    {
+      id: "q8",
+      title: "关于存储过程的说法正确的是：",
+      options: {
+        A: "存储过程可以减少网络上传输大量无用信息或原始数据",
+        B: "存储过程可被多个程序反复调用，减轻程序编写工作量",
+        C: "触发器是一种特殊的存储过程",
+        D: "应尽量将系统所有业务逻辑都封装到存储过程里"
+      },
+      answer: ["A", "B", "C"],
+      explain: "A、B 是存储过程常见优点；触发器可看成特殊的、由事件自动触发的存储过程。D 过于绝对，业务逻辑全部塞进数据库会带来维护和迁移问题。"
+    },
+    {
+      id: "q9",
+      title: "以下关于触发器的说法正确的是：",
+      options: {
+        A: "触发器基于一个表创建，但是可以对多个表进行操作",
+        B: "触发器被定义后，只有当用户调用它时才触发",
+        C: "可以对表创建 SELECT 触发器",
+        D: "行级触发器的运行效率一定比语句级触发器高"
+      },
+      answer: ["A"],
+      explain: "触发器由 INSERT/UPDATE/DELETE 等事件自动触发，不需要用户显式调用；常规 SQL 标准里没有 SELECT 触发器；行级触发器对每行触发，通常开销更大，不应说一定更高效。"
+    },
+    {
+      id: "q10",
+      title: "在关系模型中，一组具有相同数据类型的值的集合称为：",
+      options: {
+        A: "关系",
+        B: "属性",
+        C: "域",
+        D: "分量"
+      },
+      answer: ["C"],
+      explain: "严格定义是域 Domain：一组相同类型值的集合。属性是关系表中的列，包含属性名并取值于某个域。本题按严格概念选 C。"
+    }
+  ];
+
+  const mcqBox = document.getElementById("mcqBox");
+  mcqBox.innerHTML = questions.map((q, idx) => `
+    <div class="question" data-question="${q.id}">
+      <h3>${idx + 1}. ${q.title}</h3>
+      <div class="options">
+        ${Object.entries(q.options).map(([key, text]) => `
+          <label class="option">
+            <input type="checkbox" name="${q.id}" value="${key}" />
+            <span><strong>${key}.</strong> ${text}</span>
+          </label>
+        `).join("")}
+      </div>
+      <div class="feedback" id="${q.id}-feedback"></div>
+    </div>
+  `).join("");
+
+  function sameSet(a, b) {
+    return a.length === b.length && a.every(x => b.includes(x));
+  }
+
+  document.getElementById("checkMcq").addEventListener("click", () => {
+    let correct = 0;
+    questions.forEach(q => {
+      const picked = [...document.querySelectorAll(`input[name="${q.id}"]:checked`)].map(x => x.value).sort();
+      const answer = [...q.answer].sort();
+      const ok = sameSet(picked, answer);
+      if (ok) correct += 1;
+      const fb = document.getElementById(`${q.id}-feedback`);
+      fb.className = `feedback show ${ok ? "ok" : "bad"}`;
+      fb.innerHTML = `<strong>${ok ? "答对了" : "需要回炉"}：</strong>正确答案 ${answer.join("")}。<br>${q.explain}`;
+    });
+    document.getElementById("mcqScore").innerHTML = `<strong>选择题得分：</strong>${correct}/10 题，折算 ${correct * 2}/20 分。${correct < 7 ? "先别慌，低于 7 题就回看每题的“为什么不选”。" : "不错，接下来重点把 SQL/事务/范式的大题调用起来。"}`;
+  });
+
+  document.getElementById("resetMcq").addEventListener("click", () => {
+    document.querySelectorAll("#mcqBox input[type='checkbox']").forEach(x => x.checked = false);
+    document.querySelectorAll(".feedback").forEach(x => {
+      x.className = "feedback";
+      x.innerHTML = "";
+    });
+    document.getElementById("mcqScore").textContent = "已清空选择。";
+  });
+
+  const areas = [...document.querySelectorAll("textarea[data-save]")];
+  function updateProgress() {
+    const filled = areas.filter(a => a.value.trim()).length;
+    document.getElementById("progressText").textContent = `主观题草稿保存：${filled}/${areas.length} 项`;
+  }
+  areas.forEach(area => {
+    const key = area.dataset.save;
+    area.value = localStorage.getItem(key) || "";
+    area.addEventListener("input", () => {
+      localStorage.setItem(key, area.value);
+      updateProgress();
+    });
+  });
+  updateProgress();
+  document.getElementById("saveAll").addEventListener("click", () => {
+    areas.forEach(area => localStorage.setItem(area.dataset.save, area.value));
+    updateProgress();
+  });
+  document.getElementById("clearDrafts").addEventListener("click", () => {
+    if (!confirm("确认清空本页主观题草稿吗？")) return;
+    areas.forEach(area => {
+      localStorage.removeItem(area.dataset.save);
+      area.value = "";
+    });
+    updateProgress();
+  });
+</script>
+</body>
+</html>

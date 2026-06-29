@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>精品资源库 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛精品资源库：按课程、类型、阶段和优先级筛选期末复习资源。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(246, 185, 207, .42), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 76% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.94) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .20) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    button,
+    input {
+      font: inherit;
+    }
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo,
+    .icon {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo { width: 40px; height: 40px; }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .btn,
+    .navlinks a,
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+    }
+    .btn:hover,
+    .navlinks a:hover,
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary,
+    .filter-btn.active {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .resource-card,
+    .metric {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel {
+      padding: 22px;
+    }
+    .hero-main {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 90% 12%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 74ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions,
+    .filter-row,
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .actions { margin-top: 22px; }
+    .search {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(115, 135, 168, .26);
+      border-radius: 8px;
+      background: rgba(255,255,255,.78);
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.80);
+      outline: none;
+    }
+    .search:focus {
+      border-color: rgba(155, 201, 236, .85);
+      box-shadow: 0 0 0 4px rgba(155, 201, 236, .20);
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .metric {
+      padding: 14px;
+    }
+    .metric strong {
+      display: block;
+      margin: 3px 0;
+      font-size: 26px;
+      color: #293047;
+      line-height: 1.1;
+    }
+    .metric span {
+      color: #65718a;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    section { padding: 24px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .section-head p { max-width: 72ch; }
+    .filter-panel {
+      display: grid;
+      gap: 14px;
+    }
+    .filter-group {
+      display: grid;
+      gap: 8px;
+    }
+    .filter-label {
+      color: #5e6980;
+      font-size: 13px;
+      font-weight: 950;
+    }
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .resource-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 276px;
+      padding: 18px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .resource-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(159, 218, 203, .62);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      color: inherit;
+      text-decoration: none;
+    }
+    .card-title:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(115, 135, 168, .22);
+      background: rgba(255,255,255,.72);
+      color: #6a617c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .tag.hot {
+      color: #6a3f55;
+      background: linear-gradient(135deg, #ffe4ef, #fff3c9);
+      border-color: rgba(196, 142, 180, .38);
+    }
+    .tag.level-exam-like {
+      color: #315f50;
+      background: linear-gradient(135deg, #e4fbf3, #f9fff7);
+      border-color: rgba(83, 155, 133, .34);
+    }
+    .tag.level-reviewed {
+      color: #315f73;
+      background: linear-gradient(135deg, #e7f7ff, #fbfdff);
+      border-color: rgba(89, 151, 190, .32);
+    }
+    .tag.level-archive {
+      color: #6c6574;
+      background: #f1eef7;
+    }
+    .tag.level-draft {
+      color: #73506a;
+      background: #ffe7f1;
+    }
+    .quality-line {
+      display: grid;
+      gap: 4px;
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid rgba(115, 135, 168, .16);
+      border-radius: 8px;
+      background: rgba(255,255,255,.54);
+      color: #65718a;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .quality-line b {
+      color: #46536a;
+    }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 14px;
+    }
+    .done-btn {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: #31516f;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .done-btn.done {
+      color: #285a50;
+      border-color: rgba(96, 164, 146, .46);
+      background: linear-gradient(135deg, #e4fbf3, #f6f1ff);
+    }
+    .empty {
+      grid-column: 1 / -1;
+      padding: 28px;
+      text-align: center;
+    }
+    .footer {
+      padding: 30px 0 46px;
+      color: #65718a;
+    }
+    .footer .panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 980px) {
+      .hero,
+      .resource-grid {
+        grid-template-columns: 1fr;
+      }
+      .navlinks { display: none; }
+      .section-head { display: block; }
+      .hero-main { min-height: auto; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 22px, 1160px); }
+      .actions .btn { width: 100%; }
+      .filter-btn { flex: 1 1 auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="资源库导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M32 7l6.8 13.8L54 23l-11 10.7 2.6 15.1L32 41.6 18.4 48.8 21 33.7 10 23l15.2-2.2L32 7Z" fill="#ffd76f" stroke="#6b5a92" stroke-width="2"/>
+          </svg>
+        </span>
+        <span>星光学习岛</span>
+      </a>
+      <div class="navlinks">
+        <a href="./start_here.html">新手向导</a>
+        <a href="./index.html#courses">课程入口</a>
+        <a href="./dashboard.html">继续学习</a>
+        <a href="./practice_lab.html">训练台</a>
+        <a href="./index.html#resource-map">真题资源</a>
+        <a href="./course.html">课程岛</a>
+        <a href="./progress_vault.html">学习存档</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <article class="panel hero-main">
+        <div>
+          <span class="eyebrow">精品资源库</span>
+          <h1>只看最值得点开的。</h1>
+          <p class="lead">把 80 多个页面筛成<span class="key">精品入口</span>：真题卷、深学讲义、速查包、闪卡、背诵舱、错题本。按课程和训练动作筛，不用再翻文件夹。</p>
+          <input class="search" id="searchBox" type="search" placeholder="搜索课程、题型、关键词，例如：离散 证明、软工 UML、OS 真题">
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="#library">开始筛选</a>
+          <a class="btn mint" href="./start_here.html">新手向导</a>
+          <a class="btn primary" href="./practice_lab.html">进入训练台</a>
+          <a class="btn mint" href="./dashboard.html">继续学习</a>
+          <a class="btn mint" href="./index.html#courses">回课程入口</a>
+          <a class="btn" href="./progress_vault.html">学习存档</a>
+        </div>
+      </article>
+      <aside class="metric-grid">
+        <article class="metric"><span>精选资源</span><strong id="totalMetric">0</strong><p>不平铺全部旧页面，只保留高价值入口。</p></article>
+        <article class="metric"><span>已完成</span><strong id="doneMetric">0</strong><p>完成状态保存在本机，刷新也不会丢。</p></article>
+        <article class="metric"><span>真题级</span><strong id="examLikeMetric">0</strong><p>优先做最接近期末题型的资源。</p></article>
+        <article class="metric"><span>当前筛选</span><strong id="visibleMetric">0</strong><p>一边筛，一边知道还剩多少。</p></article>
+      </aside>
+    </section>
+
+    <section id="library">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">筛选器</span>
+          <h2>按你现在的复习动作找资源。</h2>
+        </div>
+        <p>从“我该学哪科”变成“我现在要做什么动作”：校准真题、补洞、背诵、考前收口或错题回炉。</p>
+      </div>
+      <div class="panel filter-panel">
+        <div class="filter-group">
+          <span class="filter-label">资源范围</span>
+          <div class="filter-row" id="scopeFilters"></div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">课程</span>
+          <div class="filter-row" id="courseFilters"></div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">使用阶段</span>
+          <div class="filter-row" id="stageFilters"></div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">资源类型</span>
+          <div class="filter-row" id="typeFilters"></div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">优先级</span>
+          <div class="filter-row" id="priorityFilters"></div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">校对等级</span>
+          <div class="filter-row" id="qualityFilters"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">资源卡片</span>
+          <h2>打开、完成、回炉。</h2>
+        </div>
+        <p>每张卡都说明它适合哪个阶段。先做“必做”，再按自己的短板补“推荐”。</p>
+      </div>
+      <div class="resource-grid" id="resourceGrid"></div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <div class="panel">
+      <p><strong>精品资源库</strong><br>让星光学习岛从“很多页面”变成“可筛选、可完成、可维护”的学习平台。</p>
+      <div class="actions" style="margin-top:0;">
+        <a class="btn" href="./index.html">回首页</a>
+        <a class="btn" href="./dashboard.html">继续学习</a>
+        <a class="btn" href="./course.html">课程岛</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const state = {
+      scope: "main",
+      course: "all",
+      stage: "all",
+      type: "all",
+      priority: "all",
+      quality: "all",
+      query: ""
+    };
+    const initialParams = new URLSearchParams(window.location.search);
+    state.query = initialParams.get("q") || "";
+    state.scope = initialParams.get("scope") || state.scope;
+    state.course = initialParams.get("course") || state.course;
+    state.stage = initialParams.get("stage") || state.stage;
+    state.type = initialParams.get("type") || state.type;
+    state.priority = initialParams.get("priority") || state.priority;
+    state.quality = initialParams.get("quality") || state.quality;
+    const doneKey = "starlight-resource-done-v1";
+    const qualityLabels = {
+      "exam-like": "真题级",
+      reviewed: "已校对",
+      draft: "草稿",
+      archive: "维护资料"
+    };
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function readDone() {
+      try {
+        return JSON.parse(localStorage.getItem(doneKey) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function writeDone(done) {
+      localStorage.setItem(doneKey, JSON.stringify(done));
+    }
+
+    function courses() {
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+      return [
+        { id: "all", title: "全部课程" },
+        ...manifest.courses,
+        { id: "global", title: "全局工具" }
+      ];
+    }
+
+    function courseName(id) {
+      return courses().find(item => item.id === id)?.title || id;
+    }
+
+    function unique(field) {
+      return [...new Set((window.STARLIGHT_RESOURCE_CATALOG || []).map(item => item[field]))].filter(Boolean);
+    }
+
+    function qualityOf(item) {
+      return (window.STARLIGHT_RESOURCE_QUALITY || {})[item.id] || {
+        level: "draft",
+        source: "待补来源说明。",
+        next: "待补下一步改进点。"
+      };
+    }
+
+    function makeButton(group, value, label) {
+      return `<button class="filter-btn ${state[group] === value ? "active" : ""}" type="button" data-group="${group}" data-value="${escapeHtml(value)}">${escapeHtml(label)}</button>`;
+    }
+
+    function renderFilters() {
+      const scopes = [
+        { id: "main", label: "主线资源" },
+        { id: "exam", label: "只看真题级" },
+        { id: "all", label: "全部资料" },
+        { id: "archive", label: "维护资料" }
+      ];
+      $("#scopeFilters").innerHTML = scopes.map(item => makeButton("scope", item.id, item.label)).join("");
+      $("#courseFilters").innerHTML = courses().map(item => makeButton("course", item.id, item.title)).join("");
+      $("#stageFilters").innerHTML = [makeButton("stage", "all", "全部阶段"), ...unique("stage").map(stage => makeButton("stage", stage, stage))].join("");
+      $("#typeFilters").innerHTML = [makeButton("type", "all", "全部类型"), ...unique("type").map(type => makeButton("type", type, type))].join("");
+      $("#priorityFilters").innerHTML = [makeButton("priority", "all", "全部优先级"), ...unique("priority").map(priority => makeButton("priority", priority, priority))].join("");
+      $("#qualityFilters").innerHTML = [
+        makeButton("quality", "all", "全部等级"),
+        makeButton("quality", "exam-like", qualityLabels["exam-like"]),
+        makeButton("quality", "reviewed", qualityLabels.reviewed),
+        makeButton("quality", "archive", qualityLabels.archive)
+      ].join("");
+      document.querySelectorAll(".filter-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          state[button.dataset.group] = button.dataset.value;
+          render();
+        });
+      });
+    }
+
+    function matches(item) {
+      const query = state.query.trim().toLowerCase();
+      const quality = qualityOf(item);
+      const haystack = [
+        item.title,
+        item.description,
+        item.type,
+        item.stage,
+        item.priority,
+        courseName(item.courseId),
+        quality.level,
+        quality.source,
+        quality.next,
+        ...(item.tags || [])
+      ].join(" ").toLowerCase();
+      const scopeOk =
+        state.scope === "all" ||
+        (state.scope === "main" && quality.level !== "archive") ||
+        (state.scope === "exam" && quality.level === "exam-like") ||
+        (state.scope === "archive" && quality.level === "archive");
+      return (
+        scopeOk &&
+        (state.course === "all" || item.courseId === state.course) &&
+        (state.stage === "all" || item.stage === state.stage) &&
+        (state.type === "all" || item.type === state.type) &&
+        (state.priority === "all" || item.priority === state.priority) &&
+        (state.quality === "all" || quality.level === state.quality) &&
+        (!query || haystack.includes(query))
+      );
+    }
+
+    function sortResources(a, b) {
+      const priorityWeight = { "必做": 0, "推荐": 1, "可选": 2 };
+      const qualityWeight = { "exam-like": 0, reviewed: 1, draft: 2, archive: 3 };
+      const pa = priorityWeight[a.priority] ?? 9;
+      const pb = priorityWeight[b.priority] ?? 9;
+      if (pa !== pb) return pa - pb;
+      const qa = qualityWeight[qualityOf(a).level] ?? 9;
+      const qb = qualityWeight[qualityOf(b).level] ?? 9;
+      if (qa !== qb) return qa - qb;
+      return `${courseName(a.courseId)}-${a.stage}-${a.title}`.localeCompare(`${courseName(b.courseId)}-${b.stage}-${b.title}`, "zh-CN");
+    }
+
+    function renderCards(items) {
+      const done = readDone();
+      if (!items.length) {
+        $("#resourceGrid").innerHTML = `<article class="panel empty"><h3>这组筛选暂时没有资源</h3><p>换一个课程、类型或关键词试试。真正复习时，能缩小范围也是一种进步。</p></article>`;
+        return;
+      }
+      $("#resourceGrid").innerHTML = items.map(item => {
+        const isDone = Boolean(done[item.id]);
+        const quality = qualityOf(item);
+        const qualityText = qualityLabels[quality.level] || quality.level;
+        return `
+          <article class="resource-card">
+            <div class="card-top">
+              <div>
+                <span class="tag ${item.priority === "必做" ? "hot" : ""}">${escapeHtml(item.priority)}</span>
+                <span class="tag">${escapeHtml(courseName(item.courseId))}</span>
+                <span class="tag level-${escapeHtml(quality.level)}">${escapeHtml(qualityText)}</span>
+              </div>
+              <span class="tag">${escapeHtml(item.stage)}</span>
+            </div>
+            <a class="card-title" href="${escapeHtml(item.href)}"><h3>${escapeHtml(item.title)}</h3></a>
+            <p>${escapeHtml(item.description)}</p>
+            <div class="tag-row" style="margin-top:12px;">
+              <span class="tag">${escapeHtml(item.type)}</span>
+              ${(item.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
+            </div>
+            <div class="quality-line">
+              <span><b>依据：</b>${escapeHtml(quality.source)}</span>
+              <span><b>维护：</b>${escapeHtml(quality.next)}</span>
+            </div>
+            <div class="card-actions">
+              <a class="btn primary" href="${escapeHtml(item.href)}">打开资源</a>
+              <button class="done-btn ${isDone ? "done" : ""}" type="button" data-id="${escapeHtml(item.id)}">${isDone ? "已完成" : "标记完成"}</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+      document.querySelectorAll(".done-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const next = readDone();
+          next[button.dataset.id] = !next[button.dataset.id];
+          if (!next[button.dataset.id]) delete next[button.dataset.id];
+          writeDone(next);
+          render();
+        });
+      });
+    }
+
+    function renderMetrics(visible) {
+      const catalog = window.STARLIGHT_RESOURCE_CATALOG || [];
+      const main = catalog.filter(item => qualityOf(item).level !== "archive").length;
+      const examLike = catalog.filter(item => qualityOf(item).level === "exam-like").length;
+      const done = readDone();
+      $("#totalMetric").textContent = main;
+      $("#doneMetric").textContent = Object.keys(done).length;
+      $("#examLikeMetric").textContent = examLike;
+      $("#visibleMetric").textContent = visible.length;
+    }
+
+    function render() {
+      renderFilters();
+      const visible = (window.STARLIGHT_RESOURCE_CATALOG || []).filter(matches).sort(sortResources);
+      renderMetrics(visible);
+      renderCards(visible);
+    }
+
+    $("#searchBox").value = state.query;
+    $("#searchBox").addEventListener("input", event => {
+      state.query = event.target.value;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 1 软工画图从零深学讲义</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245, 247, 248, 0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      font-size: 13px;
+      text-decoration: none;
+      color: var(--blue);
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .callout {
+      border: 1px solid #cfe1ec;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .focus {
+      border: 1px solid #a7d8bf;
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: #eef9f3;
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .mini-flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .mini-flow div {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 10px;
+      text-align: center;
+      font-weight: 750;
+      color: var(--blue);
+    }
+    .steps { counter-reset: step; display: grid; gap: 9px; margin: 10px 0; }
+    .step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px 12px 11px 46px;
+    }
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .diagram, .source-img {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .diagram svg, .source-img img { display: block; width: 100%; height: auto; }
+    .source-img img {
+      max-height: 380px;
+      object-fit: contain;
+      background: #fff;
+    }
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+    }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: inherit;
+      line-height: 1.6;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+    }
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .options {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .options li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px 12px;
+    }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 860px) {
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      .mini-flow { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 1 软工画图从零深学讲义</h1>
+      <p class="muted">这节课只做一件事：把“看到一大段业务描述完全不知道画什么”变成“先识别题型，再按模板画出最低不丢分骨架”。软工开卷不等于临场翻资料，真正的开卷能力是题眼索引和作答模板。</p>
+      <div class="strip">
+        <span class="pill hot">软工 6/25</span>
+        <span class="pill info">依据：软工十讲 + 画图题 PDF + 2020 上机题</span>
+        <span class="pill warn">先读题，再画图</span>
+        <span class="pill good">图旁要能解释理由</span>
+      </div>
+      <div class="toc">
+        <a href="#map">0. 图在软工里干什么</a>
+        <a href="#read">1. 读题四支笔</a>
+        <a href="#chain">2. 资料里的图链路</a>
+        <a href="#usecase">3. 用例图</a>
+        <a href="#contract">4. 操作合约</a>
+        <a href="#sequence">5. 顺序图</a>
+        <a href="#class">6. 类图</a>
+        <a href="#state">7. 状态/活动图</a>
+        <a href="#exam">8. 真题桥接</a>
+        <a href="#practice">9. 自测</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>今天这篇怎么读：Day1 不是把所有图画完</h2>
+      <p>软工画图最容易崩在第一分钟：题干一长，你会急着找“标准图长什么样”，然后把用例、流程、类、状态混在一起。Day1 不要求你画完美图，只要求你建立一个稳定动作。</p>
+      <div class="mini-flow">
+        <div>圈角色</div>
+        <div>圈动作</div>
+        <div>圈对象</div>
+        <div>圈状态</div>
+        <div>判图类型</div>
+      </div>
+      <div class="focus">
+        <strong>Day1 过关线：</strong>
+        看到一段业务描述，你能先说“这题是在问功能边界、时间交互、静态结构、对象状态，还是业务流程”，然后写出第一笔怎么画。做到这个，Day2 再拿 2020 真题做三图联动才有意义。
+      </div>
+      <div class="callout">
+        <strong>本页和 PDF 的关系：</strong>
+        本页是教学主线，PDF 截图只放在折叠区用于核对来源。你第一遍不要盯着大截图临摹，而是先学“题眼 -> 图类型 -> 第一笔 -> 扣分点”。等这套动作顺了，再去 Day2/Day4 看完整图。
+      </div>
+      <table>
+        <thead><tr><th>不要急着做</th><th>今天真正要会</th></tr></thead>
+        <tbody>
+          <tr><td>不要一上来临摹 PDF 大图。</td><td>先知道每张图回答什么问题。</td></tr>
+          <tr><td>不要把一个系统所有功能塞进一张图。</td><td>题目问什么图，就只抽对应信息。</td></tr>
+          <tr><td>不要把图画得“像”，但解释不出为什么。</td><td>每条线旁边都能说一句人话理由。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="map">
+      <h2>0. 先把软工图放回“软件开发过程”里</h2>
+      <p>你现在觉得软工画图难，主要不是不会画椭圆和箭头，而是不知道每张图在软件工程里承担什么任务。软工不是为了画图而画图，图是把需求、设计、实现和测试之间的想法说清楚。</p>
+      <div class="grid">
+        <div class="box"><strong>需求阶段</strong>先搞清楚用户要什么。常见产物：用户故事、用例描述、用例图、系统顺序图、系统操作合约、概念类图。</div>
+        <div class="box"><strong>设计阶段</strong>把“要什么”变成“系统内部怎么组织”。常见产物：架构图、包图、组件图、组件顺序图、设计类图。</div>
+        <div class="box"><strong>实现阶段</strong>把设计变成代码。这里会关心类、接口、方法、依赖、包结构。</div>
+        <div class="box"><strong>测试阶段</strong>检查系统是否满足需求。常见考点：黑盒、白盒、等价类、边界值、覆盖标准。</div>
+      </div>
+      <p class="formula">软工画图第一原则：先问“这张图回答什么问题”，再问“该画哪些符号”。</p>
+    </section>
+
+    <section class="card" id="read">
+      <h2>1. 读题四支笔：角色、动作、对象、状态</h2>
+      <p>画图题会给你一段自然语言。零基础不要直接画，先拿四支笔圈词。圈词不是慢，而是防止方向错。</p>
+      <p class="formula">学生提交实验上机预约，系统检查时间冲突。管理员审核预约并安排机房。学生可以查询自己的预约结果。未登录用户只能查看公告。</p>
+      <div class="steps">
+        <div class="step"><strong>圈角色</strong>：学生、管理员、未登录用户。角色通常在系统外部，可能成为用例图参与者。</div>
+        <div class="step"><strong>圈动作</strong>：提交预约、检查冲突、审核预约、安排机房、查询结果、查看公告。动作常成为用例、消息或方法。</div>
+        <div class="step"><strong>圈对象</strong>：预约、实验、机房、公告、预约结果。对象常成为概念类图/类图里的候选类。</div>
+        <div class="step"><strong>圈状态</strong>：待审核、已安排、已取消、有冲突。状态词提示状态图，流程词提示活动图。</div>
+      </div>
+      <table>
+        <thead><tr><th>题目问法</th><th>优先图类型</th><th>你要抽什么</th></tr></thead>
+        <tbody>
+          <tr><td>谁能使用哪些功能？系统边界是什么？</td><td>用例图</td><td>参与者、用例、系统边界、include/extend/泛化。</td></tr>
+          <tr><td>某个操作按时间怎么发生？谁给谁发消息？</td><td>顺序图</td><td>生命线、消息、返回、条件分支、循环。</td></tr>
+          <tr><td>系统有哪些对象/类？类之间什么关系？</td><td>类图</td><td>类名、属性、方法、关联、多重性、继承/聚合/组合。</td></tr>
+          <tr><td>一个对象有哪些状态？事件如何触发状态变化？</td><td>状态图</td><td>状态、事件、转换、初态、终态。</td></tr>
+          <tr><td>业务流程如何走？如果/否则/并行如何表达？</td><td>活动图</td><td>动作、判断、分支、合并、开始、结束。</td></tr>
+        </tbody>
+      </table>
+      <h3>1.1 空白纸上第一笔怎么下</h3>
+      <p>真正考试时，你最需要的不是“我见过这张图”，而是知道第一笔落在哪里。第一笔一对，后面就能补；第一笔错了，整张图会越画越乱。</p>
+      <table>
+        <thead><tr><th>图类型</th><th>第一笔</th><th>第二笔</th><th>最后自查</th></tr></thead>
+        <tbody>
+          <tr><td>用例图</td><td>画系统边界框。</td><td>框外放参与者，框内放动宾短语用例。</td><td>参与者是否都在框外？用例是否是功能目标？</td></tr>
+          <tr><td>系统顺序图</td><td>画参与者和“系统”两条生命线。</td><td>按时间从上到下写系统操作消息。</td><td>是否只描述一个具体场景？</td></tr>
+          <tr><td>组件顺序图</td><td>列出界面、控制/服务、数据对象生命线。</td><td>把外部请求拆成内部消息链。</td><td>消息是否从上到下？有没有把类图关系画进来？</td></tr>
+          <tr><td>类图</td><td>从名词列候选类。</td><td>补属性、方法、关联和多重性。</td><td>有没有把动作误画成类？关系两端数量是否标了？</td></tr>
+          <tr><td>状态图</td><td>选定一个对象，画初态和第一个状态。</td><td>用事件连接状态转换。</td><td>是否围绕同一个对象生命周期？</td></tr>
+          <tr><td>活动图</td><td>画开始点和第一个动作。</td><td>遇到“如果/否则”画判断分支。</td><td>是否表达流程，而不是对象结构？</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="chain">
+      <h2>2. 你资料里的“图链路”：不是孤立背图名</h2>
+      <p>我看了你的 `画图题.pdf`，它前几页不是随便放图，而是按一条软工链路在走：用例描述 -> 系统操作合约 -> 系统顺序图 -> 概念类图 -> 概要设计包图/组件图 -> 组件顺序图 -> 设计类图/活动图。你要学的是这条链。</p>
+      <div class="diagram">
+        <svg viewBox="0 0 980 360" role="img" aria-label="软工画图链路从需求到设计">
+          <rect width="980" height="360" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="50" y="42" font-size="21" font-weight="700" fill="#1f5f8b">一段业务描述会被翻译成不同层次的图</text>
+            <rect x="50" y="82" width="160" height="70" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="86" y="112" font-weight="700">用例描述</text><text x="72" y="138">一个用户目标</text>
+            <path d="M214 117 H285" stroke="#687581" stroke-width="3" marker-end="url(#chainArrow)"/>
+            <rect x="295" y="82" width="170" height="70" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="336" y="112" font-weight="700">操作合约</text><text x="315" y="138">操作前后变化</text>
+            <path d="M469 117 H540" stroke="#687581" stroke-width="3" marker-end="url(#chainArrow)"/>
+            <rect x="550" y="82" width="170" height="70" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="590" y="112" font-weight="700">系统顺序图</text><text x="570" y="138">黑盒消息顺序</text>
+            <path d="M724 117 H795" stroke="#687581" stroke-width="3" marker-end="url(#chainArrow)"/>
+            <rect x="805" y="82" width="135" height="70" rx="12" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="842" y="112" font-weight="700">概念类图</text><text x="825" y="138">业务对象关系</text>
+
+            <rect x="295" y="225" width="170" height="70" rx="12" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="328" y="255" font-weight="700">组件/包图</text><text x="318" y="281">内部结构划分</text>
+            <rect x="550" y="225" width="170" height="70" rx="12" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="590" y="255" font-weight="700">组件顺序图</text><text x="574" y="281">内部协作消息</text>
+            <rect x="805" y="225" width="135" height="70" rx="12" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="842" y="255" font-weight="700">设计类图</text><text x="824" y="281">类/方法/接口</text>
+            <path d="M635 154 V205 H380 V225" stroke="#687581" stroke-width="3" fill="none" marker-end="url(#chainArrow)"/>
+            <path d="M465 260 H550" stroke="#687581" stroke-width="3" marker-end="url(#chainArrow)"/>
+            <path d="M720 260 H805" stroke="#687581" stroke-width="3" marker-end="url(#chainArrow)"/>
+          </g>
+          <defs><marker id="chainArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+        <div class="caption">Day1 先记这条链：需求阶段先说用户目标和系统黑盒，设计阶段再展开内部组件、类、方法。</div>
+      </div>
+      <div class="steps">
+        <div class="step"><strong>用例描述</strong>：把一个用户目标写清楚，包括参与者、触发条件、前置条件、基本流程、扩展流程、后置条件、补充约束。</div>
+        <div class="step"><strong>系统操作合约</strong>：把一次系统操作前后发生了什么写清楚，尤其是后置条件里的对象创建、属性变化、关联变化。</div>
+        <div class="step"><strong>系统顺序图</strong>：把外部参与者和整个系统之间的消息按时间画出来，系统还是黑盒。</div>
+        <div class="step"><strong>概念类图</strong>：从业务名词抽领域概念，先不放控制类、数据库表、页面组件。</div>
+        <div class="step"><strong>组件/设计图</strong>：进入设计阶段后，才展开内部组件、包、控制类、接口、方法和实现细节。</div>
+      </div>
+      <details>
+        <summary>展开资料核对：画图题 PDF 对应页</summary>
+        <p>这些截图只用于确认来源，不是 Day1 主学习内容。先看上面的链路和步骤，再回来核对原资料。</p>
+        <div class="grid">
+          <div class="source-img">
+            <img src="./assets/pdf-pages/se-drawing-p3.png" alt="画图题 PDF 第 3 页：系统操作合约和后置条件">
+            <div class="caption">画图题 PDF 第 3 页：操作合约后置条件分成创建/删除对象、属性值变化、形成/消除关联。</div>
+          </div>
+          <div class="source-img">
+            <img src="./assets/pdf-pages/se-drawing-p7.png" alt="画图题 PDF 第 7 页：设计类图、顺序图、活动图">
+            <div class="caption">画图题 PDF 第 7 页：设计类图、用例实现顺序图、活动图，是设计阶段常见入口。</div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" id="usecase">
+      <h2>3. 用例图：只回答“谁使用系统做什么”</h2>
+      <p>用例图是功能边界图，不是流程图，也不是类图。它不关心数据库表怎么设计，不关心每一步消息怎么传，只关心系统外部有哪些参与者，以及系统给他们提供哪些目标级功能。</p>
+      <div class="grid">
+        <div class="box"><strong>参与者 Actor</strong>系统外部和系统交互的角色。可以是人，也可以是外部系统。不要把数据库、按钮、页面、业务对象画成参与者。</div>
+        <div class="box"><strong>用例 Use Case</strong>系统提供给参与者的目标级功能，名称一般是动宾短语，例如“提交预约”“查询安排”“审核申请”。</div>
+        <div class="box"><strong>系统边界</strong>一个框，框内是系统提供的用例，框外是参与者。没有边界会让答案像一堆散乱气泡。</div>
+        <div class="box"><strong>关系</strong>关联线表示参与者使用用例；include 是必做公共步骤；extend 是可选/异常扩展；泛化表示角色或用例的父子关系。</div>
+      </div>
+      <div class="diagram">
+        <svg viewBox="0 0 900 430" role="img" aria-label="实验上机安排系统用例图">
+          <rect width="900" height="430" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <rect x="260" y="40" width="390" height="330" rx="12" fill="#f8fcfd" stroke="#9dc7de" stroke-width="2"/>
+            <text x="380" y="72" font-weight="700" fill="#1f5f8b">实验上机安排系统</text>
+            <circle cx="95" cy="105" r="18" fill="none" stroke="#18212a" stroke-width="2"/><line x1="95" y1="123" x2="95" y2="175" stroke="#18212a" stroke-width="2"/><line x1="68" y1="145" x2="122" y2="145" stroke="#18212a" stroke-width="2"/><line x1="95" y1="175" x2="70" y2="214" stroke="#18212a" stroke-width="2"/><line x1="95" y1="175" x2="120" y2="214" stroke="#18212a" stroke-width="2"/><text x="70" y="244">学生</text>
+            <circle cx="95" cy="300" r="18" fill="none" stroke="#18212a" stroke-width="2"/><line x1="95" y1="318" x2="95" y2="370" stroke="#18212a" stroke-width="2"/><line x1="68" y1="340" x2="122" y2="340" stroke="#18212a" stroke-width="2"/><text x="70" y="408">教师</text>
+            <circle cx="790" cy="190" r="18" fill="none" stroke="#18212a" stroke-width="2"/><line x1="790" y1="208" x2="790" y2="260" stroke="#18212a" stroke-width="2"/><line x1="763" y1="230" x2="817" y2="230" stroke="#18212a" stroke-width="2"/><line x1="790" y1="260" x2="765" y2="299" stroke="#18212a" stroke-width="2"/><line x1="790" y1="260" x2="815" y2="299" stroke="#18212a" stroke-width="2"/><text x="762" y="330">管理员</text>
+            <ellipse cx="455" cy="120" rx="95" ry="32" fill="#eef7fc" stroke="#1f5f8b"/><text x="407" y="126">查询安排</text>
+            <ellipse cx="455" cy="195" rx="95" ry="32" fill="#eef9f3" stroke="#24724f"/><text x="407" y="201">提交项目</text>
+            <ellipse cx="455" cy="270" rx="95" ry="32" fill="#fff9e6" stroke="#936b12"/><text x="407" y="276">安排机房</text>
+            <ellipse cx="455" cy="340" rx="95" ry="32" fill="#fff2ef" stroke="#a23b32"/><text x="407" y="346">管理公告</text>
+            <line x1="128" y1="145" x2="360" y2="120" stroke="#687581" stroke-width="2"/>
+            <line x1="128" y1="340" x2="360" y2="195" stroke="#687581" stroke-width="2"/>
+            <line x1="128" y1="340" x2="360" y2="270" stroke="#687581" stroke-width="2"/>
+            <line x1="760" y1="230" x2="550" y2="270" stroke="#687581" stroke-width="2"/>
+            <line x1="760" y1="230" x2="550" y2="340" stroke="#687581" stroke-width="2"/>
+          </g>
+        </svg>
+      </div>
+      <details>
+        <summary>include 和 extend 怎么不画反？</summary>
+        <p>include 是“基础用例每次都要调用的公共步骤”，箭头从基础用例指向被包含用例。extend 是“可选/异常情况下才发生的扩展”，箭头从扩展用例指向基础用例。判断前先问：它是不是每次必做？如果每次必做，include；如果可选或异常，extend。</p>
+      </details>
+      <p class="formula">用例图最低得分模板：参与者 + 系统边界 + 动宾短语用例 + 关联线 + 必要的 include/extend/泛化。</p>
+    </section>
+
+    <section class="card" id="contract">
+      <h2>4. 系统操作合约：不要画流程，要写“操作前后变化”</h2>
+      <p>系统操作合约很容易被误解成顺序图。它不是画谁先谁后，而是精确描述一次系统操作的输入、前置条件和后置条件。你的 `画图题.pdf` 用 `enterItem(barcode, quantity)` 做例子，重点是后置条件三类变化。</p>
+      <table>
+        <thead><tr><th>字段</th><th>从零解释</th><th>考试作答句式</th></tr></thead>
+        <tbody>
+          <tr><td>操作签名</td><td>操作名和参数，像函数头。</td><td>enterItem(barcode: Integer, quantity: Integer)</td></tr>
+          <tr><td>前置条件</td><td>操作发生前必须已经成立的状态。</td><td>销售正在进行，且 barcode 对应的商品存在。</td></tr>
+          <tr><td>后置条件：创建/删除对象</td><td>操作之后新建了什么对象，或删掉了什么对象。</td><td>创建了 SalesLineItem 的实例 sli。</td></tr>
+          <tr><td>后置条件：属性变化</td><td>对象的某个属性变成什么值。</td><td>sli.quantity = quantity。</td></tr>
+          <tr><td>后置条件：形成/消除关联</td><td>对象之间建立或断开了关系。</td><td>sli 与当前 sale 建立关联；sli 与 item 建立关联。</td></tr>
+        </tbody>
+      </table>
+      <p class="formula">操作合约答题骨架：
+操作签名：____
+前置条件：____
+后置条件：
+1. 创建/删除对象：____
+2. 属性值变化：____
+3. 形成/消除关联：____</p>
+    </section>
+
+    <section class="card" id="sequence">
+      <h2>5. 顺序图：一条具体场景，按时间从上往下画</h2>
+      <p>顺序图不是“系统功能大全”。它只描述一个具体场景，例如“学生查询课程实验安排”。如果题干说“画学生查询安排的顺序图”，就不要把教师提交、管理员审核、新闻管理全塞进去。</p>
+      <div class="grid">
+        <div class="box"><strong>系统顺序图</strong>把系统当黑盒。生命线通常是外部参与者和整个系统。适合需求分析阶段。</div>
+        <div class="box"><strong>组件顺序图</strong>展开系统内部。生命线可以是界面、控制器、服务、数据库/数据对象。适合设计阶段。</div>
+      </div>
+      <div class="diagram">
+        <svg viewBox="0 0 900 430" role="img" aria-label="学生查询安排组件顺序图">
+          <rect width="900" height="430" fill="#fff"/>
+          <g font-family="sans-serif" font-size="15" fill="#18212a">
+            <rect x="55" y="35" width="105" height="42" rx="8" fill="#eef7fc" stroke="#1f5f8b"/><text x="88" y="62">学生</text>
+            <rect x="230" y="35" width="125" height="42" rx="8" fill="#eef9f3" stroke="#24724f"/><text x="260" y="62">查询界面</text>
+            <rect x="430" y="35" width="130" height="42" rx="8" fill="#fff9e6" stroke="#936b12"/><text x="457" y="62">查询服务</text>
+            <rect x="650" y="35" width="130" height="42" rx="8" fill="#fff2ef" stroke="#a23b32"/><text x="677" y="62">安排数据</text>
+            <line x1="107" y1="77" x2="107" y2="370" stroke="#b7c4cc" stroke-dasharray="7 7"/>
+            <line x1="292" y1="77" x2="292" y2="370" stroke="#b7c4cc" stroke-dasharray="7 7"/>
+            <line x1="495" y1="77" x2="495" y2="370" stroke="#b7c4cc" stroke-dasharray="7 7"/>
+            <line x1="715" y1="77" x2="715" y2="370" stroke="#b7c4cc" stroke-dasharray="7 7"/>
+            <path d="M107 125 H292" stroke="#687581" stroke-width="3" marker-end="url(#arrow)"/><text x="145" y="116">输入查询条件</text>
+            <path d="M292 178 H495" stroke="#687581" stroke-width="3" marker-end="url(#arrow)"/><text x="338" y="169">querySchedule()</text>
+            <path d="M495 232 H715" stroke="#687581" stroke-width="3" marker-end="url(#arrow)"/><text x="555" y="223">findByStudent()</text>
+            <path d="M715 286 H495" stroke="#687581" stroke-width="3" stroke-dasharray="7 6" marker-end="url(#arrow)"/><text x="575" y="277">返回安排列表</text>
+            <path d="M495 338 H292" stroke="#687581" stroke-width="3" stroke-dasharray="7 6" marker-end="url(#arrow)"/><text x="358" y="329">返回结果</text>
+          </g>
+          <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <p class="formula">顺序图最低得分模板：生命线合理 + 消息从上到下 + 每条消息是动词/方法 + 返回结果不漏 + 只画一个场景。</p>
+    </section>
+
+    <section class="card" id="class">
+      <h2>6. 类图：先抽名词，再决定关系</h2>
+      <p>lab5 UML 资料里讲得很明确：类图描述系统内对象相关的类，以及类之间的静态关系。类组件包括类名、属性、方法；类间关系包括依赖、关联、聚合、组合、泛化、实现；关联两端还要标多重性。</p>
+      <table>
+        <thead><tr><th>关系</th><th>人话解释</th><th>怎么识别</th></tr></thead>
+        <tbody>
+          <tr><td>依赖</td><td>A 临时用到 B，B 变了可能影响 A。</td><td>B 只作为局部变量/参数出现，关系较弱。</td></tr>
+          <tr><td>关联</td><td>A 长期知道 B，二者有业务联系。</td><td>一个类作为另一个类的成员变量；学生和预约、课程和实验。</td></tr>
+          <tr><td>聚合</td><td>整体-部分，但部分可脱离整体存在。</td><td>班级和学生、部门和员工，部分可以独立存在。</td></tr>
+          <tr><td>组合</td><td>强整体-部分，整体没了部分通常也没了。</td><td>订单和订单项，订单项脱离订单意义很弱。</td></tr>
+          <tr><td>泛化</td><td>继承，子类是一种父类。</td><td>学生是用户的一种，管理员是用户的一种。</td></tr>
+          <tr><td>实现</td><td>类实现接口。</td><td>出现接口、implements、规范方法。</td></tr>
+        </tbody>
+      </table>
+      <div class="diagram">
+        <svg viewBox="0 0 900 380" role="img" aria-label="实验预约类图骨架">
+          <rect width="900" height="380" fill="#fff"/>
+          <g font-family="sans-serif" font-size="15" fill="#18212a">
+            <rect x="55" y="75" width="150" height="115" fill="#eef7fc" stroke="#1f5f8b"/><line x1="55" y1="110" x2="205" y2="110" stroke="#1f5f8b"/><text x="108" y="99" font-weight="700">学生</text><text x="72" y="136">学号</text><text x="72" y="162">姓名</text>
+            <rect x="315" y="65" width="160" height="150" fill="#eef9f3" stroke="#24724f"/><line x1="315" y1="100" x2="475" y2="100" stroke="#24724f"/><text x="374" y="89" font-weight="700">预约</text><text x="333" y="126">预约时间</text><text x="333" y="152">状态</text><text x="333" y="178">提交时间</text>
+            <rect x="610" y="75" width="150" height="115" fill="#fff9e6" stroke="#936b12"/><line x1="610" y1="110" x2="760" y2="110" stroke="#936b12"/><text x="662" y="99" font-weight="700">机房</text><text x="627" y="136">地点</text><text x="627" y="162">容量</text>
+            <rect x="315" y="270" width="160" height="80" fill="#fff2ef" stroke="#a23b32"/><line x1="315" y1="303" x2="475" y2="303" stroke="#a23b32"/><text x="374" y="293" font-weight="700">实验</text><text x="333" y="329">实验名称</text>
+            <line x1="205" y1="135" x2="315" y2="135" stroke="#687581" stroke-width="2"/><text x="225" y="125">1</text><text x="292" y="125">*</text>
+            <line x1="475" y1="135" x2="610" y2="135" stroke="#687581" stroke-width="2"/><text x="493" y="125">*</text><text x="588" y="125">1</text>
+            <line x1="395" y1="215" x2="395" y2="270" stroke="#687581" stroke-width="2"/><text x="404" y="243">1</text>
+          </g>
+        </svg>
+      </div>
+      <p class="formula">类图最低得分模板：候选类正确 + 属性合理 + 关系线合理 + 多重性合理 + 不把流程/页面/控制类混进概念类图。</p>
+    </section>
+
+    <section class="card" id="state">
+      <h2>7. 状态图和活动图：一个看对象，一个看流程</h2>
+      <div class="grid">
+        <div class="box"><strong>状态图</strong>中心是一个对象，例如“预约”。它从待审核到已安排、已取消、有冲突。关键词是状态、事件、转换。</div>
+        <div class="box"><strong>活动图</strong>中心是一段业务流程，例如“提交预约流程”。它有开始、动作、判断分支、结束。关键词是流程、如果、否则、并行。</div>
+      </div>
+      <div class="diagram">
+        <svg viewBox="0 0 860 300" role="img" aria-label="预约状态图骨架">
+          <rect width="860" height="300" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <circle cx="85" cy="150" r="13" fill="#18212a"/>
+            <rect x="150" y="118" width="120" height="64" rx="12" fill="#eef7fc" stroke="#1f5f8b"/><text x="184" y="156">待审核</text>
+            <rect x="350" y="55" width="120" height="64" rx="12" fill="#eef9f3" stroke="#24724f"/><text x="384" y="93">已安排</text>
+            <rect x="350" y="185" width="120" height="64" rx="12" fill="#fff2ef" stroke="#a23b32"/><text x="384" y="223">已取消</text>
+            <rect x="580" y="118" width="120" height="64" rx="12" fill="#fff9e6" stroke="#936b12"/><text x="614" y="156">有冲突</text>
+            <path d="M98 150 H150" stroke="#687581" stroke-width="3" marker-end="url(#sarrow)"/>
+            <path d="M270 140 C310 110 320 88 350 88" stroke="#687581" stroke-width="3" fill="none" marker-end="url(#sarrow)"/><text x="282" y="100">审核通过</text>
+            <path d="M270 162 C310 190 320 216 350 216" stroke="#687581" stroke-width="3" fill="none" marker-end="url(#sarrow)"/><text x="282" y="212">取消</text>
+            <path d="M470 88 C540 85 560 120 580 140" stroke="#687581" stroke-width="3" fill="none" marker-end="url(#sarrow)"/><text x="505" y="83">发现冲突</text>
+          </g>
+          <defs><marker id="sarrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+    </section>
+
+    <section class="card" id="exam">
+      <h2>8. 真题桥接：2020 上机题不要背题面，要背拆题法</h2>
+      <p>2020 上机题的“实验上机安排系统”很适合作为训练材料，因为同一段系统描述可以分别要求画类图、用例图、顺序图。你不要背“第一部分多少分”这种元信息，而要练它怎么拆。</p>
+      <table>
+        <thead><tr><th>如果题目要求</th><th>第一步</th><th>容易扣分的坑</th></tr></thead>
+        <tbody>
+          <tr><td>画用例图</td><td>先列教师、学生、管理员、未登录用户，再列每类用户的目标级功能。</td><td>把课程实验项目、机房、公告画成参与者；漏系统边界。</td></tr>
+          <tr><td>画类图</td><td>从名词抽候选类：学生、教师、课程、实验项目、机房、安排、公告。</td><td>把“查询、提交、管理”这类动作画成类；不标多重性。</td></tr>
+          <tr><td>画顺序图</td><td>只选一个场景，例如“学生查询课程实验安排”，列生命线和消息顺序。</td><td>把全部功能塞进一张顺序图；只有学生和系统两个点，没有界面/服务/数据层次。</td></tr>
+        </tbody>
+      </table>
+      <p class="formula">真实题干拆法：先看题目要求画哪种图 -> 圈对应信息 -> 套该图最低得分模板 -> 图旁写一句设计理由。</p>
+    </section>
+
+    <section class="card">
+      <h2>9. 开卷索引：考试时翻资料要按题眼翻</h2>
+      <p>你现在不要把所有 PDF 原样背下来，而要建一个“题眼索引”。开卷索引不是目录，它是考场检索工具。</p>
+      <table>
+        <thead><tr><th>题眼</th><th>翻哪里</th><th>第一句/模板</th></tr></thead>
+        <tbody>
+          <tr><td>参与者、系统功能、include/extend</td><td>画图题 PDF：用例图/用例描述页</td><td>先列参与者，再列动宾短语用例，最后检查系统边界。</td></tr>
+          <tr><td>enterItem、前置条件、后置条件</td><td>画图题 PDF：系统操作合约页</td><td>后置条件按三类写：对象创建/删除、属性变化、关联变化。</td></tr>
+          <tr><td>系统黑盒、外部参与者、消息</td><td>画图题 PDF：系统顺序图页</td><td>参与者 -> 系统，按时间写消息。</td></tr>
+          <tr><td>组件、服务、数据库、内部协作</td><td>画图题 PDF：组件顺序图页</td><td>展开内部组件，按时间传消息。</td></tr>
+          <tr><td>类、属性、方法、关联、多重性</td><td>lab5 UML：类图资料</td><td>类名/属性/方法 + 六种关系 + 多重性。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="practice">
+      <h2>10. 场景题卡：先判断图类型，再看解析</h2>
+      <p class="muted">这一组题不是为了猜选项，而是训练考试反应。每题先写三句话：题眼是什么、应该画什么、第一笔怎么下。写完再展开答案。</p>
+
+      <div class="question">
+        <h3>题 1：系统边界与功能</h3>
+        <p>题干：实验上机安排系统中，学生可以查询自己的实验安排；教师可以提交实验项目；管理员可以安排机房和发布公告；未登录用户可以查看公告。题目要求画“系统提供给各类用户的功能”。</p>
+        <ul class="options">
+          <li>A. 类图</li>
+          <li>B. 用例图</li>
+          <li>C. 状态图</li>
+          <li>D. 组件顺序图</li>
+        </ul>
+        <textarea data-note="se_q1" placeholder="1. 题眼是____。&#10;2. 我判断应该画____。&#10;3. 第一笔先画____。"></textarea>
+        <details><summary>看正确答案和解析</summary><div class="answer-block">
+          <p><strong>答案：B，用例图。</strong></p>
+          <p><strong>题眼：</strong>“各类用户”“系统提供哪些功能”“学生/教师/管理员/未登录用户”都在问系统边界和参与者功能，这是用例图。</p>
+          <p><strong>第一笔：</strong>先画系统边界框，框外放参与者：学生、教师、管理员、未登录用户；框内放动宾短语用例：查询实验安排、提交实验项目、安排机房、发布公告、查看公告。</p>
+          <p><strong>为什么不是类图：</strong>类图回答“系统有哪些对象和静态关系”，例如学生、实验项目、机房、安排之间的多重性。题干现在问的是谁使用哪些功能，不是对象结构。</p>
+          <p><strong>自查：</strong>参与者不能画成系统内部对象；用例名称不要写成“学生”“管理员”这种名词，要写成目标级动作。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 2：一次操作后的系统变化</h3>
+        <p>题干：学生提交预约后，系统创建一条预约记录，将预约状态设为“待审核”，并把该预约与学生、实验项目和期望机房建立关联。题目要求描述“提交预约”这个系统操作执行后的变化。</p>
+        <ul class="options">
+          <li>A. 活动图</li>
+          <li>B. 用例图</li>
+          <li>C. 系统操作合约</li>
+          <li>D. 包图</li>
+        </ul>
+        <textarea data-note="se_q2" placeholder="1. 题眼是____。&#10;2. 后置条件三类变化分别是____。"></textarea>
+        <details><summary>看正确答案和解析</summary><div class="answer-block">
+          <p><strong>答案：C，系统操作合约。</strong></p>
+          <p><strong>题眼：</strong>“提交预约这个系统操作”“执行后的变化”“创建记录、设置状态、建立关联”都指向操作合约的后置条件。</p>
+          <p><strong>作答骨架：</strong>操作签名可以写 submitReservation(studentId, projectId, roomId, time)。后置条件分三类：创建 Reservation 实例；Reservation.status = 待审核；Reservation 与 Student、Project、Room 建立关联。</p>
+          <p><strong>为什么不是活动图：</strong>活动图画业务流程分支，例如提交、检查冲突、审核、通知。这里没有让你画流程，而是让你写一次操作后系统状态如何变化。</p>
+          <p><strong>资料对应：</strong>这正对应画图题 PDF 里的后置条件三类：创建/删除对象、属性值变化、形成/消除关联。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 3：单个场景的消息顺序</h3>
+        <p>题干：画“学生查询实验安排”的交互过程。学生输入查询条件，系统查询安排数据并返回列表。题目强调按时间顺序表示对象之间的消息。</p>
+        <ul class="options">
+          <li>A. 用例图</li>
+          <li>B. 顺序图</li>
+          <li>C. 状态图</li>
+          <li>D. ER 图</li>
+        </ul>
+        <textarea data-note="se_q3" placeholder="1. 题眼是____。&#10;2. 生命线可以有哪些？&#10;3. 消息顺序怎么写？"></textarea>
+        <details><summary>看正确答案和解析</summary><div class="answer-block">
+          <p><strong>答案：B，顺序图。</strong></p>
+          <p><strong>题眼：</strong>“交互过程”“按时间顺序”“对象之间的消息”就是顺序图。它描述一个具体场景，不是系统全部功能。</p>
+          <p><strong>系统顺序图版本：</strong>生命线可以只有学生和系统，消息是 querySchedule(condition)，系统返回安排列表。</p>
+          <p><strong>组件顺序图版本：</strong>可以展开为学生、查询界面、查询服务、安排数据。消息顺序是输入条件 -> querySchedule -> findByStudent -> 返回列表 -> 显示结果。</p>
+          <p><strong>常见扣分点：</strong>把教师提交、管理员审核、公告管理全部塞进同一张顺序图。顺序图要围绕一个用例场景。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 4：业务对象和静态关系</h3>
+        <p>题干：从实验上机安排系统中识别主要业务对象，并表示学生、教师、实验项目、机房、预约安排之间的静态关系和多重性。</p>
+        <ul class="options">
+          <li>A. 系统顺序图</li>
+          <li>B. 用例图</li>
+          <li>C. 状态图</li>
+          <li>D. 概念类图/类图</li>
+        </ul>
+        <textarea data-note="se_q4" placeholder="1. 题眼是____。&#10;2. 候选类有哪些？&#10;3. 至少写出两条关系和多重性。"></textarea>
+        <details><summary>看正确答案和解析</summary><div class="answer-block">
+          <p><strong>答案：D，概念类图/类图。</strong></p>
+          <p><strong>题眼：</strong>“业务对象”“静态关系”“多重性”是类图核心信号。用例图不会标对象属性和多重性，顺序图关注时间顺序。</p>
+          <p><strong>第一步：</strong>从名词抽候选类：学生、教师、实验项目、机房、预约/安排、公告。再删掉太泛或不是领域概念的词。</p>
+          <p><strong>关系示例：</strong>一个学生可以有多个预约，一个预约属于一个学生；一个实验项目可以对应多个预约；一个机房可以承载多个安排。多重性要写在关联两端。</p>
+          <p><strong>常见坑：</strong>把“提交”“查询”“审核”画成类。它们是动作，更可能出现在用例、消息或方法里，不是概念类。</p>
+        </div></details>
+      </div>
+
+      <div class="question">
+        <h3>题 5：对象状态变化</h3>
+        <p>题干：预约可能经历“待审核、已安排、有冲突、已取消”几种状态。审核通过进入已安排，发现时间冲突进入有冲突，学生撤销则进入已取消。题目要求表示这些状态及触发转换。</p>
+        <ul class="options">
+          <li>A. 状态图</li>
+          <li>B. 用例图</li>
+          <li>C. 类图</li>
+          <li>D. 数据流图</li>
+        </ul>
+        <textarea data-note="se_q5" placeholder="1. 题眼是____。&#10;2. 状态有哪些？&#10;3. 转换事件有哪些？"></textarea>
+        <details><summary>看正确答案和解析</summary><div class="answer-block">
+          <p><strong>答案：A，状态图。</strong></p>
+          <p><strong>题眼：</strong>“待审核、已安排、有冲突、已取消”这些是状态词；“审核通过、发现冲突、撤销”是事件；状态词加事件触发转换，就是状态图。</p>
+          <p><strong>第一笔：</strong>先画初态，再画待审核，之后按事件连到已安排、有冲突、已取消。每条箭头旁写触发事件。</p>
+          <p><strong>为什么不是活动图：</strong>活动图中心是流程动作，状态图中心是一个对象生命周期。这里关注的是“预约”这个对象如何变状态。</p>
+        </div></details>
+      </div>
+
+      <details>
+        <summary>展开原资料核对：画图题 PDF 关键页</summary>
+        <div class="grid">
+          <div class="source-img">
+            <img src="./assets/pdf-pages/se-drawing-p3.png" alt="画图题 PDF 第 3 页：系统操作合约后置条件">
+            <div class="caption">第 3 页：操作合约后置条件三类变化。</div>
+          </div>
+          <div class="source-img">
+            <img src="./assets/pdf-pages/se-drawing-p34.png" alt="画图题 PDF 第 34 页：用例图和操作合约相关页">
+            <div class="caption">第 34 页：用例图/操作合约相关内容入口。</div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>11. 主观训练：今天先会讲，再会画</h2>
+      <p class="muted">输入框会自动保存在本机。写不出来就回到上面的图和模板，不要急着翻答案。</p>
+      <h3>训练 1</h3>
+      <p>为什么画图题第一步不是画，而是圈角色、动作、对象、状态？</p>
+      <textarea data-note="why_circle_first"></textarea>
+      <details><summary>参考答案</summary><p>因为不同图回答的问题不同。角色和动作帮助判断用例图，动作时间顺序帮助判断顺序图，名词对象帮助判断类图，状态词帮助判断状态图。先圈词能避免把流程、结构、功能边界混在一张图里。</p></details>
+      <h3>训练 2</h3>
+      <p>用自己的话解释：系统顺序图和组件顺序图有什么区别？</p>
+      <textarea data-note="ssd_vs_component"></textarea>
+      <details><summary>参考答案</summary><p>系统顺序图把系统看成黑盒，只画外部参与者和整个系统之间的消息；组件顺序图展开系统内部，画界面、服务、数据库、控制器等内部对象或组件之间的协作。</p></details>
+      <h3>训练 3</h3>
+      <p>题干说“学生提交预约，系统检查冲突，管理员审核安排，学生查询结果”，请写出你会如何判断图类型。</p>
+      <textarea data-note="scenario_route"></textarea>
+      <details><summary>参考答案</summary><p>如果问谁能做哪些功能，画用例图；如果问提交预约这件事如何发生，画顺序图；如果问业务对象关系，画类图；如果问预约从待审核到已安排/已取消怎么变，画状态图；如果问整体业务流程，画活动图。</p></details>
+    </section>
+
+    <section class="card">
+      <h2>12. 下一步：进入真题三图实战</h2>
+      <p>如果你已经能判断用例图、顺序图、类图分别回答什么问题，下一步就不要继续背图名了，直接做同一段真题题干的三图联动。</p>
+      <p><a href="./day2_se_2020_diagram_workshop.html">继续：软工 2020 画图题手把手</a> · <a href="./index.html">回到期末陪跑学习舱</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-finals-se-diagram-zero-notes";
+    let savedNotes = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+  </script>
+</body>
+</html>

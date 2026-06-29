@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>继续学习仪表盘 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛继续学习仪表盘：根据本地完成状态推荐下一步复习资源。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(246, 185, 207, .42), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 76% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.94) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .20) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo,
+    .icon {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo { width: 40px; height: 40px; }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .btn,
+    .navlinks a,
+    .done-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+    }
+    .btn:hover,
+    .navlinks a:hover,
+    .done-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary,
+    .done-btn.done {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .metric,
+    .task-card,
+    .course-card {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .hero-main {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 90% 12%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 74ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions,
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .actions { margin-top: 22px; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .metric {
+      padding: 14px;
+    }
+    .metric strong {
+      display: block;
+      margin: 3px 0;
+      font-size: 28px;
+      color: #293047;
+      line-height: 1.1;
+    }
+    .metric span {
+      color: #65718a;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    section { padding: 24px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .section-head p { max-width: 72ch; }
+    .task-grid,
+    .course-grid,
+    .guide-grid {
+      display: grid;
+      gap: 14px;
+    }
+    .task-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .guide-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .planner {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .choice-group {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .choice-label {
+      color: #5e6980;
+      font-size: 13px;
+      font-weight: 950;
+    }
+    .choice-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .choice-btn {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: #31516f;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+    }
+    .choice-btn.active {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .task-card,
+    .course-card {
+      padding: 18px;
+    }
+    .task-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 266px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .task-card:hover,
+    .course-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(159, 218, 203, .62);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(115, 135, 168, .22);
+      background: rgba(255,255,255,.72);
+      color: #6a617c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .tag.hot {
+      color: #6a3f55;
+      background: linear-gradient(135deg, #ffe4ef, #fff3c9);
+      border-color: rgba(196, 142, 180, .38);
+    }
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 14px;
+    }
+    .progressbar {
+      height: 10px;
+      margin-top: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(101, 113, 138, .12);
+    }
+    .progressbar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--pink), var(--blue), var(--mint));
+      transition: width .5s ease;
+    }
+    .course-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 140px;
+      gap: 14px;
+      align-items: start;
+    }
+    .empty {
+      grid-column: 1 / -1;
+      padding: 28px;
+      text-align: center;
+    }
+    .footer {
+      padding: 30px 0 46px;
+      color: #65718a;
+    }
+    .footer .panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 980px) {
+      .hero,
+      .planner,
+      .task-grid,
+      .guide-grid,
+      .course-grid {
+        grid-template-columns: 1fr;
+      }
+      .course-card { grid-template-columns: 1fr; }
+      .navlinks { display: none; }
+      .section-head { display: block; }
+      .hero-main { min-height: auto; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 22px, 1160px); }
+      .actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="仪表盘导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M32 7l6.8 13.8L54 23l-11 10.7 2.6 15.1L32 41.6 18.4 48.8 21 33.7 10 23l15.2-2.2L32 7Z" fill="#ffd76f" stroke="#6b5a92" stroke-width="2"/>
+          </svg>
+        </span>
+        <span>星光学习岛</span>
+      </a>
+      <div class="navlinks">
+        <a href="./start_here.html">新手向导</a>
+        <a href="./index.html#courses">课程入口</a>
+        <a href="#today">今日学习包</a>
+        <a href="./practice_lab.html">训练台</a>
+        <a href="./resources.html">资源库</a>
+        <a href="./course.html">课程岛</a>
+        <a href="./progress_vault.html">学习存档</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <article class="panel hero-main">
+        <div>
+          <span class="eyebrow">继续学习仪表盘</span>
+          <h1>下一步，别猜。</h1>
+          <p class="lead">根据精品资源库的完成状态，自动整理<span class="key">总进度</span>、<span class="key">必做完成度</span>、<span class="key">每科进度</span>和<span class="key">下一步建议</span>。回来学习时，先看这里就够了。</p>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="#today">生成今日学习包</a>
+          <a class="btn mint" href="./start_here.html">重新生成路线</a>
+          <a class="btn" href="#next">看下一步</a>
+          <a class="btn primary" href="./practice_lab.html">开始练题</a>
+          <a class="btn mint" href="./resources.html">打开资源库</a>
+          <a class="btn" href="./progress_vault.html">学习存档</a>
+        </div>
+      </article>
+      <aside class="metric-grid">
+        <article class="metric"><span>总完成</span><strong id="totalMetric">0 / 0</strong><p>精选资源整体推进情况。</p></article>
+        <article class="metric"><span>必做完成</span><strong id="requiredMetric">0 / 0</strong><p>先把必做资源清掉，保底最稳。</p></article>
+        <article class="metric"><span>下一批建议</span><strong id="nextMetric">0</strong><p>从未完成的高价值资源里挑选。</p></article>
+      </aside>
+    </section>
+
+    <section id="guide">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">向导路线续航</span>
+          <h2>接上你上次生成的路线。</h2>
+        </div>
+        <p>新手上岛向导会把课程和当前状态存在本机。回来时，先在这里继续，不用重新找入口。</p>
+      </div>
+      <div class="guide-grid" id="guideGrid"></div>
+    </section>
+
+    <section id="today">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">今日学习包</span>
+          <h2>按今天的时间，自动挑任务。</h2>
+        </div>
+        <p>不用重新规划。选一下今天有多久、想看哪门课、想做哪类动作，系统就从未完成精品资源里挑一小包。</p>
+      </div>
+      <div class="planner">
+        <aside class="panel">
+          <h3>今天怎么学？</h3>
+          <p>状态好就选 90 分钟，累的时候选 20 分钟也算前进。选择会保存在本机。</p>
+          <div class="choice-group">
+            <span class="choice-label">可用时间</span>
+            <div class="choice-row" id="timeChoices"></div>
+          </div>
+          <div class="choice-group">
+            <span class="choice-label">科目</span>
+            <div class="choice-row" id="courseChoices"></div>
+          </div>
+          <div class="choice-group">
+            <span class="choice-label">目标</span>
+            <div class="choice-row" id="goalChoices"></div>
+          </div>
+        </aside>
+        <div class="task-grid" id="todayGrid"></div>
+      </div>
+    </section>
+
+    <section id="next">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">下一步建议</span>
+          <h2>现在最值得打开的资源。</h2>
+        </div>
+        <p>排序规则很朴素：先必做，再按课程覆盖和学习阶段补洞。打勾后这里会自动换下一批。</p>
+      </div>
+      <div class="task-grid" id="nextGrid"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">课程进度</span>
+          <h2>每门课推进到哪里了。</h2>
+        </div>
+        <p>不是所有资源都要一次做完。先看每门课的必做资源有没有完成，再决定要不要补推荐资源。</p>
+      </div>
+      <div class="course-grid" id="courseGrid"></div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <div class="panel">
+      <p><strong>继续学习仪表盘</strong><br>用本地完成状态把学习路线继续往前推一步，让用户回来就知道该做什么。</p>
+      <div class="actions" style="margin-top:0;">
+        <a class="btn" href="./index.html">回首页</a>
+        <a class="btn" href="./resources.html">资源库</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const doneKey = "starlight-resource-done-v1";
+    const planKey = "starlight-today-plan-v1";
+    const startRouteKey = "starlight-start-route-v1";
+    const goalChoices = [
+      { id: "auto", label: "自动推荐" },
+      { id: "exam", label: "真题校准" },
+      { id: "learn", label: "补知识洞" },
+      { id: "memory", label: "背诵召回" },
+      { id: "close", label: "考前收口" }
+    ];
+    const timeChoices = [
+      { id: "20", label: "20 分钟", limit: 2 },
+      { id: "45", label: "45 分钟", limit: 3 },
+      { id: "90", label: "90 分钟", limit: 5 }
+    ];
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function readDone() {
+      try {
+        return JSON.parse(localStorage.getItem(doneKey) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function writeDone(done) {
+      localStorage.setItem(doneKey, JSON.stringify(done));
+    }
+
+    function readPlan() {
+      try {
+        return { time: "45", course: "auto", goal: "auto", ...JSON.parse(localStorage.getItem(planKey) || "{}") };
+      } catch {
+        return { time: "45", course: "auto", goal: "auto" };
+      }
+    }
+
+    function readStartRoute() {
+      try {
+        return JSON.parse(localStorage.getItem(startRouteKey) || "null");
+      } catch {
+        return null;
+      }
+    }
+
+    function writePlan(plan) {
+      localStorage.setItem(planKey, JSON.stringify(plan));
+    }
+
+    function courses() {
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+      return [...manifest.courses, { id: "global", title: "全局工具", status: "错题 / 存档 / 暖机" }];
+    }
+
+    function courseName(id) {
+      return courses().find(item => item.id === id)?.title || id;
+    }
+
+    function courseById(id) {
+      return courses().find(item => item.id === id);
+    }
+
+    function stateLabel(id) {
+      const labels = {
+        lost: "不知道从哪开始",
+        paper: "想先做真题",
+        drill: "想专项补洞",
+        review: "临考收口"
+      };
+      return labels[id] || "继续学习";
+    }
+
+    function routeMode(id) {
+      const modes = { lost: "required", paper: "papers", drill: "drills", review: "review" };
+      return modes[id] || "required";
+    }
+
+    function practiceUrl(courseId, stateId) {
+      return `./practice_lab.html?course=${encodeURIComponent(courseId)}&mode=${encodeURIComponent(routeMode(stateId))}`;
+    }
+
+    function resources() {
+      return (window.STARLIGHT_RESOURCE_CATALOG || [])
+        .filter(item => qualityOf(item).level !== "archive");
+    }
+
+    function qualityOf(item) {
+      return (window.STARLIGHT_RESOURCE_QUALITY || {})[item.id] || { level: "draft" };
+    }
+
+    function isDone(item, done) {
+      return Boolean(done[item.id]);
+    }
+
+    function sortNext(a, b) {
+      const priorityScore = item => item.priority === "必做" ? 0 : 1;
+      const qualityScore = item => {
+        const order = { "exam-like": 0, reviewed: 1, draft: 2, archive: 9 };
+        return order[qualityOf(item).level] ?? 8;
+      };
+      const stageScore = item => {
+        const order = ["整卷校准", "题型校准", "先学", "先背", "定位", "补洞", "考前收口", "回炉", "举一反三", "迁移"];
+        const index = order.indexOf(item.stage);
+        return index === -1 ? 99 : index;
+      };
+      return priorityScore(a) - priorityScore(b) || qualityScore(a) - qualityScore(b) || stageScore(a) - stageScore(b) || a.title.localeCompare(b.title, "zh-CN");
+    }
+
+    function matchesGoal(item, goal) {
+      if (goal === "auto") return true;
+      const text = [item.type, item.stage, ...(item.tags || [])].join(" ");
+      const rules = {
+        exam: ["真题", "交互卷", "整卷校准", "题型校准"],
+        learn: ["深学", "知识地图", "专项", "闸门", "变式", "先学", "补洞", "举一反三"],
+        memory: ["背诵", "召回", "闪卡", "开卷", "定位", "先背"],
+        close: ["速查", "错题", "存档", "考前收口", "低成本", "回炉", "迁移"]
+      };
+      return (rules[goal] || []).some(keyword => text.includes(keyword));
+    }
+
+    function todayItems(done, plan) {
+      const limit = timeChoices.find(item => item.id === plan.time)?.limit || 3;
+      const selected = resources()
+        .filter(item => !isDone(item, done))
+        .filter(item => plan.course === "auto" || item.courseId === plan.course)
+        .filter(item => matchesGoal(item, plan.goal))
+        .sort(sortNext)
+        .slice(0, limit);
+      if (selected.length) return selected;
+      return resources()
+        .filter(item => !isDone(item, done))
+        .filter(item => plan.course === "auto" || item.courseId === plan.course)
+        .sort(sortNext)
+        .slice(0, limit);
+    }
+
+    function nextItems(done) {
+      return resources()
+        .filter(item => !isDone(item, done))
+        .sort(sortNext)
+        .slice(0, 6);
+    }
+
+    function bestRouteResource(courseId, stateId, done) {
+      const mode = routeMode(stateId);
+      const modeTypes = {
+        required: [],
+        papers: ["真题卷", "交互卷", "真题包"],
+        drills: ["专项训练", "变式题", "闸门题", "召回题", "背诵舱", "开卷包", "闪卡"],
+        review: ["速查包", "错题本"]
+      };
+      const items = resources()
+        .filter(item => item.courseId === courseId)
+        .filter(item => !isDone(item, done))
+        .sort(sortNext);
+      const wanted = modeTypes[mode] || [];
+      return items.find(item => item.priority === "必做" && (!wanted.length || wanted.includes(item.type))) ||
+        items.find(item => wanted.includes(item.type)) ||
+        items.find(item => item.priority === "必做") ||
+        items[0];
+    }
+
+    function renderGuideRoute(done) {
+      const saved = readStartRoute();
+      if (!saved || !courseById(saved.courseId)) {
+        $("#guideGrid").innerHTML = `
+          <article class="panel empty">
+            <h3>还没有生成路线</h3>
+            <p>第一次使用时，先去新手上岛向导选课程和状态。回来后这里会自动显示你的三步路线。</p>
+            <div class="actions"><a class="btn primary" href="./start_here.html">打开新手向导</a></div>
+          </article>
+        `;
+        return;
+      }
+      const course = courseById(saved.courseId);
+      const routeResource = bestRouteResource(saved.courseId, saved.stateId, done);
+      const updated = saved.updatedAt ? new Date(saved.updatedAt) : null;
+      const updatedText = updated && !Number.isNaN(updated.getTime()) ? updated.toLocaleDateString("zh-CN") : "刚刚";
+      const routeCards = [
+        {
+          tag: "路线",
+          title: `${course.title} · ${stateLabel(saved.stateId)}`,
+          desc: `这条路线生成于 ${updatedText}。想换科目或状态，可以重新打开向导。`,
+          href: "./start_here.html",
+          button: "调整路线"
+        },
+        {
+          tag: "先做",
+          title: routeResource ? routeResource.title : "打开课程岛",
+          desc: routeResource ? routeResource.description : "这门课暂无待做精品资源，先回课程岛看主入口。",
+          href: routeResource ? routeResource.href : `./course.html?id=${encodeURIComponent(saved.courseId)}`,
+          button: "继续这一步"
+        },
+        {
+          tag: "练题",
+          title: "打开训练台筛选结果",
+          desc: "训练台会按这门课和你的状态筛好入口，适合继续做题或补洞。",
+          href: practiceUrl(saved.courseId, saved.stateId),
+          button: "进入训练台"
+        }
+      ];
+      $("#guideGrid").innerHTML = routeCards.map(item => `
+        <article class="task-card">
+          <div class="tag-row"><span class="tag hot">${escapeHtml(item.tag)}</span></div>
+          <h3 style="margin-top:12px;">${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.desc)}</p>
+          <div class="card-actions"><a class="btn primary" href="${escapeHtml(item.href)}">${escapeHtml(item.button)}</a></div>
+        </article>
+      `).join("");
+    }
+
+    function renderMetrics(done, next) {
+      const all = resources();
+      const required = all.filter(item => item.priority === "必做");
+      const doneTotal = all.filter(item => isDone(item, done)).length;
+      const doneRequired = required.filter(item => isDone(item, done)).length;
+      $("#totalMetric").textContent = `${doneTotal} / ${all.length}`;
+      $("#requiredMetric").textContent = `${doneRequired} / ${required.length}`;
+      $("#nextMetric").textContent = next.length;
+    }
+
+    function resourceCard(item, done) {
+      const completed = isDone(item, done);
+      return `
+        <article class="task-card">
+          <div class="tag-row">
+            <span class="tag ${item.priority === "必做" ? "hot" : ""}">${escapeHtml(item.priority)}</span>
+            <span class="tag">${escapeHtml(courseName(item.courseId))}</span>
+            <span class="tag">${escapeHtml(item.stage)}</span>
+          </div>
+          <h3 style="margin-top:12px;">${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.description)}</p>
+          <div class="tag-row" style="margin-top:12px;">
+            <span class="tag">${escapeHtml(item.type)}</span>
+            ${(item.tags || []).slice(0, 3).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
+          </div>
+          <div class="card-actions">
+            <a class="btn primary" href="${escapeHtml(item.href)}">打开资源</a>
+            <button class="done-btn ${completed ? "done" : ""}" type="button" data-id="${escapeHtml(item.id)}">${completed ? "已完成" : "标记完成"}</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderNext(done) {
+      const next = nextItems(done);
+      if (!next.length) {
+        $("#nextGrid").innerHTML = `<article class="panel empty"><h3>主线资源全完成了</h3><p>漂亮。现在可以去资源库看推荐项、只筛真题级资源，或者打开错题回炉做最后整理。</p><div class="actions"><a class="btn primary" href="./resources.html">打开资源库</a></div></article>`;
+      } else {
+        $("#nextGrid").innerHTML = next.map(item => resourceCard(item, done)).join("");
+      }
+      return next;
+    }
+
+    function renderPlanControls(plan) {
+      const courseOptions = [{ id: "auto", title: "自动科目" }, ...courses()];
+      $("#timeChoices").innerHTML = timeChoices.map(item => `
+        <button class="choice-btn ${plan.time === item.id ? "active" : ""}" type="button" data-plan-group="time" data-value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button>
+      `).join("");
+      $("#courseChoices").innerHTML = courseOptions.map(item => `
+        <button class="choice-btn ${plan.course === item.id ? "active" : ""}" type="button" data-plan-group="course" data-value="${escapeHtml(item.id)}">${escapeHtml(item.title)}</button>
+      `).join("");
+      $("#goalChoices").innerHTML = goalChoices.map(item => `
+        <button class="choice-btn ${plan.goal === item.id ? "active" : ""}" type="button" data-plan-group="goal" data-value="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button>
+      `).join("");
+      document.querySelectorAll(".choice-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const nextPlan = readPlan();
+          nextPlan[button.dataset.planGroup] = button.dataset.value;
+          writePlan(nextPlan);
+          render();
+        });
+      });
+    }
+
+    function renderToday(done, plan) {
+      const items = todayItems(done, plan);
+      renderPlanControls(plan);
+      if (!items.length) {
+        $("#todayGrid").innerHTML = `<article class="panel empty"><h3>这个组合没有待做资源</h3><p>换一个科目或目标试试。也可能说明你已经把这部分清得很漂亮。</p><div class="actions"><a class="btn primary" href="./resources.html">打开资源库</a></div></article>`;
+      } else {
+        $("#todayGrid").innerHTML = items.map(item => resourceCard(item, done)).join("");
+      }
+    }
+
+    function renderCourses(done) {
+      $("#courseGrid").innerHTML = courses().map(course => {
+        const items = resources().filter(item => item.courseId === course.id);
+        const required = items.filter(item => item.priority === "必做");
+        const doneItems = items.filter(item => isDone(item, done));
+        const doneRequired = required.filter(item => isDone(item, done));
+        const next = items.filter(item => !isDone(item, done)).sort(sortNext)[0];
+        const pct = items.length ? Math.round(doneItems.length / items.length * 100) : 0;
+        return `
+          <article class="course-card">
+            <div>
+              <span class="tag">${escapeHtml(course.status || "全局工具")}</span>
+              <h3 style="margin-top:10px;">${escapeHtml(course.title)}</h3>
+              <p>完成 ${doneItems.length} / ${items.length}；必做 ${doneRequired.length} / ${required.length}</p>
+              <div class="progressbar"><i style="width:${pct}%"></i></div>
+              <p style="margin-top:10px;">${next ? `下一步：${escapeHtml(next.title)}` : "这门课精选资源已完成。"}</p>
+            </div>
+            <div class="actions" style="margin-top:0;">
+              <a class="btn primary" href="${next ? escapeHtml(next.href) : `./resources.html?course=${encodeURIComponent(course.id)}&scope=main`}">${next ? "继续" : "看资源库"}</a>
+              <a class="btn" href="./course.html?id=${escapeHtml(course.id)}">课程岛</a>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function bindDoneButtons() {
+      document.querySelectorAll(".done-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const done = readDone();
+          done[button.dataset.id] = !done[button.dataset.id];
+          if (!done[button.dataset.id]) delete done[button.dataset.id];
+          writeDone(done);
+          render();
+        });
+      });
+    }
+
+    function render() {
+      const done = readDone();
+      const plan = readPlan();
+      renderToday(done, plan);
+      renderGuideRoute(done);
+      const next = renderNext(done);
+      renderMetrics(done, next);
+      renderCourses(done);
+      bindDoneButtons();
+    }
+
+    render();
+  </script>
+</body>
+</html>

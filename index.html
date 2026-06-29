@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>星光学习岛 Starlight Study Island</title>
+  <meta name="description" content="一个面向期末冲刺的治愈系学习陪跑平台，整合路线规划、互动闯关、真题训练和错题回炉。">
+  <meta name="theme-color" content="#f6b9cf">
+  <meta name="application-name" content="星光学习岛">
+  <meta property="og:title" content="星光学习岛 Starlight Study Island">
+  <meta property="og:description" content="期末复习、互动刷题、课程岛、资源库和错题回炉整合在一个静态学习平台里。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./assets/brand/hero-study-island.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="星光学习岛 Starlight Study Island">
+  <meta name="twitter:description" content="一个面向期末冲刺的交互学习平台，适合低基础、时间紧、需要真题和错题回炉的同学。">
+  <meta name="twitter:image" content="./assets/brand/hero-study-island.png">
+  <link rel="icon" type="image/svg+xml" href="./assets/brand/icon.svg">
+  <link rel="manifest" href="./site.webmanifest">
+  <link rel="apple-touch-icon" href="./assets/brand/icon.svg">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .86);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --peach: #f5c89d;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 12%, rgba(246, 185, 207, .42), transparent 28%),
+        radial-gradient(circle at 86% 8%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 78% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+    body::before {
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .24) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    body::after {
+      background:
+        linear-gradient(120deg, transparent 12%, rgba(255,255,255,.68) 13%, transparent 14%) 10% 18% / 240px 140px no-repeat,
+        linear-gradient(120deg, transparent 12%, rgba(255,255,255,.52) 13%, transparent 14%) 82% 64% / 260px 150px no-repeat;
+      animation: cloudFloat 28s ease-in-out infinite alternate;
+      opacity: .7;
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes cloudFloat {
+      from { transform: translateX(-12px); }
+      to { transform: translateX(16px); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes sway {
+      from { transform: translateY(0) rotate(-1deg); }
+      to { transform: translateY(-8px) rotate(1.5deg); }
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: .42; transform: scale(.92); }
+      50% { opacity: .95; transform: scale(1.06); }
+    }
+
+    a { color: inherit; }
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+      letter-spacing: .01em;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .navlinks a,
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.68);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .navlinks a:hover,
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.95);
+    }
+    .btn.primary {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .btn.dark {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #46506f, #6c5f98);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(500px, 1.1fr);
+      gap: 38px;
+      align-items: center;
+      min-height: calc(100vh - 72px);
+      padding: 46px 0 54px;
+    }
+    .hero-copy,
+    .panel,
+    .card,
+    .route,
+    .module,
+    .metric {
+      animation: riseIn .55s ease both;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 11ch;
+      margin: 18px 0 12px;
+      font-size: clamp(52px, 7vw, 94px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(26px, 3vw, 42px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; }
+    .lead {
+      max-width: 68ch;
+      color: var(--muted);
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .primary-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .primary-actions .btn {
+      min-height: 54px;
+      font-size: 16px;
+    }
+    .support-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .share-note {
+      min-height: 26px;
+      margin-top: 10px;
+      color: #667187;
+      font-size: 13px;
+      font-weight: 780;
+      opacity: 0;
+      transform: translateY(-2px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .share-note.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .subject-ribbon {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .subject-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 5px 10px;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 999px;
+      background: rgba(255,255,255,.70);
+      color: #4d5870;
+      font-size: 13px;
+      font-weight: 920;
+      text-decoration: none;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, background .18s ease;
+    }
+    .subject-chip:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.95);
+    }
+    .hero-art {
+      position: relative;
+      min-height: 0;
+      aspect-ratio: 16 / 10;
+      border-radius: 8px;
+      background: rgba(255,255,255,.52);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .hero-art img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: cover;
+      object-position: center;
+    }
+    .floaty {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .floaty .mini {
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 8px;
+      background: rgba(255,255,255,.75);
+      box-shadow: 0 10px 24px rgba(61, 80, 111, .10);
+      color: #5e6980;
+      font-weight: 760;
+      backdrop-filter: blur(12px);
+    }
+    .mini strong {
+      display: block;
+      color: #28354b;
+      font-size: 18px;
+    }
+
+    section { padding: 36px 0; }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(340px, 1.18fr);
+      align-items: end;
+      gap: 28px;
+      margin-bottom: 16px;
+    }
+    .section-head > div { min-width: 0; }
+    .section-head p {
+      max-width: 74ch;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.82;
+    }
+    .section-head.course-head {
+      align-items: start;
+      margin-bottom: 22px;
+    }
+    .section-head.course-head h2 {
+      margin-top: 10px;
+      font-size: clamp(30px, 3.2vw, 46px);
+      line-height: 1.12;
+    }
+    .section-head.course-head p {
+      padding-top: 42px;
+      font-size: 16px;
+    }
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .panel,
+    .route,
+    .module,
+    .metric,
+    .card {
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .route,
+    .module,
+    .metric,
+    .card { padding: 18px; }
+    .route {
+      position: relative;
+      overflow: hidden;
+      min-height: 210px;
+    }
+    .route::before {
+      content: attr(data-step);
+      position: absolute;
+      right: 14px;
+      top: 8px;
+      font-size: 62px;
+      line-height: 1;
+      font-weight: 1000;
+      color: rgba(102, 86, 148, .10);
+    }
+    .route .pill { margin-bottom: 10px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 4px 9px;
+      color: #67507f;
+      background: rgba(255,255,255,.72);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+    .course-card {
+      position: relative;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+      min-height: 224px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 8px;
+      background:
+        linear-gradient(160deg, rgba(255,255,255,.92), rgba(247,250,255,.76)),
+        radial-gradient(circle at top right, rgba(201, 185, 244, .26), transparent 34%);
+      box-shadow: var(--soft-shadow);
+      text-decoration: none;
+      overflow: hidden;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .course-card::after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 0;
+      height: 4px;
+      border-radius: 999px 999px 0 0;
+      background: linear-gradient(90deg, rgba(246,185,207,.76), rgba(155,201,236,.72), rgba(247,223,139,.72));
+      transform: scaleX(.45);
+      transform-origin: left;
+      opacity: .72;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+    .course-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(155, 201, 236, .62);
+    }
+    .course-card:hover::after {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    .course-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+    .course-card .icon {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+    }
+    .course-card .icon svg {
+      width: 34px;
+      height: 34px;
+    }
+    .course-card .status {
+      min-width: 0;
+      color: #6c5a88;
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 13px;
+      line-height: 1.34;
+      font-weight: 900;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .course-mode {
+      margin: 0;
+      color: #56647d;
+      font-size: 14px;
+      line-height: 1.68;
+      font-weight: 820;
+    }
+    .course-card p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .course-counts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 2px;
+    }
+    .course-counts span,
+    .course-tags span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      background: rgba(255,255,255,.62);
+      color: #6b587c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .course-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .course-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .course-links a {
+      color: #31516f;
+      font-size: 13px;
+      font-weight: 850;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(115, 135, 168, .22);
+      background: rgba(255,255,255,.70);
+      color: #6a617c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .resource-shell {
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .resource-brief {
+      position: sticky;
+      top: 86px;
+    }
+    .resource-brief .lead {
+      font-size: 16px;
+    }
+    .home-search {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(115, 135, 168, .26);
+      border-radius: 8px;
+      background: rgba(255,255,255,.82);
+      color: var(--ink);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.80);
+      outline: none;
+      font: inherit;
+    }
+    .home-search:focus {
+      border-color: rgba(155, 201, 236, .85);
+      box-shadow: 0 0 0 4px rgba(155, 201, 236, .20);
+    }
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .resource-card {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 12px;
+      min-height: 168px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.88), rgba(246,250,255,.76)),
+        radial-gradient(circle at 86% 12%, rgba(255, 215, 111, .24), transparent 32%);
+      box-shadow: var(--soft-shadow);
+      text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .library-doors {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .library-door {
+      display: grid;
+      gap: 5px;
+      padding: 13px;
+      border: 1px solid rgba(115, 135, 168, .22);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      box-shadow: 0 8px 18px rgba(71, 82, 115, .08);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .library-door:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .12);
+      border-color: rgba(155, 201, 236, .58);
+    }
+    .library-door strong { font-size: 16px; }
+    .library-door span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .resource-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(159, 218, 203, .62);
+    }
+    .resource-card .icon {
+      width: 52px;
+      height: 52px;
+    }
+    .resource-card .icon svg {
+      width: 40px;
+      height: 40px;
+    }
+    .resource-card h3 {
+      margin-bottom: 4px;
+    }
+    .resource-card p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .steps {
+      display: grid;
+      gap: 7px;
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .steps li {
+      position: relative;
+      padding-left: 18px;
+      color: #5e6980;
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .steps li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .72em;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--pink), var(--blue));
+      box-shadow: 0 0 0 3px rgba(255,255,255,.78);
+    }
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .summary-strip .metric {
+      min-height: 120px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.84), rgba(255,247,252,.76)),
+        radial-gradient(circle at 90% 12%, rgba(201, 185, 244, .22), transparent 38%);
+    }
+    .summary-strip .metric strong {
+      font-size: 28px;
+    }
+    .module {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      text-decoration: none;
+      min-height: 170px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .module:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(181, 152, 220, .55);
+    }
+    .module p,
+    .route p,
+    .card p { color: var(--muted); }
+    .quick-card {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 12px;
+      min-height: 150px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,246,251,.72)),
+        radial-gradient(circle at top right, rgba(255, 215, 111, .28), transparent 34%);
+      box-shadow: var(--soft-shadow);
+      padding: 16px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .quick-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(238, 164, 192, .55);
+    }
+    .quick-card .icon {
+      width: 48px;
+      height: 48px;
+    }
+    .quick-card .icon svg {
+      width: 38px;
+      height: 38px;
+    }
+    .quick-card small {
+      display: block;
+      margin-bottom: 7px;
+      color: #8a6d9c;
+      font-weight: 950;
+    }
+    .quick-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .feature-card {
+      min-height: 180px;
+    }
+    .icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #fff, #fff0f7 45%, #e8f8ff);
+      border: 1px solid rgba(255,255,255,.86);
+      box-shadow: 0 8px 18px rgba(71, 82, 115, .10);
+    }
+    .icon svg { width: 48px; height: 48px; }
+    .tool {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 8px;
+      background: rgba(255,255,255,.78);
+      box-shadow: var(--soft-shadow);
+      padding: 16px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .tool:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: rgba(181, 152, 220, .55);
+    }
+    .tool p { color: var(--muted); }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .metric strong {
+      display: block;
+      margin: 4px 0;
+      font-size: 32px;
+      line-height: 1.1;
+    }
+    .metric span { color: var(--muted); font-weight: 780; }
+    .progressbar {
+      height: 9px;
+      margin-top: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(101, 113, 138, .12);
+    }
+    .progressbar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--pink), var(--blue), var(--mint));
+      transition: width .5s ease;
+    }
+    .product-story {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .story-map {
+      min-height: 100%;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(247, 223, 139, .46), transparent 18%),
+        radial-gradient(circle at 80% 28%, rgba(155, 201, 236, .46), transparent 22%),
+        linear-gradient(135deg, rgba(255,255,255,.82), rgba(244,250,255,.64));
+    }
+    .story-map svg {
+      width: 100%;
+      height: 100%;
+      min-height: 410px;
+      display: block;
+    }
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+    .check {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+    }
+    .check b { display: block; }
+    .check span { color: var(--muted); }
+    .dot {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe4ef, #e8f8ff);
+      font-weight: 950;
+      color: #6a5a92;
+    }
+    .footer {
+      padding: 34px 0 50px;
+      color: #65718a;
+    }
+    .footer .panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .spark {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 0 18px rgba(255, 213, 139, .86);
+      animation: twinkle 2.8s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .grid.three,
+      .grid.two,
+      .grid.four,
+      .course-grid,
+      .resource-shell,
+      .resource-grid,
+      .product-story {
+        grid-template-columns: 1fr;
+      }
+      .hero { min-height: auto; padding-top: 28px; }
+      .hero-art { aspect-ratio: 16 / 11; }
+      h1 { max-width: 12ch; }
+      .section-head { display: block; }
+      .section-head.course-head p { padding-top: 0; }
+      .nav { align-items: flex-start; }
+      .navlinks { display: none; }
+      .resource-brief { position: static; }
+    }
+    @media (min-width: 921px) and (max-width: 1220px) {
+      .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 22px, 1180px); }
+      h1 { font-size: clamp(48px, 18vw, 78px); }
+      .hero-art { aspect-ratio: 4 / 3; }
+      .floaty { grid-template-columns: 1fr; }
+      .module { grid-template-columns: 1fr; }
+      .resource-card { grid-template-columns: 1fr; }
+      .summary-strip { grid-template-columns: 1fr; }
+      .quick-card { grid-template-columns: 1fr; }
+      .tool { grid-template-columns: 1fr; }
+      .actions .btn,
+      .primary-actions .btn { width: 100%; }
+      .primary-actions,
+      .library-doors { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div id="sparkLayer" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="主导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <path d="M32 7l6.8 13.8L54 23l-11 10.7 2.6 15.1L32 41.6 18.4 48.8 21 33.7 10 23l15.2-2.2L32 7Z" fill="#ffd76f" stroke="#6b5a92" stroke-width="2"/>
+            <circle cx="22" cy="38" r="4" fill="#ffc2d8"/>
+            <circle cx="43" cy="37" r="4" fill="#a9dfd2"/>
+          </svg>
+        </span>
+        <span>星光学习岛</span>
+      </a>
+      <div class="navlinks">
+        <a href="./product_intro.html">项目介绍</a>
+        <a href="./start_here.html">新手向导</a>
+        <a href="#courses">课程入口</a>
+        <a href="#resource-map">资料库查找</a>
+        <a href="./practice_lab.html">真题训练台</a>
+        <a href="./dashboard.html">继续学习</a>
+        <a href="#progress">学习进度</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow">期末复习 · 真题交互 · 全科陪跑</span>
+        <h1>星光学习岛</h1>
+        <p class="lead">
+          一个面向大学期末冲刺的交互学习平台：把<span class="key">数据库、人工智能、软件工程、军事理论、离散数学、马克思主义基本原理（马原）、操作系统</span>的<span class="key">深学讲义</span>、<span class="key">往年真题卷</span>、<span class="key">闯关闪卡</span>和<span class="key">错题回炉</span>整理成清楚入口。先选课程，再选学习动作，不在资料堆里迷路。
+        </p>
+        <div class="primary-actions">
+          <a class="btn primary" href="#courses">选择课程岛</a>
+          <a class="btn mint" href="./resources.html">查全部资料库</a>
+          <a class="btn primary" href="./practice_lab.html">做真题训练</a>
+        </div>
+        <div class="support-actions">
+          <a class="btn" href="./product_intro.html">看项目介绍</a>
+          <a class="btn" href="./start_here.html">新手上岛向导</a>
+          <a class="btn" href="./dashboard.html">继续学习</a>
+          <a class="btn" href="./final_two_wrong_review.html">错题宝箱</a>
+          <a class="btn" href="./exam_scope_master_map.html">全科地图</a>
+          <button class="btn" id="shareHome" type="button">分享给同学</button>
+        </div>
+        <div class="share-note" id="shareNote" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="hero-art" aria-label="星光学习岛插画">
+        <img src="./assets/brand/hero-study-island.png" alt="彩虹星岛上的期末复习学习场景">
+        <div class="floaty">
+          <div class="mini"><strong>7 门课程</strong>统一入口，重点清楚</div>
+          <div class="mini"><strong>真题交互</strong>选择判分，大题逐步展开</div>
+          <div class="mini"><strong>深学讲义</strong>从零铺垫到题型动作</div>
+          <div class="mini"><strong>本地进度</strong>错题、闯关、存档可回炉</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="courses">
+      <div class="section-head course-head">
+        <div>
+          <span class="eyebrow">课程入口</span>
+          <h2>七门课程入口</h2>
+        </div>
+        <p>每门课保留一个清晰主入口。点击卡片进入课程岛，再选择深学讲义、真题交互、闪卡背诵或错题回炉；首页负责认路，资料库负责承载完整内容。</p>
+      </div>
+      <div class="course-grid" id="courseGrid"></div>
+    </section>
+
+    <section class="wrap" id="resource-map">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">真题资源地图 · 资料库查找</span>
+          <h2>全部资料集中在这里找。</h2>
+        </div>
+        <p>之前做过的讲义、交互卷、闪卡、速查包、错题回炉都统一进资源库。首页只露出高价值入口，避免资料摊成一片。</p>
+      </div>
+      <div class="resource-shell">
+        <aside class="panel resource-brief">
+          <span class="eyebrow">怎么用</span>
+          <h3>资料库是主仓库，真题训练台负责练。</h3>
+          <p class="lead">搜“离散 证明”“软工 UML”“AI 公式”“OS 真题”都可以。资源卡会告诉你它属于哪门课、什么阶段、是否必做、适合先学还是临考回炉。</p>
+          <input class="home-search" id="homeResourceSearch" type="search" placeholder="搜索全部资料，例如：AI 公式、软工 UML、离散证明、OS 真题">
+          <div class="library-doors" aria-label="资料库快捷入口">
+            <a class="library-door" href="./resources.html?scope=main"><strong>全部资料库</strong><span>按课程、阶段、类型筛选</span></a>
+            <a class="library-door" href="./resources.html?scope=exam"><strong>真题资源</strong><span>交互卷和整卷校准入口</span></a>
+            <a class="library-door" href="./resources.html?priority=%E5%BF%85%E5%81%9A"><strong>必做清单</strong><span>每门课最该先点的资源</span></a>
+            <a class="library-door" href="./final_two_wrong_review.html"><strong>错题宝箱</strong><span>答错和卡壳题集中回炉</span></a>
+          </div>
+          <div class="summary-strip">
+            <article class="metric"><span>课程入口</span><strong>7</strong><p>覆盖本轮期末核心科目</p></article>
+            <article class="metric"><span>资料资源</span><strong id="homeResourceCount">0</strong><p>真题、讲义、闪卡和回炉舱</p></article>
+            <article class="metric"><span>必做资源</span><strong id="homeRequiredCount">0</strong><p>每门课优先完成的主线入口</p></article>
+          </div>
+        </aside>
+        <div class="resource-grid" id="resourceGrid"></div>
+      </div>
+    </section>
+
+    <section class="wrap" id="progress">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">学习进度</span>
+          <h2>不用登录，也能看见自己在变强。</h2>
+        </div>
+        <p>闯关、真题、错题和材料题练习会保存在这个浏览器里。换设备时可以用学习存档导出和导入。</p>
+      </div>
+      <div class="grid four" id="progressGrid"></div>
+    </section>
+
+  </main>
+
+  <footer class="wrap footer">
+    <div class="panel">
+      <p><strong>星光学习岛</strong><br>一个从期末冲刺长出来的交互学习平台。当前版本已接入数据库、人工智能、软工、军理、离散、马原和操作系统入口。</p>
+      <div class="actions" style="margin-top:0;">
+        <a class="btn" href="./product_intro.html">项目介绍</a>
+        <a class="btn" href="./start_here.html">开始学习</a>
+        <a class="btn" href="./focus_dual_exam_game.html">三题暖机</a>
+        <a class="btn" href="./practice_lab.html">开始练题</a>
+        <a class="btn" href="./final_two_wrong_review.html">复盘错题</a>
+        <a class="btn" href="./progress_vault.html">学习存档</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function iconSvg(type) {
+      const icons = {
+        star: `<svg viewBox="0 0 64 64"><path d="M31 7l7 14 16 2-12 11 3 16-14-8-14 8 3-16L8 23l16-2 7-14Z" fill="#ffd76f" stroke="#6d5a94" stroke-width="3"/><circle cx="23" cy="39" r="4" fill="#ffc2dc"/><circle cx="42" cy="39" r="4" fill="#aee2d6"/></svg>`,
+        db: `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="14" rx="19" ry="8" fill="#dff4ff" stroke="#52708c" stroke-width="3"/><path d="M13 14v28c0 5 8.5 9 19 9s19-4 19-9V14" fill="#eef9ff" stroke="#52708c" stroke-width="3"/><path d="M13 28c0 5 8.5 9 19 9s19-4 19-9" fill="none" stroke="#52708c" stroke-width="3"/><path d="M13 40c0 5 8.5 9 19 9s19-4 19-9" fill="none" stroke="#52708c" stroke-width="3"/></svg>`,
+        ai: `<svg viewBox="0 0 64 64"><rect x="16" y="14" width="32" height="32" rx="10" fill="#f2ebff" stroke="#725f8f" stroke-width="3"/><path d="M24 25h16M24 33h16M24 41h10" stroke="#725f8f" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="8" r="4" fill="#ffd76f"/><circle cx="48" cy="52" r="5" fill="#aee2d6"/><path d="M20 12v8M48 47v-8" stroke="#725f8f" stroke-width="3" stroke-linecap="round"/></svg>`,
+        se: `<svg viewBox="0 0 64 64"><rect x="12" y="13" width="40" height="30" rx="6" fill="#fff4d8" stroke="#8f7650" stroke-width="3"/><path d="M20 51h24M28 43v8M20 23h24M20 32h14" stroke="#8f7650" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="32" r="5" fill="#ffc2dc" stroke="#8f7650" stroke-width="2"/></svg>`,
+        military: `<svg viewBox="0 0 64 64"><path d="M32 9l21 8v14c0 12-8 20-21 25C19 51 11 43 11 31V17l21-8Z" fill="#e8fbf3" stroke="#527d6d" stroke-width="3"/><path d="M32 18v26M22 29h20" stroke="#527d6d" stroke-width="4" stroke-linecap="round"/><path d="M22 44c7-5 13-5 20 0" fill="none" stroke="#527d6d" stroke-width="3" stroke-linecap="round"/></svg>`,
+        marx: `<svg viewBox="0 0 64 64"><path d="M16 12h26a8 8 0 0 1 8 8v34H24a8 8 0 0 1-8-8Z" fill="#ffeef5" stroke="#8d6076" stroke-width="3"/><path d="M24 24h18M24 34h18M24 44h12" stroke="#8d6076" stroke-width="3" stroke-linecap="round"/><path d="M47 15l-6 9 9-2" fill="#ffd76f" stroke="#8d6076" stroke-width="2"/></svg>`,
+        os: `<svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="8" fill="#eef1ff" stroke="#626f8e" stroke-width="3"/><rect x="22" y="22" width="20" height="20" rx="4" fill="#fff" stroke="#626f8e" stroke-width="3"/><path d="M8 24h8M8 40h8M48 24h8M48 40h8M24 8v8M40 8v8M24 48v8M40 48v8" stroke="#626f8e" stroke-width="3" stroke-linecap="round"/></svg>`,
+        ladder: `<svg viewBox="0 0 64 64"><path d="M10 48 C18 22 44 20 54 48Z" fill="#b9e4f6" stroke="#426c8f" stroke-width="3"/><path d="M18 48h28M22 40h22M26 32h16" stroke="#426c8f" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="20" r="8" fill="#fff3a8" stroke="#8c7a38" stroke-width="3"/></svg>`,
+        paper: `<svg viewBox="0 0 64 64"><rect x="12" y="10" width="40" height="46" rx="6" fill="#fff" stroke="#626f8e" stroke-width="3"/><path d="M20 22h24M20 32h24M20 42h14" stroke="#626f8e" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="45" r="8" fill="#ffc9dc" stroke="#9b6479" stroke-width="3"/></svg>`,
+        check: `<svg viewBox="0 0 64 64"><path d="M14 50h36" stroke="#6f638e" stroke-width="4" stroke-linecap="round"/><path d="M18 46 C20 22 42 18 48 42" fill="none" stroke="#a8dfd1" stroke-width="8" stroke-linecap="round"/><path d="M24 36l8 8 16-22" fill="none" stroke="#6f638e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        book: `<svg viewBox="0 0 64 64"><path d="M14 12h30a8 8 0 0 1 8 8v34H22a8 8 0 0 1-8-8Z" fill="#fff0cf" stroke="#8f7650" stroke-width="3"/><path d="M22 22h22M22 32h22M22 42h14" stroke="#8f7650" stroke-width="3" stroke-linecap="round"/><path d="M48 16v22l-6-5-6 5V16" fill="#ffd1df" stroke="#8f7650" stroke-width="3"/></svg>`,
+        box: `<svg viewBox="0 0 64 64"><path d="M12 24h40v26a6 6 0 0 1-6 6H18a6 6 0 0 1-6-6Z" fill="#e9f8ff" stroke="#52708c" stroke-width="3"/><path d="M20 24l6-10h12l6 10" fill="none" stroke="#52708c" stroke-width="3" stroke-linecap="round"/><path d="M32 31l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z" fill="#ffd76f" stroke="#8d7540" stroke-width="2"/></svg>`,
+        vault: `<svg viewBox="0 0 64 64"><path d="M12 25h40v24a7 7 0 0 1-7 7H19a7 7 0 0 1-7-7Z" fill="#e9f8ff" stroke="#52708c" stroke-width="3"/><path d="M20 25l7-12h10l7 12" fill="none" stroke="#52708c" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="39" r="10" fill="#ffd76f" stroke="#8d7540" stroke-width="3"/><path d="M32 34v10M27 39h10" stroke="#8d7540" stroke-width="3" stroke-linecap="round"/></svg>`,
+        spec: `<svg viewBox="0 0 64 64"><rect x="13" y="9" width="38" height="48" rx="6" fill="#fff" stroke="#626f8e" stroke-width="3"/><path d="M22 22h20M22 32h20M22 42h12" stroke="#626f8e" stroke-width="3" stroke-linecap="round"/><path d="M44 8v14l-5-4-5 4V8" fill="#ffd1df" stroke="#626f8e" stroke-width="3"/></svg>`,
+        rocket: `<svg viewBox="0 0 64 64"><path d="M34 8 C46 12 52 24 50 38 L38 26 C24 24 12 18 8 10 C18 8 27 7 34 8Z" fill="#ffe1ed" stroke="#725f8f" stroke-width="3" stroke-linejoin="round"/><path d="M38 26l-9 9" stroke="#725f8f" stroke-width="4" stroke-linecap="round"/><path d="M25 38 C20 42 18 47 18 53 C24 52 29 50 33 45" fill="#fff0c7" stroke="#725f8f" stroke-width="3" stroke-linejoin="round"/><circle cx="39" cy="18" r="5" fill="#b9e4f6" stroke="#725f8f" stroke-width="3"/></svg>`
+      };
+      return icons[type] || icons.star;
+    }
+
+    function courseHubHref(course) {
+      return `./course.html?id=${encodeURIComponent(course.id)}`;
+    }
+
+    function renderManifest() {
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [], features: [], flow: [] };
+      const catalog = window.STARLIGHT_RESOURCE_CATALOG || [];
+      const examTypes = new Set(["真题卷", "交互卷", "真题包"]);
+      $("#courseGrid").innerHTML = (manifest.courses || []).map(item => {
+        const resources = catalog.filter(resource => resource.courseId === item.id);
+        const required = resources.filter(resource => resource.priority === "必做").length;
+        const papers = resources.filter(resource => examTypes.has(resource.type)).length;
+        const tags = (item.resourceTags || []).slice(0, 3).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+        return `
+        <a class="course-card" href="${escapeHtml(courseHubHref(item))}" aria-label="进入${escapeHtml(item.title)}课程岛">
+          <div class="course-top">
+            <span class="icon" aria-hidden="true">${iconSvg(item.icon)}</span>
+            <span class="status">${escapeHtml(item.status)}</span>
+          </div>
+          <h3>${escapeHtml(item.title)}</h3>
+          <p class="course-mode">${escapeHtml(item.examMode || item.status)}</p>
+          <div class="course-tags" aria-label="资源标签">${tags}</div>
+          <div class="course-counts" aria-label="资源数量">
+            <span>必做 ${required}</span>
+            <span>资料 ${resources.length}</span>
+            <span>真题 ${papers}</span>
+          </div>
+        </a>
+      `;
+      }).join("");
+      const courseById = new Map((manifest.courses || []).map(course => [course.id, course]));
+      const mustDo = [
+        ...(manifest.courses || [])
+          .map(course => catalog.find(item => item.courseId === course.id && item.priority === "必做"))
+          .filter(Boolean),
+        ...catalog.filter(item => item.courseId === "global" && item.priority === "必做").slice(0, 3)
+      ];
+      $("#homeResourceCount").textContent = String(catalog.length);
+      $("#homeRequiredCount").textContent = String(catalog.filter(item => item.priority === "必做").length);
+      $("#resourceGrid").innerHTML = mustDo.map(item => {
+        const course = courseById.get(item.courseId);
+        return `
+        <a class="resource-card" href="${escapeHtml(item.href)}">
+          <span class="icon" aria-hidden="true">${iconSvg(course?.icon || "paper")}</span>
+          <span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+            <ul class="steps">
+              <li>${escapeHtml(course?.title || "全局工具")} · ${escapeHtml(item.type)}</li>
+              <li>${escapeHtml(item.stage)} · ${escapeHtml(item.priority)}</li>
+            </ul>
+            <span class="tag-row">${(item.tags || []).slice(0, 4).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</span>
+          </span>
+        </a>
+        `;
+      }).join("");
+      const routeGrid = $("#routeGrid");
+      if (routeGrid) {
+        routeGrid.innerHTML = manifest.flow.map(item => `
+          <article class="route" data-step="${escapeHtml(item.step)}">
+            <span class="pill">${escapeHtml(item.label)}</span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+            <div class="actions"><a class="btn ${escapeHtml(item.style || "")}" href="${escapeHtml(item.href)}">${escapeHtml(item.button)}</a></div>
+          </article>
+        `).join("");
+      }
+      const featureGrid = $("#featureGrid");
+      if (featureGrid) {
+        featureGrid.innerHTML = (manifest.features || []).map(item => `
+          <a class="module feature-card" href="${escapeHtml(item.href)}">
+            <span class="icon" aria-hidden="true">${iconSvg(item.icon)}</span>
+            <span>
+              <h3>${escapeHtml(item.title)}</h3>
+              <p>${escapeHtml(item.description)}</p>
+              <span class="meta">${item.tags.map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}</span>
+            </span>
+          </a>
+        `).join("");
+      }
+    }
+
+    function readJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function countPaper(year) {
+      const state = readJSON(`discrete-hiji-${year}`, {});
+      return Object.values(state).filter(Boolean).length;
+    }
+
+    function countDay7() {
+      const base = "buaa-finals-discrete-day7-final";
+      const gates = Array.from({ length: 10 }, (_, i) => localStorage.getItem(`${base}:gate:g${i + 1}`) === "1").filter(Boolean).length;
+      const drills = Array.from({ length: 8 }, (_, i) => (localStorage.getItem(`${base}:d7-q${i + 1}`) || "").trim().length >= 12).filter(Boolean).length;
+      return { gates, drills };
+    }
+
+    function countMarx() {
+      const todoKeys = ["practice","dialectics","truth","social","productive","people","surplus","communism","exam-rules"];
+      const todo = todoKeys.filter(k => localStorage.getItem("marxTodoV2:" + k) === "1").length;
+      const gates = ["marx-gate-practice","marx-gate-productivity","marx-gate-surplus","marx-gate-contradiction"].filter(k => (localStorage.getItem(k) || "").trim().length >= 45).length;
+      return { todo, gates };
+    }
+
+    function renderProgress() {
+      const island = readJSON("starlight-island-state-v2", { stars: 0, right: 0, answered: 0 });
+      const done = readJSON("starlight-resource-done-v1", {});
+      const resources = window.STARLIGHT_RESOURCE_CATALOG || [];
+      const courses = (window.STARLIGHT_MANIFEST || { courses: [] }).courses || [];
+      const required = resources.filter(item => item.priority === "必做");
+      const requiredDone = required.filter(item => done[item.id]);
+      const paperTypes = new Set(["真题卷", "交互卷", "真题包"]);
+      const papers = resources.filter(item => paperTypes.has(item.type));
+      const papersDone = papers.filter(item => done[item.id]);
+      const courseDone = courses.filter(course => resources.some(item => item.courseId === course.id && done[item.id]));
+      const today = readJSON("starlight-today-plan-v1", { items: [] });
+      const todayCount = Array.isArray(today.items) ? today.items.length : 0;
+      const metrics = [
+        {
+          title: "全科必做",
+          value: `${requiredDone.length}/${required.length}`,
+          sub: "覆盖数据库、AI、软工、军理、离散、马原、OS 的主线资源",
+          pct: required.length ? Math.min(100, (requiredDone.length / required.length) * 100) : 0
+        },
+        {
+          title: "真题训练",
+          value: `${papersDone.length}/${papers.length}`,
+          sub: "交互卷、真题包和整卷校准入口",
+          pct: papers.length ? Math.min(100, (papersDone.length / papers.length) * 100) : 0
+        },
+        {
+          title: "课程覆盖",
+          value: `${courseDone.length}/${courses.length}`,
+          sub: "至少完成过一个资源的课程数量",
+          pct: courses.length ? Math.min(100, (courseDone.length / courses.length) * 100) : 0
+        },
+        {
+          title: "今日学习包",
+          value: todayCount || island.stars || 0,
+          sub: todayCount ? "仪表盘已生成今日资源任务" : "还没生成任务时先做三题暖机",
+          pct: todayCount ? Math.min(100, (todayCount / 5) * 100) : Math.min(100, ((island.stars || 0) / 240) * 100)
+        }
+      ];
+      $("#progressGrid").innerHTML = metrics.map(item => `
+        <article class="metric">
+          <span>${item.title}</span>
+          <strong>${item.value}</strong>
+          <p>${item.sub}</p>
+          <div class="progressbar"><i style="width:${item.pct}%"></i></div>
+        </article>
+      `).join("");
+    }
+
+    function paintSparks() {
+      const layer = $("#sparkLayer");
+      const count = window.matchMedia("(max-width: 700px)").matches ? 8 : 15;
+      layer.innerHTML = Array.from({ length: count }, (_, i) => {
+        const left = 4 + Math.random() * 92;
+        const top = 8 + Math.random() * 84;
+        const delay = (i * .37).toFixed(2);
+        return `<span class="spark" style="left:${left}vw;top:${top}vh;animation-delay:${delay}s"></span>`;
+      }).join("");
+    }
+
+    function sharePayload() {
+      const url = location.protocol === "file:" ? "index.html" : location.href.split("#")[0];
+      return {
+        title: "星光学习岛 Starlight Study Island",
+        text: "一个面向期末冲刺的交互学习平台：课程岛、真题训练、资源库、闯关和错题回炉都在这里。",
+        url
+      };
+    }
+
+    function showShareNote(message) {
+      const note = $("#shareNote");
+      if (!note) return;
+      note.textContent = message;
+      note.classList.add("show");
+      window.clearTimeout(showShareNote.timer);
+      showShareNote.timer = window.setTimeout(() => note.classList.remove("show"), 2600);
+    }
+
+    async function copyShareLink(payload) {
+      const text = `${payload.title}\n${payload.text}\n${payload.url}`;
+      if (navigator.clipboard && location.protocol !== "file:") {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const area = document.createElement("textarea");
+        area.value = text;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+    }
+
+    async function handleShare() {
+      const payload = sharePayload();
+      try {
+        if (navigator.share && location.protocol !== "file:") {
+          await navigator.share(payload);
+          showShareNote("已打开系统分享面板。");
+          return;
+        }
+        await copyShareLink(payload);
+        showShareNote("已复制项目入口和简介，可以直接发给同学。");
+      } catch {
+        showShareNote("分享没有完成，可以手动复制浏览器地址。");
+      }
+    }
+
+    renderManifest();
+    $("#homeResourceSearch")?.addEventListener("keydown", event => {
+      if (event.key !== "Enter") return;
+      const query = event.currentTarget.value.trim();
+      window.location.href = query ? `./resources.html?q=${encodeURIComponent(query)}` : "./resources.html";
+    });
+    $("#shareHome")?.addEventListener("click", handleShare);
+    paintSparks();
+    renderProgress();
+    window.addEventListener("storage", renderProgress);
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

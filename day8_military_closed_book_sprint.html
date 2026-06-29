@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>军理闭卷背诵舱</title>
+  <style>
+    :root{
+      --bg:#f5f7f4;--ink:#19231c;--muted:#657263;--panel:#fff;--line:#d9e2d7;
+      --green:#2f6f4e;--red:#a54235;--gold:#956b18;--blue:#2f5f8d;--soft:#eef7ee;
+      --paper:#fffdf7;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.82;letter-spacing:0}
+    header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+    .head{width:min(1220px,calc(100% - 28px));margin:0 auto;padding:14px 0;display:flex;justify-content:space-between;gap:16px;align-items:center}
+    h1{margin:0;font-size:26px;line-height:1.2}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .wrap{width:min(1220px,calc(100% - 28px));margin:18px auto 70px;display:grid;grid-template-columns:280px 1fr;gap:16px}
+    aside{position:sticky;top:84px;align-self:start;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;box-shadow:0 10px 24px rgba(25,35,28,.05)}
+    nav a{display:block;color:var(--green);text-decoration:none;font-weight:850;padding:7px 0;border-bottom:1px dashed #e3eadf}
+    .progress{font-size:28px;font-weight:950;color:var(--green);margin:6px 0}
+    .small{font-size:13px;color:var(--muted)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:16px;box-shadow:0 10px 24px rgba(25,35,28,.05)}
+    .paper{background:var(--paper)}
+    h2{font-size:24px;margin:0 0 10px;line-height:1.25}
+    h3{font-size:19px;margin:0 0 8px;line-height:1.35}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .mini{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fbfdfa}
+    .tag{display:inline-flex;border:1px solid #c9d8ca;border-radius:999px;padding:3px 9px;margin:2px;font-size:12px;color:#476246;background:#fbfdfa;font-weight:750}
+    .mark{font-weight:900;color:var(--red);background:linear-gradient(transparent 60%,#ffe2d8 60%)}
+    .must{font-weight:900;color:var(--green);background:linear-gradient(transparent 60%,#dff0df 60%)}
+    .warn{border-left:4px solid var(--gold);background:#fff8e9;padding:10px 12px;border-radius:6px;margin:10px 0}
+    .danger{border-left:4px solid var(--red);background:#fff2ef;padding:10px 12px;border-radius:6px;margin:10px 0}
+    table{width:100%;border-collapse:collapse;background:#fff}
+    th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+    th{background:#eef6ef}
+    .btn,.choice{border:1px solid #b8d1bd;background:#f6fbf6;color:var(--green);border-radius:8px;padding:8px 12px;font-weight:850;cursor:pointer;font:inherit;text-align:left}
+    .btn.primary{background:var(--green);color:white;border-color:var(--green)}
+    .btn.ghost{background:#fff;color:var(--muted)}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .flash{border:1px solid var(--line);border-radius:8px;background:#fff;padding:16px;margin:10px 0}
+    .flash .front{font-size:18px;font-weight:900}
+    .flash .back{display:none;margin-top:10px;padding:12px;border-radius:8px;background:#f4faf4;border:1px solid #d8e8d8}
+    .flash.open .back{display:block}
+    .quiz{border:1px solid var(--line);border-radius:8px;background:#fff;padding:16px;margin:12px 0}
+    .choices{display:grid;gap:8px;margin-top:10px}
+    .choice.selected{border-color:var(--blue);background:#edf5ff}
+    .choice.correct{border-color:var(--green);background:#edf8ef}
+    .choice.wrong{border-color:var(--red);background:#fff0ed}
+    .answer{display:none;margin-top:10px;border-left:4px solid var(--green);background:#f4faf4;padding:10px 12px;border-radius:6px}
+    .quiz.checked .answer{display:block}
+    input[type=text],textarea{width:100%;border:1px solid #cbd9c9;border-radius:8px;background:#fbfdfa;padding:10px;font:inherit;line-height:1.65}
+    textarea{min-height:100px;resize:vertical}
+    details{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:#fbfdfa;margin:10px 0}
+    summary{font-weight:900;color:var(--green);cursor:pointer}
+    .twoCol{columns:2;column-gap:28px}
+    .twoCol li{break-inside:avoid;margin-bottom:6px}
+    @media(max-width:960px){.wrap{grid-template-columns:1fr}aside{position:static}.grid,.tri{grid-template-columns:1fr}.twoCol{columns:1}.head{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div>
+      <h1>军理闭卷背诵舱</h1>
+      <div class="sub">目标：把五章重点从“看过”变成“闭卷能填、能选、能写简答第一句”。来源：2024考前梳理、2024重点整理、白色教材版知识点、2008-2016往年题。</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="./day8_liberal_low_cost_sprint.html">回文科低成本包</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside>
+    <div class="small">背诵进度</div>
+    <div class="progress"><span id="doneCount">0</span> / <span id="totalCount">0</span></div>
+    <div class="small">先把绿色“必背”记住，再做题。闭卷最怕眼熟但写不出关键词。</div>
+    <nav>
+      <a href="#route">今晚路线</a>
+      <a href="#exam">考试结构</a>
+      <a href="#map">五章总图</a>
+      <a href="#patches">往年题补丁</a>
+      <a href="#chapters">从零讲义</a>
+      <a href="#flashcards">主动回忆闪卡</a>
+      <a href="#quiz">闭卷小测</a>
+      <a href="#templates">简答论述模板</a>
+      <a href="#sources">资料覆盖</a>
+    </nav>
+  </aside>
+
+  <main>
+    <section class="card paper" id="route">
+      <h2>今晚怎么背：别硬啃，按四轮走</h2>
+      <div class="grid">
+        <div class="mini">
+          <h3>第 1 轮：30 分钟建地图</h3>
+          <p>只看五章总图和每章“核心句”。你要先知道军理在考什么：<span class="mark">定义、并列要点、数字、人物著作、战争形态</span>。</p>
+        </div>
+        <div class="mini">
+          <h3>第 2 轮：70 分钟背必背句</h3>
+          <p>每个知识点只背“关键词骨架”，不要背成散文。比如国防定义背成：<span class="must">防侵略、止颠覆、保主权统一领土安全发展、军事及相关活动</span>。</p>
+        </div>
+        <div class="mini">
+          <h3>第 3 轮：45 分钟做小测</h3>
+          <p>填空题和选择题先做，判断题用来抓坑。错了不要难过，错题就是今晚该背的清单。</p>
+        </div>
+        <div class="mini">
+          <h3>第 4 轮：30 分钟背简答模板</h3>
+          <p>简答题不要求文学表达，要求<span class="mark">定义 + 分点 + 关键词</span>。论述题再加一两句联系实际。</p>
+        </div>
+      </div>
+      <div class="warn"><strong>救火版：</strong>如果只剩 60 分钟，背：中国国防 1-6、国家安全 1-3、毛泽东军事思想、信息化战争、新概念武器，再做 15 道小测。</div>
+      <div class="danger"><strong>新增二轮：</strong>主干背完后，再刷“往年题补丁”。那里专门收拾老题爱考的碎点：国防法规、兵役、国防教育日、海洋权益、航天技术、精确制导。闭卷选择填空很吃这些。</div>
+    </section>
+
+    <section class="card" id="exam">
+      <h2>考试结构：闭卷意味着要会“吐关键词”</h2>
+      <table>
+        <thead><tr><th>题型</th><th>官方结构</th><th>你该怎么准备</th></tr></thead>
+        <tbody>
+          <tr><td>填空题</td><td>20题20分</td><td>背数字、专名、短语：14个陆地邻国、2.2万多千米、2035、本世纪中叶、200海里、国防动员法时间等。</td></tr>
+          <tr><td>选择题</td><td>15题30分</td><td>看选项识别边界：自卫型/扩张型，可靠关键词，武器分类，信息化战争特征。</td></tr>
+          <tr><td>判断题</td><td>10题10分</td><td>专抓“绝对化”和旧概念：信息化战争仍是暴力对抗；国防教育对象不是只限军人。</td></tr>
+          <tr><td>简答题</td><td>5题20分</td><td>每题写 3-5 点，先定义，再分点。字不必多，但关键词要准。</td></tr>
+          <tr><td>论述题</td><td>2题20分</td><td>按“定义 + 要点 + 意义 + 联系实际”写。毛泽东军事思想、国防动员、信息化战争很适合出。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="map">
+      <h2>五章总图：先把全书折成五个盒子</h2>
+      <div class="tri">
+        <div class="mini"><h3>一 中国国防</h3><p><span class="must">国防是什么、为什么重要、我国是什么类型、谁组成武装力量、怎样动员。</span></p><p>题型：填空、选择、简答。</p></div>
+        <div class="mini"><h3>二 国家安全</h3><p><span class="must">总体国家安全观、地缘环境、新兴安全、国际战略形势。</span></p><p>题型：填空、简答、论述。</p></div>
+        <div class="mini"><h3>三 军事思想</h3><p><span class="must">孙子兵法、古代军事思想、毛泽东军事思想、强军目标。</span></p><p>题型：选择、简答、论述。</p></div>
+        <div class="mini"><h3>四 现代战争</h3><p><span class="must">战争定义、新军事革命、机械化战争、信息化战争。</span></p><p>题型：选择、判断、简答。</p></div>
+        <div class="mini"><h3>五 信息化装备</h3><p><span class="must">信息化装备、空战平台、指挥信息系统、新概念武器。</span></p><p>题型：填空、选择、简答。</p></div>
+        <div class="mini"><h3>往年题额外提醒</h3><p>老题反复出现：<span class="mark">海洋权益、航天技术、精确制导、马岛/海湾/伊拉克、微波武器</span>。这些不一定是今年主线，但适合做选择填空补丁。</p></div>
+      </div>
+    </section>
+
+    <section class="card" id="patches">
+      <h2>往年题补丁：专门捞闭卷碎分</h2>
+      <p>官方 2024 范围是五章，但 2008-2016 往年题反复把同一批点拆成填空、选择、判断。这里不是让你背旧卷冷知识，而是把<span class="mark">仍然贴合教材主线</span>的高频碎点收成一张表。</p>
+      <table>
+        <thead><tr><th>高频题眼</th><th>闭卷该背什么</th><th>容易怎么坑你</th></tr></thead>
+        <tbody>
+          <tr><td>国防法规</td><td><span class="must">法规体系</span>：宪法之下有法律层、法规层、规章层。<br><span class="must">国防动员法</span>：2010年2月26日通过，2010年7月1日起施行，14章72条。</td><td>“层次关系”和“按立法权限区分”不是同一个问法，选择题要看题干。</td></tr>
+          <tr><td>兵役与国防教育</td><td>年满18周岁男性公民应征；未征集的22周岁前仍可征集；普通高校毕业生可放宽至24周岁。全民国防教育日是<span class="must">每年9月第三个星期六</span>。</td><td>不要把“国防教育对象”缩成军人；高校也要设置国防教育课程。</td></tr>
+          <tr><td>海洋权益与周边安全</td><td>专属经济区：领海以外邻接领海，自领海基线量起不超过<span class="must">200海里</span>。周边安全特点：邻国多、边界海域问题多、大国影响复杂。</td><td>老题常把“海洋国土约300万平方千米”“200海里”“大陆架争议”混在一起。</td></tr>
+          <tr><td>航天技术</td><td>航天技术又称空间技术，是把航天器送入太空以探索、开发、利用太空及地外天体的综合性工程技术。军事航天系统：运输、卫星、载人航天、空间武器。</td><td>“航空”在大气层内，“航天”在外层空间；不要把空军飞机和航天系统混背。</td></tr>
+          <tr><td>精确制导</td><td>采用精确制导技术，直接命中概率在<span class="must">50%以上</span>；分为导弹和精确制导弹药；特点：命中精度高、作战效能高、可控性强。</td><td>“用了制导技术”还不够，老题常把“50%以上”作为定义条件。</td></tr>
+          <tr><td>信息化战场</td><td>信息化战争战场包括物理域、信息域、认知域；老题还爱问信息化要素：数字化、网络化、精确化、智能化。</td><td>信息化战争不是“不暴力”，本质仍是战争；“体系对抗”是定义关键词。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card paper" id="chapters">
+      <h2>从零讲义：每章先理解，再背骨架</h2>
+
+      <details open>
+        <summary>第一章 中国国防：国家的安全底盘</summary>
+        <p>你可以把国防理解成国家的“安全底盘”。它不是只有军队打仗，而是国家为了防备侵略、制止颠覆分裂、保卫核心利益而进行的一整套军事和相关活动。</p>
+        <p><span class="must">国防定义骨架：</span>国家为防备和抵抗侵略，制止武装颠覆和分裂，保卫主权、统一、领土完整、安全和发展利益，进行的军事活动，以及与军事有关的政治、经济、外交、科技、教育等活动。</p>
+        <p><span class="must">地位作用三句：</span>国家生存与发展的安全保障；国家独立自主的前提；国家繁荣富强的重要条件。</p>
+        <p><span class="must">我国国防类型：</span>自卫型国防；军事战略方针是积极防御。</p>
+        <p><span class="must">时代内涵四拓展：</span>范围拓展、目标拓展、任务拓展、手段拓展。</p>
+        <p><span class="must">武装力量组成：</span>中国人民解放军、中国人民武装警察部队、民兵。</p>
+        <p><span class="must">军兵种战略要求：</span>陆军：机动作战、立体攻防；海军：近海防御、远海防卫；空军：空天一体、攻防兼备；火箭军：核常兼备、全域慑战；武警：多能一体、维稳维权。</p>
+        <p><span class="must">国防动员定义：</span>国家为应对战争或其他安全威胁，使社会诸领域全部或部分由平时状态转入战时状态或紧急状态的活动。</p>
+        <div class="warn"><strong>易混：</strong>2024重点按“宪法之下法律层、法规层、规章层”记；老题可能按立法权限问“法律、法规、规章、地方性法规”。遇到选择题看题干问的是“层次关系”还是“立法权限”。</div>
+      </details>
+
+      <details>
+        <summary>第二章 国家安全：总体国家安全观是大盒子</summary>
+        <p>国家安全这一章不要背散词，抓住一个核心：<span class="mark">总体</span>。总体国家安全观强调大安全，传统安全和非传统安全都在里面。</p>
+        <p><span class="must">总体国家安全观：</span>关键是把握“一个总体”和“十个坚持”。“总体”强调大安全理念，涵盖政治、军事、国土、经济、金融、文化、社会、科技、网络、粮食、生态、资源、核、海外利益、太空、深海、极地、生物、人工智能、数据等领域，并动态调整。</p>
+        <p><span class="must">五大要素版：</span>以人民安全为宗旨，以政治安全为根本，以经济安全为基础，以军事、文化、社会安全为保障，以促进国际安全为依托。</p>
+        <p><span class="must">地缘数字：</span>中国位于亚洲东部；陆地边界线 2.2 万多千米；共同陆地边界国家 14 个。</p>
+        <p><span class="must">国际战略形势四表现：</span>世界多极化进程加快；经济全球化进程出现波折；大国战略博弈更加激烈；全球性问题和挑战空前增多。</p>
+        <p><span class="must">全球性挑战：</span>恐怖主义、网络犯罪/恐怖组织活动平台、难民问题、战略军备与军控博弈。</p>
+      </details>
+
+      <details>
+        <summary>第三章 军事思想：人物、著作、思想体系</summary>
+        <p>这章最像文科背诵题：人物和著作要准，毛泽东军事思想要会写完整结构。</p>
+        <p><span class="must">军事思想定义：</span>关于军事领域基本问题的理性认识，通常包括战争观、军事问题认识论和方法论、战争指导思想、国防和军队建设思想等。</p>
+        <p><span class="must">《孙子兵法》：</span>我国现存最早兵书，春秋末孙武所著。老题常问第一篇《计篇》、共 13 篇、核心“知彼知己，百战不殆”。</p>
+        <p><span class="must">古代军事思想代表：</span>慎战、备战；知彼知己；以谋略制胜；文武兼施、恩威并用；朴素唯物论和原始辩证法。</p>
+        <p><span class="must">毛泽东军事思想发展：</span>中国共产党成立到遵义会议：产生；遵义会议到抗战胜利：形成；解放战争、抗美援朝和社会主义建设时期：丰富发展。</p>
+        <p><span class="must">毛泽东军事思想主要内容：</span>战争观和军事方法论；人民军队思想；人民战争思想；人民战争的战略战术思想；国防建设思想。</p>
+        <p><span class="must">新时代强军目标：</span>建设一支听党指挥、能打胜仗、作风优良的人民军队；2035年基本实现国防和军队现代化；本世纪中叶全面建成世界一流军队。</p>
+      </details>
+
+      <details>
+        <summary>第四章 现代战争：从机械化到信息化</summary>
+        <p>现代战争这章的主线是战争形态变化：冷兵器、热兵器、机械化、信息化。现在重点在信息化战争。</p>
+        <p><span class="must">战争定义：</span>国家或政治集团之间，为一定政治、经济等目的，使用武装力量进行的大规模激烈交战的军事斗争。</p>
+        <p><span class="must">战争基本特点：</span>激烈的暴力对抗；快速地流动变化；充满盖然性或偶然性。</p>
+        <p><span class="must">新军事革命：</span>20世纪末以来，以信息化为核心的全面深刻军事革命。主要标志包括：信息化武器系统主宰战场；知识密集型信息化军队；一体化联合作战成为基本作战形式；军事理论体系革新；信息化战争最终取代机械化战争。</p>
+        <p><span class="must">中国特色军事变革六句：</span>方向是信息化；目标是建设信息化军队；途径是机械化与信息化复合发展；步骤与国家发展战略相适应；动力是改革创新；保证是坚持中国共产党绝对领导。</p>
+        <p><span class="must">机械化战争四特征：</span>机动速度快、火力毁伤重、战场范围广、战争消耗大。</p>
+        <p><span class="must">信息化战争定义：</span>依托网络化信息系统，使用信息化武器装备及相应作战方法，在陆、海、空、天和网络电磁等空间及认知领域进行的以体系对抗为主要形式的战争，是信息时代战争的基本形态。</p>
+        <p><span class="must">信息化战争常考特征：</span>信息资源主导化、武器装备信息化、作战空间多维化、作战节奏快速化、作战要素一体化、作战指挥扁平化、作战行动精确化。</p>
+      </details>
+
+      <details>
+        <summary>第五章 信息化装备：按“平台、系统、武器”背</summary>
+        <p>这一章不要把装备名堆成一团。按三类背：作战平台、指挥信息系统、新概念武器。</p>
+        <p><span class="must">信息化装备分类：</span>按功能可分为信息化主战武器系统和信息系统两大类。</p>
+        <p><span class="must">信息化作战平台：</span>陆战武器平台、海战武器平台、空战武器平台。空战武器平台包括战斗机、轰炸机、电子战飞机、运输机。</p>
+        <p><span class="must">空战武器平台：</span>空空和空地作战的主战装备和运载工具。轰炸机按起飞重量、载弹量和航程分为轻型、中型、重型。</p>
+        <p><span class="must">指挥信息系统定义：</span>以计算机网络为核心，由指挥控制、情报、通信、信息对抗、综合保障等分系统组成，对作战信息进行实时获取、传输、处理，保障指挥机构科学高效指挥控制。</p>
+        <p><span class="must">新概念武器：</span>工作原理、毁伤机理和作战运用方式与传统武器显著不同的高技术武器。包括定向能武器、动能武器、军用机器人、非致命武器。</p>
+        <p><span class="must">定向能武器：</span>激光武器、高功率微波武器、粒子束武器。动能武器：动能拦截弹、电磁炮。</p>
+      </details>
+    </section>
+
+    <section class="card" id="flashcards">
+      <h2>主动回忆闪卡：闭卷就靠这个</h2>
+      <p class="small">点开前先在心里说答案。答不出来没关系，按“记住/再背”标记，页面会保存。</p>
+      <div class="actions" id="cardFilters"></div>
+      <div id="cards"></div>
+    </section>
+
+    <section class="card" id="quiz">
+      <h2>闭卷小测：填空、选择、判断混合</h2>
+      <p class="small">这里题目故意贴近闭卷：不是让你复制整段，而是训练关键词召回。</p>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="card paper" id="templates">
+      <h2>简答和论述模板：背这个上场能写</h2>
+      <div class="grid">
+        <div class="mini">
+          <h3>国防动员</h3>
+          <p><span class="must">定义：</span>国家为应对战争或其他安全威胁，使社会诸领域全部或部分由平时转入战时/紧急状态的活动。</p>
+          <p><span class="must">内容：</span>武装力量动员、国民经济动员、人民防空动员、交通战备动员、政治动员。</p>
+          <p><span class="must">作用：</span>战时应战、急时应急、平时服务；为战争准备提供人力物力财力和组织保证。</p>
+        </div>
+        <div class="mini">
+          <h3>毛泽东军事思想</h3>
+          <p><span class="must">定义：</span>以毛泽东为代表的中国共产党人关于中国革命战争和军队问题的科学理论体系。</p>
+          <p><span class="must">内容：</span>战争观和方法论、人民军队、人民战争、人民战争战略战术、国防建设。</p>
+          <p><span class="must">地位：</span>对马列主义军事理论作出贡献；在世界上有影响；是我军克敌制胜的法宝。</p>
+        </div>
+        <div class="mini">
+          <h3>信息化战争</h3>
+          <p><span class="must">定义：</span>依托网络化信息系统，使用信息化武器装备和作战方法，在多域进行体系对抗的战争。</p>
+          <p><span class="must">特征：</span>资源主导、装备信息化、空间多维、节奏快速、要素一体、指挥扁平、行动精确。</p>
+          <p><span class="must">展开：</span>信息成为战斗力倍增器，制信息权成为制高点，一体化联合作战成为基本形式。</p>
+        </div>
+        <div class="mini">
+          <h3>国防政策</h3>
+          <p><span class="must">五点：</span>维护国家安全统一、保障发展利益；坚持全民自卫、独立自主建设国防；坚持积极防御和自卫防御核战略；推进国防和军队建设全面协调可持续发展；维护世界和平，反对侵略扩张。</p>
+        </div>
+        <div class="mini">
+          <h3>周边安全环境</h3>
+          <p><span class="must">定义：</span>国家周边安全状况和态势，关系国家和民族兴衰存亡，是制定国防战略的依据。</p>
+          <p><span class="must">三点：</span>陆海邻国多；边界漫长、海域辽阔、争议多；地处大国利益交汇区，受大国影响复杂。</p>
+        </div>
+        <div class="mini">
+          <h3>航天技术</h3>
+          <p><span class="must">定义：</span>又称空间技术，是将航天器送入太空以探索、开发、利用太空及地外天体的综合性工程技术。</p>
+          <p><span class="must">四系统：</span>军事航天运输系统、军事卫星系统、军事载人航天系统、空间武器系统。</p>
+        </div>
+        <div class="mini">
+          <h3>精确制导武器</h3>
+          <p><span class="must">定义：</span>采用精确制导技术，直接命中概率在 50% 以上的武器。</p>
+          <p><span class="must">特点：</span>命中精度高、作战效能高、可控性强；分类常写导弹和精确制导弹药。</p>
+        </div>
+      </div>
+      <div class="danger"><strong>论述题写法：</strong>第一段给定义，第二段列 3-5 个要点，第三段写意义，最后一句联系实际。别空谈太长，关键词比漂亮句子重要。</div>
+      <h3>我的考前默写区</h3>
+      <textarea id="myNotes" placeholder="把最容易忘的 5 个点写在这里，例如：陆海空火武战略要求、国防动员内容、信息化战争特征。"></textarea>
+    </section>
+
+    <section class="card" id="sources">
+      <h2>资料覆盖记录</h2>
+      <ul>
+        <li>已读取：`2024军理期末考试重点整理.md`，164 行，作为背诵主干。</li>
+        <li>已读取：`2024年春季《军事理论》考前知识梳理.pdf`，10 页，确认闭卷、题型、五章范围和页码重点。</li>
+        <li>已转换：`军事理论知识点-白色教材版-修改版1.docx`，用于补充定义、数字和旧题常见说法。</li>
+        <li>已抽取：2008-2016 往年题 PDF，重点用于判断题型偏好和老题补丁。</li>
+        <li>本轮二次补强：重点吸收 2012、2013、2014、2015 老题中的国防法规、兵役、国防教育日、海洋权益、航天技术、精确制导和信息化战场题眼。</li>
+        <li>完整教材 PDF：317 页扫描版，普通文本抽取为空；本页先以官方考前梳理的页码重点和白色教材版定义为准，必要时再对指定页 OCR 校验。</li>
+      </ul>
+    </section>
+  </main>
+</div>
+
+<script>
+const CARDS=[
+  {cat:"中国国防",front:"国防定义怎么背？",back:"国家为防备和抵抗侵略，制止武装颠覆和分裂，保卫主权、统一、领土完整、安全和发展利益所进行的军事活动，以及与军事有关的政治、经济、外交、科技、教育等活动。",tip:"防侵略、止颠覆、保五项、军事及相关。"},
+  {cat:"中国国防",front:"国防地位作用三句是什么？",back:"国家生存与发展的安全保障；国家独立自主的前提；国家繁荣富强的重要条件。",tip:"安全保障、独立前提、富强条件。"},
+  {cat:"中国国防",front:"我国国防类型和战略方针？",back:"自卫型国防；军事战略方针是积极防御。",tip:"自卫型 + 积极防御。"},
+  {cat:"中国国防",front:"中国国防时代内涵新变化是哪四个拓展？",back:"范围拓展、目标拓展、任务拓展、手段拓展。",tip:"范目任手。"},
+  {cat:"中国国防",front:"中国武装力量由哪三部分组成？",back:"中国人民解放军、中国人民武装警察部队、民兵。",tip:"解放军、武警、民兵。"},
+  {cat:"中国国防",front:"陆海空火武的战略要求？",back:"陆军：机动作战、立体攻防；海军：近海防御、远海防卫；空军：空天一体、攻防兼备；火箭军：核常兼备、全域慑战；武警：多能一体、维稳维权。",tip:"机立、近远、空攻、核全、多稳。"},
+  {cat:"中国国防",front:"中国民兵定义？",back:"不脱离生产的群众武装组织，是中华人民共和国武装力量的组成部分，是中国人民解放军的助手和后备力量。",tip:"不脱产、群众武装、助手后备。"},
+  {cat:"中国国防",front:"国防动员定义？",back:"国家为应对战争或其他安全威胁，使社会诸领域全部或部分由平时状态转入战时状态或紧急状态的活动。",tip:"平时转战时/紧急。"},
+  {cat:"中国国防",front:"公民国防义务五项？",back:"兵役义务、接受国防教育、保护国防设施、保守国家秘密、协助国防活动。",tip:"兵教设密助。"},
+  {cat:"中国国防",front:"公民国防权利三项？",back:"提出建议权；制止和检举权；获得经济损失补偿权。",tip:"建议、检举、补偿。"},
+  {cat:"国家安全",front:"总体国家安全观关键是什么？",back:"关键是把握“一个总体”和“十个坚持”；核心在“总体”，强调大安全理念，覆盖传统与非传统安全诸领域。",tip:"一个总体、十个坚持。"},
+  {cat:"国家安全",front:"总体国家安全观五大要素版？",back:"以人民安全为宗旨，以政治安全为根本，以经济安全为基础，以军事、文化、社会安全为保障，以促进国际安全为依托。",tip:"人民宗旨、政治根本、经济基础。"},
+  {cat:"国家安全",front:"中国地缘环境两个数字？",back:"陆地边界线 2.2 万多千米；共同陆地边界国家 14 个。",tip:"2.2 万、14。"},
+  {cat:"国家安全",front:"国际战略形势四表现？",back:"世界多极化进程加快；经济全球化进程出现波折；大国战略博弈更加激烈；全球性问题和挑战空前增多。",tip:"多极、全球化波折、大国博弈、全球挑战。"},
+  {cat:"国家安全",front:"全球性问题和挑战举例？",back:"恐怖主义威胁不减；网络成为犯罪分子甚至恐怖组织活动平台；难民问题；战略军备与军控领域博弈加剧。",tip:"恐怖、网络、难民、军控。"},
+  {cat:"军事思想",front:"军事思想定义？",back:"关于军事领域基本问题的理性认识，通常包括战争观、军事问题认识论和方法论、战争指导思想、国防和军队建设思想等。",tip:"军事领域基本问题的理性认识。"},
+  {cat:"军事思想",front:"《孙子兵法》三点？",back:"我国现存最早兵书；春秋末孙武所著；老题常考“知彼知己，百战不殆”和共 13 篇。",tip:"最早、孙武、13篇。"},
+  {cat:"军事思想",front:"中国古代军事思想代表作/思想怎么背？",back:"慎战、备战；知彼知己；以谋略制胜；文武兼施、恩威并用；朴素唯物论和原始辩证法。",tip:"慎备、知谋、文恩、唯辩。"},
+  {cat:"军事思想",front:"毛泽东军事思想发展三阶段？",back:"党成立到遵义会议：产生；遵义会议到抗战胜利：形成；解放战争、抗美援朝和社会主义建设时期：丰富发展。",tip:"产生、形成、丰富发展。"},
+  {cat:"军事思想",front:"毛泽东军事思想主要内容？",back:"战争观和军事方法论；人民军队思想；人民战争思想；人民战争的战略战术思想；国防建设思想。",tip:"战方、军队、人民战争、战略战术、国防建设。"},
+  {cat:"军事思想",front:"新时代强军目标？",back:"建设一支听党指挥、能打胜仗、作风优良的人民军队；2035年基本实现国防和军队现代化；本世纪中叶全面建成世界一流军队。",tip:"听党、能打、作风；2035；中叶。"},
+  {cat:"现代战争",front:"战争定义？",back:"国家或政治集团之间，为一定政治、经济等目的，使用武装力量进行的大规模激烈交战的军事斗争。",tip:"国家/政治集团、目的、武装力量。"},
+  {cat:"现代战争",front:"战争基本特点？",back:"激烈的暴力对抗；快速地流动变化；充满盖然性或偶然性。",tip:"暴力、流动、盖然。"},
+  {cat:"现代战争",front:"新军事革命定义和核心？",back:"20世纪末以来，以信息化为核心的全面而深刻的军事革命。",tip:"20世纪末、信息化核心。"},
+  {cat:"现代战争",front:"新军事革命主要标志？",back:"信息化武器系统逐渐主宰战场；知识密集型信息化军队；一体化联合作战成为基本形式；军事理论体系革新；信息化战争最终取代机械化战争。",tip:"武器、军队、联合作战、理论、战争形态。"},
+  {cat:"现代战争",front:"中国特色军事变革六句？",back:"方向信息化；目标建设信息化军队；途径机械化与信息化复合发展；步骤与国家发展战略相适应；动力改革创新；保证坚持中国共产党绝对领导。",tip:"方向、目标、途径、步骤、动力、保证。"},
+  {cat:"现代战争",front:"机械化战争四特征？",back:"机动速度快、火力毁伤重、战场范围广、战争消耗大。",tip:"快、重、广、大。"},
+  {cat:"现代战争",front:"信息化战争定义？",back:"依托网络化信息系统，使用信息化武器装备及相应作战方法，在陆、海、空、天和网络电磁等空间及认知领域进行的以体系对抗为主要形式的战争，是信息时代战争的基本形态。",tip:"网络系统、信息装备、多域、体系对抗。"},
+  {cat:"现代战争",front:"信息化战争七特征？",back:"信息资源主导化；武器装备信息化；作战空间多维化；作战节奏快速化；作战要素一体化；作战指挥扁平化；作战行动精确化。",tip:"资源、装备、空间、节奏、要素、指挥、行动。"},
+  {cat:"信息化装备",front:"信息化装备按功能分几类？",back:"信息化主战武器系统和信息系统两大类。",tip:"主战武器系统 + 信息系统。"},
+  {cat:"信息化装备",front:"空战武器平台包括什么？",back:"战斗机、轰炸机、电子战飞机、运输机；空战武器平台是空空和空地作战的主战装备和运载工具。",tip:"战轰电运。"},
+  {cat:"信息化装备",front:"轰炸机按什么分轻中重？",back:"按起飞重量、载弹量和航程不同，分为轻型、中型、重型。",tip:"重量、载弹、航程。"},
+  {cat:"信息化装备",front:"指挥信息系统定义抓手？",back:"以计算机网络为核心，由指挥控制、情报、通信、信息对抗、综合保障等分系统组成，对作战信息实时获取、传输、处理，保障科学高效指挥控制。",tip:"网络核心、五分系统、三处理。"},
+  {cat:"信息化装备",front:"新概念武器定义？",back:"工作原理、毁伤机理和作战运用方式与传统武器有显著不同的各类高技术武器。",tip:"三不同：原理、毁伤、运用。"},
+  {cat:"信息化装备",front:"定向能武器和动能武器分别包括？",back:"定向能武器：激光武器、高功率微波武器、粒子束武器。动能武器：动能拦截弹、电磁炮。",tip:"激光、微波、粒子束；拦截弹、电磁炮。"},
+  {cat:"往年题补丁",front:"国防法规体系按层次怎么背？",back:"国防法规体系是国防法律规范按层次和门类构成的有机整体。在宪法之下，通常按法律层、法规层、规章层记。",tip:"宪法之下：法律、法规、规章。"},
+  {cat:"往年题补丁",front:"《国防动员法》三个数字？",back:"2010年2月26日通过，同日公布；2010年7月1日起施行；共14章72条。它是规范国防动员活动的基本法律依据。",tip:"2010.2.26；2010.7.1；14章72条。"},
+  {cat:"往年题补丁",front:"兵役年龄怎么记？",back:"每年12月31日以前年满18周岁的男性公民应征；当年未征集的，22周岁以前仍可征集；普通高等学校毕业生可放宽至24周岁；根据需要可征集18至22周岁女性公民。",tip:"男18、到22；高校毕业24；女18-22。"},
+  {cat:"往年题补丁",front:"全民国防教育日是哪天？",back:"每年9月第三个星期六。老题常把它放在选择题里，顺手记住：国防教育不是只面向军人，高校也要开设国防教育课程。",tip:"9月第三个星期六。"},
+  {cat:"往年题补丁",front:"我国国防政策五点？",back:"维护国家安全统一、保障发展利益；坚持全民自卫、独立自主建设国防；坚持积极防御和自卫防御核战略；推进国防和军队建设全面协调可持续发展；维护世界和平、反对侵略扩张。",tip:"安发、自主、积极、防军、和平。"},
+  {cat:"往年题补丁",front:"中国周边安全环境三特点？",back:"陆地和海洋邻国多，安全环境受周边国家影响大；边界漫长、海域辽阔，边界争议和海洋权益纠纷多；地处大国利益交汇区，安全环境受大国影响因素复杂。",tip:"邻国多、争议多、大国复杂。"},
+  {cat:"往年题补丁",front:"新兴领域国家安全有哪些？",back:"网络空间安全、外层空间安全、国际海底区域安全、极地安全、生物安全。新版材料还会扩展到人工智能、数据、深海等领域，但闭卷先记这组。",tip:"网、外、海底、极地、生物。"},
+  {cat:"往年题补丁",front:"海洋权益两个数字？",back:"专属经济区自领海基线量起不超过200海里；老题常写我国海洋国土约300万平方千米。",tip:"200海里；300万平方千米。"},
+  {cat:"往年题补丁",front:"航天技术定义？",back:"航天技术又称空间技术，是将无人或载人航天器送入太空，以探索、开发和利用太空及地球以外天体的综合性工程技术。",tip:"送入太空、开发利用、空间技术。"},
+  {cat:"往年题补丁",front:"我国军事航天系统四类？",back:"军事航天运输系统、军事卫星系统、军事载人航天系统、空间武器系统。",tip:"运输、卫星、载人、空间武器。"},
+  {cat:"往年题补丁",front:"精确制导武器特点？",back:"定义抓50%以上命中概率；特点抓三句：命中精度高、作战效能高、可控性强。常见分类是导弹和精确制导弹药。",tip:"50%；精度高、效能高、可控强。"},
+  {cat:"往年题补丁",front:"信息化战场三个域？",back:"物理域、信息域、认知域。看到“陆海空天电”是作战空间扩展，看到“认知域”要想到信息化战争已经不只打物理目标。",tip:"物理、信息、认知。"},
+  {cat:"往年题补丁",front:"信息化要素和战场模式老题版？",back:"信息化要素：数字化、网络化、精确化、智能化。战场模式：电子战、空间战、网络战、情报战、心理战。",tip:"数网精准智；电空网情心。"},
+  {cat:"往年题补丁",front:"心理战为什么容易考？",back:"舆论战、心理战、法律战合称“三战”。老题说心理战更具有根本性和普遍性，是“三战”的核心。",tip:"三战核心：心理战。"}
+];
+
+const QUIZ=[
+  {type:"choice",cat:"中国国防",q:"我国国防类型是？",opts:["扩张型","自卫型","联盟型","中立型"],ans:1,exp:"2024重点明确：中国社会主义制度和国家政策决定我国国防是自卫型国防。"},
+  {type:"fill",cat:"中国国防",q:"国防地位作用中，国防是国家独立自主的____。",ans:"前提",exp:"三句：安全保障、独立前提、富强条件。"},
+  {type:"choice",cat:"中国国防",q:"中国武装力量组成不包括哪一项？",opts:["中国人民解放军","中国人民武装警察部队","民兵","公安机关"],ans:3,exp:"官方重点为解放军、武警、民兵。"},
+  {type:"judge",cat:"中国国防",q:"国防动员是把社会诸领域由平时状态转入战时状态或紧急状态的活动。",ans:true,exp:"这是国防动员定义的核心。"},
+  {type:"fill",cat:"中国国防",q:"海军战略要求：近海防御、____。",ans:"远海防卫",exp:"陆海空火武战略要求要整组背。"},
+  {type:"choice",cat:"国家安全",q:"总体国家安全观的关键是？",opts:["总体","经济","军事","科技"],ans:0,exp:"官方梳理说关键是总体，强调大安全理念。"},
+  {type:"fill",cat:"国家安全",q:"中国陆地边界线约____万多千米。",ans:"2.2",exp:"地缘安全数字：2.2万多千米，陆地邻国14个。"},
+  {type:"fill",cat:"国家安全",q:"与中国有共同陆地边界的国家有____个。",ans:"14",exp:"填空高频数字。"},
+  {type:"choice",cat:"国家安全",q:"国际战略形势总体表现不包括？",opts:["世界多极化进程加快","经济全球化进程出现波折","大国战略博弈更加激烈","战争已经完全消失"],ans:3,exp:"官方四表现没有“战争完全消失”。"},
+  {type:"choice",cat:"军事思想",q:"《孙子兵法》的作者是？",opts:["孙膑","孙武","司马迁","克劳塞维茨"],ans:1,exp:"春秋末孙武所著。"},
+  {type:"fill",cat:"军事思想",q:"《孙子兵法》是我国现存最____的兵书。",ans:"早",exp:"我国现存最早兵书。"},
+  {type:"choice",cat:"军事思想",q:"毛泽东军事思想的核心内容在老题中常写为？",opts:["人民战争","空间战","微波武器","经济全球化"],ans:0,exp:"老题多次考人民战争。新版复习仍需背完整五项内容。"},
+  {type:"fill",cat:"军事思想",q:"新时代强军目标：听党指挥、能打胜仗、____。",ans:"作风优良",exp:"九个字必须准。"},
+  {type:"fill",cat:"军事思想",q:"到____年基本实现国防和军队现代化。",ans:"2035",exp:"强军目标时间节点。"},
+  {type:"choice",cat:"现代战争",q:"新军事革命的核心是？",opts:["机械化","信息化","冷兵器","单纯数量扩张"],ans:1,exp:"20世纪末以来以信息化为核心。"},
+  {type:"judge",cat:"现代战争",q:"信息化战争因为以知识和信息为主导，所以不再是暴力对抗。",ans:false,exp:"老题常考坑：信息化战争本质仍是战争，仍有暴力对抗。"},
+  {type:"choice",cat:"现代战争",q:"机械化战争基本特征不包括？",opts:["机动速度快","火力毁伤重","战场范围广","作战指挥扁平化"],ans:3,exp:"作战指挥扁平化属于信息化战争特征。"},
+  {type:"fill",cat:"现代战争",q:"信息化战争以____对抗为主要形式。",ans:"体系",exp:"定义关键词：体系对抗。"},
+  {type:"choice",cat:"信息化装备",q:"指挥信息系统以什么为核心？",opts:["计算机网络","火炮","地形","单兵体能"],ans:0,exp:"定义：以计算机网络为核心。"},
+  {type:"choice",cat:"信息化装备",q:"下列属于定向能武器的是？",opts:["激光武器","电磁炮","动能拦截弹","普通步枪"],ans:0,exp:"定向能：激光、高功率微波、粒子束。电磁炮属于动能武器。"},
+  {type:"fill",cat:"信息化装备",q:"新概念武器中，动能武器包括动能拦截弹和____。",ans:"电磁炮",exp:"这组容易和定向能武器混。"},
+  {type:"choice",cat:"往年题补丁",q:"专属经济区自领海基线量起不超过多少海里？",opts:["100","200","30","150"],ans:1,exp:"老题高频：200海里。"},
+  {type:"choice",cat:"往年题补丁",q:"精确制导武器通常要求直接命中概率达到？",opts:["30%以上","40%以上","50%以上","90%以上"],ans:2,exp:"老题定义：直接命中概率在50%以上。"},
+  {type:"judge",cat:"往年题补丁",q:"国防教育对象只限现役军人。",ans:false,exp:"国防教育具有全民性，高校也应开展国防教育。"},
+  {type:"fill",cat:"往年题补丁",q:"国防法规体系在宪法之下分为法律层、法规层和____层。",ans:"规章",exp:"2024重点按层次关系记：法律层、法规层、规章层。"},
+  {type:"fill",cat:"往年题补丁",q:"《中华人民共和国国防动员法》自2010年____月1日起施行。",ans:"7",exp:"三个数字一起背：2010年2月26日通过，2010年7月1日施行，14章72条。"},
+  {type:"choice",cat:"往年题补丁",q:"普通高等学校毕业生的征集年龄可以放宽至多少周岁？",opts:["20","22","24","26"],ans:2,exp:"2024重点写普通高校毕业生可放宽至24周岁。研究生年龄说法可能出现在补充材料里，但主干按官方重点先记24。"},
+  {type:"choice",cat:"往年题补丁",q:"全民国防教育日是每年的？",opts:["7月7日","9月第三个星期六","9月18日","3月第三个星期六"],ans:1,exp:"老题高频：每年9月第三个星期六。"},
+  {type:"choice",cat:"往年题补丁",q:"下列哪项不属于我国国防政策主要内容？",opts:["维护国家安全统一，保障发展利益","坚持全民自卫，独立自主建设国防","坚持积极防御和自卫防御核战略","奉行侵略扩张政策"],ans:3,exp:"我国奉行防御性国防政策，维护世界和平，反对侵略扩张。"},
+  {type:"choice",cat:"国家安全",q:"中国周边安全环境的特点不包括？",opts:["陆地和海洋邻国多","边界漫长、海域辽阔","地处大国利益交汇区","周边不存在任何边界争议"],ans:3,exp:"往年简答常写三点：邻国多、争议多、大国影响复杂。"},
+  {type:"choice",cat:"国家安全",q:"下列哪项属于新兴领域国家安全？",opts:["网络空间安全","外层空间安全","极地安全","以上都属于"],ans:3,exp:"白色教材版列出网络空间、外层空间、国际海底区域、极地、生物等新兴安全领域。"},
+  {type:"fill",cat:"往年题补丁",q:"航天技术又称____技术。",ans:"空间",exp:"航天技术又称空间技术，核心是把航天器送入太空并开发利用太空。"},
+  {type:"choice",cat:"往年题补丁",q:"我国军事航天系统通常不包括哪一类？",opts:["军事航天运输系统","军事卫星系统","军事载人航天系统","地面装甲突击系统"],ans:3,exp:"往年答案常写四类：运输、卫星、载人航天、空间武器。"},
+  {type:"choice",cat:"往年题补丁",q:"精确制导武器的特点不包括？",opts:["命中精度高","作战效能高","可控性强","完全不需要制导技术"],ans:3,exp:"精确制导武器定义就要求采用精确制导技术，特点是精度高、效能高、可控性强。"},
+  {type:"choice",cat:"现代战争",q:"信息化战场通常包括哪三个域？",opts:["物理域、信息域、认知域","陆域、水域、火域","政治域、经济域、文化域","近地空间、远地空间、月球空间"],ans:0,exp:"2013老题考过：信息化战场包括物理域、信息域、认知域。"},
+  {type:"judge",cat:"往年题补丁",q:"舆论战、心理战、法律战中，心理战更具有根本性和普遍性，是“三战”的核心。",ans:true,exp:"2014老题出现过这类表述，适合作为选择判断补丁记忆。"}
+];
+
+const storeKey="military-closed-book-sprint-v1";
+const state=JSON.parse(localStorage.getItem(storeKey)||"{}");
+let currentCat="全部";
+
+function save(){localStorage.setItem(storeKey,JSON.stringify(state));updateProgress();}
+function cats(){return ["全部",...Array.from(new Set(CARDS.map(c=>c.cat)))];}
+function renderFilters(){
+  document.getElementById("cardFilters").innerHTML=cats().map(c=>`<button class="btn ${c===currentCat?'primary':''}" data-filter="${c}">${c}</button>`).join("");
+}
+function renderCards(){
+  const data=CARDS.filter(c=>currentCat==="全部"||c.cat===currentCat);
+  document.getElementById("cards").innerHTML=data.map((c,i)=>{
+    const id=CARDS.indexOf(c);
+    const known=state.cards?.[id]==="known";
+    return `<article class="flash ${state.open?.[id]?'open':''}" data-card="${id}">
+      <span class="tag">${c.cat}</span>
+      <div class="front">${c.front}</div>
+      <div class="small">提示：${c.tip}</div>
+      <div class="back">${c.back}</div>
+      <div class="actions">
+        <button class="btn primary" data-open="${id}">${state.open?.[id]?'收起':'看答案'}</button>
+        <button class="btn ${known?'primary':''}" data-known="${id}">${known?'已记住':'记住'}</button>
+        <button class="btn ghost" data-again="${id}">再背</button>
+      </div>
+    </article>`;
+  }).join("");
+}
+function renderQuiz(){
+  document.getElementById("quizBox").innerHTML=QUIZ.map((q,i)=>{
+    const s=state.quiz?.[i]||{};
+    if(q.type==="choice"){
+      return `<article class="quiz ${s.checked?'checked':''}" data-q="${i}">
+        <span class="tag">${q.cat}</span><h3>${i+1}. ${q.q}</h3>
+        <div class="choices">${q.opts.map((o,j)=>{
+          let cls="choice";
+          if(s.checked&&j===q.ans) cls+=" correct";
+          if(s.checked&&s.choice===j&&j!==q.ans) cls+=" wrong";
+          if(!s.checked&&s.choice===j) cls+=" selected";
+          return `<button class="${cls}" data-choice="${i}:${j}">${String.fromCharCode(65+j)}. ${o}</button>`;
+        }).join("")}</div>
+        <div class="actions"><button class="btn primary" data-check="${i}">核对</button><button class="btn ghost" data-reset="${i}">重做</button></div>
+        <div class="answer"><strong>答案：</strong>${String.fromCharCode(65+q.ans)}。${q.exp}</div>
+      </article>`;
+    }
+    if(q.type==="judge"){
+      return `<article class="quiz ${s.checked?'checked':''}" data-q="${i}">
+        <span class="tag">${q.cat}</span><h3>${i+1}. 判断：${q.q}</h3>
+        <div class="choices">
+          <button class="choice ${s.checked&&q.ans===true?'correct':''} ${s.checked&&s.choice===true&&q.ans!==true?'wrong':''}" data-judge="${i}:true">正确</button>
+          <button class="choice ${s.checked&&q.ans===false?'correct':''} ${s.checked&&s.choice===false&&q.ans!==false?'wrong':''}" data-judge="${i}:false">错误</button>
+        </div>
+        <div class="actions"><button class="btn primary" data-check="${i}">核对</button><button class="btn ghost" data-reset="${i}">重做</button></div>
+        <div class="answer"><strong>答案：</strong>${q.ans?'正确':'错误'}。${q.exp}</div>
+      </article>`;
+    }
+    return `<article class="quiz ${s.checked?'checked':''}" data-q="${i}">
+      <span class="tag">${q.cat}</span><h3>${i+1}. 填空：${q.q}</h3>
+      <input type="text" data-fill="${i}" value="${s.fill||''}" placeholder="先闭卷写，再核对">
+      <div class="actions"><button class="btn primary" data-check="${i}">核对</button><button class="btn ghost" data-reset="${i}">重做</button></div>
+      <div class="answer"><strong>参考答案：</strong>${q.ans}。${q.exp}</div>
+    </article>`;
+  }).join("");
+}
+function updateProgress(){
+  const known=Object.values(state.cards||{}).filter(x=>x==="known").length;
+  document.getElementById("doneCount").textContent=known;
+  document.getElementById("totalCount").textContent=CARDS.length;
+}
+document.addEventListener("click",e=>{
+  const f=e.target.closest("[data-filter]"); if(f){currentCat=f.dataset.filter; renderFilters(); renderCards(); return;}
+  const open=e.target.closest("[data-open]"); if(open){state.open=state.open||{}; const id=open.dataset.open; state.open[id]=!state.open[id]; save(); renderCards(); return;}
+  const known=e.target.closest("[data-known]"); if(known){state.cards=state.cards||{}; state.cards[known.dataset.known]="known"; save(); renderCards(); return;}
+  const again=e.target.closest("[data-again]"); if(again){state.cards=state.cards||{}; state.cards[again.dataset.again]="again"; save(); renderCards(); return;}
+  const choice=e.target.closest("[data-choice]"); if(choice){const [i,j]=choice.dataset.choice.split(":").map(Number); state.quiz=state.quiz||{}; state.quiz[i]={...(state.quiz[i]||{}),choice:j,checked:false}; save(); renderQuiz(); return;}
+  const judge=e.target.closest("[data-judge]"); if(judge){const [i,val]=judge.dataset.judge.split(":"); state.quiz=state.quiz||{}; state.quiz[i]={...(state.quiz[i]||{}),choice:val==="true",checked:false}; save(); renderQuiz(); return;}
+  const check=e.target.closest("[data-check]"); if(check){const i=Number(check.dataset.check); state.quiz=state.quiz||{}; const q=QUIZ[i]; const input=document.querySelector(`[data-fill="${i}"]`); if(input) state.quiz[i]={...(state.quiz[i]||{}),fill:input.value}; state.quiz[i]={...(state.quiz[i]||{}),checked:true}; save(); renderQuiz(); return;}
+  const reset=e.target.closest("[data-reset]"); if(reset){const i=Number(reset.dataset.reset); state.quiz=state.quiz||{}; delete state.quiz[i]; save(); renderQuiz(); return;}
+});
+document.getElementById("myNotes").value=state.notes||"";
+document.getElementById("myNotes").addEventListener("input",e=>{state.notes=e.target.value;save();});
+renderFilters();renderCards();renderQuiz();updateProgress();
+</script>
+</body>
+</html>

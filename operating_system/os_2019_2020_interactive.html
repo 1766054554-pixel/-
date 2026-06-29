@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>19-20操作系统期末·交互刷题</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑",sans-serif;}
+body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px 10px;color:#333;}
+.wrap{max-width:880px;margin:0 auto;}
+h1{text-align:center;color:#fff;margin-bottom:8px;font-size:25px;text-shadow:2px 2px 6px rgba(0,0,0,.3);}
+.sub{text-align:center;color:#fff;opacity:.85;margin-bottom:20px;font-size:13px;}
+.nav{position:sticky;top:0;z-index:99;background:rgba(255,255,255,.95);border-radius:14px;padding:10px;margin-bottom:18px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.2);backdrop-filter:blur(8px);}
+.nav button{background:#eef;border:none;color:#445;padding:6px 11px;border-radius:16px;margin:3px;cursor:pointer;font-size:12px;transition:.2s;}
+.nav button:hover{background:#667eea;color:#fff;}
+.sec{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 6px 20px rgba(0,0,0,.18);}
+.sec h2{color:#5a3a9a;border-left:5px solid #667eea;padding-left:10px;margin-bottom:14px;font-size:19px;}
+.q{margin-bottom:18px;padding:14px;background:#f7f8ff;border-radius:12px;}
+.qt{font-weight:bold;margin-bottom:10px;line-height:1.6;}
+.step{background:#667eea;color:#fff;border:none;padding:9px 18px;border-radius:10px;cursor:pointer;margin:8px 0;font-size:14px;display:block;width:100%;transition:.2s;}
+.step:hover{background:#5566d0;}
+.stepc{display:none;margin:8px 0;padding:13px;background:#eef5ff;border-left:4px solid #667eea;border-radius:8px;font-size:14px;line-height:1.9;}
+.stepc.show{display:block;}
+.code{background:#2d2d3a;color:#9ef;padding:12px;border-radius:8px;font-family:Consolas,monospace;font-size:13px;line-height:1.7;white-space:pre-wrap;margin:6px 0;}
+.hint{color:#888;font-style:italic;font-size:13px;margin:6px 0;}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:13px;}
+table td,table th{border:1px solid #bbb;padding:5px 8px;text-align:center;}
+table th{background:#eef;}
+b{color:#5a3a9a;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎓 2019-2020《操作系统》期末A卷·交互刷题</h1>
+<p class="sub">大题逐步点击揭晓完整解题过程 | 参考答案逐题整理 | 步骤完整可追溯</p>
+
+<div class="nav">
+<button onclick="go('s1')">一·存储1</button>
+<button onclick="go('s2')">二·存储2</button>
+<button onclick="go('s3')">三·存储3</button>
+<button onclick="go('s4')">四·磁盘</button>
+<button onclick="go('s5')">五·同步1</button>
+<button onclick="go('s6')">六·同步2</button>
+<button onclick="go('s7')">七·死锁</button>
+<button onclick="go('s8')">八·文件</button>
+</div>
+
+<div class="sec" id="s1">
+<h2>一、存储管理1（本题共15分）</h2>
+<div class="q">
+<div class="qt">32位虚拟存储系统采用两级页表，逻辑地址结构：第一级页表(10位) + 第二级页表(10位) + 页内偏移(12位)。物理地址32位：物理页框号(20位) + 页内偏移(12位)。页表项格式：高20位为物理页框号，低12位为标志位；第0位有效位（1有效），第1位读写位（1可写）。<br><br>(1) 进程地址空间共多少字节？<br>(2) 设学号最后两位为MN，对应逻辑地址基址0xMN000000，从该地址开始映射4MB页表。求第一级页表的逻辑地址，以及指向第一级页表的自映射表项的逻辑地址。<br>(3) 已知第一级页表物理基址为0x00200000，内存大端存储，判断以下指令执行结果：Load读字节，Store写操作，成功写结果/读数值，失败写Error。</div>
+<table>
+<tr><th>指令</th></tr>
+<tr><td>Load [0x00001034]</td></tr>
+<tr><td>Store [0x00C07665]</td></tr>
+<tr><td>Store [0x00C005FF]</td></tr>
+<tr><td>Load [0x00C03012]</td></tr>
+<tr><td>Load [0xFF80078F]</td></tr>
+<tr><td>Load [0xFFFFF00B]</td></tr>
+</table>
+</div>
+<div id="s1steps"></div>
+</div>
+
+<div class="sec" id="s2">
+<h2>二、存储管理2（本题共10分）</h2>
+<div class="q">
+<div class="qt">(1) 页面走向：5,4,3,2,4,5,4,1,5,2,5,4,5,2,1；共3个物理页初始为空。分别求OPT最优置换、FIFO先进先出、LRU最近最久未使用算法的缺页次数，给出计算过程。<br><br>(2) 仅考虑页内碎片与页表开销，进程平均大小1MB，每个页表项8B。为使额外内存开销最小，页面大小应设置为多少？给出推导过程。</div>
+</div>
+<div id="s2steps"></div>
+</div>
+
+<div class="sec" id="s3">
+<h2>三、存储管理3（本题共10分）</h2>
+<div class="q">
+<div class="qt">可变分区内存管理，总内存128KB，初始分配如下表。作业序列：X到达(申请12KB) → C结束 → D结束 → Y到达(申请30KB) → E结束 → Z到达(申请9KB)。分别使用First Fit、Best Fit算法给出最终内存分配表。</div>
+<table>
+<tr><th>分区号</th><th>起始地址</th><th>分区大小</th><th>占用情况</th></tr>
+<tr><td>1</td><td>0</td><td>10KB</td><td>作业A</td></tr>
+<tr><td>2</td><td>10K</td><td>10KB</td><td>空闲</td></tr>
+<tr><td>3</td><td>20K</td><td>12KB</td><td>作业B</td></tr>
+<tr><td>4</td><td>32K</td><td>2KB</td><td>空闲</td></tr>
+<tr><td>5</td><td>34K</td><td>6KB</td><td>作业C</td></tr>
+<tr><td>6</td><td>40K</td><td>20KB</td><td>空闲</td></tr>
+<tr><td>7</td><td>60K</td><td>24KB</td><td>作业D</td></tr>
+<tr><td>8</td><td>84K</td><td>8KB</td><td>作业E</td></tr>
+<tr><td>9</td><td>92K</td><td>18KB</td><td>空闲</td></tr>
+<tr><td>10</td><td>110K</td><td>5KB</td><td>作业F</td></tr>
+<tr><td>11</td><td>115K</td><td>13KB</td><td>作业G</td></tr>
+</table>
+</div>
+<div id="s3steps"></div>
+</div>
+
+<div class="sec" id="s4">
+<h2>四、磁盘管理（本题共10分）</h2>
+<div class="q">
+<div class="qt">磁盘请求柱面序列：10,22,20,2,40,6,38。磁头初始位于20号柱面，向柱面号增大方向移动，每移动1个柱面耗时4ms，磁盘共51个柱面(0-50)。<br><br>(1) 电梯调度(SCAN)算法，需扫描到柱面边界才反向。给出访问次序与寻道总时间。<br><br>(2) 动态到达：t+31ms新增请求50号，t+70ms新增请求1号，t+91ms新增请求10号。仍用电梯调度，给出从t时刻开始的访问次序与寻道总时间，要求写出每一请求到达时刻的队列与磁头位置。</div>
+</div>
+<div id="s4steps"></div>
+</div>
+
+<div class="sec" id="s5">
+<h2>五、进程同步与互斥1（本题共15分）</h2>
+<div class="q">
+<div class="qt">仓库最多容纳50件产品，每次仅一件进出。甲、乙车间分别生产A、B产品存入仓库；5个A类客户、5个B类客户分别从仓库取走对应产品。仓库满则停止生产。<br>请用PV操作实现车间与客户的同步互斥，定义信号量含义与初值，给出完整伪代码并加注释。</div>
+</div>
+<div id="s5steps"></div>
+</div>
+
+<div class="sec" id="s6">
+<h2>六、进程同步与互斥2（本题共15分）</h2>
+<div class="q">
+<div class="qt">校车问题：乘客到站排队等车。巴士到站后，所有正在等待的乘客依次上车；上车开始后新到乘客必须等下一班。校车容量50人，超员部分等下一班。所有乘客上车完毕后巴士发车；巴士到站无人则立即发车。<br>请用PV操作实现巴士进程与乘客进程的同步互斥，定义信号量并给出完整伪代码。</div>
+</div>
+<div id="s6steps"></div>
+</div>
+
+<div class="sec" id="s7">
+<h2>七、死锁（本题共10分）</h2>
+<div class="q">
+<div class="qt">系统5个进程、4类资源，当前已分配、剩余需求与可用资源如下表。<br>(1) 系统当前是否安全？是否处于死锁状态？说明依据。<br>(2) 若各类资源单位代价相同，如何以最小代价增加资源避免死锁？给出过程。</div>
+<table>
+<tr><th rowspan="2">进程</th><th colspan="4">已分配资源</th><th colspan="4">还需要资源</th></tr>
+<tr><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th></tr>
+<tr><td>P1</td><td>0</td><td>1</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>P2</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>8</td><td>5</td><td>0</td></tr>
+<tr><td>P3</td><td>1</td><td>3</td><td>5</td><td>4</td><td>1</td><td>0</td><td>0</td><td>2</td></tr>
+<tr><td>P4</td><td>0</td><td>2</td><td>3</td><td>2</td><td>0</td><td>0</td><td>2</td><td>0</td></tr>
+<tr><td>P5</td><td>0</td><td>0</td><td>1</td><td>4</td><td>0</td><td>6</td><td>4</td><td>2</td></tr>
+</table>
+<p class="hint">当前可用资源：R1=0, R2=3, R3=2, R4=0</p>
+</div>
+<div id="s7steps"></div>
+</div>
+
+<div class="sec" id="s8">
+<h2>八、文件系统（本题共15分）</h2>
+<div class="q">
+<div class="qt">Unix索引文件系统，数据块大小2KB，块地址4字节。每个inode包含10个直接索引、1个一级间接索引、1个二级间接索引。<br>(1) 该文件系统支持的最大文件大小为多少KB？<br>(2) 磁盘中一半文件大小恰好2KB，另一半恰好1.5KB。求磁盘空间利用率；若数据块改为1KB，利用率又是多少？（仅考虑文件数据块）<br>(3) 随机读取文件时，大文件平均性能明显下降，分析主要原因并给出解决思路。</div>
+</div>
+<div id="s8steps"></div>
+</div>
+
+</div>
+
+<script>
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+
+function buildSteps(containerId,steps){
+    var box=document.getElementById(containerId);
+    for(var i=0;i<steps.length;i++){
+        (function(s){
+            var btn=document.createElement('button');btn.className='step';btn.textContent='👉 点击揭晓 '+s.t;
+            var c=document.createElement('div');c.className='stepc';c.innerHTML=s.c;
+            btn.onclick=function(){
+                c.classList.toggle('show');
+                btn.textContent=c.classList.contains('show')?'🔽 收起 '+s.t:'👉 点击揭晓 '+s.t;
+            };
+            box.appendChild(btn);box.appendChild(c);
+        })(steps[i]);
+    }
+}
+
+// ====================== 一、存储管理1 ======================
+buildSteps('s1steps',[
+{t:"小题1：进程地址空间大小",c:"32位逻辑地址，地址空间总大小 = 2³² 字节 = <b>4 GB（4294967296字节）</b>"},
+{t:"小题2：自映射与页目录地址推导",c:"设基址为 0xMN000000，4MB页表对应 4MB/4KB = 1024 页，恰好覆盖全部二级页表项。<br><br>第一级页表（页目录）逻辑地址 = 0xMN000000 + (0xMN000000 >> 10)<br>原理：页目录对应页表中的第 (0xMN000000>>12) 项，每项4字节，偏移量为 (0xMN000000>>12)×4 = 0xMN000000>>10<br><br>自映射表项逻辑地址 = 0xMN000000 + (0xMN000000 >> 10) + (0xMN000000 >> 20)<br>原理：页目录自身在页目录中的索引为高10位，对应项偏移为 (0xMN000000>>22)×4 = 0xMN000000>>20"},
+{t:"小题3：6条指令执行结果与推导",c:"地址拆分规则：高10位PDX、中10位PTX、低12位偏移；页表项高20位为页框号，低12位标志位，大端存储。<br><br><b>1. Load [0x00001034]</b><br>PDX=0, PTX=1, OFF=0x034<br>PDE地址0x00200000 → 值0x00100007（有效，页框0x00100）<br>PTE地址0x00100004 → 值0x00002067（有效，页框0x00002）<br>物理地址0x00002034 → 值 <b>0x12</b><br><br><b>2. Store [0x00C07665]</b><br>PDX=3, PTX=7, OFF=0x665<br>PDE地址0x0020000C → 值0x00103007（有效，页框0x00103）<br>PTE地址0x0010301C → 标志位可写，权限合法<br>结果：<b>OK</b><br><br><b>3. Store [0x00C005FF]</b><br>PDX=3, PTX=0, OFF=0x5FF<br>PTE值0x11220005，第1位为0 → 只读，不可写<br>结果：<b>Error</b><br><br><b>4. Load [0x00C03012]</b><br>PDX=3, PTX=3, OFF=0x012<br>PTE对应页框0x00000，物理地址0x00000012 → 值 <b>0x20</b><br><br><b>5. Load [0xFF80078F]</b><br>PDX=0x3FE，对应PTE有效位为0 → 缺页<br>结果：<b>Error</b><br><br><b>6. Load [0xFFFFF00B]</b><br>PDX=0x3FF, PTX=0x3FF, OFF=0x00B<br>PTE对应页框0x00103，物理地址0x0010300B → 值 <b>0xCC</b>"},
+{t:"最终答案汇总",c:"1. Load [0x00001034] → <b>0x12</b><br>2. Store [0x00C07665] → <b>OK</b><br>3. Store [0x00C005FF] → <b>Error</b><br>4. Load [0x00C03012] → <b>0x20</b><br>5. Load [0xFF80078F] → <b>Error</b><br>6. Load [0xFFFFF00B] → <b>0xCC</b>"}
+]);
+
+// ====================== 二、存储管理2 ======================
+buildSteps('s2steps',[
+{t:"小题1：OPT最优置换算法",c:"页面序列：5,4,3,2,4,5,4,1,5,2,5,4,5,2,1；3个物理页<br>逐轮模拟：每次淘汰未来最久不使用的页<br>缺页发生位置：第1、2、3、4、8、12、15次访问<br><b>总缺页次数：7 次</b>"},
+{t:"小题1：FIFO先进先出算法",c:"按进入内存顺序淘汰，先进先出<br>缺页发生位置：第1、2、3、4、6、7、8、10、11、12、15次访问<br><b>总缺页次数：11 次</b>"},
+{t:"小题1：LRU最近最久未使用算法",c:"每次淘汰最久未被访问的页面<br>缺页发生位置：第1、2、3、4、6、8、10、12、15次访问<br><b>总缺页次数：9 次</b>"},
+{t:"小题2：最优页面大小推导",c:"设页面大小为p，进程大小s=1MB，页表项大小e=8B<br>总额外开销 = 页表开销 + 平均内碎片 = (s/p)×e + p/2<br>令两项相等时总开销最小：(s×e)/p = p/2<br>解得 p = √(2×s×e) = √(2×2²⁰×8) = √(2²⁴) = 2¹² = 4096 B<br><b>最优页面大小：4KB</b>"}
+]);
+
+// ====================== 三、存储管理3 ======================
+buildSteps('s3steps',[
+{t:"First Fit 最终内存分配表",c:'<table><tr><th>分区号</th><th>起始地址</th><th>分区大小</th><th>占用情况</th></tr><tr><td>1</td><td>0</td><td>10KB</td><td>作业A</td></tr><tr><td>2</td><td>10K</td><td>9KB</td><td>作业Z</td></tr><tr><td>3</td><td>19K</td><td>1KB</td><td>空闲</td></tr><tr><td>4</td><td>20K</td><td>12KB</td><td>作业B</td></tr><tr><td>5</td><td>32K</td><td>8KB</td><td>空闲</td></tr><tr><td>6</td><td>40K</td><td>12KB</td><td>作业X</td></tr><tr><td>7</td><td>52K</td><td>30KB</td><td>作业Y</td></tr><tr><td>8</td><td>82K</td><td>28KB</td><td>空闲</td></tr><tr><td>9</td><td>110K</td><td>5KB</td><td>作业F</td></tr><tr><td>10</td><td>115K</td><td>13KB</td><td>作业G</td></tr></table>'},
+{t:"Best Fit 最终内存分配表",c:'<table><tr><th>分区号</th><th>起始地址</th><th>分区大小</th><th>占用情况</th></tr><tr><td>1</td><td>0</td><td>10KB</td><td>作业A</td></tr><tr><td>2</td><td>10K</td><td>9KB</td><td>作业Z</td></tr><tr><td>3</td><td>19K</td><td>1KB</td><td>空闲</td></tr><tr><td>4</td><td>20K</td><td>12KB</td><td>作业B</td></tr><tr><td>5</td><td>32K</td><td>30KB</td><td>作业Y</td></tr><tr><td>6</td><td>62K</td><td>20KB</td><td>空闲</td></tr><tr><td>7</td><td>92K</td><td>12KB</td><td>作业X</td></tr><tr><td>8</td><td>104K</td><td>6KB</td><td>空闲</td></tr><tr><td>9</td><td>110K</td><td>5KB</td><td>作业F</td></tr><tr><td>10</td><td>115K</td><td>13KB</td><td>作业G</td></tr></table>'}
+]);
+
+// ====================== 四、磁盘管理 ======================
+buildSteps('s4steps',[
+{t:"小题1：SCAN电梯调度（静态请求）",c:"初始位置20，向增大方向移动，扫描到边界50再反向。<br><b>访问次序：20 → 22 → 38 → 40 → 50(边界) → 10 → 6 → 2</b><br>总移动柱面数：(50-20) + (50-2) = 30 + 48 = 78 柱面<br>寻道总时间 = 78 × 4ms = <b>312 ms</b>"},
+{t:"小题2：动态到达下的SCAN调度",c:"逐时刻模拟磁头位置与请求队列：<br>• t=0ms，位置20，队列：10,22,2,40,6,38；正向移动<br>• t=8ms，到达22号，处理完成，队列剩余：10,2,40,6,38<br>• t=72ms，到达38号，处理完成，新增请求50入队<br>• t=80ms，到达40号，处理完成<br>• t=120ms，到达50号边界，开始反向；新增请求1、10入队<br>• t=296ms，到达6号，处理完成<br>• t=312ms，到达2号，处理完成；新增请求10入队<br>• t=316ms，到达1号，处理完成<br><br><b>最终访问次序：22 → 38 → 40 → 50 → 10 → 6 → 2 → 1</b><br>总移动柱面数 = 50-20 + 50-1 = 79 柱面<br>寻道总时间 = 79 × 4ms = <b>316 ms</b>"}
+]);
+
+// ====================== 五、进程同步1 仓库生产者消费者 ======================
+buildSteps('s5steps',[
+{t:"信号量定义与初值",c:'<div class="code">semaphore empty = 50;  // 仓库总空位数\nsemaphore itemA = 0;   // A产品数量\nsemaphore itemB = 0;   // B产品数量\nsemaphore mutex = 1;   // 仓库操作互斥锁</div>'},
+{t:"甲车间（生产A产品）",c:'<div class="code">ProducerA() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;produceA();          // 生产A产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty);            // 申请空位\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);            // 互斥访问仓库\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;putA();              // 放入A产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);            // 释放互斥锁\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(itemA);            // A产品数量+1\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"乙车间（生产B产品）",c:'<div class="code">ProducerB() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;produceB();          // 生产B产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(empty);            // 申请空位\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);            // 互斥访问仓库\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;putB();              // 放入B产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);            // 释放互斥锁\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(itemB);            // B产品数量+1\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"A类客户进程",c:'<div class="code">ConsumerA() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(itemA);            // 申请A产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);            // 互斥访问仓库\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;takeA();             // 取出A产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);            // 释放互斥锁\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;consumeA();          // 消费A产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(empty);            // 空位+1\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'},
+{t:"B类客户进程",c:'<div class="code">ConsumerB() {\n&nbsp;&nbsp;&nbsp;&nbsp;while(true) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(itemB);            // 申请B产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);            // 互斥访问仓库\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;takeB();             // 取出B产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);            // 释放互斥锁\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;consumeB();          // 消费B产品\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(empty);            // 空位+1\n&nbsp;&nbsp;&nbsp;&nbsp;}\n}</div>'}
+]);
+
+// ====================== 六、进程同步2 校车问题 ======================
+buildSteps('s6steps',[
+{t:"信号量与共享变量定义",c:'<div class="code">const int CAPACITY = 50;   // 校车容量\nint waiting = 0;            // 当前等待乘客数\nsemaphore mutex = 1;        // 保护waiting变量互斥\nsemaphore bus = 0;          // 巴士到站信号\nsemaphore boarded = 0;      // 乘客上车完成信号</div>'},
+{t:"巴士进程实现",c:'<div class="code">Bus() {\n&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;int n = min(waiting, CAPACITY); // 本次上车人数\n&nbsp;&nbsp;&nbsp;&nbsp;for(int i=0; i&lt;n; i++) {\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V(bus);        // 依次唤醒乘客上车\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P(boarded);    // 等待一名乘客上车完成\n&nbsp;&nbsp;&nbsp;&nbsp;}\n&nbsp;&nbsp;&nbsp;&nbsp;waiting = max(waiting - CAPACITY, 0);\n&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;depart();          // 发车\n}</div>'},
+{t:"乘客进程实现",c:'<div class="code">Passenger() {\n&nbsp;&nbsp;&nbsp;&nbsp;P(mutex);\n&nbsp;&nbsp;&nbsp;&nbsp;waiting++;         // 加入等待队列\n&nbsp;&nbsp;&nbsp;&nbsp;V(mutex);\n\n&nbsp;&nbsp;&nbsp;&nbsp;P(bus);            // 等待巴士到站唤醒\n&nbsp;&nbsp;&nbsp;&nbsp;boardBus();        // 上车\n&nbsp;&nbsp;&nbsp;&nbsp;V(boarded);        // 通知司机已上车\n}</div>'},
+{t:"设计说明",c:"✅ mutex保护等待人数的并发修改<br>✅ bus信号量由巴士释放，乘客等待，实现巴士到站同步<br>✅ boarded信号量由乘客释放，巴士等待，确保全部上车后再发车<br>✅ 容量限制：每次最多唤醒50名乘客，超员部分留在waiting等待下一班<br>✅ 无人等待时n=0，循环不执行，直接发车，符合题意"}
+]);
+
+// ====================== 七、死锁 ======================
+buildSteps('s7steps',[
+{t:"小题1：安全性检查与死锁判断",c:"初始可用资源：(0, 3, 2, 0)<br><br>第一轮：P1无需额外资源，可执行并释放资源<br>释放后可用 = (0+0, 3+1, 2+2, 0+0) = (0, 4, 4, 0)<br><br>第二轮：P4的Need=(0,0,2,0) ≤ 可用，可执行并释放<br>释放后可用 = (0, 4+2, 4+3, 0+2) = (0, 6, 7, 2)<br><br>第三轮：P5的Need=(0,6,4,2) ≤ 可用，可执行并释放<br>释放后可用 = (0, 6+0, 7+1, 2+4) = (0, 6, 8, 6)<br><br>剩余进程P2、P3：<br>P2 Need=(0,8,5,0) > 可用(0,6,8,6) 不满足<br>P3 Need=(1,0,0,2) > 可用(0,6,8,6) 不满足<br><br><b>结论：系统处于不安全状态，P2与P3无法推进，发生死锁。</b>"},
+{t:"小题2：最小代价增加资源方案",c:"当前瓶颈是R1资源不足，导致P3无法执行。<br>增加 1 个R1资源后，可用变为 (1, 6, 8, 6)<br>• P3的Need=(1,0,0,2) 满足，可执行；释放后可用 = (2, 9, 13, 10)<br>• P2的Need=(0,8,5,0) 满足，可执行；所有进程均可完成<br><br><b>结论：增加1个R1资源即可破除死锁，代价最小。</b>"}
+]);
+
+// ====================== 八、文件系统 ======================
+buildSteps('s8steps',[
+{t:"小题1：最大文件大小计算",c:"块大小2KB，块地址4B → 每块可存 2048/4 = 512 个地址<br><br>• 10个直接块：10 × 2KB = <b>20 KB</b><br>• 1个一级间接：512 × 2KB = <b>1024 KB</b><br>• 1个二级间接：512×512 × 2KB = 262144 × 2KB = <b>524288 KB</b><br><br>最大文件总大小 = 20 + 1024 + 524288 = <b>525332 KB</b>"},
+{t:"小题2：磁盘空间利用率计算",c:"【数据块2KB时】<br>• 2KB文件：占1块，利用率100%<br>• 1.5KB文件：占1块，利用率75%<br>各占一半，总利用率 = 0.5×100% + 0.5×75% = <b>87.5%</b><br><br>【数据块1KB时】<br>• 2KB文件：占2块，利用率100%<br>• 1.5KB文件：占2块（1块满+1块用0.5KB），利用率75%<br>总利用率 = 0.5×100% + 0.5×75% = <b>87.5%</b>"},
+{t:"小题3：大文件性能下降原因与优化",c:"<b>主要原因：</b><br>小文件可通过直接索引访问，仅需1次磁盘I/O；大文件需要通过一级、二级间接索引访问，每多一级索引就多一次磁盘读操作，I/O次数增加导致性能下降。<br><br><b>解决思路：</b><br>1. 引入块高速缓存，缓存常用的索引块与数据块，减少磁盘访问<br>2. 利用局部性原理，将常用数据放在直接索引与一级索引区域<br>3. 采用预读策略，提前加载连续数据块<br>4. 优化磁盘调度算法，减少寻道时间<br>5. 采用RAID技术提升磁盘吞吐"}
+]);
+
+</script>
+</body>
+</html>

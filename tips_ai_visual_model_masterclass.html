@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Tips 图解模型主线课：从决策树到 Transformer</title>
+  <style>
+    :root {
+      --ink: #18222f;
+      --muted: #617083;
+      --line: #d8e2ec;
+      --paper: #fbfdff;
+      --blue: #2563eb;
+      --green: #16845b;
+      --orange: #c05a12;
+      --red: #b83232;
+      --purple: #6d46c7;
+      --wash: #eef6ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef6ff 0, #f7fbff 280px, #ffffff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+      letter-spacing: 0;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 22px 64px; }
+    header {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      padding: 30px;
+      box-shadow: 0 16px 40px rgba(36, 68, 111, .08);
+    }
+    h1 { margin: 0 0 10px; font-size: 40px; line-height: 1.12; }
+    h2 { margin: 0 0 14px; font-size: 28px; line-height: 1.25; }
+    h3 { margin: 18px 0 8px; font-size: 21px; }
+    p { margin: 8px 0 0; }
+    a { color: #1558c8; }
+    .muted { color: var(--muted); }
+    .pillrow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid #cdddeb;
+      background: #fff;
+      color: #31506f;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 0;
+    }
+    nav a {
+      text-decoration: none;
+      border: 1px solid #c9d9e8;
+      background: #fff;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-weight: 700;
+    }
+    section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      padding: 24px;
+      box-shadow: 0 8px 26px rgba(36, 68, 111, .05);
+    }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .box {
+      border: 1px solid #d8e4ef;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 16px;
+    }
+    .box strong { display: block; margin-bottom: 4px; }
+    .story {
+      border-left: 6px solid var(--blue);
+      background: #f1f7ff;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-top: 14px;
+    }
+    .callout {
+      border-left: 6px solid var(--orange);
+      background: #fff8ed;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+    .exam {
+      border-left: 6px solid var(--green);
+      background: #f0fbf6;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+    .danger {
+      border-left-color: var(--red);
+      background: #fff4f4;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid #d8e4ef; padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #edf6ff; }
+    .math-card {
+      border: 1px solid #cdddeb;
+      border-radius: 8px;
+      background: #f7fbff;
+      padding: 14px 16px;
+      margin: 14px 0;
+    }
+    .eq {
+      display: block;
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      color: #153d78;
+      white-space: normal;
+      word-break: break-word;
+      margin-bottom: 8px;
+    }
+    .math-card ul { margin: 8px 0 0 20px; padding: 0; }
+    .figure {
+      border: 1px solid #d3e0ec;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 14px 0;
+      overflow-x: auto;
+    }
+    .figure svg { min-width: 760px; width: 100%; height: auto; display: block; }
+    .caption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    details {
+      margin-top: 12px;
+      border: 1px solid #d9e4ef;
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+    }
+    summary { cursor: pointer; font-weight: 800; }
+    .quiz {
+      border: 1px solid #d7e2ee;
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .quiz h3 { margin-top: 0; }
+    .quiz textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      border: 1px solid #cbd8e6;
+      border-radius: 8px;
+      padding: 10px;
+      font: inherit;
+      margin-top: 10px;
+    }
+    .answer {
+      border-left: 5px solid var(--green);
+      background: #f1fbf6;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 820px) {
+      .wrap { padding: 16px 12px 42px; }
+      header, section { padding: 18px; }
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      .figure svg { min-width: 680px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="pillrow">
+        <span class="pill">AI Tips</span>
+        <span class="pill">从零补故事线</span>
+        <span class="pill">图解模型</span>
+        <span class="pill">选择/填空/简答/综合题</span>
+      </div>
+      <h1>AI 图解模型主线课：从“怎么学习”到 Transformer</h1>
+      <p class="muted">这页是辅助理解课，不是某一天必须硬塞完的主线讲义。它专门修你说的痛点：新词太多、公式难看、决策树/神经网络/CNN/RNN/LSTM/Transformer 不知道为什么出现。主线讲义学到对应模型时，如果觉得名词开始糊成一团，就回来用这页把故事线接上。</p>
+      <p class="muted">读完这里如果还缺“看到题干我该切哪个模型”的反应速度，去 <a href="./tips_ai_model_gate_practice.html">AI 模型闯关训练</a> 做应用题。</p>
+      <nav>
+        <a href="#map">0. 总地图</a>
+        <a href="#words">1. 新词地基</a>
+        <a href="#tree">2. 决策树</a>
+        <a href="#nn">3. 神经网络</a>
+        <a href="#cnn">4. CNN</a>
+        <a href="#rnn">5. RNN/LSTM</a>
+        <a href="#transformer">6. Transformer</a>
+        <a href="#compare">7. 区分与题卡</a>
+      </nav>
+    </header>
+
+    <section id="map">
+      <h2>0. 先有整体故事：AI 模型其实都在回答同一个问题</h2>
+      <p>你现在看 AI 会烦，是因为每个 PPT 都像在丢新名字。但考试里，大多数模型题都可以回到同一个框架：</p>
+      <div class="story">
+        <strong>输入数据 x 进来，模型 f 产生预测 y_hat；损失函数 L 批改预测哪里错；训练算法调整参数，让下次错得少一点；最后拿新数据检验泛化能力。</strong>
+      </div>
+      <div class="figure">
+        <svg viewBox="0 0 980 330" role="img" aria-label="AI 学习闭环总图">
+          <defs>
+            <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#2563eb"></path>
+            </marker>
+          </defs>
+          <rect x="24" y="38" width="140" height="76" rx="8" fill="#eef6ff" stroke="#9dbde5"/>
+          <text x="94" y="68" text-anchor="middle" font-size="18" font-weight="700">输入 x</text>
+          <text x="94" y="93" text-anchor="middle" font-size="14">特征/图片/句子</text>
+          <line x1="168" y1="76" x2="258" y2="76" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="264" y="34" width="166" height="84" rx="8" fill="#fff7ed" stroke="#e2a15d"/>
+          <text x="347" y="65" text-anchor="middle" font-size="18" font-weight="700">模型 f</text>
+          <text x="347" y="92" text-anchor="middle" font-size="14">线性/树/网络</text>
+          <line x1="433" y1="76" x2="520" y2="76" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="526" y="38" width="142" height="76" rx="8" fill="#f0fbf6" stroke="#7fc9a6"/>
+          <text x="597" y="68" text-anchor="middle" font-size="18" font-weight="700">预测 y_hat</text>
+          <text x="597" y="93" text-anchor="middle" font-size="14">分数/类别/概率</text>
+          <line x1="670" y1="76" x2="760" y2="76" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+          <rect x="766" y="34" width="178" height="84" rx="8" fill="#f5f2ff" stroke="#b8a4e9"/>
+          <text x="855" y="65" text-anchor="middle" font-size="18" font-weight="700">损失 L</text>
+          <text x="855" y="92" text-anchor="middle" font-size="14">和真实标签 y 比较</text>
+          <path d="M855 122 C835 205, 510 240, 348 128" fill="none" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="610" y="228" text-anchor="middle" font-size="16" fill="#6d46c7" font-weight="700">训练：调整参数 w，让损失变小</text>
+          <rect x="92" y="250" width="790" height="44" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="487" y="278" text-anchor="middle" font-size="17" font-weight="700">考试问模型时：先说输入是什么，再说模型怎么处理，再说损失/训练/优缺点。</text>
+        </svg>
+        <div class="caption">把这张图记住，后面每个模型都只是“模型 f”的不同写法。</div>
+      </div>
+      <table>
+        <thead><tr><th>模型</th><th>它把 f 写成什么样</th><th>最适合处理什么</th><th>考试高频问法</th></tr></thead>
+        <tbody>
+          <tr><td>线性/逻辑回归</td><td>一条线或一个超平面</td><td>结构简单、需要公式计算</td><td>损失函数、sigmoid、分类概率</td></tr>
+          <tr><td>决策树</td><td>一串 if-else 问题</td><td>规则解释、表格特征</td><td>熵、信息增益、过拟合、剪枝</td></tr>
+          <tr><td>SVM</td><td>最大间隔分界面</td><td>中小规模分类、边界清楚</td><td>支持向量、间隔、核函数</td></tr>
+          <tr><td>神经网络</td><td>多层可调打分器</td><td>复杂非线性规律</td><td>激活函数、BP、过拟合</td></tr>
+          <tr><td>CNN</td><td>小窗口在图像上滑动</td><td>图片、局部空间结构</td><td>卷积核、参数共享、池化</td></tr>
+          <tr><td>RNN/LSTM</td><td>按顺序读，并带着记忆</td><td>句子、时间序列</td><td>隐藏状态、长期依赖、门控</td></tr>
+          <tr><td>Transformer</td><td>每个 token 对全局做注意力</td><td>长文本、多模态、生成理解</td><td>Q/K/V、self-attention、并行</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="words">
+      <h2>1. 新词先铺地基：每个词都要知道它在闭环里站哪</h2>
+      <div class="grid three">
+        <div class="box"><strong>特征 feature</strong>输入 x 的每一项信息。房价模型里的面积、楼层；图片里的像素；文本里的 token 向量，都是特征。</div>
+        <div class="box"><strong>标签 label</strong>标准答案 y。分类题标签是类别，回归题标签是数值。没有标签时通常进入无监督学习。</div>
+        <div class="box"><strong>参数 parameter</strong>模型要学出来的数字。线性模型的 w、神经网络连接权重、卷积核里的数字，都属于参数。</div>
+        <div class="box"><strong>损失 loss</strong>模型做错的程度。回归常用平方误差，分类常用交叉熵。它像批改卷子的分数。</div>
+        <div class="box"><strong>训练 training</strong>用训练数据不断调参数，让损失下降。不是“模型自己突然懂了”，而是参数被一步步改了。</div>
+        <div class="box"><strong>泛化 generalization</strong>模型对没见过的新题也做得好。训练集好但测试集差，就是过拟合。</div>
+      </div>
+      <div class="exam">
+        <strong>考试答题句式：</strong>某模型接收输入特征 x，通过参数化函数得到预测 y_hat，再用损失函数衡量预测和真实标签 y 的差异，并通过训练调整参数。模型好不好，最终看泛化能力，而不是只看训练集表现。
+      </div>
+    </section>
+
+    <section id="tree">
+      <h2>2. 决策树：不是“树长得像树”，而是每个节点都在问一个最有用的问题</h2>
+      <p>决策树适合从零理解，因为它最像人类做判断：先问一个问题，把样本分成几堆；再在每堆里继续问。关键不是树形图好看，而是“第一个问题该问谁”。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 430" role="img" aria-label="决策树从样本到信息增益">
+          <defs>
+            <marker id="arrow2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#16845b"></path>
+            </marker>
+          </defs>
+          <rect x="390" y="28" width="200" height="64" rx="8" fill="#eef6ff" stroke="#9dbde5"/>
+          <text x="490" y="56" text-anchor="middle" font-size="17" font-weight="700">所有样本混在一起</text>
+          <text x="490" y="79" text-anchor="middle" font-size="13">混乱程度 = 熵 H(D)</text>
+          <line x1="490" y1="94" x2="250" y2="160" stroke="#16845b" stroke-width="3" marker-end="url(#arrow2)"/>
+          <line x1="490" y1="94" x2="490" y2="160" stroke="#16845b" stroke-width="3" marker-end="url(#arrow2)"/>
+          <line x1="490" y1="94" x2="730" y2="160" stroke="#16845b" stroke-width="3" marker-end="url(#arrow2)"/>
+          <rect x="130" y="164" width="240" height="76" rx="8" fill="#fff8ed" stroke="#e2a15d"/>
+          <text x="250" y="193" text-anchor="middle" font-size="16" font-weight="700">问题 A：天气？</text>
+          <text x="250" y="218" text-anchor="middle" font-size="13">分完后仍然混</text>
+          <rect x="370" y="164" width="240" height="76" rx="8" fill="#f0fbf6" stroke="#7fc9a6"/>
+          <text x="490" y="193" text-anchor="middle" font-size="16" font-weight="700">问题 B：是否有风？</text>
+          <text x="490" y="218" text-anchor="middle" font-size="13">分完后更纯</text>
+          <rect x="610" y="164" width="240" height="76" rx="8" fill="#fff4f4" stroke="#e3a0a0"/>
+          <text x="730" y="193" text-anchor="middle" font-size="16" font-weight="700">问题 C：编号？</text>
+          <text x="730" y="218" text-anchor="middle" font-size="13">可能过拟合</text>
+          <rect x="220" y="305" width="540" height="64" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="490" y="331" text-anchor="middle" font-size="17" font-weight="700">信息增益 = 划分前混乱 - 划分后加权混乱</text>
+          <text x="490" y="355" text-anchor="middle" font-size="14">选让类别最变纯、但不过度偏向多取值的特征</text>
+        </svg>
+        <div class="caption">决策树图要看“问题如何把样本分纯”，不是只记树的形状。</div>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">Entropy</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span>
+          <span class="op">=</span><span class="op">−</span>
+          <span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot"><span class="mi">k</span></span></span>
+          <span class="mi">p</span><sub><span class="mi">k</span></sub>
+          <span class="func">log</span><sub>2</sub><span class="op">(</span><span class="mi">p</span><sub><span class="mi">k</span></sub><span class="op">)</span>
+        </div>
+        <ul>
+          <li>p_k：当前数据集中第 k 类样本的比例。</li>
+          <li>熵越大，类别越混；熵越小，越纯。</li>
+        </ul>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">Gain</span><span class="op">(</span><span class="mi">D</span><span class="op">,</span><span class="mi">A</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="func">Entropy</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span>
+          <span class="op">−</span>
+          <span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot"><span class="mi">v</span></span></span>
+          <span class="frac"><span>|<span class="mi">D</span><sub><span class="mi">v</span></sub>|</span><span>|<span class="mi">D</span>|</span></span>
+          <span class="func">Entropy</span><span class="op">(</span><span class="mi">D</span><sub><span class="mi">v</span></sub><span class="op">)</span>
+        </div>
+        <ul>
+          <li>A：准备用来划分的特征。</li>
+          <li>D_v：按特征 A 的某个取值 v 分出来的子集。</li>
+          <li>信息增益越大，说明这个特征越能把混乱样本分清。</li>
+        </ul>
+      </div>
+      <details>
+        <summary>决策树简答题怎么写丰满？</summary>
+        <p>决策树通过一系列特征测试把样本递归划分到叶节点。每个内部节点选择一个划分特征，常用信息增益或信息增益率衡量划分前后不确定性下降程度。优点是可解释性强、能处理离散特征；缺点是树过深时容易过拟合，因此常用剪枝、限制深度、最小样本数等方法提升泛化能力。</p>
+      </details>
+    </section>
+
+    <section id="nn">
+      <h2>3. 神经网络：先别想大模型，先看一个“会调权重的打分器”</h2>
+      <p>神经网络的基本单元很像打分表：每个输入特征乘一个权重，加上偏置，再经过激活函数。很多单元叠起来，模型就能表达复杂的非线性边界。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 440" role="img" aria-label="神经网络从单个神经元到多层网络">
+          <defs>
+            <marker id="arrow3" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#2563eb"></path>
+            </marker>
+          </defs>
+          <text x="44" y="42" font-size="20" font-weight="700" fill="#153d78">单个神经元：先加权求和，再激活</text>
+          <circle cx="120" cy="130" r="28" fill="#eef6ff" stroke="#9dbde5"/><text x="120" y="136" text-anchor="middle">x1</text>
+          <circle cx="120" cy="220" r="28" fill="#eef6ff" stroke="#9dbde5"/><text x="120" y="226" text-anchor="middle">x2</text>
+          <circle cx="120" cy="310" r="28" fill="#eef6ff" stroke="#9dbde5"/><text x="120" y="316" text-anchor="middle">x3</text>
+          <line x1="150" y1="130" x2="350" y2="210" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow3)"/>
+          <line x1="150" y1="220" x2="350" y2="220" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow3)"/>
+          <line x1="150" y1="310" x2="350" y2="230" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow3)"/>
+          <text x="248" y="145" font-size="14" fill="#617083">w1</text>
+          <text x="248" y="209" font-size="14" fill="#617083">w2</text>
+          <text x="248" y="294" font-size="14" fill="#617083">w3</text>
+          <circle cx="392" cy="220" r="58" fill="#fff8ed" stroke="#e2a15d"/>
+          <text x="392" y="210" text-anchor="middle" font-size="15" font-weight="700">z = w·x + b</text>
+          <text x="392" y="235" text-anchor="middle" font-size="14">打分</text>
+          <line x1="452" y1="220" x2="580" y2="220" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow3)"/>
+          <rect x="586" y="180" width="150" height="80" rx="8" fill="#f0fbf6" stroke="#7fc9a6"/>
+          <text x="661" y="211" text-anchor="middle" font-size="16" font-weight="700">a = g(z)</text>
+          <text x="661" y="236" text-anchor="middle" font-size="14">激活后输出</text>
+          <line x1="740" y1="220" x2="850" y2="220" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow3)"/>
+          <rect x="856" y="180" width="94" height="80" rx="8" fill="#f5f2ff" stroke="#b8a4e9"/>
+          <text x="903" y="212" text-anchor="middle" font-size="16" font-weight="700">y_hat</text>
+          <text x="903" y="236" text-anchor="middle" font-size="14">预测</text>
+          <rect x="58" y="378" width="864" height="40" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="490" y="404" text-anchor="middle" font-size="16" font-weight="700">没有激活函数，多层线性仍可合并成一层线性；激活函数让网络能“拐弯”。</text>
+        </svg>
+        <div class="caption">考试问神经网络时，先把它还原成 z、激活、损失、反向传播四步。</div>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">z</span><span class="op">=</span>
+          <span class="mi">w</span><sub>1</sub><span class="mi">x</span><sub>1</sub>
+          <span class="op">+</span>
+          <span class="mi">w</span><sub>2</sub><span class="mi">x</span><sub>2</sub>
+          <span class="op">+</span><span class="op">⋯</span><span class="op">+</span>
+          <span class="mi">w</span><sub><span class="mi">d</span></sub><span class="mi">x</span><sub><span class="mi">d</span></sub>
+          <span class="op">+</span><span class="mi">b</span>
+          <span class="op">=</span>
+          <span class="mb">w</span><sup>⊤</sup><span class="mb">x</span><span class="op">+</span><span class="mi">b</span>
+        </div>
+        <ul>
+          <li>w：权重，表示某个特征对结果影响多大。</li>
+          <li>b：偏置，相当于整体分数的起点。</li>
+          <li>z：激活前的原始打分。</li>
+        </ul>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">ReLU</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="func">max</span><span class="op">(</span>0<span class="op">,</span><span class="mi">z</span><span class="op">)</span>
+        </div>
+        <ul>
+          <li>z 小于 0 就压成 0，大于 0 就保留。</li>
+          <li>作用：引入非线性，让网络能表达复杂模式。</li>
+        </ul>
+      </div>
+      <div class="callout">
+        <strong>BP 反向传播别背成黑魔法：</strong>前向传播先算预测，损失函数给出“错多少”，反向传播用链式法则把责任从输出层分摊回前面每一层，最后更新权重。简答题写“链式法则 + 梯度 + 更新参数”就有骨架。
+      </div>
+    </section>
+
+    <section id="cnn">
+      <h2>4. CNN：图片不是一串数字，图片有“附近关系”</h2>
+      <p>如果把图片拉平成一长串数字，模型会忘记哪个像素和哪个像素挨着。CNN 的核心是局部连接和参数共享：同一个小窗口在整张图片上滑动，寻找边缘、纹理、角点等局部模式。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 430" role="img" aria-label="CNN 卷积池化图解">
+          <defs>
+            <marker id="arrow4" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#2563eb"></path>
+            </marker>
+          </defs>
+          <text x="44" y="42" font-size="20" font-weight="700" fill="#153d78">CNN：小窗口扫图，先看局部，再逐层组合</text>
+          <g transform="translate(60,84)">
+            <rect width="210" height="210" fill="#f7fbff" stroke="#9dbde5"/>
+            <g stroke="#c8d8e8">
+              <path d="M42 0 V210 M84 0 V210 M126 0 V210 M168 0 V210 M0 42 H210 M0 84 H210 M0 126 H210 M0 168 H210"/>
+            </g>
+            <rect x="42" y="42" width="84" height="84" fill="#fff1cf" stroke="#c05a12" stroke-width="3"/>
+            <text x="105" y="238" text-anchor="middle" font-size="15">输入图片</text>
+          </g>
+          <line x1="286" y1="190" x2="388" y2="190" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow4)"/>
+          <g transform="translate(410,104)">
+            <rect width="150" height="150" rx="8" fill="#fff8ed" stroke="#e2a15d"/>
+            <text x="75" y="58" text-anchor="middle" font-size="18" font-weight="700">卷积核</text>
+            <text x="75" y="88" text-anchor="middle" font-size="14">同一组参数</text>
+            <text x="75" y="113" text-anchor="middle" font-size="14">到处滑动</text>
+            <text x="75" y="188" text-anchor="middle" font-size="15">提边缘/纹理</text>
+          </g>
+          <line x1="580" y1="190" x2="684" y2="190" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow4)"/>
+          <g transform="translate(710,84)">
+            <rect width="210" height="210" fill="#f0fbf6" stroke="#7fc9a6"/>
+            <g stroke="#b7ddc9">
+              <path d="M52 0 V210 M104 0 V210 M156 0 V210 M0 52 H210 M0 104 H210 M0 156 H210"/>
+            </g>
+            <rect x="52" y="52" width="106" height="106" fill="#dbf5e8" stroke="#16845b" stroke-width="3"/>
+            <text x="105" y="238" text-anchor="middle" font-size="15">特征图 + 池化</text>
+          </g>
+          <rect x="205" y="340" width="570" height="52" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="490" y="363" text-anchor="middle" font-size="16" font-weight="700">卷积：提局部特征；参数共享：少参数；池化：保留强响应并降维。</text>
+          <text x="490" y="385" text-anchor="middle" font-size="14" fill="#617083">简答题不能只写“CNN 适合图像”，要写出为什么适合。</text>
+        </svg>
+      </div>
+      <details>
+        <summary>CNN 考试标准答案模板</summary>
+        <p>CNN 适合图像任务，因为图像具有局部空间结构。卷积层通过可学习卷积核在局部区域滑动，提取边缘、纹理等局部特征，并通过参数共享减少参数量；池化层对局部响应进行下采样，降低特征图尺寸和计算量，并提高一定的平移鲁棒性；ReLU 等激活函数引入非线性，使网络能表示复杂图像模式。</p>
+      </details>
+    </section>
+
+    <section id="rnn">
+      <h2>5. RNN/LSTM：序列题的关键词是“顺序”和“记忆”</h2>
+      <p>句子、语音、股票、传感器数据都有时间顺序。RNN 的思想是每一步读当前输入 x_t，同时带着上一时刻隐藏状态 h_{t-1}。问题是路径太长时，早期信息会在训练中变弱，于是 LSTM 加了门控。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 410" role="img" aria-label="RNN LSTM 记忆链和门控">
+          <defs>
+            <marker id="arrow5" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#2563eb"></path>
+            </marker>
+          </defs>
+          <text x="44" y="42" font-size="20" font-weight="700" fill="#153d78">RNN：按顺序读；LSTM：给记忆装三个门</text>
+          <g transform="translate(68,96)">
+            <rect width="120" height="76" rx="8" fill="#eef6ff" stroke="#9dbde5"/>
+            <text x="60" y="32" text-anchor="middle" font-weight="700">x1</text>
+            <text x="60" y="56" text-anchor="middle" font-size="13">我</text>
+          </g>
+          <g transform="translate(258,96)">
+            <rect width="120" height="76" rx="8" fill="#eef6ff" stroke="#9dbde5"/>
+            <text x="60" y="32" text-anchor="middle" font-weight="700">x2</text>
+            <text x="60" y="56" text-anchor="middle" font-size="13">不</text>
+          </g>
+          <g transform="translate(448,96)">
+            <rect width="120" height="76" rx="8" fill="#eef6ff" stroke="#9dbde5"/>
+            <text x="60" y="32" text-anchor="middle" font-weight="700">x3</text>
+            <text x="60" y="56" text-anchor="middle" font-size="13">喜欢</text>
+          </g>
+          <g transform="translate(638,96)">
+            <rect width="120" height="76" rx="8" fill="#eef6ff" stroke="#9dbde5"/>
+            <text x="60" y="32" text-anchor="middle" font-weight="700">x4</text>
+            <text x="60" y="56" text-anchor="middle" font-size="13">电影</text>
+          </g>
+          <line x1="190" y1="134" x2="256" y2="134" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow5)"/>
+          <line x1="380" y1="134" x2="446" y2="134" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow5)"/>
+          <line x1="570" y1="134" x2="636" y2="134" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow5)"/>
+          <text x="224" y="120" font-size="14" fill="#617083">h1</text>
+          <text x="414" y="120" font-size="14" fill="#617083">h2</text>
+          <text x="604" y="120" font-size="14" fill="#617083">h3</text>
+          <rect x="198" y="238" width="584" height="90" rx="8" fill="#f5f2ff" stroke="#b8a4e9"/>
+          <text x="490" y="268" text-anchor="middle" font-size="18" font-weight="700">LSTM 记忆单元 cell state</text>
+          <text x="490" y="296" text-anchor="middle" font-size="15">遗忘门：丢掉无用旧信息；输入门：写入新信息；输出门：决定当前输出</text>
+          <rect x="294" y="344" width="392" height="42" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="490" y="371" text-anchor="middle" font-size="16" font-weight="700">长期依赖题：普通 RNN 梯度路径长，LSTM 用门控保留重要信息。</text>
+        </svg>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">h</span><sub><span class="mi">t</span></sub>
+          <span class="op">=</span>
+          <span class="func">activation</span>
+          <span class="op">(</span>
+          <span class="mb">W</span><sub><span class="mi">x</span></sub><span class="mi">x</span><sub><span class="mi">t</span></sub>
+          <span class="op">+</span>
+          <span class="mb">W</span><sub><span class="mi">h</span></sub><span class="mi">h</span><sub><span class="mi">t</span><span class="op">−</span>1</sub>
+          <span class="op">+</span><span class="mi">b</span>
+          <span class="op">)</span>
+        </div>
+        <ul>
+          <li>x_t：当前时刻输入，比如当前词。</li>
+          <li>h_{t-1}：上一时刻记忆。</li>
+          <li>h_t：读完当前输入后的新记忆。</li>
+        </ul>
+      </div>
+      <details>
+        <summary>LSTM 为什么缓解长期依赖？</summary>
+        <p>普通 RNN 在长序列中需要把梯度跨很多时间步传回前面，容易出现梯度消失或爆炸，导致早期信息难以学习。LSTM 引入记忆单元和门控机制：遗忘门控制旧信息保留多少，输入门控制新信息写入多少，输出门控制当前输出多少。这样重要信息可以沿较长时间传递，从而缓解长期依赖困难。</p>
+      </details>
+    </section>
+
+    <section id="transformer">
+      <h2>6. Transformer：不排队传话，而是每个 token 直接问全班“我该看谁”</h2>
+      <p>RNN 是顺序读，远处信息要一步步传过来。Transformer 的 self-attention 让每个 token 和所有 token 直接计算相关性，所以能并行，也更擅长长距离依赖。</p>
+      <div class="figure">
+        <svg viewBox="0 0 980 450" role="img" aria-label="Transformer self-attention QKV">
+          <defs>
+            <marker id="arrow6" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="#6d46c7"></path>
+            </marker>
+          </defs>
+          <text x="44" y="42" font-size="20" font-weight="700" fill="#153d78">Self-attention：每个 token 都有 Q、K、V 三个身份</text>
+          <g transform="translate(70,96)">
+            <rect width="120" height="58" rx="8" fill="#eef6ff" stroke="#9dbde5"/><text x="60" y="36" text-anchor="middle" font-weight="700">我</text>
+            <rect y="86" width="120" height="58" rx="8" fill="#eef6ff" stroke="#9dbde5"/><text x="60" y="122" text-anchor="middle" font-weight="700">喜欢</text>
+            <rect y="172" width="120" height="58" rx="8" fill="#eef6ff" stroke="#9dbde5"/><text x="60" y="208" text-anchor="middle" font-weight="700">这部电影</text>
+          </g>
+          <rect x="300" y="82" width="190" height="80" rx="8" fill="#fff8ed" stroke="#e2a15d"/>
+          <text x="395" y="113" text-anchor="middle" font-size="18" font-weight="700">Query Q</text>
+          <text x="395" y="140" text-anchor="middle" font-size="14">我正在找什么信息？</text>
+          <rect x="300" y="184" width="190" height="80" rx="8" fill="#f0fbf6" stroke="#7fc9a6"/>
+          <text x="395" y="215" text-anchor="middle" font-size="18" font-weight="700">Key K</text>
+          <text x="395" y="242" text-anchor="middle" font-size="14">我能提供什么线索？</text>
+          <rect x="300" y="286" width="190" height="80" rx="8" fill="#f5f2ff" stroke="#b8a4e9"/>
+          <text x="395" y="317" text-anchor="middle" font-size="18" font-weight="700">Value V</text>
+          <text x="395" y="344" text-anchor="middle" font-size="14">真正被汇总的信息</text>
+          <line x1="192" y1="125" x2="294" y2="122" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow6)"/>
+          <line x1="192" y1="211" x2="294" y2="224" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow6)"/>
+          <line x1="192" y1="297" x2="294" y2="326" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow6)"/>
+          <line x1="500" y1="122" x2="630" y2="184" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow6)"/>
+          <line x1="500" y1="224" x2="630" y2="224" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow6)"/>
+          <line x1="500" y1="326" x2="630" y2="264" stroke="#6d46c7" stroke-width="3" marker-end="url(#arrow6)"/>
+          <rect x="640" y="160" width="260" height="128" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="770" y="194" text-anchor="middle" font-size="18" font-weight="700">相关性权重</text>
+          <text x="770" y="224" text-anchor="middle" font-size="14">Q 和 K 做相似度</text>
+          <text x="770" y="250" text-anchor="middle" font-size="14">softmax 变成权重</text>
+          <text x="770" y="276" text-anchor="middle" font-size="14">再加权汇总 V</text>
+          <rect x="210" y="398" width="560" height="36" rx="8" fill="#ffffff" stroke="#cdddeb"/>
+          <text x="490" y="421" text-anchor="middle" font-size="16" font-weight="700">QK 决定“看谁多少”，V 是“拿来汇总的内容”。</text>
+        </svg>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">Attention</span><span class="op">(</span><span class="mb">Q</span><span class="op">,</span><span class="mb">K</span><span class="op">,</span><span class="mb">V</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="func">softmax</span>
+          <span class="op">(</span>
+          <span class="frac">
+            <span><span class="mb">Q</span><span class="mb">K</span><sup>⊤</sup></span>
+            <span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub><span class="mi">k</span></sub></span></span></span>
+          </span>
+          <span class="op">)</span>
+          <span class="mb">V</span>
+        </div>
+        <ul>
+          <li>Q：查询，表示当前 token 想找什么。</li>
+          <li>K：键，表示每个 token 能被匹配的线索。</li>
+          <li>V：值，表示真正要被加权汇总的信息。</li>
+          <li>除以 sqrt(d_k)：避免点积过大导致 softmax 太尖，训练不稳定。</li>
+        </ul>
+      </div>
+      <div class="exam">
+        <strong>BERT/GPT/ViT 怎么和 Transformer 连起来：</strong>BERT 偏理解，常说双向上下文和 Encoder-only；GPT 偏生成，常说自回归和 Decoder-only；ViT 把图片切成 patch 当 token，再用 Transformer 处理视觉任务。别把它们当三个孤立名词。
+      </div>
+    </section>
+
+    <section id="compare">
+      <h2>7. 考试区分表：老师换问法时，你要能切模型</h2>
+      <table>
+        <thead><tr><th>题干信号</th><th>切到谁</th><th>标准第一句话</th><th>常见坑</th></tr></thead>
+        <tbody>
+          <tr><td>信息熵、信息增益、剪枝</td><td>决策树</td><td>决策树用特征测试递归划分样本，选择能最大降低混乱程度的特征。</td><td>只说“树分类”，不说熵/增益。</td></tr>
+          <tr><td>激活函数、BP、隐藏层</td><td>神经网络</td><td>神经网络由多层加权求和和非线性激活组成，通过反向传播更新参数。</td><td>忘记激活函数的非线性作用。</td></tr>
+          <tr><td>图像、卷积核、池化</td><td>CNN</td><td>CNN 利用局部连接和参数共享提取图像局部空间特征。</td><td>只写“用于图像”，没有为什么。</td></tr>
+          <tr><td>序列、隐藏状态、长期依赖</td><td>RNN/LSTM</td><td>RNN 用隐藏状态传递上下文，LSTM 用门控和记忆单元缓解长期依赖。</td><td>把 LSTM 说成完全解决所有梯度问题。</td></tr>
+          <tr><td>Q/K/V、注意力、并行、长距离依赖</td><td>Transformer</td><td>Transformer 用 self-attention 让 token 直接建模全局依赖，适合并行处理长序列。</td><td>只背公式，不解释 Q/K/V。</td></tr>
+        </tbody>
+      </table>
+
+      <div class="quiz">
+        <h3>题 1：决策树计算题起手</h3>
+        <p>给一个二分类数据集，正类 9 个、负类 5 个。问你“用特征 A 划分前的信息熵怎么写”。先不急着算小数，写公式结构。</p>
+        <textarea placeholder="写：总样本数、正负比例、熵公式。"></textarea>
+        <details><summary>看标准解析</summary><div class="answer">
+          <p><strong>答案骨架：</strong>D 中共有 14 个样本，正类比例 9/14，负类比例 5/14，所以可写成：</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="func">Entropy</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span>
+              <span class="op">=</span><span class="op">−</span>
+              <span class="frac"><span>9</span><span>14</span></span>
+              <span class="func">log</span><sub>2</sub><span class="frac"><span>9</span><span>14</span></span>
+              <span class="op">−</span>
+              <span class="frac"><span>5</span><span>14</span></span>
+              <span class="func">log</span><sub>2</sub><span class="frac"><span>5</span><span>14</span></span>
+            </div>
+          </div>
+          <p><strong>为什么这样写：</strong>熵衡量类别混乱程度。二分类时只需要把两类比例带入 -Σp log p。考试若无需计算器，通常重在公式结构和含义。</p>
+        </div></details>
+      </div>
+
+      <div class="quiz">
+        <h3>题 2：神经网络简答题</h3>
+        <p>为什么多层神经网络中需要非线性激活函数？</p>
+        <textarea placeholder="至少写出：没有激活会怎样；激活函数带来什么；考试可举 ReLU。"></textarea>
+        <details><summary>看标准解析</summary><div class="answer">
+          <p><strong>标准答法：</strong>如果网络每层都只是线性变换，那么多层线性变换复合后仍然等价于一层线性变换，表达能力不会本质增强。非线性激活函数让模型能够表示复杂的非线性关系，例如 ReLU 将负值压为 0、正值保留，使网络可以学习更复杂的分类边界或函数映射。</p>
+          <p><strong>题眼：</strong>“为什么需要激活函数”不是问 ReLU 公式本身，而是问非线性表达能力。</p>
+        </div></details>
+      </div>
+
+      <div class="quiz">
+        <h3>题 3：模型辨析题</h3>
+        <p>“某模型把输入句子按词逐个处理，用 h_t 保存到当前位置的上下文；但长句中早期信息容易衰减，于是引入门控记忆单元。”这描述的是哪组模型？为什么？</p>
+        <textarea placeholder="写：RNN 是什么；LSTM 加了什么；为什么不是 CNN/Transformer。"></textarea>
+        <details><summary>看标准解析</summary><div class="answer">
+          <p><strong>答案：</strong>这是 RNN/LSTM。RNN 按时间步处理序列，用隐藏状态 h_t 保存当前上下文；普通 RNN 在长序列中容易出现长期依赖困难，LSTM 通过记忆单元和遗忘门、输入门、输出门控制信息流，缓解早期信息难以保留的问题。</p>
+          <p><strong>为什么不是 CNN/Transformer：</strong>CNN 关键词是卷积核和局部窗口；Transformer 关键词是 self-attention、Q/K/V 和并行全局依赖。题干明确说逐个处理和隐藏状态，先切 RNN。</p>
+        </div></details>
+      </div>
+
+      <div class="quiz">
+        <h3>题 4：Transformer 公式解释</h3>
+        <p>解释下面注意力公式中 Q、K、V 分别代表什么，以及为什么 Transformer 比 RNN 更易并行。</p>
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="func">Attention</span><span class="op">(</span><span class="mb">Q</span><span class="op">,</span><span class="mb">K</span><span class="op">,</span><span class="mb">V</span><span class="op">)</span>
+            <span class="op">=</span>
+            <span class="func">softmax</span><span class="op">(</span>
+            <span class="frac">
+              <span><span class="mb">Q</span><span class="mb">K</span><sup>⊤</sup></span>
+              <span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub><span class="mi">k</span></sub></span></span></span>
+            </span>
+            <span class="op">)</span><span class="mb">V</span>
+          </div>
+        </div>
+        <textarea placeholder="写：Q/K/V 人话含义；softmax 权重；并行原因。"></textarea>
+        <details><summary>看标准解析</summary><div class="answer">
+          <p><strong>标准答法：</strong>Q 表示查询，表示当前 token 想从其他 token 获取什么信息；K 表示键，用于和 Q 计算相关性；V 表示值，是最终被加权汇总的信息。QK^T 计算 token 间相关性，softmax 将相关性变成权重，再对 V 加权求和。Transformer 不需要像 RNN 那样按时间步串行传递隐藏状态，各位置的 attention 可以并行计算，因此更易并行并能直接建模长距离依赖。</p>
+        </div></details>
+      </div>
+
+      <div class="callout danger">
+        <strong>今天的过关线：</strong>你不需要把所有公式数值算熟，但要能做到：看到图像想到 CNN，看到序列隐藏状态想到 RNN/LSTM，看到 Q/K/V 想到 Transformer，看到熵/增益想到决策树；并且每个模型都能说出“为什么它要这样设计”。
+      </div>
+    </section>
+  </div>
+</body>
+</html>

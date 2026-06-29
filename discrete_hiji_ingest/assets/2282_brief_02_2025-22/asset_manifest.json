@@ -1,0 +1,29 @@
+{
+  "assets": [
+    {
+      "contentType": "image/png",
+      "id": "393942a6b00bccf0",
+      "kind": "image",
+      "name": "logoCG4839196648.png",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/a2ed79ac-42b7-4f85-a2a4-5237ee2d5aab/393942a6b00bccf0.png",
+      "url": "http://judge.buaa.edu.cn/userfiles/skin/logoCG4839196648.png"
+    },
+    {
+      "contentType": "image/svg+xml",
+      "id": "a64a12f9af972eb5",
+      "kind": "image",
+      "name": "stuside.svg#home",
+      "path": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/a2ed79ac-42b7-4f85-a2a4-5237ee2d5aab/a64a12f9af972eb5.svg",
+      "url": "http://judge.buaa.edu.cn/images/nav/stuside.svg#home"
+    }
+  ],
+  "directoryPath": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/a2ed79ac-42b7-4f85-a2a4-5237ee2d5aab",
+  "failures": [],
+  "manifestPath": "/var/folders/rk/vby_6xtx5r947_nx7sskmxq80000gn/T/browser-use/assets/a2ed79ac-42b7-4f85-a2a4-5237ee2d5aab/manifest.json",
+  "summary": {
+    "downloadedCount": 2,
+    "elapsedMs": 3056.641667000018,
+    "failedCount": 0,
+    "requestedCount": 2
+  }
+}

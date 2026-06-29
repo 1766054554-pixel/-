@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>内容质量看板 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛内容质量看板：按课程检查资源校对等级、题目质量和待改进备注。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .90);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(246, 185, 207, .40), transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 76% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.94) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .20) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    a { color: inherit; }
+    button,
+    select,
+    textarea {
+      font: inherit;
+    }
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks,
+    .actions,
+    .tag-row,
+    .filters {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .navlinks { justify-content: flex-end; }
+    .btn,
+    .navlinks a,
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+    }
+    .btn:hover,
+    .navlinks a:hover,
+    .filter-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary,
+    .filter-btn.active {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .metric,
+    .resource-card {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .hero-main {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 90% 12%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+    .metric {
+      padding: 18px;
+      display: grid;
+      gap: 4px;
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .metric strong {
+      font-size: 34px;
+      line-height: 1.1;
+      color: #2f5c84;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 10ch;
+      margin: 18px 0 10px;
+      font-size: clamp(50px, 7vw, 88px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 76ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions { margin-top: 22px; }
+    section { padding: 22px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-head p { max-width: 72ch; }
+    .board-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .aside {
+      position: sticky;
+      top: 86px;
+      display: grid;
+      gap: 12px;
+    }
+    .resource-list {
+      display: grid;
+      gap: 12px;
+    }
+    .resource-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+    .resource-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      background: rgba(255,255,255,.70);
+      color: #56657e;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .level-draft { color: #73506a; background: #ffe7f1; }
+    .level-reviewed { color: #315f73; background: #e7f7ff; }
+    .level-exam-like { color: #48634f; background: #e4fbf3; }
+    .level-archive { color: #6c6574; background: #f1eef7; }
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.76);
+      color: var(--ink);
+      outline: none;
+    }
+    select {
+      min-height: 40px;
+      padding: 7px 10px;
+    }
+    textarea {
+      min-height: 82px;
+      padding: 9px 11px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+    .audit-grid {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+    .quality-note {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+      color: #5d6981;
+      font-size: 14px;
+    }
+    .quality-note b {
+      color: #43516a;
+    }
+    .rubric-list {
+      display: grid;
+      gap: 8px;
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(104, 122, 154, .28);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+    }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 30;
+      max-width: min(420px, calc(100% - 36px));
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.82);
+      background: rgba(255,255,255,.92);
+      color: #493d6c;
+      box-shadow: var(--shadow);
+      font-weight: 850;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .footer {
+      margin-top: 32px;
+      padding: 28px 0 38px;
+      color: var(--muted);
+      border-top: 1px solid rgba(104, 122, 154, .18);
+    }
+    @media (max-width: 980px) {
+      .hero,
+      .board-shell,
+      .audit-grid {
+        grid-template-columns: 1fr;
+      }
+      .aside { position: static; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1180px); }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .navlinks { justify-content: flex-start; }
+      h1 { font-size: 46px; }
+      .actions .btn { width: 100%; }
+      .resource-head { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="质量看板导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M32 8l5.6 13.6L52 24.4 40.8 34l3.6 14.4L32 40.8 19.6 48.4 23.2 34 12 24.4l14.4-2.8L32 8z" fill="#f7df8b" stroke="#6d618c" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M18 50c8 6 20 6 28 0" stroke="#9fdacb" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        星光学习岛
+      </a>
+      <div class="navlinks">
+        <a href="./release_status.html">发布检查台</a>
+        <a href="./course_pack_builder.html">课程包生成器</a>
+        <a href="./docs/content_quality_rubric.md">质量清单</a>
+        <a href="./docs/source_notes.md">来源记录</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <article class="panel hero-main">
+        <div>
+          <span class="eyebrow">Quality Board</span>
+          <h1>内容质量看板</h1>
+          <p class="lead">
+            开源后最怕资料越堆越散。这里按资源逐条标注<span class="key">校对等级</span>、写下<span class="key">待改进备注</span>，
+            让“内容精品化”有可追踪的维护动作。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="#board">开始巡检</a>
+            <button class="btn mint" type="button" id="exportAudit">导出校对记录</button>
+            <button class="btn" type="button" id="resetAudit">清空本地记录</button>
+          </div>
+        </div>
+        <p class="lead">这些状态保存在本机 localStorage；人工确认后，再把结论写入来源记录或资源清单。</p>
+      </article>
+      <aside class="hero-side">
+        <article class="metric">
+          <span>资源总数</span>
+          <strong id="totalMetric">0</strong>
+          <p>来自精品资源库。</p>
+        </article>
+        <article class="metric">
+          <span>已标注</span>
+          <strong id="auditedMetric">0</strong>
+          <p>本机校对记录。</p>
+        </article>
+        <article class="metric">
+          <span>可进主线</span>
+          <strong id="readyMetric">0</strong>
+          <p>reviewed 或 exam-like。</p>
+        </article>
+      </aside>
+    </section>
+
+    <section class="wrap" id="board">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">巡检台</span>
+          <h2>按课程检查资源。</h2>
+        </div>
+        <p>发布主线建议只放 `reviewed` 或 `exam-like`。旧材料和未校对内容先留在资源库或维护侧。</p>
+      </div>
+      <div class="board-shell">
+        <aside class="aside">
+          <section class="panel">
+            <h3>课程筛选</h3>
+            <div class="filters" id="courseFilters"></div>
+          </section>
+          <section class="panel">
+            <h3>质量等级</h3>
+            <div class="filters" id="levelFilters"></div>
+          </section>
+          <section class="panel">
+            <h3>巡检口径</h3>
+            <ul class="rubric-list">
+              <li>题目是否训练真实考试动作。</li>
+              <li>解析是否有题眼、第一步、错因和迁移提醒。</li>
+              <li>新词、公式、符号是否有零基础铺垫。</li>
+              <li>来源和人工校对状态是否能追踪。</li>
+            </ul>
+          </section>
+        </aside>
+        <div class="resource-list" id="resourceList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p><strong>内容质量看板</strong> 是维护侧工具。学生正式学习仍从 <a href="./start_here.html">新手上岛向导</a>、<a href="./practice_lab.html">真题训练台</a> 和 <a href="./dashboard.html">继续学习仪表盘</a> 进入。</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    (() => {
+      const STORAGE_KEY = "starlight-quality-audit-v1";
+      const levels = [
+        { id: "all", label: "全部" },
+        { id: "draft", label: "draft" },
+        { id: "reviewed", label: "reviewed" },
+        { id: "exam-like", label: "exam-like" },
+        { id: "archive", label: "archive" }
+      ];
+      let activeCourse = "all";
+      let activeLevel = "all";
+      let audit = readAudit();
+      const qualitySeed = window.STARLIGHT_RESOURCE_QUALITY || {};
+
+      const $ = selector => document.querySelector(selector);
+
+      function escapeHtml(text) {
+        return String(text ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function courses() {
+        const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+        return [{ id: "all", title: "全部课程" }, ...manifest.courses, { id: "global", title: "全局工具" }];
+      }
+
+      function resources() {
+        return window.STARLIGHT_RESOURCE_CATALOG || [];
+      }
+
+      function courseName(id) {
+        return courses().find(course => course.id === id)?.title || id;
+      }
+
+      function readAudit() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveAudit() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(audit));
+      }
+
+      function defaultLevel(item) {
+        if (item.priority === "必做" && ["真题卷", "交互卷", "真题包", "开卷包"].includes(item.type)) return "exam-like";
+        if (item.priority === "必做") return "reviewed";
+        return "draft";
+      }
+
+      function entry(item) {
+        const seeded = qualitySeed[item.id] || {};
+        const local = audit[item.id] || {};
+        return {
+          level: local.level || seeded.level || defaultLevel(item),
+          note: local.note ?? seeded.note ?? "",
+          source: seeded.source || "待补来源说明。",
+          next: seeded.next || "待补下一步改进点。",
+          updated: seeded.updated || ""
+        };
+      }
+
+      function filteredResources() {
+        return resources().filter(item => {
+          const itemLevel = entry(item).level;
+          const courseOk = activeCourse === "all" || item.courseId === activeCourse;
+          const levelOk = activeLevel === "all" || itemLevel === activeLevel;
+          return courseOk && levelOk;
+        });
+      }
+
+      function renderMetrics() {
+        const all = resources();
+        const audited = all.filter(item => Boolean(audit[item.id]));
+        const ready = all.filter(item => ["reviewed", "exam-like"].includes(entry(item).level));
+        $("#totalMetric").textContent = String(all.length);
+        $("#auditedMetric").textContent = String(audited.length);
+        $("#readyMetric").textContent = String(ready.length);
+      }
+
+      function renderFilters() {
+        $("#courseFilters").innerHTML = courses().map(course => `
+          <button class="filter-btn ${activeCourse === course.id ? "active" : ""}" type="button" data-course="${escapeHtml(course.id)}">${escapeHtml(course.title)}</button>
+        `).join("");
+        $("#levelFilters").innerHTML = levels.map(level => `
+          <button class="filter-btn ${activeLevel === level.id ? "active" : ""}" type="button" data-level="${escapeHtml(level.id)}">${escapeHtml(level.label)}</button>
+        `).join("");
+      }
+
+      function renderResources() {
+        const items = filteredResources();
+        if (!items.length) {
+          $("#resourceList").innerHTML = `<div class="empty">这组筛选没有资源。换一个课程或等级试试。</div>`;
+          return;
+        }
+        $("#resourceList").innerHTML = items.map(item => {
+          const state = entry(item);
+          return `
+            <article class="resource-card">
+              <div class="resource-head">
+                <div>
+                  <span class="pill">${escapeHtml(courseName(item.courseId))} · ${escapeHtml(item.type)}</span>
+                  <h3>${escapeHtml(item.title)}</h3>
+                  <p>${escapeHtml(item.description)}</p>
+                  <div class="tag-row" style="margin-top:10px;">
+                    <span class="pill">${escapeHtml(item.priority)}</span>
+                    <span class="pill">${escapeHtml(item.stage)}</span>
+                    ${(item.tags || []).slice(0, 4).map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}
+                  </div>
+                  <div class="quality-note" style="margin-top:12px;">
+                    <span><b>来源依据：</b>${escapeHtml(state.source)}</span>
+                    <span><b>下一步改进：</b>${escapeHtml(state.next)}</span>
+                    ${state.updated ? `<span><b>更新：</b>${escapeHtml(state.updated)}</span>` : ""}
+                  </div>
+                </div>
+                <span class="pill level-${escapeHtml(state.level)}">${escapeHtml(state.level)}</span>
+              </div>
+              <div class="audit-grid">
+                <label>校对等级
+                  <select data-level-select="${escapeHtml(item.id)}">
+                    ${levels.filter(level => level.id !== "all").map(level => `<option value="${level.id}" ${state.level === level.id ? "selected" : ""}>${level.label}</option>`).join("")}
+                  </select>
+                </label>
+                <label>待改进备注
+                  <textarea data-note="${escapeHtml(item.id)}" placeholder="例如：主观题解析还缺第一步；公式显示需复查；来源页码待补。">${escapeHtml(state.note || "")}</textarea>
+                </label>
+              </div>
+              <div class="actions" style="margin-top:0;">
+                <a class="btn primary" href="${escapeHtml(item.href)}">打开资源</a>
+                <a class="btn" href="./docs/content_quality_rubric.md">看质量清单</a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function render() {
+        renderMetrics();
+        renderFilters();
+        renderResources();
+      }
+
+      function toast(message) {
+        const node = $("#toast");
+        node.textContent = message;
+        node.classList.add("show");
+        clearTimeout(node._timer);
+        node._timer = setTimeout(() => node.classList.remove("show"), 2200);
+      }
+
+      document.addEventListener("click", event => {
+        const courseButton = event.target.closest("[data-course]");
+        if (courseButton) {
+          activeCourse = courseButton.dataset.course;
+          render();
+          return;
+        }
+        const levelButton = event.target.closest("[data-level]");
+        if (levelButton) {
+          activeLevel = levelButton.dataset.level;
+          render();
+        }
+      });
+
+      document.addEventListener("change", event => {
+        const select = event.target.closest("[data-level-select]");
+        if (!select) return;
+        const id = select.dataset.levelSelect;
+        const previous = audit[id] || {};
+        audit[id] = { ...previous, level: select.value };
+        saveAudit();
+        render();
+        toast("校对等级已保存。");
+      });
+
+      document.addEventListener("input", event => {
+        const textarea = event.target.closest("[data-note]");
+        if (!textarea) return;
+        const id = textarea.dataset.note;
+        const previous = audit[id] || {};
+        audit[id] = { ...previous, note: textarea.value };
+        saveAudit();
+        renderMetrics();
+      });
+
+      $("#exportAudit").addEventListener("click", async () => {
+        const payload = {
+          product: "starlight-study-island",
+          exportedAt: new Date().toISOString(),
+          key: STORAGE_KEY,
+          audit
+        };
+        try {
+          await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+          toast("校对记录已复制到剪贴板。");
+        } catch {
+          toast("复制失败，可以从存档室导出 localStorage。");
+        }
+      });
+
+      $("#resetAudit").addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        audit = {};
+        render();
+        toast("本地校对记录已清空。");
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

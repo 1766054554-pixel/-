@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>操作系统全考点闪卡 🎴</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"微软雅黑",sans-serif;}
+  body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:25px 12px;color:#fff;}
+  h1{text-align:center;margin-bottom:6px;font-size:26px;text-shadow:2px 2px 6px rgba(0,0,0,.3);}
+  .tip{text-align:center;margin-bottom:16px;opacity:.85;font-size:13px;}
+  .stats-wrap{text-align:center;margin-bottom:14px;}
+  .stats{background:rgba(255,255,255,.15);padding:7px 18px;border-radius:30px;display:inline-block;backdrop-filter:blur(5px);font-size:15px;}
+  .filters{text-align:center;margin-bottom:14px;}
+  .filters button,.btns button{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 14px;border-radius:20px;margin:4px;cursor:pointer;font-size:13px;transition:.25s;backdrop-filter:blur(5px);}
+  .filters button:hover,.btns button:hover{background:rgba(255,255,255,.4);transform:scale(1.06);}
+  .filters button.active{background:#ffd700;color:#5a3a00;font-weight:bold;}
+  .btns{text-align:center;margin:14px 0;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;max-width:1300px;margin:20px auto;}
+  .card{perspective:1200px;height:260px;cursor:pointer;}
+  .inner{position:relative;width:100%;height:100%;transition:transform .65s;transform-style:preserve-3d;}
+  .card.flipped .inner{transform:rotateY(180deg);}
+  .front,.back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;padding:18px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 8px 26px rgba(0,0,0,.35);overflow:auto;}
+  .front{background:linear-gradient(145deg,#fff,#eef2ff);color:#333;align-items:center;text-align:center;}
+  .front .mod{position:absolute;top:9px;left:11px;font-size:10px;background:#667eea;color:#fff;padding:2px 8px;border-radius:12px;}
+  .front .tag{position:absolute;top:9px;right:11px;font-size:10px;background:rgba(0,0,0,.15);padding:2px 8px;border-radius:12px;}
+  .front .icon{font-size:40px;margin-bottom:10px;}
+  .front .q{font-size:16px;font-weight:bold;line-height:1.45;}
+  .front .hint{margin-top:12px;font-size:11px;color:#999;}
+  .back{transform:rotateY(180deg);color:#fff;background:linear-gradient(145deg,#11998e,#38ef7d);}
+  .back.trap{background:linear-gradient(145deg,#eb3349,#f45c43);}
+  .back.calc{background:linear-gradient(145deg,#f7971e,#ffd200);color:#5a3a00;}
+  .back .title{font-size:14px;font-weight:bold;margin-bottom:8px;border-bottom:2px solid rgba(255,255,255,.4);padding-bottom:5px;}
+  .back .body{font-size:13px;line-height:1.55;}
+  .back .body b{background:rgba(255,255,255,.28);padding:1px 5px;border-radius:5px;}
+  .done{box-shadow:0 0 0 4px gold,0 8px 26px rgba(0,0,0,.35)!important;}
+  .quiz{max-width:760px;margin:30px auto;background:rgba(255,255,255,.12);border-radius:18px;padding:22px;backdrop-filter:blur(8px);}
+  .quiz h2{text-align:center;margin-bottom:14px;}
+  .qitem{background:rgba(255,255,255,.1);border-radius:12px;padding:14px;margin-bottom:12px;}
+  .qitem .qt{margin-bottom:9px;font-size:15px;}
+  .qitem button{margin-right:8px;padding:6px 18px;border:none;border-radius:18px;cursor:pointer;font-size:14px;background:#fff;color:#333;transition:.2s;}
+  .qitem button:hover{transform:scale(1.08);}
+  .ans{margin-top:9px;font-size:13px;display:none;padding:8px;border-radius:8px;background:rgba(0,0,0,.2);}
+  .right{background:#38ef7d!important;color:#fff!important;}
+  .wrong{background:#eb3349!important;color:#fff!important;}
+</style>
+</head>
+<body>
+<h1>🎴 操作系统全考点闪卡（零遗漏版）</h1>
+<p class="tip">👆点卡翻转看答案 ｜ 🟢知识点 🔴易错陷阱 🟡计算题 ｜ 看懂再点一次锁金边</p>
+<div class="stats-wrap"><span class="stats" id="stats"></span></div>
+<div class="filters" id="filters"></div>
+<div class="btns">
+  <button onclick="flipAll(true)">全部翻开</button>
+  <button onclick="flipAll(false)">全部盖上</button>
+  <button onclick="resetAll()">重置进度</button>
+</div>
+<div class="grid" id="grid"></div>
+
+<div class="quiz">
+  <h2>📝 综合判断题自测（点选项看答案）</h2>
+  <div id="quizbox"></div>
+</div>
+
+<script>
+const cards=[
+// 模块一 进程与线程
+{m:"进程线程",icon:"💰",q:"进程 vs 线程<br>分别是什么基本单位?",t:"know",title:"两大单位",
+ body:"💰进程 = <b>资源分配</b>基本单位<br>🏃线程 = <b>处理机调度</b>基本单位<br><br>口诀：进家有钱(资源)，线条跑腿(调度)"},
+{m:"进程线程",icon:"🚪",q:"应用程序如何请求OS<br>执行高权限操作?",t:"know",title:"系统调用",
+ body:"通过<b>系统调用 / 陷入(trap)指令</b><br>访问内核功能<br><br>用户进程不能直接执行特权操作"},
+{m:"进程线程",icon:"⚠️",q:"系统调用/陷入内核<br>=一定切换进程吗?",t:"trap",title:"陷阱❌",
+ body:"陷入内核 ≠ 一定切换进程<br>系统调用 ≠ 一定切换上下文<br><br>✅一定进内核态(特权变)<br>❌只有阻塞等才换进程<br>📌进内核≠换人"},
+{m:"进程线程",icon:"🛑",q:"正在执行的程序<br>能主动放弃CPU吗?",t:"trap",title:"陷阱❌",
+ body:"✅<b>能主动放弃</b>!<br>(如调用yield、阻塞)<br><br>❌「不可以主动放弃」是错的"},
+// 模块二 内存管理
+{m:"内存管理",icon:"🔗",q:"两个不同进程的页表<br>能有相同的页表项吗?",t:"know",title:"对✅",
+ body:"✅可以!<br>两进程可<b>共享同一块物理内存</b><br>(比如共享库)"},
+{m:"内存管理",icon:"📏",q:"虚拟地址空间<br>总是大于物理地址空间?",t:"trap",title:"陷阱❌",
+ body:"❌「总是大于」错!<br>✅虚拟空间<b>可大可小</b>于物理空间<br>取决于地址位数设计，非必然关系"},
+{m:"内存管理",icon:"📉",q:"页面尺寸<br>越小越好吗?",t:"trap",title:"陷阱❌",
+ body:"❌不是越小越好!<br>页太小→页表项数量暴增<br>→<b>页表本身占内存变大</b>"},
+{m:"内存管理",icon:"🧩",q:"段式管理<br>碎片特点?",t:"know",title:"段式管理",
+ body:"各段大小不同<br>✅减少<b>内碎片</b><br>❌但会产生<b>外碎片</b>"},
+{m:"内存管理",icon:"🗂️",q:"多级页表<br>级数越多有何影响?",t:"know",title:"多级页表",
+ body:"✅优点：<b>减少页表占内存</b><br>❌代价：级数越多<b>访存时间越长</b><br>(每级查一次内存)<br><br>「二级性能优于一级」不一定对"},
+{m:"内存管理",icon:"🏷️",q:"有效/无效页表项<br>各存什么?",t:"know",title:"页表项内容",
+ body:"有效页表项 → 一定存<b>页框号</b><br>无效页表项 → 可能存<b>外存地址</b><br>(指出页面在磁盘哪)"},
+{m:"内存管理",icon:"⚡",q:"快表(TLB)<br>作用和记录内容?",t:"know",title:"快表TLB",
+ body:"✅加速页表查询<br>命中率越高访存越快<br>快表项记录：<b>虚拟页号+物理页框号</b>(双向对应)"},
+{m:"内存管理",icon:"🔄",q:"反置页表IPT<br>优点是什么?",t:"know",title:"IPT优点✅",
+ body:"✅<b>页表占内存小</b><br>大小只取决于<b>物理内存大小</b><br>与进程数、虚拟空间无关<br><br>📌真题答案选D"},
+{m:"内存管理",icon:"🐌",q:"反置页表IPT<br>有哪些缺点?",t:"trap",title:"IPT缺点❌",
+ body:"❌「查找速度快」错→其实<b>查找慢</b>(哈希/遍历)<br>❌「便于进程共享数据」错→<b>不便共享</b><br>反置页表难直接用传统TLB加速"},
+// 模块三 局部性
+{m:"局部性原理",icon:"🕐",q:"时间局部性<br>定义+典型例子?",t:"know",title:"时间局部性",
+ body:"最近访问过的，<b>很快会再访问</b><br>典型例子：<b>循环结构</b><br>(反复执行同一段代码)"},
+{m:"局部性原理",icon:"📍",q:"空间局部性<br>定义+典型例子?",t:"know",title:"空间局部性",
+ body:"访问某地址后，<b>附近地址</b>很快也访问<br>典型例子：<b>数组顺序遍历</b>、顺序执行指令"},
+{m:"局部性原理",icon:"🔁",q:"循环结构导致<br>哪种局部性?",t:"trap",title:"死亡陷阱❌",
+ body:"❌「循环→空间局部性」错!<br>✅「循环→<b>时间局部性</b>」对!<br><br>记忆：循环=时间轮回⏰"},
+// 模块四 重定位
+{m:"重定位",icon:"🏗️",q:"重定位<br>三种时机?",t:"know",title:"重定位三时机",
+ body:"①编译时：编译就定地址(几乎不用)<br>②装载时：装入内存算地址，之后不能移<br>③执行时：每次访存动态算(用重定位寄存器)"},
+{m:"重定位",icon:"📍",q:"装载时 vs 执行时<br>谁依赖MMU?",t:"trap",title:"陷阱❌",
+ body:"❌「装载时依赖MMU」错!<br>✅装载时=<b>软件一次性改</b>地址，不靠MMU<br>✅执行时=<b>每次访存靠MMU</b>硬件加法"},
+{m:"重定位",icon:"⏱️",q:"执行时重定位<br>有何开销?",t:"know",title:"执行时开销",
+ body:"每次访存都要做<br><b>基址寄存器 + 逻辑地址</b><br>的加法运算，有时间开销"},
+// 模块五 文件系统
+{m:"文件系统",icon:"📁",q:"目录<br>是不是一种文件?",t:"know",title:"对✅",
+ body:"✅目录也是一种<b>文件</b><br>目录本身存在某数据块里，有inode"},
+{m:"文件系统",icon:"📃",q:"连续文件<br>优缺点?",t:"know",title:"连续文件",
+ body:"✅优点：顺序访问快、分配简单<br>❌缺点：<b>不利于动态修改</b><br>(变大需重新分配连续空间)"},
+{m:"文件系统",icon:"🔗",q:"链接(串联)文件<br>优缺点?",t:"know",title:"链接文件",
+ body:"✅优点：<b>动态扩展容易</b><br>❌缺点：<b>随机访问慢</b><br>(必须顺着链表走)"},
+{m:"文件系统",icon:"📑",q:"索引文件<br>适合顺序还是随机?",t:"trap",title:"陷阱❌",
+ body:"❌「适合顺序、不适合随机」反了!<br>✅索引适合<b>随机访问</b>(查表直接定位)<br>支持大文件，但<b>小文件开销大</b>"},
+// 模块六 IO分层
+{m:"I/O分层",icon:"👤",q:"I/O—用户层<br>负责什么?",t:"know",title:"用户层",
+ body:"①检查用户<b>权限</b><br>②<b>格式化输出</b>(printf格式转换)<br>③二进制转文本以便打印"},
+{m:"I/O分层",icon:"🎩",q:"I/O—设备无关层<br>负责什么?",t:"know",title:"设备无关层",
+ body:"<b>缓冲管理、错误报告</b><br><b>设备命名</b>(逻辑名→物理名)<br><b>SPOOLing假脱机</b>、统一访问接口"},
+{m:"I/O分层",icon:"🔧",q:"I/O—设备驱动层<br>负责什么?",t:"know",title:"驱动层",
+ body:"<b>计算磁道、扇区、磁头位置</b><br>设置设备寄存器<br>发起I/O操作"},
+{m:"I/O分层",icon:"⚡",q:"I/O—中断处理层<br>负责什么?",t:"know",title:"中断层",
+ body:"处理设备<b>完成中断</b><br>唤醒驱动"},
+{m:"I/O分层",icon:"🖨️",q:"算磁道扇区 vs 二进制转文本<br>各属哪层?",t:"trap",title:"易错对照⭐",
+ body:"算磁道/扇区/磁头 → <b>驱动层</b>✅<br>SPOOLing/缓冲/错误报告 → <b>无关层</b>✅<br>二进制转文本/I/O格式化 → <b>用户层</b>(不是无关层!)"},
+// 模块七 RAID
+{m:"RAID",icon:"💾",q:"RAID 0 / 1<br>各是什么?",t:"know",title:"RAID 0&1",
+ body:"RAID0：条带化，<b>无冗余</b>，快但不可靠<br>RAID1：<b>镜像</b>，容量减半，可靠加倍"},
+{m:"RAID",icon:"💿",q:"RAID 3 / 4 / 5<br>区别?",t:"know",title:"RAID 3/4/5",
+ body:"RAID3：位/字节条带+<b>独立校验盘</b>，容错1块<br>RAID4：块条带+独立校验盘，容错1块<br>RAID5：块条带+<b>分布式校验</b>，容错1块"},
+{m:"RAID",icon:"🔀",q:"RAID3 vs RAID5<br>校验盘区别?",t:"know",title:"校验盘",
+ body:"RAID3校验盘<b>独立</b>→易成瓶颈<br>RAID5校验<b>分散到各盘</b>→避免瓶颈"},
+{m:"RAID",icon:"🛡️",q:"RAID6 和 RAID5<br>容错能力相同吗?",t:"trap",title:"陷阱❌",
+ body:"❌「相同」错!<br>✅RAID5容错<b>1块</b>(最少3盘)<br>✅RAID6容错<b>2块</b>(双校验)<br>RAID4与5容错相同(都1块)"},
+// 模块八 管程
+{m:"管程",icon:"🏛️",q:"管程内<br>同时几个活跃进程?",t:"know",title:"管程互斥",
+ body:"任一时刻最多<b>1个</b>活跃进程<br>管程<b>内部自带互斥</b><br>进入管程的进程互斥执行"},
+{m:"管程",icon:"⚖️",q:"管程比信号量<br>更强大吗?",t:"trap",title:"陷阱❌",
+ body:"❌「更强大」错!<br>✅管程能解决的，信号量<b>也都能</b><br>管程只是更<b>结构化、安全</b>，能力相同"},
+// 模块九 TLB刷新
+{m:"上下文切换",icon:"🔐",q:"同进程的线程切换<br>要切页表/刷TLB吗?",t:"trap",title:"陷阱❌",
+ body:"❌都不需要!<br>同进程<b>共享地址空间</b><br>→不切页表、<b>不刷新TLB</b><br>「同进程线程切换要刷TLB」是错的"},
+{m:"上下文切换",icon:"🔄",q:"不同进程切换<br>要切页表/刷TLB吗?",t:"know",title:"进程切换",
+ body:"✅需要<b>切换页表</b><br>✅需要<b>刷新TLB</b><br>(除非用ASID等硬件优化)"},
+// 模块十 fork/exec
+{m:"fork/exec",icon:"🍴",q:"fork子进程<br>地址空间特点?",t:"know",title:"fork()",
+ body:"复制父进程地址空间(代码/数据/堆栈)<br>现代用<b>写时复制COW</b>(只读代码物理共享)<br>逻辑上<b>父子独立</b>地址空间"},
+{m:"fork/exec",icon:"🚫",q:"fork后父子能用<br>全局变量传数据吗?",t:"trap",title:"陷阱❌",
+ body:"❌不能!fork后是<b>两个独立地址空间</b><br>各自改全局变量<b>互不影响</b><br>(写时复制会触发实际拷贝)"},
+{m:"fork/exec",icon:"🔁",q:"exec()<br>会改进程ID吗?",t:"trap",title:"陷阱❌",
+ body:"❌「exec改PID」错!<br>✅exec用新程序<b>替换地址空间</b><br>不创建新进程，<b>PID不变</b><br>(换瓤不换壳)"},
+// 模块十一 时间公式
+{m:"调度公式",icon:"📊",q:"吞吐量<br>定义?",t:"know",title:"吞吐量",
+ body:"单位时间完成的<b>作业数</b><br>= throughput"},
+{m:"调度公式",icon:"⏰",q:"周转/带权周转/响应/等待<br>四大公式?",t:"calc",title:"调度时间公式⭐",
+ body:"周转 = <b>完成-提交</b><br>带权周转 = <b>周转÷运行</b><br>响应 = <b>首次响应-提交</b><br>等待 = <b>第一次调度-到达</b>"},
+// 模块十二 批处理vs分时
+{m:"批处理分时",icon:"📦",q:"批处理系统<br>优缺点?",t:"know",title:"批处理",
+ body:"✅优点：<b>吞吐量大</b>、利用率高、切换开销小<br>❌缺点：<b>失去交互性</b>、响应慢"},
+{m:"批处理分时",icon:"🔃",q:"交互作业改善响应<br>RR还是FCFS?",t:"know",title:"时间片轮转",
+ body:"<b>RR(时间片轮转)</b>比FCFS更改善响应<br>让每个进程很快得到一点CPU时间"},
+// 模块十三 双缓冲
+{m:"双缓冲",icon:"🔂",q:"单缓冲 vs 双缓冲<br>核心区别?",t:"know",title:"单vs双缓冲",
+ body:"单缓冲：读→传→处理 <b>串行</b><br>双缓冲：CPU处理A区时，磁盘同时读B区<br>→读和处理<b>并行</b>"},
+{m:"双缓冲",icon:"⏱️",q:"双缓冲<br>每块时间公式?",t:"calc",title:"双缓冲公式⭐",
+ body:"每块时间 = <b>max(磁盘读, 处理+传输)</b><br>取瓶颈那个<br>双缓冲让读与处理重叠"},
+{m:"双缓冲",icon:"🧮",q:"读50/传10/处理40，10块<br>双缓冲总时间?",t:"calc",title:"双缓冲计算⭐",
+ body:"max(50, 10+40)=max(50,50)=50<br>总时间 = <b>首块预读 + 块数×每块</b><br>= 50 + 10×50 = <b>550ms</b><br>📌别忘加首块50的初始延迟!"},
+];
+
+// 判断题
+const quiz=[
+ {q:"1. RAID6与RAID5的容错能力相同。",ans:false,why:"❌错。RAID6容错2块 > RAID5容错1块。"},
+ {q:"2. 缓冲机制属于设备无关软件层。",ans:true,why:"✅对。缓冲管理确实在设备无关层。"},
+ {q:"3. 同一进程的线程切换需要刷新TLB。",ans:false,why:"❌错。同进程共享地址空间，不刷新TLB。"},
+ {q:"4. 装载时重定位依赖MMU部件。",ans:false,why:"❌错。装载时是软件一次性修改，不靠MMU；执行时才靠MMU。"},
+ {q:"5. 循环结构会导致程序的空间局部性。",ans:false,why:"❌错。循环导致的是时间局部性！"},
+ {q:"6. 索引文件结构适用于顺序访问，不适合随机访问。",ans:false,why:"❌错。反了！索引适合随机访问。"},
+ {q:"7. fork创建的子进程可以通过全局变量和父进程传递数据。",ans:false,why:"❌错。父子独立地址空间，互不影响。"},
+ {q:"8. 管程比信号量更强大，能解决信号量不能解决的同步问题。",ans:false,why:"❌错。能力相同，管程只是更结构化安全。"},
+];
+
+const grid=document.getElementById('grid');
+const stats=document.getElementById('stats');
+let done=new Set();
+let curFilter="全部";
+
+// 模块筛选按钮
+const modules=["全部",...new Set(cards.map(c=>c.m)),"🔴只看陷阱","🟡只看计算"];
+const fbox=document.getElementById('filters');
+modules.forEach(m=>{
+  const b=document.createElement('button');
+  b.textContent=m; if(m==="全部")b.classList.add('active');
+  b.onclick=()=>{curFilter=m;document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render();};
+  fbox.appendChild(b);
+});
+
+function render(){
+  grid.innerHTML='';
+  cards.forEach((c,i)=>{
+    if(curFilter!=="全部"){
+      if(curFilter==="🔴只看陷阱"&&c.t!=="trap")return;
+      else if(curFilter==="🟡只看计算"&&c.t!=="calc")return;
+      else if(curFilter!=="🔴只看陷阱"&&curFilter!=="🟡只看计算"&&c.m!==curFilter)return;
+    }
+    const tagTxt=c.t==="trap"?"🔴陷阱":c.t==="calc"?"🟡计算":"🟢知识";
+    const div=document.createElement('div');
+    div.className='card'+(done.has(i)?' flipped done':'');
+    div.innerHTML=`<div class="inner">
+      <div class="front"><span class="mod">${c.m}</span><span class="tag">${tagTxt}</span>
+        <div class="icon">${c.icon}</div><div class="q">${c.q}</div><div class="hint">点击翻转 👆</div></div>
+      <div class="back ${c.t}"><div class="title">${c.title}</div><div class="body">${c.body}</div></div>
+    </div>`;
+    let flipped=done.has(i);
+    div.onclick=()=>{
+      if(!flipped){div.classList.add('flipped');flipped=true;}
+      else if(!done.has(i)){done.add(i);div.classList.add('done');update();}
+      else{done.delete(i);div.classList.remove('flipped','done');flipped=false;update();}
+    };
+    grid.appendChild(div);
+  });
+}
+function update(){stats.textContent=`已掌握 ${done.size} / ${cards.length} 张 ${done.size===cards.length?'🎉全掌握啦!':''}`;}
+function flipAll(f){document.querySelectorAll('.card').forEach(c=>c.classList.toggle('flipped',f));}
+function resetAll(){done.clear();render();update();}
+
+// 判断题渲染
+const qbox=document.getElementById('quizbox');
+quiz.forEach((item,i)=>{
+  const d=document.createElement('div');d.className='qitem';
+  d.innerHTML=`<div class="qt">${item.q}</div>
+    <button onclick="judge(${i},true,this)">✔ 对</button>
+    <button onclick="judge(${i},false,this)">✘ 错</button>
+    <div class="ans" id="ans${i}">${item.why}</div>`;
+  qbox.appendChild(d);
+});
+function judge(i,choice,btn){
+  const correct=quiz[i].ans===choice;
+  btn.classList.add(correct?'right':'wrong');
+  document.getElementById('ans'+i).style.display='block';
+}
+
+render();update();
+</script>
+</body>
+</html>

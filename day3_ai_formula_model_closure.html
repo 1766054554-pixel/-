@@ -1,0 +1,1376 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Day3 公式与模型闭环：从题眼到答案</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 300px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .focus {
+      border-radius: 6px;
+      background: #fff3bf;
+      box-shadow: inset 0 -2px 0 rgba(147,107,18,.24);
+      padding: 1px 5px;
+      font-weight: 840;
+      color: #60440a;
+    }
+    .key { color: var(--blue); font-weight: 840; }
+    .hl { color: var(--red); font-weight: 840; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: inherit;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .formula-cell .display-eq {
+      font-size: 16px !important;
+      padding: 0;
+      white-space: normal;
+    }
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .source-list div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px 12px;
+    }
+    .source-list strong {
+      display: block;
+      color: var(--blue);
+      margin-bottom: 4px;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 760px; height: auto; display: block; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .flash-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .flash-grid div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      min-height: 76px;
+    }
+    .flash-grid strong { display: block; color: var(--blue); margin-bottom: 4px; }
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .memory-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 14px;
+    }
+    .memory-card h3 { color: var(--blue); }
+    .concept-drill {
+      border: 1px solid #cfe1ec;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 11px 13px;
+      margin-top: 12px;
+    }
+    .concept-drill strong { color: var(--blue); }
+    .concept-drill p { margin-bottom: 6px; }
+    .exam-thread {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .mini-case {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff 0, #fbfdfe 100%);
+      padding: 15px;
+      box-shadow: 0 8px 18px rgba(24, 33, 42, .04);
+    }
+    .mini-case h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #b3d2e7;
+      border-radius: 999px;
+      background: #eef7fc;
+      color: var(--blue);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+    .case-flow {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .case-flow span:first-child {
+      color: var(--blue);
+      font-weight: 820;
+    }
+    .why-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .why-list div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px 10px;
+    }
+    .why-list strong { color: var(--green); }
+    .formula-ladder {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .ladder-card {
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px;
+      min-width: 0;
+    }
+    .ladder-card:nth-child(2) { border-top-color: var(--red); }
+    .ladder-card:nth-child(3) { border-top-color: var(--purple); }
+    .ladder-card:nth-child(4) { border-top-color: var(--yellow); }
+    .ladder-card:nth-child(5) { border-top-color: var(--green); }
+    .ladder-card strong {
+      display: block;
+      color: var(--blue);
+      margin-bottom: 5px;
+    }
+    .micro-quiz {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .micro-quiz article {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 13px;
+      min-width: 0;
+    }
+    .micro-quiz h3 {
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+    .memory-card .formula-line {
+      display: block;
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 9px 10px;
+      margin: 8px 0;
+      font-family: inherit;
+    }
+    .chain {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .chain div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+	    .chain strong { display: block; color: var(--green); margin-bottom: 4px; }
+	    .story-panel {
+	      display: grid;
+	      grid-template-columns: 1.05fr .95fr;
+	      gap: 12px;
+	      align-items: stretch;
+	      margin: 12px 0;
+	    }
+	    .story-panel .box {
+	      background: #fff;
+	    }
+	    .term-list {
+	      display: grid;
+	      grid-template-columns: repeat(2, minmax(0, 1fr));
+	      gap: 8px;
+	      margin: 10px 0;
+	    }
+	    .term-list div {
+	      border: 1px solid var(--line);
+	      border-radius: 8px;
+	      background: #fbfdfe;
+	      padding: 10px;
+	    }
+	    .term-list strong { color: var(--blue); }
+	    @media (max-width: 900px) {
+	      main { padding: 18px 12px 42px; }
+	      .grid, .grid.three, .flash-grid, .memory-grid, .chain, .rubric, .source-list, .story-panel, .term-list, .why-list, .case-flow, .formula-ladder, .micro-quiz { grid-template-columns: 1fr; }
+	      .diagram svg { min-width: 640px; }
+	    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>AI Day3 公式与模型闭环：从题眼到答案</h1>
+      <p class="muted">AI 考试没有稳定往年题，<span class="key">参考习题和 PPT 总结</span>就更重要。这页把常见公式、模型对比、简答模板和小计算题放到一起，目标不是让你死背，而是让你看到题眼就知道<span class="focus">该写哪套答案、第一句话怎么开头</span>。</p>
+      <div class="strip">
+        <span class="pill hot">人工智能 6/23</span>
+        <span class="pill info">选择 / 填空 / 计算 / 简答 / 综合</span>
+        <span class="pill warn">无需计算器：公式含义和小规模手算</span>
+        <span class="pill good">参考习题 + PPT 总结</span>
+      </div>
+      <div class="toc">
+	        <a href="#route">0. 使用路线</a>
+	        <a href="#sources">资料依据</a>
+	        <a href="#story">0.5 主线图</a>
+	        <a href="#memory">1. 公式怎么学</a>
+	        <a href="#translator">1.5 公式动作翻译器</a>
+	        <a href="#map">2. 题型地图</a>
+	        <a href="#formulas">3. 核心公式</a>
+	        <a href="#embedded">3.5 公式旁例题</a>
+        <a href="#models">4. 模型对比</a>
+        <a href="#deep">5. 深度/生成/强化</a>
+        <a href="#cards">6. 题卡</a>
+        <a href="#gate">7. 闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 使用路线：AI 先会说人话，再背公式</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>没看 Day1</strong>
+          先回 <a href="./day1_ai_se_visual.html">AI 从零深学</a>，把样本、特征、标签、模型、参数、损失、训练、泛化讲顺。
+        </div>
+        <div class="box">
+          <strong>已经懂底层词</strong>
+          用本页背公式和模型对比。<span class="focus">每个公式必须能解释符号</span>，否则等于没背。
+        </div>
+        <div class="box">
+          <strong>做参考习题</strong>
+          回到 <a href="./day1_ai_reference_bridge.html">参考习题桥接</a>、<a href="./day2_ai_reference_ml_cards.html">机器学习题卡</a>、<a href="./day2_ai_reference_nn_cards.html">神经网络题卡</a>，按题型刷。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>AI 的高分答案结构：</strong><span class="focus">先定位任务</span>，再写公式或关键词，再解释符号/步骤，最后补一句适用场景或常见陷阱。
+      </div>
+      <div class="mark" id="sources">
+        <strong>本页资料依据：</strong>这页不是凭空整理公式。线性回归/MSE 来自 PPT 第2讲第 62-63 页和 `笔记.pdf` 第 2-3 页；逻辑回归、交叉熵、softmax、经验/期望/结构风险来自 PPT 第3讲第 37、49-67 页和 `复习.pdf` 第 2、5-6 页；LDA/SVM 来自 PPT 第4讲第 11、48、52、55 页；决策树/信息增益/AdaBoost 来自 PPT 第5讲第 18、30-31、38-46 页；Attention 来自 PPT 第7讲第 62-67 页和第8讲第 8、13-14 页；Q-learning 来自 `笔记.pdf` 第 117-118 页和强化学习 PPT。后续题卡优先贴这些资料。
+      </div>
+      <div class="source-list">
+        <div><strong>机器学习主线</strong>第2-5讲：线性回归、逻辑回归、LDA/SVM、决策树、集成学习。考试要会公式含义、模型对比和小计算。</div>
+        <div><strong>泛化能力主线</strong>复习/笔记/PPT 第3讲：经验风险、期望风险、结构风险、过拟合、欠拟合、L1/L2 正则。简答题很爱问“训练好测试差”。</div>
+        <div><strong>深度学习主线</strong>第6-8讲：前馈网络、训练策略、CNN、自注意力、Transformer/BERT。考试重点是结构、公式含义、适用场景。</div>
+        <div><strong>强化学习主线</strong>第12-13讲和笔记后段：状态、动作、奖励、策略、V/Q、Q-learning 一步更新。计算不会大，但步骤必须稳。</div>
+	      </div>
+	    </section>
+
+	    <section class="card" id="story">
+	      <h2>0.5 先把第2-6讲串成一条线：AI 不是名词堆，是一台学习机器</h2>
+	      <p>Day3 最重要的不是把公式表背满，而是看懂它们为什么会排在一起。第2讲从线性回归开始，是因为它最清楚地展示了<span class="focus">输入特征 x -> 模型算预测 -> 损失衡量错多少 -> 优化参数</span>的机器学习骨架。第3讲把输出从连续数字改成类别，第4讲继续问“分类边界怎么更稳”，第5讲换成树和集成，第6讲再问“训练出来的模型到底有没有泛化”。</p>
+	      <div class="diagram" aria-label="AI Day3 机器学习主线图">
+	        <svg viewBox="0 0 980 360" role="img">
+	          <rect width="980" height="360" fill="#fbfdfe"/>
+	          <g font-family="sans-serif" fill="#18212a" font-size="15">
+	            <rect x="36" y="122" width="128" height="78" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+	            <text x="64" y="154" font-weight="700">数据 D</text>
+	            <text x="52" y="180" fill="#687581">样本 x + 标签 y</text>
+
+	            <rect x="214" y="42" width="142" height="70" rx="10" fill="#eef9f3" stroke="#24724f"/>
+	            <text x="250" y="73" font-weight="700">回归</text>
+	            <text x="231" y="98" fill="#687581">连续值 + MSE</text>
+	            <rect x="214" y="132" width="142" height="70" rx="10" fill="#fff9e6" stroke="#936b12"/>
+	            <text x="250" y="163" font-weight="700">分类</text>
+	            <text x="224" y="188" fill="#687581">sigmoid / SVM</text>
+	            <rect x="214" y="222" width="142" height="70" rx="10" fill="#fff2ef" stroke="#a23b32"/>
+	            <text x="250" y="253" font-weight="700">树模型</text>
+	            <text x="230" y="278" fill="#687581">熵 / 信息增益</text>
+
+	            <rect x="414" y="122" width="136" height="78" rx="10" fill="#f6f2ff" stroke="#66519a"/>
+	            <text x="448" y="154" font-weight="700">损失/准则</text>
+	            <text x="433" y="180" fill="#687581">错多少 / 分多开</text>
+
+	            <rect x="604" y="122" width="138" height="78" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+	            <text x="640" y="154" font-weight="700">优化</text>
+	            <text x="626" y="180" fill="#687581">调参数 / 选属性</text>
+
+	            <rect x="790" y="54" width="150" height="70" rx="10" fill="#eef9f3" stroke="#24724f"/>
+	            <text x="830" y="85" font-weight="700">泛化</text>
+	            <text x="807" y="110" fill="#687581">新题表现好不好</text>
+	            <rect x="790" y="184" width="150" height="70" rx="10" fill="#fff9e6" stroke="#936b12"/>
+	            <text x="817" y="215" font-weight="700">训练策略</text>
+	            <text x="810" y="240" fill="#687581">正则 / 剪枝 / 早停</text>
+
+	            <path d="M164 161 H214 M356 77 C386 78 389 132 414 152 M356 167 H414 M356 257 C386 257 390 188 414 170 M550 161 H604 M742 161 C770 135 775 90 790 89 M742 161 C770 185 775 219 790 219" stroke="#687581" stroke-width="2.6" fill="none" marker-end="url(#arrowStory)"/>
+	            <text x="56" y="318" fill="#687581">考试换问法时，先问：这是在问任务、模型、损失/准则、优化，还是泛化？定位层次后再写公式。</text>
+	          </g>
+	          <defs><marker id="arrowStory" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+	        </svg>
+	      </div>
+	      <div class="story-panel">
+	        <div class="box">
+	          <strong>这条主线怎么读</strong>
+	          <p><strong>线性回归</strong>教你最基本的预测骨架：给 x，算出 ŷ，用 <span class="key">MSE</span> 评价错多少。</p>
+	          <p><strong>逻辑回归/Softmax</strong>把连续分数变成概率，所以它虽然有“回归”两个字，考试上要把它归到<span class="focus">分类</span>。</p>
+	          <p><strong>LDA/SVM</strong>继续处理分类，但问法变成“怎样的边界或投影更好”：LDA 要<span class="key">类间远类内近</span>，SVM 要<span class="key">最大间隔</span>。</p>
+	          <p><strong>决策树/AdaBoost</strong>换了一种思路：树用属性问题降低混乱，Boosting 串行训练弱分类器，让<span class="focus">错分样本下一轮更重要</span>。</p>
+	        </div>
+	        <div class="box">
+	          <strong>考场最怕的混淆</strong>
+	          <p><strong>经验风险小</strong>只说明训练题做得好，不说明新题会；<strong>期望风险</strong>才接近未来样本表现。</p>
+	          <p><strong>正则化</strong>不是“让模型更准”的魔法，而是在损失里加复杂度惩罚，逼模型别为了训练集噪声乱弯。</p>
+	          <p><strong>训练策略</strong>题要同时看训练损失和验证/测试损失：<span class="hl">训练低、验证高 = 过拟合</span>；两边都高可能是欠拟合或优化没做好。</p>
+	        </div>
+	      </div>
+	      <div class="term-list">
+	        <div><strong>目标函数：</strong>你要最小化或最大化的东西。MSE、交叉熵、Hinge 损失、Fisher 准则、信息增益都属于“指挥训练方向”的规则。</div>
+	        <div><strong>参数：</strong>模型里要学的量，比如线性模型的 w 和 b。训练不是背样本，而是找一组能让损失变小的参数。</div>
+	        <div><strong>超参数：</strong>训练前由人设定或验证集选择的量，比如正则强度 λ、树深度、学习率。它们通常不直接由梯度学出。</div>
+	        <div><strong>泛化：</strong>模型做新题的能力。考试看到“训练集好、测试集差”，要立刻说泛化差、过拟合。</div>
+	      </div>
+	      <div class="mark">
+	        <strong>Day3 读法：</strong>先把这条主线复述一遍，再看公式。你要能说出<span class="focus">“这个公式在链路里负责哪一步”</span>，才算真的开始会用它。
+	      </div>
+	    </section>
+
+	    <section class="card" id="memory">
+      <h2>1. 公式怎么学：先把公式翻译成人话</h2>
+      <p>你现在最容易掉进一个坑：看见一整张公式表，以为只要背下来就行。但 AI 考试不会只问“把公式抄一遍”，更常问<span class="focus">“这个量是什么意思、为什么要这么做、看到题干怎么选它”</span>。所以这页的公式按四层记。</p>
+      <div class="chain">
+        <div><strong>第一层：任务</strong>它解决什么问题？回归、分类、聚类、评价、生成、决策？</div>
+        <div><strong>第二层：符号</strong>x、y、w、Q、K、V、TP、FP 分别是什么？</div>
+        <div><strong>第三层：动作</strong>公式是在预测、度量错误、更新参数，还是选择最优划分？</div>
+        <div><strong>第四层：题眼</strong>题干出现什么词时，我要把它叫出来？</div>
+      </div>
+      <div class="mark warnbox">
+        <strong>你的背诵目标：</strong>不是“我能背出公式”，而是<span class="focus">“我能看到题干，把公式叫出来，并解释为什么用它”</span>。如果只能背符号，考试换成简答题就会卡。
+      </div>
+      <table>
+        <thead><tr><th>新词</th><th>先解决什么问题</th><th>考试怎么问</th><th>你第一句话怎么写</th></tr></thead>
+        <tbody>
+          <tr><td>经验风险</td><td>模型在训练集上的平均损失。</td><td>训练集表现很好但测试集差。</td><td>经验风险小只能说明训练集拟合好，不能保证泛化好。</td></tr>
+          <tr><td>期望风险</td><td>模型在真实数据分布/未来样本上的损失，理论上更想小。</td><td>为什么只看训练误差不够。</td><td>考试时把它翻成“新题表现”，和泛化能力绑定。</td></tr>
+          <tr><td>结构风险</td><td>在经验风险之外惩罚模型复杂度。</td><td>正则化为什么能防过拟合。</td><td>结构风险最小化是在“拟合训练集”和“别太复杂”之间折中。</td></tr>
+          <tr><td>交叉熵</td><td>分类任务里惩罚正确类别概率太低。</td><td>逻辑回归/softmax 为什么不用 MSE。</td><td>分类输出是概率，交叉熵直接让正确类概率变大。</td></tr>
+          <tr><td>支持向量</td><td>离分类边界最近、决定 SVM 超平面的位置。</td><td>SVM 为什么叫最大间隔。</td><td>支持向量撑住边界，普通远点对边界影响小。</td></tr>
+          <tr><td>Q/K/V</td><td>Attention 里“查什么、拿什么匹配、汇总什么”。</td><td>解释 Attention 公式。</td><td>Q 查 K 得到相关性权重，再按权重汇总 V。</td></tr>
+        </tbody>
+      </table>
+
+      <div class="memory-grid">
+        <div class="memory-card">
+          <h3>线性回归：用一条线猜数字</h3>
+          <p>先想一个很朴素的场景：用面积、楼层、位置预测房价。每个特征给一个权重，最后加起来，就是预测值。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              ŷ<span class="op">=</span><span class="mb">w</span><sup>T</sup><span class="mb">x</span><span class="op">+</span><span class="mi">b</span>
+            </div>
+            <div class="math-note">读法：把每个特征按权重加起来，再加一个基础偏移。</div>
+          </div>
+          <p><strong>怎么记：</strong>x 是输入信息，w 是每条信息的重要程度，b 是基础偏移，y_hat 是模型猜出来的答案。</p>
+          <p><strong>题眼：</strong>预测连续数值、房价、分数、温度、销量，优先想到回归。问“误差”时常接 MSE。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>题干说“根据房屋面积、楼层、位置预测成交价”，你第一句写：这是<span class="focus">连续数值预测</span>，优先归为回归任务，可用线性回归把特征按权重组合成预测值。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>MSE：错多少，就把差距平方后平均</h3>
+          <p>模型猜错了，要有一个“错题本分数”。MSE 就是把每个样本的预测值和真实值相减，平方，再取平均。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="mi">J</span><span class="op">=</span>
+              <span class="frac"><span>1</span><span>n</span></span>
+              <span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+              <span class="op">(</span>ŷ<sub>i</sub><span class="op">−</span><span class="mi">y</span><sub>i</sub><span class="op">)</span><sup>2</sup>
+            </div>
+            <div class="math-note">读法：把每个样本“预测 - 真实”的差平方后求平均。</div>
+          </div>
+          <p><strong>怎么记：</strong>括号里是“猜的 - 真的”；平方让正负误差都变成惩罚，也会放大大错误。</p>
+          <p><strong>题眼：</strong>连续值预测、最小二乘、平方误差、异常值敏感。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>若真实值是 10，预测值是 13，这个样本的平方误差是 9。写解析时不要只写数字，要补一句：平方误差会放大较大的偏差，所以 MSE 对异常值比较敏感。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>逻辑回归：名字叫回归，实际做分类</h3>
+          <p>它先像线性回归一样算一个分数 z，再用 sigmoid 把分数压到 0 到 1，解释成“属于正类的概率”。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="mi">p</span><span class="op">=</span>
+              <span class="func">sigmoid</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span>
+              <span class="op">=</span>
+              <span class="frac"><span>1</span><span>1<span class="op">+</span><span class="mi">e</span><sup>−z</sup></span></span>
+            </div>
+            <div class="math-note">读法：把任意分数 z 压到 0-1，解释成正类概率。</div>
+          </div>
+          <p><strong>怎么记：</strong>z 很大，p 接近 1；z 很小，p 接近 0；p 超过阈值就判为正类。</p>
+          <p><strong>题眼：</strong>二分类、概率输出、sigmoid、交叉熵。不要被“回归”两个字骗去答连续值预测。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>题干问“是否违约/是否垃圾邮件”，即使模型名叫逻辑回归，也要先写：这是<span class="focus">二分类</span>，sigmoid 输出正类概率，常用交叉熵训练。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>SVM：把边界画得离两边都远一点</h3>
+          <p>分类不只是把样本分开，还要让分界线离最近的样本尽可能远。最近的那几颗样本叫支持向量，因为它们撑住了边界。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="mi">y</span><sub>i</sub>
+              <span class="op">(</span><span class="mb">w</span><sup>T</sup><span class="mb">x</span><sub>i</sub><span class="op">+</span><span class="mi">b</span><span class="op">)</span>
+              <span class="op">≥</span>1
+              <span class="op">,</span>
+              <span class="func">margin</span><span class="op">=</span>
+              <span class="frac"><span>2</span><span>||<span class="mb">w</span>||</span></span>
+            </div>
+            <div class="math-note">读法：样本不仅要分对，还要离分界面有足够距离；间隔越大越稳。</div>
+          </div>
+          <p><strong>怎么记：</strong>支持向量像边界旁边的“警戒线”，最大间隔就是让警戒线尽量宽。</p>
+          <p><strong>题眼：</strong>最大间隔、支持向量、超平面、核函数、小中规模分类。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>如果题目问“移除哪些点会改变分类边界”，先找<span class="focus">离分界线最近的点</span>，这些才是支持向量；远处普通样本通常不决定边界。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>信息增益：问一个问题后，世界变清楚了多少</h3>
+          <p>决策树每次都在选“最会分裂数据的问题”。熵表示混乱程度，信息增益表示问完这个属性后，混乱减少了多少。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="func">Gain</span><span class="op">(</span><span class="mi">D</span><span class="op">,</span><span class="mi">A</span><span class="op">)</span>
+              <span class="op">=</span>
+              <span class="mi">H</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span>
+              <span class="op">−</span>
+              <span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot">v</span></span>
+              <span class="frac"><span>|<span class="mi">D</span><sub>v</sub>|</span><span>|<span class="mi">D</span>|</span></span>
+              <span class="mi">H</span><span class="op">(</span><span class="mi">D</span><sub>v</sub><span class="op">)</span>
+            </div>
+            <div class="math-note">读法：划分前的混乱程度，减去按属性 A 划分后的加权混乱程度。</div>
+          </div>
+          <p><strong>怎么记：</strong>增益 = 原来有多乱 - 分完以后还剩多乱。剩得越少，属性越好。</p>
+          <p><strong>题眼：</strong>决策树、熵、不纯度、属性选择、ID3。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>父节点熵 1.0，划分后加权熵 0.4，则信息增益 0.6。考试解释要写：这个属性让不确定性下降 0.6，下降越多越适合作为划分属性。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>Precision / Recall：一个管误报，一个管漏报</h3>
+          <p>Precision 看“我说是正的里面，有多少是真的”；Recall 看“真正是正的里面，我抓回来多少”。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="func">Precision</span><span class="op">=</span>
+              <span class="frac"><span>TP</span><span>TP<span class="op">+</span>FP</span></span>
+              <span class="op">,</span>
+              <span class="func">Recall</span><span class="op">=</span>
+              <span class="frac"><span>TP</span><span>TP<span class="op">+</span>FN</span></span>
+            </div>
+            <div class="math-note">读法：Precision 怕误报，Recall 怕漏报。</div>
+          </div>
+          <p><strong>怎么记：</strong>P 的分母是“Predicted positive”；R 的分母是“Real positive”。</p>
+          <p><strong>题眼：</strong>垃圾邮件误拦重视 Precision；疾病漏诊危险重视 Recall；类别不平衡不要只看 Accuracy。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>模型预测 30 个正例，其中 24 个真为正；真实正例共有 40 个。Precision = 24/30，Recall = 24/40。先写 TP=24，再写两个分母分别是什么。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>Attention：用问题去查索引，再汇总内容</h3>
+          <p>Q 是“我想找什么”，K 是“每个位置的索引”，V 是“真正拿来汇总的内容”。先用 Q 和 K 算相关性，再按权重汇总 V。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="func">Attention</span><span class="op">(</span><span class="mb">Q</span><span class="op">,</span><span class="mb">K</span><span class="op">,</span><span class="mb">V</span><span class="op">)</span>
+              <span class="op">=</span>
+              <span class="func">softmax</span>
+              <span class="op">(</span>
+              <span class="frac"><span><span class="mb">Q</span><span class="mb">K</span><sup>T</sup></span><span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub>k</sub></span></span></span></span>
+              <span class="op">)</span>
+              <span class="mb">V</span>
+            </div>
+            <div class="math-note">读法：用 Q 和 K 算相关性，softmax 成权重，再加权汇总 V。</div>
+          </div>
+          <p><strong>怎么记：</strong>像搜索：query 查 key，最后取 value。除以 sqrt(d_k) 是为了分数别太大，softmax 才稳定。</p>
+          <p><strong>题眼：</strong>Transformer、自注意力、长距离依赖、Q/K/V、Encoder/Decoder。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>题干问“为什么 Transformer 能处理长距离依赖”，第一句写：自注意力允许任意位置通过 Q/K 匹配直接建立联系，再加权汇总 V，因此不必像 RNN 那样逐步传递。</p>
+          </div>
+        </div>
+        <div class="memory-card">
+          <h3>Q-learning：旧估计向新目标靠近</h3>
+          <p>Q(s,a) 是“在状态 s 做动作 a 的长期价值”。更新时，不是完全推翻旧值，而是让旧值朝“即时奖励 + 下一步最好价值”移动一点。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="mi">Q</span><sub>new</sub>
+              <span class="op">=</span>
+              <span class="mi">Q</span><sub>old</sub>
+              <span class="op">+</span>
+              <span class="mi">α</span>
+              <span class="op">[</span>
+              <span class="mi">r</span>
+              <span class="op">+</span>
+              <span class="mi">γ</span>
+              <span class="func">max</span><span class="mi">Q</span><span class="op">(</span><span class="mi">s'</span><span class="op">,</span><span class="mi">a'</span><span class="op">)</span>
+              <span class="op">−</span>
+              <span class="mi">Q</span><sub>old</sub>
+              <span class="op">]</span>
+            </div>
+            <div class="math-note">读法：旧估计值朝“即时奖励 + 折扣后的下一状态最好价值”移动 α 这么大一步。</div>
+          </div>
+	          <p><strong>怎么记：</strong>括号里是“目标 - 旧值”，学习率 α 决定改多少，折扣因子 γ 决定多看重未来。</p>
+          <p><strong>题眼：</strong>状态、动作、奖励、策略、探索利用、model-free、Q 表一步更新。</p>
+          <div class="concept-drill">
+            <strong>当场例题：</strong>
+            <p>Q_old=4，α=0.5，r=2，γ=0.9，下一状态最大 Q=6。目标值是 7.4，新 Q = 4 + 0.5 × (7.4 - 4) = 5.7。步骤永远是<span class="focus">目标值 -> TD 误差 -> 旧值更新</span>。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="translator">
+      <h2>1.5 公式动作翻译器：先问“它要我做什么”</h2>
+      <p>很多 AI 公式看起来吓人，是因为你一眼看到的是符号，不是动作。其实第14讲总结里反复强调的主线很朴素：<span class="focus">学习模型、定义损失、优化参数、评价泛化</span>。所以考场上你先别急着背整条公式，先判断题干正在叫你做哪件事。</p>
+      <div class="formula-ladder">
+        <div class="ladder-card">
+          <strong>预测</strong>
+          题眼是“预测房价/销量/分数”。先写线性回归或回归任务，再解释 <span class="key">x 是特征，w 是权重，ŷ 是预测</span>。
+        </div>
+        <div class="ladder-card">
+          <strong>惩罚错误</strong>
+          题眼是“损失函数、交叉熵、MSE”。先问输出是连续值还是类别概率：连续值多接 MSE，分类概率多接交叉熵。
+        </div>
+        <div class="ladder-card">
+          <strong>选边界</strong>
+          题眼是“最大间隔、支持向量”。先写 SVM：在能分类正确的边界中，选择离最近样本最远的超平面。
+        </div>
+        <div class="ladder-card">
+          <strong>选属性</strong>
+          题眼是“熵、信息增益、增益率”。先写总熵，再写划分后加权熵，最后比较不确定性下降多少。
+        </div>
+        <div class="ladder-card">
+          <strong>更新价值</strong>
+          题眼是“状态、动作、奖励、Q 表”。先算目标值 <span class="key">r + γ max Q</span>，再让旧 Q 值向目标靠近。
+        </div>
+      </div>
+      <div class="diagram" aria-label="公式动作翻译流程图">
+        <svg viewBox="0 0 980 310" role="img">
+          <rect width="980" height="310" fill="#fbfdfe"/>
+          <g font-family="sans-serif" fill="#18212a" font-size="15">
+            <rect x="44" y="110" width="150" height="70" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="84" y="140" font-weight="700">题干信号</text>
+            <text x="62" y="164" fill="#687581">先圈关键词</text>
+
+            <rect x="252" y="44" width="150" height="62" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="293" y="78" font-weight="700">任务层</text>
+            <text x="270" y="100" fill="#687581">回归 / 分类</text>
+            <rect x="252" y="124" width="150" height="62" rx="10" fill="#fff9e6" stroke="#936b12"/>
+            <text x="293" y="158" font-weight="700">模型层</text>
+            <text x="274" y="180" fill="#687581">SVM / 树 / Boost</text>
+            <rect x="252" y="204" width="150" height="62" rx="10" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="293" y="238" font-weight="700">训练层</text>
+            <text x="272" y="260" fill="#687581">loss / 正则 / BP</text>
+
+            <rect x="472" y="110" width="160" height="70" rx="10" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="515" y="140" font-weight="700">调用动作</text>
+            <text x="494" y="164" fill="#687581">预测/惩罚/选择/更新</text>
+
+            <rect x="700" y="54" width="180" height="62" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="742" y="88" font-weight="700">写第一句话</text>
+            <text x="720" y="110" fill="#687581">这是哪类任务/模型</text>
+            <rect x="700" y="156" width="180" height="62" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="736" y="190" font-weight="700">再写公式含义</text>
+            <text x="730" y="212" fill="#687581">符号 + 目标 + 陷阱</text>
+
+            <path d="M194 145 H252 M402 75 C435 80 435 122 472 140 M402 155 H472 M402 235 C435 230 435 168 472 154 M632 145 H700 M790 116 V156" stroke="#687581" stroke-width="2.6" fill="none" marker-end="url(#arrowTranslator)"/>
+            <text x="80" y="286" fill="#687581">这就是 Day3 的核心反应：先分层，再调用动作；先写第一句，再展开公式。</text>
+          </g>
+          <defs><marker id="arrowTranslator" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <div class="micro-quiz">
+        <article>
+          <h3>小题 A：λ 小于 0 为什么危险？</h3>
+          <p>题干给出 L2 正则项 <span class="key">λw<sup>T</sup>w</span>，追问如果 λ &lt; 0 会怎样。你先别背“不能为负”，要写动作：L2 本来是在<span class="focus">惩罚权重变大</span>，λ 为负会反过来鼓励权重变大。</p>
+          <textarea data-note="ai3-translator-l2" placeholder="写 3 句：L2 本意是什么？λ>0 时怎么惩罚？λ<0 时为什么反过来？"></textarea>
+          <details>
+            <summary>看答案骨架</summary>
+            <div class="answer-block">
+              <p>L2 正则化通过惩罚权重平方和来限制模型复杂度，目的是减少过拟合。λ 为正时，权重越大，损失函数增加越多，优化会倾向于选择较小权重。若 λ 为负，权重越大反而会降低目标函数，这会鼓励模型把权重放大，和正则化目标相反，甚至导致优化不稳定。</p>
+            </div>
+          </details>
+        </article>
+        <article>
+          <h3>小题 B：为什么 ID 属性不能只看信息增益？</h3>
+          <p>参考习题里有信息增益率和决策树构建。若一个属性几乎每个样本一个取值，它会让训练集看起来很纯，但可能只是<span class="focus">把样本编号背下来了</span>。这就是信息增益率要修正的偏好。</p>
+          <textarea data-note="ai3-translator-gain" placeholder="写 3 句：信息增益在奖励什么？ID 属性为什么虚高？信息增益率修正什么？"></textarea>
+          <details>
+            <summary>看答案骨架</summary>
+            <div class="answer-block">
+              <p>信息增益衡量按某属性划分后不确定性减少多少。取值特别多的属性容易把样本拆成很小甚至单样本分支，使训练集熵下降很多，信息增益看起来很高，但它未必学到可泛化规律。信息增益率会惩罚分支过多的属性，降低“记住样本编号”式划分的吸引力。</p>
+            </div>
+          </details>
+        </article>
+        <article>
+          <h3>小题 C：逻辑回归、LDA、SVM 都线性，怎么分？</h3>
+          <p>这类题最像老师会出的简答比较。不要写“它们都是分类器”就结束，要抓三种动作：逻辑回归给<span class="key">概率</span>，LDA 找<span class="key">投影</span>，SVM 选<span class="key">最大间隔边界</span>。</p>
+          <textarea data-note="ai3-translator-linear-classifiers" placeholder="按：逻辑回归 -> LDA -> SVM，各写一句核心目标和一个关键词。"></textarea>
+          <details>
+            <summary>看答案骨架</summary>
+            <div class="answer-block">
+              <p>逻辑回归先算线性分数，再用 sigmoid 输出正类概率，关键词是概率输出、交叉熵、二分类。LDA 利用标签信息寻找投影方向，使类间距离尽量大、类内距离尽量小，关键词是 Fisher 准则、类间/类内散度。SVM 寻找最大间隔分类超平面，支持向量决定边界，关键词是最大间隔、支持向量、核函数。</p>
+            </div>
+          </details>
+        </article>
+        <article>
+          <h3>小题 D：Attention 里的 Q 不是 Q-learning 的 Q</h3>
+          <p>AI 最容易痛苦的地方就是同一个字母在不同章节换意思。Attention 的 Q 是 Query，强化学习的 Q 是动作价值函数。遇到 Q 先看上下文：有 K/V/softmax 就是注意力；有状态、动作、奖励、max Q 就是强化学习。</p>
+          <textarea data-note="ai3-translator-q" placeholder="写 2 组判别信号：什么时候 Q 是 Query？什么时候 Q 是动作价值？"></textarea>
+          <details>
+            <summary>看答案骨架</summary>
+            <div class="answer-block">
+              <p>若题干出现 Q/K/V、softmax、Transformer、自注意力、token 之间相关性，Q 表示 Query，即当前位置想查询什么；K 是 Key，V 是 Value。若题干出现状态 s、动作 a、奖励 r、折扣因子 γ、下一状态最大 Q，Q(s,a) 表示在状态 s 执行动作 a 的长期动作价值。</p>
+            </div>
+          </details>
+        </article>
+      </div>
+      <div class="mark">
+        <strong>给今天的你：</strong>你不是要一口气变成 AI 专家。Day3 真正要拿下的是：看到题干不慌，能把它放进<span class="focus">任务层、模型层、训练层、评价层</span>里，再写出第一句话。这个能力一旦长出来，后面混合题就会突然没那么吓人。
+      </div>
+    </section>
+
+    <section class="card" id="map">
+      <h2>2. 题型地图：先分题，再作答</h2>
+      <table>
+        <thead><tr><th>题型</th><th>常见样子</th><th>第一反应</th><th>答案骨架</th></tr></thead>
+        <tbody>
+          <tr><td>选择/填空</td><td>问算法属于哪类、某个词的定义</td><td>先定位章节：机器学习/深度/生成/强化</td><td>关键词 + 排除干扰项</td></tr>
+          <tr><td>公式解释</td><td>给线性回归、SVM、Q-learning 公式</td><td>逐个解释符号</td><td>公式 -> 符号 -> 目标 -> 陷阱</td></tr>
+          <tr><td>小计算</td><td>熵/信息增益、评价指标、AdaBoost、Q-learning</td><td>写出表格步骤</td><td>代入小数 -> 保留过程 -> 给结论</td></tr>
+          <tr><td>简答比较</td><td>监督/无监督/强化，RNN/LSTM，GAN/VAE</td><td>按“输入、目标、训练信号、优缺点”比较</td><td>同点 + 不同点 + 适用场景</td></tr>
+          <tr><td>综合题</td><td>给数据表、模型图、实验曲线</td><td>先读图/表，再定模型</td><td>题眼 -> 步骤 -> 结论 -> 解释</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="formulas">
+      <h2>3. 核心公式：这是速查表，不是第一遍学习材料</h2>
+      <p>如果你刚开始学，先看上一节“公式怎么学”；这一节是用来临考复盘和查漏的。每看一行，都要能补出一句人话：<span class="focus">它解决什么、每个符号是什么、题目怎么问</span>。</p>
+      <table>
+        <thead><tr><th>考点</th><th>公式/表达</th><th>符号含义</th><th>考试提醒</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>线性回归</td>
+            <td class="formula-cell"><span class="display-eq">ŷ<span class="op">=</span><span class="mb">w</span><sup>T</sup><span class="mb">x</span><span class="op">+</span><span class="mi">b</span></span></td>
+            <td>x 是特征，w/b 是参数，ŷ 是预测值。</td>
+            <td>输出连续值；训练目标通常最小化平方误差。</td>
+          </tr>
+          <tr>
+            <td>MSE</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">J</span><span class="op">=</span><span class="frac"><span>1</span><span>n</span></span><span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span><span class="op">(</span>ŷ<sub>i</sub><span class="op">−</span><span class="mi">y</span><sub>i</sub><span class="op">)</span><sup>2</sup></span></td>
+            <td>预测和真实差的平方平均。</td>
+            <td>回归常用；对异常值敏感。</td>
+          </tr>
+          <tr>
+            <td>加权线性回归</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mb">w</span><sup>*</sup><span class="op">=</span><span class="op">(</span><span class="mb">X</span><sup>T</sup><span class="mb">R</span><span class="mb">X</span><span class="op">)</span><sup>−1</sup><span class="mb">X</span><sup>T</sup><span class="mb">R</span><span class="mb">Y</span></span></td>
+            <td>R 是样本权重矩阵，控制不同样本贡献。</td>
+            <td>题目常问 X/Y/w/R 分别是什么。</td>
+          </tr>
+          <tr>
+            <td>逻辑回归</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">p</span><span class="op">=</span><span class="mi">σ</span><span class="op">(</span><span class="mi">z</span><span class="op">)</span><span class="op">=</span><span class="frac"><span>1</span><span>1<span class="op">+</span><span class="mi">e</span><sup>−z</sup></span></span></span></td>
+	            <td>z 是特征加权求和后的分类分数，p 是正类概率。</td>
+            <td>它叫回归，但用于分类；常配交叉熵。</td>
+          </tr>
+          <tr>
+            <td>二分类交叉熵</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">L</span><span class="op">=</span><span class="op">−</span><span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span><span class="op">[</span><span class="mi">y</span><sub>i</sub><span class="func">log</span><span class="mi">p</span><sub>i</sub><span class="op">+</span><span class="op">(</span>1<span class="op">−</span><span class="mi">y</span><sub>i</sub><span class="op">)</span><span class="func">log</span><span class="op">(</span>1<span class="op">−</span><span class="mi">p</span><sub>i</sub><span class="op">)</span><span class="op">]</span></span></td>
+            <td>正确类别概率越低，惩罚越大。</td>
+            <td>逻辑回归/二分类常考“为什么用交叉熵”。</td>
+          </tr>
+          <tr>
+            <td>softmax</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">p</span><sub>k</sub><span class="op">=</span><span class="frac"><span><span class="mi">e</span><sup>z<sub>k</sub></sup></span><span><span class="sum"><span class="top">K</span><span class="sym">∑</span><span class="bot">j=1</span></span><span class="mi">e</span><sup>z<sub>j</sub></sup></span></span></span></td>
+            <td>把多类分数 z 变成和为 1 的概率。</td>
+            <td>多分类题眼；常接交叉熵损失。</td>
+          </tr>
+          <tr>
+            <td>结构风险</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">J</span><span class="op">=</span><span class="mi">经验风险</span><span class="op">+</span><span class="mi">λ</span><span class="mi">Ω</span><span class="op">(</span><span class="mi">f</span><span class="op">)</span></span></td>
+            <td>Ω(f) 惩罚模型复杂度，λ 控制惩罚强度。</td>
+            <td>过拟合/正则化简答题常用。</td>
+          </tr>
+          <tr>
+            <td>LDA</td>
+            <td class="formula-cell"><span class="display-eq"><span class="func">max</span><span class="op"> </span><span class="frac"><span>类间散度</span><span>类内散度</span></span></span></td>
+            <td>找投影方向，让类间远、类内近。</td>
+            <td>题眼：投影方向、类间大、类内小。</td>
+          </tr>
+          <tr>
+            <td>SVM</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">y</span><sub>i</sub><span class="op">(</span><span class="mb">w</span><sup>T</sup><span class="mb">x</span><sub>i</sub><span class="op">+</span><span class="mi">b</span><span class="op">)</span><span class="op">≥</span>1</span></td>
+            <td>样本被正确分类并在间隔外。</td>
+            <td>关键词：最大间隔、支持向量、超平面。</td>
+          </tr>
+          <tr>
+            <td>间隔</td>
+            <td class="formula-cell"><span class="display-eq"><span class="func">margin</span><span class="op">=</span><span class="frac"><span>2</span><span>||<span class="mb">w</span>||</span></span></span></td>
+            <td>w 越小，间隔越大。</td>
+            <td>SVM 优化直觉是最大化间隔。</td>
+          </tr>
+          <tr>
+            <td>熵</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">H</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span><span class="op">=</span><span class="op">−</span><span class="sum"><span class="top">K</span><span class="sym">∑</span><span class="bot">k=1</span></span><span class="mi">p</span><sub>k</sub><span class="func">log</span><sub>2</sub><span class="mi">p</span><sub>k</sub></span></td>
+            <td>集合不纯度；越混乱熵越大。</td>
+            <td>决策树用来选划分属性。</td>
+          </tr>
+          <tr>
+            <td>信息增益</td>
+            <td class="formula-cell"><span class="display-eq"><span class="func">Gain</span><span class="op">(</span><span class="mi">D</span><span class="op">,</span><span class="mi">A</span><span class="op">)</span><span class="op">=</span><span class="mi">H</span><span class="op">(</span><span class="mi">D</span><span class="op">)</span><span class="op">−</span><span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot">v</span></span><span class="frac"><span>|<span class="mi">D</span><sub>v</sub>|</span><span>|<span class="mi">D</span>|</span></span><span class="mi">H</span><span class="op">(</span><span class="mi">D</span><sub>v</sub><span class="op">)</span></span></td>
+            <td>按属性 A 划分后，熵减少多少。</td>
+            <td>增益越大，划分越好。</td>
+          </tr>
+          <tr>
+            <td>AdaBoost</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">α</span><span class="op">=</span><span class="frac"><span>1</span><span>2</span></span><span class="func">ln</span><span class="frac"><span>1<span class="op">−</span><span class="mi">e</span></span><span><span class="mi">e</span></span></span></span></td>
+            <td>e 是弱分类器加权错误率，α 是分类器权重。</td>
+            <td>错分样本权重增大；最终加权投票。</td>
+          </tr>
+          <tr>
+            <td>Precision</td>
+            <td class="formula-cell"><span class="display-eq"><span class="func">Precision</span><span class="op">=</span><span class="frac"><span>TP</span><span>TP<span class="op">+</span>FP</span></span></span></td>
+            <td>预测为正的里面有多少真正。</td>
+            <td>误报代价高时重视。</td>
+          </tr>
+          <tr>
+            <td>Recall</td>
+            <td class="formula-cell"><span class="display-eq"><span class="func">Recall</span><span class="op">=</span><span class="frac"><span>TP</span><span>TP<span class="op">+</span>FN</span></span></span></td>
+            <td>真实为正的里面抓住多少。</td>
+            <td>漏报代价高时重视。</td>
+          </tr>
+          <tr>
+            <td>F1</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">F</span><sub>1</sub><span class="op">=</span><span class="frac"><span>2PR</span><span>P<span class="op">+</span>R</span></span></span></td>
+            <td>Precision 和 Recall 的调和平均。</td>
+            <td>类别不平衡时比 Accuracy 更稳。</td>
+          </tr>
+          <tr>
+            <td>Q-learning</td>
+            <td class="formula-cell"><span class="display-eq"><span class="mi">Q</span><sub>new</sub><span class="op">=</span><span class="mi">Q</span><sub>old</sub><span class="op">+</span><span class="mi">α</span><span class="op">[</span><span class="mi">r</span><span class="op">+</span><span class="mi">γ</span><span class="func">max</span><span class="mi">Q</span><span class="op">(</span><span class="mi">s'</span><span class="op">,</span><span class="mi">a'</span><span class="op">)</span><span class="op">−</span><span class="mi">Q</span><sub>old</sub><span class="op">]</span></span></td>
+            <td>旧 Q 值往“即时奖励 + 下一状态最好价值”靠近。</td>
+            <td>一步更新只改当前 (s,a) 那一格。</td>
+          </tr>
+          <tr>
+            <td>Attention</td>
+            <td class="formula-cell"><span class="display-eq"><span class="func">softmax</span><span class="op">(</span><span class="frac"><span><span class="mb">Q</span><span class="mb">K</span><sup>T</sup></span><span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub>k</sub></span></span></span></span><span class="op">)</span><span class="mb">V</span></span></td>
+            <td>Q 查什么，K 被查索引，V 是内容。</td>
+            <td>Transformer 核心；除以 √d_k 防止分数过大。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>公式题最低保底：</strong>哪怕不会完整推导，也要写出“它解决什么任务、每个符号表示什么、优化目标是什么”。这三项通常能保住大部分步骤分。
+      </div>
+    </section>
+
+    <section class="card" id="embedded">
+      <h2>3.5 公式旁边立刻接题：别等到最后才发现不会用</h2>
+      <p>这一节专门解决你说的“公式堆在那里，但我不知道怎么记、怎么做题”。下面每个小剧场都按<span class="focus">先讲题眼 -> 再写第一步 -> 再做小题 -> 再看解析</span>来走。它们来自 OCR 后的《人工智能参考习题》和第14讲课程总结的高频信号：SVM 支持向量、L2 正则、信息增益率、AdaBoost、BP 和 loss 曲线。</p>
+      <div class="mark warnbox">
+        <strong>使用规则：</strong>不要一上来点开答案。先在输入框里写 2-4 句：这题考什么、第一步是什么、哪个相邻知识点最容易混。写不出来也没事，写“我卡在……”也比直接看答案有效。
+      </div>
+
+      <div class="exam-thread">
+        <article class="mini-case">
+          <h3><span class="tag">参考习题型</span>SVM 画边界题：为什么支持向量才决定边界</h3>
+          <p><strong>先讲人话：</strong>SVM 不是“随便画一条能分开的线”，而是在所有能分开的线里，选一条离两类最近样本都尽量远的线。离线最近的样本就是支持向量，它们像两边把线“撑住”。参考习题里出现过“画分类边界、圈支持向量、移除哪些样本会改变边界”这类问法。</p>
+          <div class="case-flow"><span>题眼</span><span>最大间隔、支持向量、分类边界、移除样本是否改变边界。</span></div>
+          <div class="case-flow"><span>第一步</span><span>先找两类样本之间最窄的通道，再找贴着间隔边界的最近样本；不要去看远离边界的普通点。</span></div>
+          <div class="case-flow"><span>易混点</span><span>支持向量不是“所有样本”，也不是“分类正确的样本”，而是离边界最近、决定间隔的样本。</span></div>
+          <textarea data-note="ai3-embed-svm" placeholder="练一下：如果题目问“移除哪些样本会让 SVM 分类边界变化”，你会先找什么？为什么远处样本通常不影响边界？"></textarea>
+          <details>
+            <summary>看丰满解析</summary>
+            <div class="answer-block">
+              <p>标准思路是先定位支持向量。SVM 的边界由最大间隔条件决定，真正卡住这条边界的是离超平面最近的正负样本。远离边界的样本即使移动一点，通常不会改变“最近点是谁”，所以分类边界不变；但支持向量被移除或位置改变，最大间隔的约束就会变化，边界可能随之改变。</p>
+              <p>考试作答别只写“找最近的点”。更稳的写法是：SVM 通过最大化分类间隔确定超平面，间隔边界上的样本称为支持向量，只有这些样本直接决定超平面位置，因此移除支持向量最可能改变分类边界。</p>
+            </div>
+          </details>
+        </article>
+
+        <article class="mini-case">
+          <h3><span class="tag">公式解释</span>L2 正则化：lambda 不能小于 0 的原因</h3>
+          <p><strong>先讲人话：</strong>L2 正则不是“多加一项显得高级”，它是在损失里加入参数大小惩罚，提醒模型别为了训练集噪声把权重调得特别大。第14讲总结和参考习题都强调 L2 的目的：约束权重、防止过拟合。</p>
+          <div class="math-card">
+            <div class="display-eq">
+              <span class="mi">L</span><span class="op">=</span>
+              <span class="op">(</span><span class="mb">Y</span><span class="op">−</span><span class="mb">X</span><span class="mb">w</span><span class="op">)</span><sup>T</sup>
+              <span class="op">(</span><span class="mb">Y</span><span class="op">−</span><span class="mb">X</span><span class="mb">w</span><span class="op">)</span>
+              <span class="op">+</span><span class="mi">λ</span><span class="mb">w</span><sup>T</sup><span class="mb">w</span>
+            </div>
+            <div class="math-note">读法：前半项管预测误差，后半项惩罚权重过大。lambda 控制惩罚强度。</div>
+          </div>
+          <div class="case-flow"><span>题眼</span><span>L2、正则化、权重平方和、过拟合、lambda 小于 0。</span></div>
+          <div class="case-flow"><span>第一步</span><span>先说明 L2 正则的本意：惩罚过大的权重，使模型别过度复杂。</span></div>
+          <textarea data-note="ai3-embed-l2" placeholder="练一下：如果 λ < 0，这一项为什么反而起不到正则化作用？请用“惩罚/鼓励权重变大”的语言写。"></textarea>
+          <details>
+            <summary>看丰满解析</summary>
+            <div class="answer-block">
+              <p>当 λ > 0 时，w<sup>T</sup>w 越大，目标函数增加越多，所以优化会倾向于避免过大的权重，这就是“约束模型复杂度”。当 λ < 0 时，权重越大，λw<sup>T</sup>w 反而越小，优化过程会被鼓励把权重放大，正好和正则化的目的相反。</p>
+              <p>标准答案可以写成：L2 正则化的目标是通过惩罚权重平方和来降低模型复杂度、防止过拟合；若 λ 为负，该项不再惩罚大权重，而会降低大权重带来的目标值，从而鼓励模型权重增大，不能起到正则化作用，还可能使优化不稳定。</p>
+            </div>
+          </details>
+        </article>
+
+        <article class="mini-case">
+          <h3><span class="tag">小计算</span>信息增益率：为什么不只看信息增益</h3>
+          <p><strong>先讲人话：</strong>信息增益喜欢“分得很细”的属性。比如一个属性几乎每个样本一个取值，训练集上看起来纯度特别高，但它可能只是把每个样本记住了，泛化很差。C4.5 用信息增益率修正这个偏好。</p>
+          <div class="case-flow"><span>题眼</span><span>决策树、属性取值很多、信息增益偏高、信息增益率、过拟合。</span></div>
+          <div class="case-flow"><span>第一步</span><span>先写信息增益 = 划分前熵 - 划分后加权熵，再说明“取值多属性可能虚高”。</span></div>
+          <div class="why-list">
+            <div><strong>ID3</strong><br>主要用信息增益选属性，直觉是让数据变得更纯。</div>
+            <div><strong>C4.5</strong><br>用信息增益率，惩罚分支过多，减少取值多属性的偏置。</div>
+          </div>
+          <textarea data-note="ai3-embed-gainratio" placeholder="练一下：某属性 ID 几乎每个样本一个取值，信息增益很高。为什么不一定应该选它？信息增益率在修正什么？"></textarea>
+          <details>
+            <summary>看丰满解析</summary>
+            <div class="answer-block">
+              <p>ID 这种属性把每个样本分到很小的分支里，训练集熵会急剧下降，信息增益看起来很大。但这种划分没有学到可泛化规律，只是把训练样本拆散甚至记住，容易过拟合。</p>
+              <p>信息增益率通过引入划分本身的信息量来惩罚分支过多的属性。作答时要写出三步：信息增益偏好取值多的属性；取值多可能导致过拟合或泛化差；信息增益率用于削弱这种偏好，使属性选择更稳。</p>
+            </div>
+          </details>
+        </article>
+
+        <article class="mini-case">
+          <h3><span class="tag">综合步骤</span>AdaBoost：先算带权错误，不是普通准确率</h3>
+          <p><strong>先讲人话：</strong>AdaBoost 的核心不是“找一个最强分类器”，而是一轮一轮训练弱分类器。上一轮分错的样本，下一轮权重变大，逼后面的弱分类器重点照顾难样本。参考习题里出现了“第一轮选哪个弱分类器、权重怎么变、强分类器怎么写”的综合题。</p>
+          <div class="case-flow"><span>题眼</span><span>弱分类器、样本权重、错分样本、第一轮迭代、强分类器。</span></div>
+          <div class="case-flow"><span>第一步</span><span>计算每个弱分类器的加权错误率 ε，不是数普通错了几个。</span></div>
+          <div class="case-flow"><span>标准流程</span><span>算 ε -> 选 ε 最小且小于 0.5 的弱分类器 -> 算 α -> 错分增权、正确降权 -> 归一化 -> 加权投票。</span></div>
+          <textarea data-note="ai3-embed-adaboost" placeholder="练一下：为什么 AdaBoost 第一轮不能只看“错了几个样本”？如果两个分类器错的数量一样，但错的是高权重样本，谁更差？"></textarea>
+          <details>
+            <summary>看丰满解析</summary>
+            <div class="answer-block">
+              <p>AdaBoost 的训练分布会给不同样本不同权重，因此错误率必须按样本权重求和。错一个高权重样本，比错一个低权重样本更严重，因为高权重样本代表当前模型还没处理好的难点。</p>
+              <p>第一轮若初始权重相同，普通错误个数和加权错误率可能一致；但从第二轮开始，权重已经变化，必须按加权错误率选弱分类器。考试里如果题干给了样本权重表，第一行就写“ε = 被错分样本权重之和”，这一步比最终小数更重要。</p>
+            </div>
+          </details>
+        </article>
+
+        <article class="mini-case">
+          <h3><span class="tag">判断/简答</span>BP 和激活函数：为什么“不可导映射”是坑</h3>
+          <p><strong>先讲人话：</strong>BP 是反向传播误差并更新参数的方法，它靠链式法则把输出层的错误一路传回前面的权重。如果中间的映射不可导，梯度就没法稳定地往前传，参数更新会出问题。参考习题里就有 BP 描述正误判断。</p>
+          <div class="case-flow"><span>题眼</span><span>BP、误差反向传播、隐藏层、链式法则、可导、梯度下降。</span></div>
+          <div class="case-flow"><span>第一步</span><span>先写 BP 的本质：从输出误差出发，按链式法则计算各层参数梯度。</span></div>
+          <textarea data-note="ai3-embed-bp" placeholder="练一下：为什么说 BP 不能随便配不可导映射函数？请用“链式法则/梯度/参数更新”写。"></textarea>
+          <details>
+            <summary>看丰满解析</summary>
+            <div class="answer-block">
+              <p>BP 的核心是沿网络从后往前传播误差信号，并用链式法则计算每一层参数对损失的影响。如果某个神经元映射函数不可导，链式法则在该位置无法正常给出梯度，梯度下降就难以更新对应参数。</p>
+              <p>考试表达不要只写“BP 要可导”。更完整的句式是：BP 依赖可导的复合函数结构，通过链式法则把输出层误差转化为各层参数梯度，因此激活函数通常需要可导或几乎处处可导，如 sigmoid、tanh、ReLU 等。</p>
+            </div>
+          </details>
+        </article>
+
+        <article class="mini-case">
+          <h3><span class="tag">读图诊断</span>训练损失和测试损失：别把所有病都叫过拟合</h3>
+          <p><strong>先讲人话：</strong>第6讲和第14讲都强调训练策略：看训练损失和测试/验证损失的组合。训练集都学不好，叫欠拟合或优化问题；训练集很好但测试差，才是典型过拟合。参考习题也有随模型复杂度变化的训练误差、测试误差曲线题。</p>
+          <div class="case-flow"><span>题眼</span><span>模型复杂度、训练误差、测试误差、过拟合、欠拟合、优化问题、分布差异。</span></div>
+          <div class="case-flow"><span>第一步</span><span>先分别看训练曲线和测试曲线，而不是只看其中一条。</span></div>
+          <div class="why-list">
+            <div><strong>两边都高</strong><br>模型没学好，可能欠拟合，也可能训练优化没到位。</div>
+            <div><strong>训练低测试高</strong><br>典型过拟合，经验风险低但泛化差。</div>
+            <div><strong>训练降不动</strong><br>优先怀疑优化问题：学习率、初始化、模型结构等。</div>
+            <div><strong>测试整体异常高</strong><br>还要考虑训练/测试分布差异，不要只背过拟合。</div>
+          </div>
+          <textarea data-note="ai3-embed-loss" placeholder="练一下：训练误差随复杂度增加持续下降，测试误差先降后升，这说明什么？如果训练误差和测试误差都很高，又该怎么判断？"></textarea>
+          <details>
+            <summary>看丰满解析</summary>
+            <div class="answer-block">
+              <p>训练误差随模型复杂度增加通常会下降，因为模型更容易拟合训练集。测试误差先降后升表示一开始模型表达能力变强、泛化改善；复杂度过高后开始记住训练噪声，测试误差上升，这是过拟合。</p>
+              <p>如果训练误差和测试误差都高，不能直接写过拟合。更可能是欠拟合或优化不足：模型表达能力太弱、特征不足、训练不充分、学习率不合适等。对应改进是提高模型能力、改进特征、调整优化策略；过拟合才主要用正则、早停、降复杂度和数据增强。</p>
+            </div>
+          </details>
+        </article>
+      </div>
+    </section>
+
+    <section class="card" id="models">
+      <h2>4. 模型对比：简答题按维度写</h2>
+      <table>
+        <thead><tr><th>模型/方法</th><th>一句话</th><th>适合什么</th><th>常见坑</th></tr></thead>
+        <tbody>
+          <tr><td>线性回归</td><td>用直线/超平面拟合连续输出。</td><td>房价、分数、数值预测。</td><td>不是分类模型。</td></tr>
+          <tr><td>逻辑回归</td><td>用 sigmoid 输出类别概率。</td><td>二分类。</td><td>名字有回归，但本质是分类。</td></tr>
+          <tr><td>LDA</td><td>找投影方向，让类间远、类内近。</td><td>线性分类/降维。</td><td>和线性回归不是一回事。</td></tr>
+          <tr><td>SVM</td><td>找最大间隔分类超平面。</td><td>小中规模分类、边界清晰问题。</td><td>支持向量决定边界，不是所有样本同等重要。</td></tr>
+          <tr><td>决策树</td><td>像问问题一样逐步划分数据。</td><td>可解释分类、表格数据。</td><td>容易过拟合，常需剪枝/集成。</td></tr>
+          <tr><td>AdaBoost</td><td>把多个弱分类器加权组合成强分类器。</td><td>分类集成。</td><td>错分样本权重会变大。</td></tr>
+          <tr><td>CNN</td><td>用卷积提取局部空间特征。</td><td>图像、局部模式。</td><td>不是主要处理长文本依赖。</td></tr>
+          <tr><td>RNN/LSTM</td><td>处理序列；LSTM 用门控保留长期信息。</td><td>文本、时间序列、语音。</td><td>普通 RNN 有梯度消失问题。</td></tr>
+          <tr><td>Transformer</td><td>用自注意力建模任意位置关系。</td><td>NLP、生成、理解。</td><td>BERT 偏理解，GPT 偏生成。</td></tr>
+          <tr><td>GAN</td><td>生成器和判别器对抗训练。</td><td>图像生成、数据生成。</td><td>训练不稳定、模式崩塌。</td></tr>
+          <tr><td>强化学习</td><td>智能体与环境交互，通过奖励学习策略。</td><td>决策、控制、游戏。</td><td>不是每个样本都有标准标签。</td></tr>
+        </tbody>
+      </table>
+      <div class="diagram" aria-label="AI 模型选择地图">
+        <svg viewBox="0 0 930 310" role="img">
+          <rect width="930" height="310" fill="#fbfdfe"/>
+          <g font-family="sans-serif" fill="#18212a" font-size="15">
+            <rect x="34" y="112" width="120" height="58" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="60" y="146" font-weight="700">题干任务</text>
+            <rect x="220" y="32" width="140" height="58" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="247" y="66" font-weight="700">预测数值</text>
+            <text x="242" y="88" fill="#687581">线性回归</text>
+            <rect x="220" y="112" width="140" height="58" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="247" y="146" font-weight="700">判断类别</text>
+            <text x="232" y="168" fill="#687581">LR / SVM / 树</text>
+            <rect x="220" y="192" width="140" height="58" rx="8" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="247" y="226" font-weight="700">序列/文本</text>
+            <text x="235" y="248" fill="#687581">RNN / LSTM</text>
+            <rect x="440" y="32" width="150" height="58" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="470" y="66" font-weight="700">图像局部</text>
+            <text x="497" y="88" fill="#687581">CNN</text>
+            <rect x="440" y="112" width="150" height="58" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="470" y="146" font-weight="700">长距离关系</text>
+            <text x="468" y="168" fill="#687581">Transformer</text>
+            <rect x="440" y="192" width="150" height="58" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="470" y="226" font-weight="700">生成样本</text>
+            <text x="475" y="248" fill="#687581">GAN / VAE</text>
+            <rect x="670" y="112" width="170" height="58" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="706" y="146" font-weight="700">奖励反馈</text>
+            <text x="696" y="168" fill="#687581">强化学习 / Q</text>
+            <path d="M154 141 H220 M360 61 H440 M360 141 H440 M360 221 H440 M590 141 H670" stroke="#687581" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <path d="M154 141 C182 70 190 61 220 61 M154 141 C182 220 190 221 220 221 M590 221 C650 221 650 160 670 141" stroke="#687581" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+          </g>
+          <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+    </section>
+
+    <section class="card" id="deep">
+      <h2>5. 深度、生成、强化：后半简答高频</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>RNN vs LSTM</strong>
+	          RNN 用“隐藏状态”保存过去的信息，但长序列反传容易梯度消失。LSTM 加门控和记忆单元，让重要信息可以保留更久。
+        </div>
+        <div class="box">
+          <strong>Transformer</strong>
+          用自注意力让每个 token 看见其它 token，核心公式是 Attention(Q,K,V)。Encoder 偏理解，Decoder 偏生成。
+        </div>
+        <div class="box">
+          <strong>GAN</strong>
+          生成器负责造假，判别器负责识别真假；训练目标是对抗。优点是样本逼真，问题是训练不稳定。
+        </div>
+        <div class="box">
+          <strong>VAE / 扩散模型</strong>
+          VAE 学潜变量分布；扩散模型先加噪再学会逐步去噪。简答题重在“生成过程”和“训练目标”。
+        </div>
+        <div class="box">
+          <strong>强化学习</strong>
+          四件套：状态、动作、奖励、策略。Q-learning 是 model-free，更新 Q(s,a) 的长期价值估计。
+        </div>
+        <div class="box">
+          <strong>探索与利用</strong>
+          利用是选当前最优，探索是尝试未知动作。epsilon-greedy 用小概率探索，避免只盯眼前最优。
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>6. 题卡：按考试语言练</h2>
+
+      <article class="drill">
+        <h3>题 1：公式解释 - 加权线性回归</h3>
+        <p>解释下方加权线性回归闭式解中 X、Y、w、R 的含义，并说明 R 的作用。</p>
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="mb">w</span><sup>*</sup><span class="op">=</span>
+            <span class="op">(</span><span class="mb">X</span><sup>T</sup><span class="mb">R</span><span class="mb">X</span><span class="op">)</span><sup>−1</sup>
+            <span class="mb">X</span><sup>T</sup><span class="mb">R</span><span class="mb">Y</span>
+          </div>
+          <div class="math-note">读法：带权重 R 的最小二乘闭式解，用来求让预测最贴近 Y 的参数 w。</div>
+        </div>
+        <textarea data-note="ai3q1" placeholder="先写：这是什么模型？X/Y/w/R 分别是什么？R 为什么存在？"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="rubric"><span>2 分</span><span>说明这是线性回归/加权最小二乘的闭式解，用于连续值预测。</span></div>
+          <div class="rubric"><span>3 分</span><span>X 是特征矩阵，Y 是真实标签/目标值，w 是待学习参数，R 是样本权重矩阵。</span></div>
+          <div class="rubric"><span>2 分</span><span>R 改变不同样本对损失的贡献，可用于强调重要样本或降低噪声/异常样本影响。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 2：SVM 简答</h3>
+        <p>不用推导优化问题，解释 SVM 为什么叫“最大间隔”分类器，支持向量是什么。</p>
+        <textarea data-note="ai3q2" placeholder="先写：超平面、间隔、支持向量、泛化。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p>SVM 要找一个分类超平面，把两类样本分开，并让离超平面最近的样本到超平面的距离尽可能大。这个距离就是间隔，间隔越大，模型对边界附近扰动越不敏感，通常泛化更好。</p>
+            <p>支持向量是离分类超平面最近、真正决定边界位置的样本。移动远离边界的普通样本通常不影响超平面，但移动支持向量可能改变分类边界。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 3：决策树信息增益</h3>
+        <p>某属性划分前数据集熵为 1.0，按该属性划分后两个子集权重分别为 1/2、1/2，熵分别为 0、0.5。信息增益是多少？这个属性好不好？</p>
+        <textarea data-note="ai3q3" placeholder="先写 Gain = 原熵 - 加权子熵。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+	          <div class="rubric"><span>2 分</span><span>加权子熵 = 1/2 × 0 + 1/2 × 0.5 = 0.25。</span></div>
+          <div class="rubric"><span>2 分</span><span>信息增益 = 1.0 - 0.25 = 0.75。</span></div>
+          <div class="rubric"><span>2 分</span><span>增益较大，说明划分后不纯度明显降低，是较好的划分属性。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 4：Precision / Recall</h3>
+        <p>某模型 TP=30，FP=10，FN=20。求 Precision、Recall，并说明如果漏诊代价高应更重视哪个指标。</p>
+        <textarea data-note="ai3q4" placeholder="先写 P=TP/(TP+FP)，R=TP/(TP+FN)。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="rubric"><span>2 分</span><span>Precision = 30/(30+10)=0.75。</span></div>
+          <div class="rubric"><span>2 分</span><span>Recall = 30/(30+20)=0.60。</span></div>
+          <div class="rubric"><span>2 分</span><span>漏诊代价高时更重视 Recall，因为 Recall 衡量真实正例被找回多少。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 5：RNN/LSTM 简答</h3>
+        <p>为什么普通 RNN 难以学习长期依赖？LSTM 用什么思路缓解？</p>
+        <textarea data-note="ai3q5" placeholder="先写：长序列反传、梯度消失/爆炸、门控、记忆单元。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p>普通 RNN 训练时误差需要沿很多时间步反向传播，梯度会反复相乘，可能越来越小或越来越大，导致很早之前的信息难以影响当前参数更新，这就是长期依赖问题。</p>
+            <p>LSTM 引入记忆单元和输入门、遗忘门、输出门。遗忘门决定旧信息保留多少，输入门决定新信息写入多少，输出门决定输出多少，因此能让重要信息跨更长时间传递。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 6：Transformer / Attention</h3>
+        <p>解释下方 Attention 公式中 Q、K、V 的直观含义，并说明 Transformer 为什么适合文本建模。</p>
+        <div class="math-card">
+          <div class="display-eq">
+            <span class="func">Attention</span><span class="op">(</span><span class="mb">Q</span><span class="op">,</span><span class="mb">K</span><span class="op">,</span><span class="mb">V</span><span class="op">)</span>
+            <span class="op">=</span>
+            <span class="func">softmax</span><span class="op">(</span>
+            <span class="frac"><span><span class="mb">Q</span><span class="mb">K</span><sup>T</sup></span><span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub>k</sub></span></span></span></span>
+            <span class="op">)</span><span class="mb">V</span>
+          </div>
+          <div class="math-note">读法：Q 和 K 计算相关性，softmax 变成权重，再按权重汇总 V。</div>
+        </div>
+        <textarea data-note="ai3q6" placeholder="先写：Q 查什么，K 匹配索引，V 内容；自注意力建模长距离依赖。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p>Q 可以理解成“我要查什么”，K 是“每个位置可被匹配的索引”，V 是“真正要汇总的内容”。QK^T 计算注意力分数，softmax 变成权重，再对 V 加权求和。</p>
+            <p>Transformer 用自注意力让句子中任意两个位置直接建立联系，不需要像 RNN 那样一步步传递，因此更适合捕捉长距离依赖，也更容易并行训练。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 7：GAN 简答</h3>
+        <p>说明 GAN 中生成器和判别器分别做什么，并写出 GAN 训练的基本思想。</p>
+        <textarea data-note="ai3q7" placeholder="先写：生成器造假，判别器辨真假，对抗训练。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p>生成器接收随机噪声，生成尽可能像真实数据的样本。判别器接收真实样本和生成样本，判断它们是真还是假。</p>
+            <p>训练时两者对抗：判别器努力提高识别真假能力，生成器努力骗过判别器。理想情况下，生成器生成的样本越来越接近真实数据分布。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 8：Q-learning 一步更新</h3>
+        <p>已知 Q(s,a)=2，学习率 α=0.5，折扣因子 γ=0.8，即时奖励 r=4，下一状态最大 Q 值为 5。更新后的 Q(s,a) 是多少？</p>
+	        <textarea data-note="ai3q8" placeholder="先写目标值：即时奖励 + 折扣因子 × 下一状态最大 Q，再写旧值往目标值靠近。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+	          <div class="rubric"><span>2 分</span><span>目标值 = 即时奖励 + 折扣因子 × 下一状态最大 Q = 4 + 0.8 × 5 = 8。</span></div>
+          <div class="rubric"><span>2 分</span><span>TD 误差 = 目标值 - 旧 Q = 8 - 2 = 6。</span></div>
+	          <div class="rubric"><span>2 分</span><span>新 Q = 2 + 0.5 × 6 = 5。</span></div>
+          <div class="answer-block"><p>考试提醒：一步 Q-learning 只更新当前这个 (s,a)，其它格子不变。</p></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题 9：过拟合与结构风险 - 不是只背“加正则”</h3>
+        <p>某分类模型训练集准确率 99%，测试集准确率 70%。老师问：这是什么现象？请用经验风险、期望风险、结构风险解释，并给出 3 种改进方法。</p>
+        <textarea data-note="ai3q9" placeholder="先写：现象 -> 风险语言 -> 为什么 -> 怎么改。不要只写“过拟合，加正则”。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>现象：</strong>这是过拟合。模型在训练集上表现极好，但在测试集上明显下降，说明它可能把训练数据里的偶然细节甚至噪声也学进去了。</p>
+            <p><strong>风险语言：</strong>经验风险指训练集上的损失，训练准确率 99% 说明经验风险很小；期望风险指真实分布或新样本上的损失，测试准确率只有 70% 说明期望风险仍然较大。二者差距大，就是泛化能力差。</p>
+            <p><strong>结构风险：</strong>结构风险最小化是在经验风险之外加入模型复杂度惩罚。它不是让训练集拟合越好越好，而是在“训练集拟合”和“模型别太复杂”之间折中。L1/L2 正则、限制模型深度、早停都属于这个思路。</p>
+            <p><strong>可写方法：</strong>加入 L2/L1 正则；早停；降低模型复杂度；增加数据或数据增强；交叉验证选择超参数；剪枝或 dropout。考试答三种即可，但要说明它们为什么能减少对训练集噪声的依赖。</p>
+          </div>
+        </details>
+      </article>
+
+	      <article class="drill">
+	        <h3>题 10：综合分流 - 看到题干先选模型和第一步</h3>
+	        <p>分别判断下面四个题眼最该想到什么模型/公式，并写第一步：A. “类间尽量远，类内尽量近”；B. “最大间隔、支持向量”；C. “正确类别概率太低要被惩罚”；D. “当前 Q 值往即时奖励加未来最好价值靠近”。</p>
+        <textarea data-note="ai3q10" placeholder="A：模型 + 第一句。&#10;B：模型 + 第一句。&#10;C：模型/损失 + 第一句。&#10;D：模型/公式 + 第一步。"></textarea>
+        <details>
+          <summary>看答案和解析</summary>
+          <div class="rubric"><span>A</span><span>LDA/Fisher 线性判别分析。第一句：它寻找投影方向，使投影后类间差异尽量大、类内差异尽量小，常用于监督分类或降维。</span></div>
+          <div class="rubric"><span>B</span><span>SVM。第一句：SVM 寻找能分开样本且间隔最大的超平面，真正决定边界的是离超平面最近的支持向量。</span></div>
+          <div class="rubric"><span>C</span><span>交叉熵。第一句：分类模型输出概率，交叉熵直接惩罚正确类别概率太低，因此常用于逻辑回归或 softmax 多分类。</span></div>
+	          <div class="rubric"><span>D</span><span>Q-learning。第一步：先算“即时奖励 + 折扣后的下一状态最大 Q”作为目标值，再用学习率 α 让旧 Q 值向目标值靠近。</span></div>
+          <div class="answer-block">
+            <p><strong>这题的训练目标：</strong>不是让你背四个名词，而是训练“题眼 -> 模型 -> 第一句”的速度。考试里选择题、填空题、简答题、综合题常常只换包装，核心信号不会变。</p>
+          </div>
+	        </details>
+	      </article>
+
+	      <article class="drill">
+	        <h3>题 11：第4讲模型对比 - 别把“线性分类”全答成一个东西</h3>
+	        <p>老师给出一个二分类任务，并追问：“逻辑回归、LDA、感知器、SVM 都能和线性分类有关，它们的核心区别是什么？”请按“输出/目标、训练准则、考试关键词、常见坑”写一个简答。</p>
+	        <textarea data-note="ai3q11" placeholder="先写四行：逻辑回归、LDA、感知器、SVM。每行至少写一个关键词和一个区别点。"></textarea>
+	        <details>
+	          <summary>看答案和解析</summary>
+	          <div class="answer-block">
+	            <p><strong>逻辑回归：</strong>先算线性分数，再用 sigmoid 输出正类概率，常用交叉熵训练。关键词是概率输出、sigmoid、二分类。它适合需要解释“属于某类的概率”的场景。</p>
+	            <p><strong>LDA：</strong>利用标签信息找一个投影方向，让投影后类间尽量远、类内尽量近。关键词是 Fisher 准则、类间散度、类内散度、降维/分类。它不是在直接最大化分类间隔，而是在找有利于区分类别的投影。</p>
+	            <p><strong>感知器：</strong>用硬阈值把线性分数变成类别，目标是把样本分对。它的问题是阶跃函数不光滑、难优化，而且如果有很多条线都能分对，它没有告诉你哪条更稳。</p>
+	            <p><strong>SVM：</strong>在正确分类的基础上最大化间隔，离边界最近的支持向量决定超平面。关键词是最大间隔、支持向量、Hinge 损失、核函数。它强调边界稳健性，而不强调概率输出。</p>
+	          </div>
+	          <div class="mark warnbox">
+	            <strong>为什么这题重要：</strong>第4讲 PPT 把这些方法放在同一张“优化方法/损失函数/激活函数”对比表里。考试很可能不让你机械背定义，而是问“同样是线性分类，为什么不是同一个模型”。你只要抓住概率、投影、硬分类、最大间隔四个词，就不会乱。
+	          </div>
+	        </details>
+	      </article>
+
+	      <article class="drill">
+	        <h3>题 12：第6讲训练策略 - 看 loss 曲线别只喊“过拟合”</h3>
+	        <p>有三个模型训练结果：A. 训练损失高，验证损失也高；B. 训练损失低，验证损失高；C. 训练损失下降很慢，两条曲线都卡在较高位置。分别判断更可能是什么问题，并给出对应改进。</p>
+	        <textarea data-note="ai3q12" placeholder="先按 A/B/C 分三段：现象 -> 判断 -> 改进。注意不要所有情况都写正则化。"></textarea>
+	        <details>
+	          <summary>看答案和解析</summary>
+	          <div class="rubric"><span>A</span><span>训练损失和验证损失都高，说明模型连训练集都学不好，更像欠拟合。可增加模型复杂度、加入更有效特征、训练更久，或减弱过强正则化。</span></div>
+	          <div class="rubric"><span>B</span><span>训练损失低、验证损失高，是典型过拟合。模型把训练集细节学得太死，泛化差。可用正则化、早停、数据增强、增加数据、降低模型复杂度、剪枝或 dropout。</span></div>
+	          <div class="rubric"><span>C</span><span>训练损失下降慢且整体较高，可能是优化问题或训练策略不合适。可调整学习率、优化器、批归一化、动量、自适应学习率，或检查初始化和数据预处理。</span></div>
+	          <div class="answer-block">
+	            <p><strong>评分关键：</strong>这题不是问你背几个改进方法，而是问你能不能从“训练损失/验证损失的组合”判断病因。第6讲训练策略图的核心就是这张诊断表：过拟合用限制复杂度和增强泛化，欠拟合用提升表达能力，优化问题用学习率和优化器等训练手段。</p>
+	            <p><strong>常见错因：</strong>看到验证损失高就一律写正则化。正则化主要针对 B；如果 A 里训练损失也高，模型可能根本没学会，再强行加正则会更学不动。</p>
+	          </div>
+	        </details>
+	      </article>
+	    </section>
+
+    <section class="card" id="gate">
+      <h2>7. AI Day3 过关闸门</h2>
+      <div class="grid">
+	        <div class="box">
+	          <strong>B 级</strong>
+	          能解释核心公式的符号含义；能把模型按回归/分类/序列/生成/强化分流；能完成小规模信息增益、Precision/Recall、Q-learning 更新；能看 loss 组合判断过拟合/欠拟合/优化问题。
+	        </div>
+	        <div class="box">
+	          <strong>A 级</strong>
+	          能把参考习题里的简答题写成“概念 -> 原理 -> 优缺点/适用场景”；模型比较题不只背词，而能说明为什么，并能在换问法时区分逻辑回归、LDA、感知器、SVM。
+	        </div>
+      </div>
+      <div class="flash-grid">
+	        <div><strong>线性回归</strong>连续值 + MSE</div>
+	        <div><strong>SVM</strong>最大间隔 + 支持向量</div>
+	        <div><strong>决策树</strong>熵 + 信息增益</div>
+	        <div><strong>Q-learning</strong>旧 Q 往目标值靠近</div>
+	        <div><strong>LDA</strong>类间远 + 类内近</div>
+	        <div><strong>训练策略</strong>训练/验证 loss 一起看</div>
+	      </div>
+      <textarea data-note="ai3-summary" placeholder="闭眼写：1. 三个你最怕的公式；2. 每个公式的符号含义；3. 下次看到题眼时第一步做什么。"></textarea>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./study_update_roadmap.html">回更新路线</a> · <a href="./day2_ai_reference_nn_cards.html">回神经网络题卡</a> · <a href="./day4_ai_unsupervised_rl_closure.html">接 AI Day4 无监督与强化学习</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-ai-day3-formula-model";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const id = area.dataset.note;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散最后48小时高分训练：从知识到真题动作</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --ink: #172331;
+      --muted: #647386;
+      --line: #d9e3ec;
+      --blue: #1f6391;
+      --green: #19704f;
+      --red: #a43a36;
+      --amber: #946618;
+      --purple: #6550a7;
+      --soft-blue: #eef7ff;
+      --soft-green: #eef9f4;
+      --soft-red: #fff3f0;
+      --soft-amber: #fff8e7;
+      --shadow: 0 14px 34px rgba(23,35,49,.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf4fb 0, #f5f7fa 330px, #fff 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+      letter-spacing: 0;
+    }
+    main { width: min(1180px, calc(100% - 30px)); margin: 0 auto; padding: 28px 0 72px; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); font-weight: 760; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.98);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .muted { color: var(--muted); }
+    .focus {
+      color: #11202d;
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #ffe49a 58%);
+      padding: 0 2px;
+    }
+    .math {
+      font-family: "Times New Roman", "STIX Two Text", "Cambria Math", "Songti SC", serif;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+    .pillrow, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill, .btn {
+      border: 1px solid #bdd5e8;
+      border-radius: 999px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 6px 11px;
+      font-size: 14px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+    .btn { border-radius: 8px; }
+    .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .pill.hot { color: var(--red); border-color: #dfaaa3; background: var(--soft-red); }
+    .pill.good { color: var(--green); border-color: #a7d3b8; background: var(--soft-green); }
+    .pill.warn { color: var(--amber); border-color: #ddc184; background: var(--soft-amber); }
+    .pill.purple { color: var(--purple); border-color: #c7bae5; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card strong { color: var(--blue); }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      margin-top: 12px;
+    }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 11px; vertical-align: top; text-align: left; }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .quiz { display: grid; gap: 12px; margin-top: 12px; }
+    .q {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 15px;
+    }
+    .q.done { border-color: #a7d3b8; background: var(--soft-green); }
+    .tag {
+      display: inline-block;
+      border: 1px solid #c9d7e4;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--blue);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 850;
+      margin-bottom: 6px;
+    }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .option {
+      width: 100%;
+      border: 1px solid #cbd9e5;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      padding: 10px 11px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .option.correct { border-color: #91caa8; background: var(--soft-green); color: #145838; }
+    .option.wrong { border-color: #dfa9a1; background: var(--soft-red); color: #842d28; }
+    .feedback {
+      display: none;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 11px 13px;
+      margin-top: 9px;
+    }
+    .feedback.show { display: block; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 900; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid #cbd9e5;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 11px;
+      font: inherit;
+      resize: vertical;
+      margin-top: 8px;
+    }
+    .checklist label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+    .micro { color: var(--muted); font-size: 13px; }
+    @media (max-width: 880px) {
+      main { width: min(100% - 22px, 1180px); padding-top: 18px; }
+      .grid, .grid.three, .options { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>离散最后48小时高分训练</h1>
+      <p class="muted">这页不是新开一门课，而是把你已经学过的 Day3-Day7、希冀 2024/2025/2023 和多年证明套路压成 <span class="focus">考场动作</span>。你每做一题，都要能说出：这题属于哪个盒子、第一步写什么、错了回哪一页补。</p>
+      <div class="pillrow">
+        <span class="pill hot">6/28 离散临考</span>
+        <span class="pill good">题型分流 + 第一动作</span>
+        <span class="pill warn">解析要会复述</span>
+        <span class="pill purple">真题风味变式</span>
+      </div>
+      <div class="actions">
+        <a class="btn primary" href="#quiz">做12题查漏</a>
+        <a class="btn" href="#templates">看卷面模板</a>
+        <a class="btn" href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">回精练闸门</a>
+        <a class="btn" href="./day7_discrete_final_recall.html">回Day7速查</a>
+        <a class="btn" href="./final_two_subject_command_center.html">回最后两科作战台</a>
+      </div>
+    </header>
+
+    <section>
+      <h2>0. 怎么用：只练“能上卷面的反应”</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>先学再刷，但现在要学会调用</h3>
+          <p>前面讲义负责教知识；这页负责让知识能在题目里被叫出来。遇到不会的题，不要骂自己笨，先问：<span class="focus">我是没认出题型，还是认出题型但不会下一步？</span></p>
+        </div>
+        <div class="card">
+          <h3>三次点击法</h3>
+          <p>每题先选答案；看解析后，用自己的话复述“题眼是什么”；最后决定回哪个页面补：Day4 补前束/Skolem，Day6 补证明链，Day7 补全卷速查，希冀卷补原题。</p>
+        </div>
+      </div>
+      <div class="note">
+        <strong>资料依据：</strong>希冀 2024 参考卷与解析、希冀 2025 真题、希冀 2023 真题、2020/2022 往年题结构，以及现有 Day4/Day5/Day6/Day7 离散讲义。这里不凭空造奇怪题，题目都围绕这些卷面信号变形。
+      </div>
+    </section>
+
+    <section>
+      <h2>1. 六个高分盒子：题目先归类，再动笔</h2>
+      <table>
+        <thead><tr><th>盒子</th><th>卷面信号</th><th>第一动作</th><th>最常见丢分</th><th>回哪里补</th></tr></thead>
+        <tbody>
+          <tr><td>主范式/真值表</td><td>主析取、主合取、成真赋值、F0 真值列</td><td>固定变量顺序，先算最后一列。主析取看 1 行，主合取看 0 行。</td><td>主合取映射反了：0 写原变量，1 写否定。</td><td><a href="./day7_discrete_final_recall.html">Day7</a>、<a href="./discrete_hiji_ingest/discrete_2025_hiji_interactive.html">2025-24</a></td></tr>
+          <tr><td>前束/Skolem</td><td>化为前束范式、无 ∃ 前束、Skolem 范式</td><td>改名防冲突 -> 消蕴含 -> 否定内移 -> 量词前移 -> 母式化 -> Skolem。</td><td>Skolem 函数参数写错：只依赖它左侧仍在前缀里的全称变量。</td><td><a href="./day4_discrete_prenex_skolem_axiom.html">Day4</a>、<a href="./discrete_hiji_ingest/discrete_2025_hiji_interactive.html">2025-26</a></td></tr>
+          <tr><td>语义推论</td><td><span class="math">Γ ⊨ Q</span>、是否成立、语义方法</td><td>证明成立：反设前提全真、结论假。证明不成立：给反例三件套。</td><td>只让结论假，却没证明所有前提真。</td><td><a href="./discrete_proof_chain_lab.html">证明链条</a></td></tr>
+          <tr><td>反模型/解释构造</td><td>构造解释、给定论域 D、关系表、使公式为假</td><td>从“公式怎样才假”倒推每个谓词/关系表该怎么设。</td><td>只写表，不说明为什么前提真/结论假或公式整体假。</td><td><a href="./discrete_hiji_ingest/discrete_2024_hiji_interactive.html">2024 语义证明题</a></td></tr>
+          <tr><td>公理系统概念</td><td>可靠性、完全性、协调、独立、推演序列</td><td>先分清 <span class="math">⊨</span> 是语义，<span class="math">⊢</span> 是证明；可靠性从 <span class="math">⊢</span> 到 <span class="math">⊨</span>，完全性反过来。</td><td>以为扩充公理能修复不可靠；或把完全性箭头背反。</td><td><a href="./day7_discrete_final_recall.html">Day7</a></td></tr>
+          <tr><td>形式证明</td><td>公理方法证明、MP、UG、不可用演绎定理</td><td>先写自然骨架，再把每一行标为前提、公理实例、MP、UG 或已给定定理。</td><td>题目禁用演绎定理还直接“假设前件推出后件”。</td><td><a href="./day6_discrete_proof_sprint.html">Day6</a>、<a href="./discrete_proof_chain_lab.html">链条工坊</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="quiz">
+      <h2>2. 12题临考查漏：每题都要看解析</h2>
+      <p class="muted">这些题故意不长，但每题都对应卷面高频坑。选完以后读解析；如果解析里的“下次口令”你说不出来，就不算真正过关。</p>
+      <div class="quiz" id="quizBox"></div>
+      <p class="micro" id="quizStats"></p>
+    </section>
+
+    <section id="templates">
+      <h2>3. 六个卷面模板：不会完整做也要写出过程分</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>语义推出成立</h3>
+          <p>反设存在解释/赋值 <span class="math">v</span>，使 <span class="math">Γ</span> 中所有前提为真而结论 <span class="math">Q</span> 为假。由结论假推出若干取值，再逐条使用前提，推出矛盾。因此不存在前提全真结论假的情形，<span class="math">Γ ⊨ Q</span>。</p>
+        </div>
+        <div class="card">
+          <h3>语义推出不成立</h3>
+          <p>取论域 <span class="math">D=...</span>，定义各谓词/命题变元解释。验证：每个前提都为真；但结论为假。因此这是一个反例，<span class="math">Γ ⊭ Q</span>。</p>
+        </div>
+        <div class="card">
+          <h3>前束/Skolem</h3>
+          <p>先变量改名，避免量词捕获；再消去蕴含、否定内移、量词前移。Skolem 化时，<span class="focus">存在量词左侧有哪些全称变量，就依赖谁</span>；若左侧没有全称变量，用常元。</p>
+        </div>
+        <div class="card">
+          <h3>主范式</h3>
+          <p>按固定变量顺序列真值表。主析取范式收集成真行：1 写原变量，0 写否定。主合取范式收集成假行：0 写原变量，1 写否定。</p>
+        </div>
+        <div class="card">
+          <h3>公理系统概念</h3>
+          <p>可靠性：若 <span class="math">Γ⊢Q</span>，则 <span class="math">Γ⊨Q</span>。完全性：若 <span class="math">Γ⊨Q</span>，则 <span class="math">Γ⊢Q</span>。可靠性是不证明错东西；完全性是不漏掉真东西。</p>
+        </div>
+        <div class="card">
+          <h3>形式证明保底</h3>
+          <p>若完整公理链写不完，至少写目标结构、可用定理、MP 链条和每一步来源。空白最亏；“自然骨架 + 部分形式化证据”通常还能抢过程分。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. 两个手写区：把解析变成自己的话</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>我的离散急救口令</h3>
+          <p class="muted">写 5 句你考前最容易忘的第一动作。</p>
+          <textarea data-save="rescue" placeholder="例：Γ⊨Q 先反设前提全真结论假；Skolem 函数只依赖左侧全称变量；主合取 0 写原变量 1 写否定……"></textarea>
+        </div>
+        <div class="card">
+          <h3>今日错题回炉</h3>
+          <p class="muted">每错一题写“错因 + 下次题眼 + 回哪里补”。</p>
+          <textarea data-save="wrong" placeholder="例：我把可靠性箭头背反了；下次看到可靠性先想“证明系统不证明错东西”；回 Day7 公理系统概念。"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>5. 上场闸门</h2>
+      <div class="checklist" id="gate">
+        <label><input type="checkbox" data-gate="g1"> 我能把题先分到六个盒子之一，而不是一上来硬算。</label>
+        <label><input type="checkbox" data-gate="g2"> 我能说出主析取/主合取分别看真值表哪类行，且主合取映射不反。</label>
+        <label><input type="checkbox" data-gate="g3"> 我能解释 Skolem 函数为什么依赖某些变量。</label>
+        <label><input type="checkbox" data-gate="g4"> 我能写语义推论成立和不成立的标准开头。</label>
+        <label><input type="checkbox" data-gate="g5"> 我能区分可靠性和完全性箭头。</label>
+        <label><input type="checkbox" data-gate="g6"> 我知道公理证明要一行一证据，题目禁用演绎定理时不能偷用。</label>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "final48-discrete-score-booster";
+    const state = JSON.parse(localStorage.getItem(KEY) || "{}");
+    const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+    const quiz = [
+      {
+        tag: "2024 公理系统",
+        q: "“若公理系统不具有可靠性，那么通过扩充公理集合，有可能使其具备可靠性。”这句话为什么错？",
+        options: [
+          "不可靠说明已经能证明语义上不成立的公式，扩充公理不会删除旧证明",
+          "可靠性只和真值表行数有关",
+          "扩充公理一定会让系统变弱",
+          "完全性和可靠性是同一个概念"
+        ],
+        answer: 0,
+        exp: "不可靠意味着系统已经证明出“语义上不该成立”的东西。扩充公理只会增加或保留可证明公式，不会把旧的错误证明擦掉。所以靠加公理不能修复不可靠。下次口令：可靠性坏了，问题是已经证错；加更多出发点不会删错。"
+      },
+      {
+        tag: "可靠性/完全性",
+        q: "可靠性和完全性的箭头方向，哪一项正确？",
+        options: [
+          "可靠性：Γ⊢Q -> Γ⊨Q；完全性：Γ⊨Q -> Γ⊢Q",
+          "可靠性：Γ⊨Q -> Γ⊢Q；完全性：Γ⊢Q -> Γ⊨Q",
+          "二者都只讨论真值表最后一列",
+          "二者都表示公式复杂度"
+        ],
+        answer: 0,
+        exp: "可靠性是“证明系统不会证明错东西”：能证明出来就语义有效，所以 Γ⊢Q -> Γ⊨Q。完全性是“语义上真的东西证明系统不漏掉”：Γ⊨Q -> Γ⊢Q。下次口令：可靠不乱证，完全不漏证。"
+      },
+      {
+        tag: "主合取范式",
+        q: "变量顺序为 p,q,r。某公式在赋值 101 时为假，则主合取范式中对应的大项是哪一个？",
+        options: [
+          "¬p∨q∨¬r",
+          "p∨¬q∨r",
+          "p∧¬q∧r",
+          "¬p∧q∧¬r"
+        ],
+        answer: 0,
+        exp: "主合取范式看假行。大项规则和小项相反：赋值为 0 写原变量，赋值为 1 写否定。101 表示 p=1,q=0,r=1，所以写 ¬p∨q∨¬r。下次口令：主合取是假行，1 变非，0 保原。"
+      },
+      {
+        tag: "2025 Skolem",
+        q: "公式前缀中出现 ∀x∃y∀z，Skolem 化时 y 应替换成什么形态？",
+        options: ["f(x)", "f(z)", "f(x,z)", "常元 a"],
+        answer: 0,
+        exp: "y 的存在量词左侧只有 ∀x，右侧的 ∀z 还没出现，不能依赖 z。因此 y=f(x)。这就是 2025-26 同类题的核心。下次口令：Skolem 只看左边已经出现的全称变量。"
+      },
+      {
+        tag: "前束流程",
+        q: "前束/Skolem 题最稳的第一步是什么？",
+        options: [
+          "变量改名，避免不同量词绑定的同名变量冲突",
+          "直接把所有量词搬到最前面",
+          "先写主析取范式",
+          "先判断可靠性"
+        ],
+        answer: 0,
+        exp: "前束题第一坑是变量捕获。如果不同量词用了同名变量，直接搬量词会改变公式含义。先改名防冲突，再消蕴含、否定内移、量词前移。下次口令：前束先改名，别让量词抢人。"
+      },
+      {
+        tag: "语义推论",
+        q: "要证明 Γ⊨Q 成立，最标准的语义反证开头是什么？",
+        options: [
+          "反设存在解释/赋值，使 Γ 中所有前提为真而 Q 为假",
+          "只要找一个 Q 为真的赋值即可",
+          "假设 Γ 中某个前提为假",
+          "直接写 Q 是定理"
+        ],
+        answer: 0,
+        exp: "Γ⊨Q 的失败情形只有一种：前提全真、结论假。证明成立就是排除这种失败情形。下次口令：语义推出看失败世界，前提全真结论假。"
+      },
+      {
+        tag: "反例三件套",
+        q: "要说明 Γ⊭Q，反例答案至少要交代哪三件事？",
+        options: [
+          "论域/解释或赋值；前提为什么真；结论为什么假",
+          "只写结论假",
+          "只写一个公式等值变形",
+          "只写“显然不成立”"
+        ],
+        answer: 0,
+        exp: "反例不是一句“令 Q 假”。必须在同一个解释里证明所有前提真、结论假。谓词题还要写论域和谓词解释。下次口令：反例三件套，世界怎么设、前提为什么真、结论为什么假。"
+      },
+      {
+        tag: "量词反例",
+        q: "为什么 ∀x(P(x)∨Q(x)) 不推出 ∀xP(x)∨∀xQ(x)？",
+        options: [
+          "可以让不同对象分别满足 P 和 Q，前件每个对象至少一边真，但没有一边全体真",
+          "因为 ∀ 永远不能和 ∨ 同时出现",
+          "因为论域必须为空集",
+          "因为 P 和 Q 必须相等"
+        ],
+        answer: 0,
+        exp: "经典反例：D={a,b}，P(a) 真 Q(a) 假，P(b) 假 Q(b) 真。每个对象都满足 P∨Q，所以前件真；但不是所有对象都满足 P，也不是所有对象都满足 Q，所以后件假。下次口令：性质分摊反例，人人有一边，但没有一边人人有。"
+      },
+      {
+        tag: "2024 语义构造",
+        q: "要让 ∃x∃y∀w((A(x,y)∧S(x,y))∨¬S(x,w)) 为假，思路应从哪里下手？",
+        options: [
+          "让任意 x,y 都能找到某个 w，使 A(x,y)∧S(x,y) 为假且 S(x,w) 为真",
+          "随便把 S 全设为 0",
+          "只让 A 全为 1",
+          "只证明 P 是永真式"
+        ],
+        answer: 0,
+        exp: "存在式要为假，必须所有 x,y 都失败；∀w 的内部要失败，只要找到一个 w 让析取式假。析取式假要求两边都假：A∧S 假，且 ¬S(x,w) 假，也就是 S(x,w) 真。2024 的 S 表构造正是围绕这个倒推。下次口令：让存在失败，要让每个候选都被某个 w 打掉。"
+      },
+      {
+        tag: "公理证明",
+        q: "题目要求“用公理方法证明，不可用演绎定理”。最危险的做法是什么？",
+        options: [
+          "直接假设前件推出后件，然后把假设收回",
+          "每行标前提、公理实例、MP 或 UG",
+          "先写自然骨架再转形式链",
+          "检查题面允许使用哪些定理"
+        ],
+        answer: 0,
+        exp: "演绎定理的作用就是把临时假设收回成蕴涵。题目禁用它时，你不能直接“假设前件，推出后件，故蕴涵成立”。要用公理实例、MP、UG、给定定理逐行推。下次口令：禁用演绎定理，就不能偷收假设。"
+      },
+      {
+        tag: "2023 公理证明",
+        q: "2023 风格的证明 Q->R ⊢ (P->Q)->(P->R)，若题面已给定定理 ⊢(Q->R)->((P->Q)->(P->R))，最短链条是什么？",
+        options: [
+          "引用给定定理，再用前提 Q->R 一次 MP",
+          "构造一个两元素论域",
+          "列完整真值表",
+          "先 Skolem 化"
+        ],
+        answer: 0,
+        exp: "这类公理证明不一定都很长。若题面已经给定 (Q->R)->((P->Q)->(P->R))，再有前提 Q->R，一次 MP 就得到目标。下次口令：公理证明先找题面给定定理，能 MP 就别绕远。"
+      },
+      {
+        tag: "考场策略",
+        q: "一道离散长证明完全卡住时，最不该做什么？",
+        options: [
+          "空着不写，等最后灵感出现",
+          "写题型判断和目标翻译",
+          "写第一句或反例失败情形",
+          "写可用定义和已知定理"
+        ],
+        answer: 0,
+        exp: "离散证明有过程分。就算完整证明写不出，题型判断、定义、第一句、失败情形、反例三件套、可用定理都可能拿分。空白最亏。下次口令：不会完整证明，也要把入口和证据写上卷面。"
+      }
+    ];
+
+    function renderQuiz() {
+      const root = document.getElementById("quizBox");
+      root.innerHTML = quiz.map((item, index) => {
+        const picked = state[`q${index}`];
+        const done = picked !== undefined;
+        return `
+          <article class="q ${done ? "done" : ""}">
+            <span class="tag">${item.tag}</span>
+            <h3>${index + 1}. ${item.q}</h3>
+            <div class="options">
+              ${item.options.map((option, i) => {
+                const cls = !done ? "" : i === item.answer ? "correct" : i === picked ? "wrong" : "";
+                return `<button class="option ${cls}" data-q="${index}" data-i="${i}">${option}</button>`;
+              }).join("")}
+            </div>
+            <div class="feedback ${done ? "show" : ""}">${item.exp}</div>
+          </article>
+        `;
+      }).join("");
+      root.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state[`q${btn.dataset.q}`] = Number(btn.dataset.i);
+          save();
+          renderQuiz();
+        });
+      });
+      const done = quiz.filter((_, i) => state[`q${i}`] !== undefined).length;
+      const right = quiz.filter((item, i) => state[`q${i}`] === item.answer).length;
+      document.getElementById("quizStats").textContent = `已做 ${done}/${quiz.length}，正确 ${right}/${quiz.length}。错题要写进下面的“今日错题回炉”，不然只是眼熟一遍。`;
+    }
+
+    document.querySelectorAll("textarea[data-save]").forEach(area => {
+      const key = `txt-${area.dataset.save}`;
+      area.value = state[key] || "";
+      area.addEventListener("input", () => {
+        state[key] = area.value;
+        save();
+      });
+    });
+    document.querySelectorAll("[data-gate]").forEach(input => {
+      const key = `gate-${input.dataset.gate}`;
+      input.checked = !!state[key];
+      input.addEventListener("change", () => {
+        state[key] = input.checked;
+        save();
+      });
+    });
+    renderQuiz();
+  </script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 3 数据库大题后半主动回忆</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    .muted { color: var(--muted); }
+    .strip, .toc, .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 10px 0 12px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 126px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+    }
+    .diagram svg { width: 100%; max-width: 900px; height: auto; display: block; margin: 0 auto; }
+    .code {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.62;
+      margin: 10px 0;
+    }
+    .callout {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .callout > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 11px;
+    }
+    .callout .label { background: #eef7fc; color: var(--blue); font-weight: 800; }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 4px 0; }
+    @media (max-width: 860px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .callout { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 3 数据库大题后半主动回忆</h1>
+      <p class="muted">这页专门训练数据库大题后半的“第一反应”。你已经有深学讲义，这里不再从头讲一遍，而是逼你在范式、事务、恢复、ER 图之间快速分流，并写出可得分第一步。</p>
+      <div class="strip">
+        <span class="pill hot">范式 / 候选码</span>
+        <span class="pill info">事务优先图</span>
+        <span class="pill warn">Undo / Redo</span>
+        <span class="pill good">ER 抽取</span>
+      </div>
+      <div class="toc">
+        <a href="#rules">0. 使用规则</a>
+        <a href="#fd">1. 范式关</a>
+        <a href="#tx">2. 事务关</a>
+        <a href="#recover">3. 恢复关</a>
+        <a href="#er">4. ER 关</a>
+        <a href="#review">5. 回炉模板</a>
+      </div>
+    </section>
+
+    <section class="card" id="rules">
+      <h2>0. 使用规则：先写流程，不先看答案</h2>
+      <div class="grid three">
+        <div class="box"><strong>第一步</strong>写题型：范式、事务、恢复、ER。</div>
+        <div class="box"><strong>第二步</strong>写模板第一句：闭包、优先图、Undo/Redo 表、实体联系。</div>
+        <div class="box"><strong>第三步</strong>再展开计算或画图，最后看解析补错因。</div>
+      </div>
+      <div class="mark warnbox">
+        <strong>过关标准：</strong>每关至少一题能不看答案写出题眼和第一步。数据库大题后半拿分靠步骤，第一步错了后面再努力也会散。
+      </div>
+    </section>
+
+    <section class="card" id="fd">
+      <h2>1. 范式关：候选码是整题的钥匙</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 900 340" role="img" aria-label="范式题流程图">
+          <rect width="900" height="340" fill="#fff"/>
+          <g font-family="sans-serif" font-size="17" fill="#18212a">
+            <rect x="45" y="58" width="160" height="70" rx="10" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+            <text x="82" y="88" font-weight="700">找必带属性</text>
+            <text x="70" y="115">右边没出现</text>
+            <rect x="265" y="58" width="160" height="70" rx="10" fill="#eef9f3" stroke="#24724f" stroke-width="2"/>
+            <text x="315" y="88" font-weight="700">求闭包</text>
+            <text x="292" y="115">X+ 能推出谁</text>
+            <rect x="485" y="58" width="160" height="70" rx="10" fill="#fff9e6" stroke="#936b12" stroke-width="2"/>
+            <text x="522" y="88" font-weight="700">候选码</text>
+            <text x="512" y="115">全推出且最小</text>
+            <rect x="705" y="58" width="150" height="70" rx="10" fill="#fff2ef" stroke="#a23b32" stroke-width="2"/>
+            <text x="745" y="88" font-weight="700">判范式</text>
+            <text x="730" y="115">3NF / BCNF</text>
+            <path d="M205 94 H265 M425 94 H485 M645 94 H705" stroke="#687581" stroke-width="3" marker-end="url(#arrowFd3)"/>
+            <rect x="135" y="220" width="630" height="62" rx="10" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="165" y="256">不要先背范式：候选码没出来，主属性/超码/BCNF 都没法稳判。</text>
+          </g>
+          <defs><marker id="arrowFd3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+
+      <article class="drill">
+        <h3>FD-1 候选码与 BCNF 判断</h3>
+        <p><strong>题干：</strong>关系 R(A,B,C,D,E)，函数依赖 F={ A &rarr; B, B &rarr; C, CD &rarr; E, E &rarr; A }。判断 AE 是否为候选码，并判断依赖 A &rarr; B 是否违反 BCNF。</p>
+        <textarea data-note="day3-fd-1" placeholder="先写：AE+ 从 AE 开始，按依赖一步步扩展。再判断 A 是否为超码。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>AE 不是候选码。</strong>从 AE 出发，E &rarr; A 已有 A；A &rarr; B 得 B；B &rarr; C 得 C。此时 AE+ = {A,B,C,E}，没有 D，不能推出全部属性，所以 AE 不是超码，更不是候选码。</p>
+            <p><strong>A &rarr; B 违反 BCNF。</strong>判断 BCNF 看每条非平凡依赖 X &rarr; Y 的左边 X 是否为超码。A+ = {A,B,C}，不能推出 D/E，所以 A 不是超码。因此 A &rarr; B 违反 BCNF。</p>
+            <p><strong>常见错因：</strong>看到 E &rarr; A、A &rarr; B、B &rarr; C 就以为 AE 很强，但 D 无法推出，缺 D 就不能成为码。范式题一定要写闭包，不要凭感觉。</p>
+            <p><strong>变式提醒：</strong>若题干问 CD 是否为候选码，CD+ 可推出 E，再由 E 推 A，再由 A 推 B，再由 B 推 C，最后有 A/B/C/D/E；还要检查 C 或 D 是否能单独推出全部。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>FD-2 BCNF 分解第一刀</h3>
+        <p><strong>题干：</strong>R(A,B,C,D)，F={ A &rarr; B, B &rarr; C }。已知 A+={A,B,C}，A 不是超码。若按 A &rarr; B 做 BCNF 分解，第一刀怎么拆？</p>
+        <textarea data-note="day3-fd-2" placeholder="先写：违反依赖 X->Y，拆成 R1=X∪Y 和 R2=R-(Y-X)。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>第一刀：</strong>R1(A,B)，R2(A,C,D)。</p>
+            <p><strong>模板：</strong>对违反 BCNF 的依赖 X &rarr; Y，常用分解为 R1 = X ∪ Y，R2 = R - (Y - X)。这里 X=A，Y=B，所以 R1={A,B}，R2={A,C,D}。</p>
+            <p><strong>为什么 R2 要保留 A：</strong>A 是连接两个分解关系的共同属性。若把 A 也拿掉，就无法用 A 把 R1 和 R2 无损连接回来。</p>
+            <p><strong>下一步：</strong>继续检查 R1 和 R2 是否满足 BCNF。不要拆完第一刀就停止，除非题目只问第一步。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="tx">
+      <h2>2. 事务关：冲突优先图先于结论</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 900 340" role="img" aria-label="事务冲突图流程">
+          <rect width="900" height="340" fill="#fff"/>
+          <g font-family="sans-serif" font-size="17" fill="#18212a">
+            <rect x="70" y="58" width="190" height="70" rx="10" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+            <text x="105" y="88" font-weight="700">同一数据项</text>
+            <text x="104" y="115">A 对 A, B 对 B</text>
+            <rect x="355" y="58" width="190" height="70" rx="10" fill="#eef9f3" stroke="#24724f" stroke-width="2"/>
+            <text x="386" y="88" font-weight="700">不同事务</text>
+            <text x="392" y="115">T1 与 T2/T3</text>
+            <rect x="640" y="58" width="190" height="70" rx="10" fill="#fff9e6" stroke="#936b12" stroke-width="2"/>
+            <text x="675" y="88" font-weight="700">至少一个写</text>
+            <text x="680" y="115">r/w 或 w/w</text>
+            <path d="M260 94 H355 M545 94 H640" stroke="#687581" stroke-width="3" marker-end="url(#arrowTx3)"/>
+            <circle cx="355" cy="240" r="34" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/><text x="338" y="247" font-weight="700">T1</text>
+            <circle cx="545" cy="240" r="34" fill="#fff9e6" stroke="#936b12" stroke-width="2"/><text x="528" y="247" font-weight="700">T2</text>
+            <path d="M389 240 H511" stroke="#687581" stroke-width="4" marker-end="url(#arrowTx3)"/>
+            <text x="395" y="292" fill="#687581">谁的冲突操作先发生，边就从谁指向谁。</text>
+          </g>
+          <defs><marker id="arrowTx3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+
+      <article class="drill">
+        <h3>TX-1 冲突可串行化</h3>
+        <p><strong>调度：</strong>r1(A), w2(A), r2(B), w1(B), w3(A), r3(B)。判断是否冲突可串行化。</p>
+        <textarea data-note="day3-tx-1" placeholder="先列冲突：A 上 r1(A) 与 w2(A)、w3(A)；B 上 r2(B) 与 w1(B)、w1(B) 与 r3(B)。再画边。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>冲突边：</strong>A 上 r1(A) 在 w2(A) 前，得 T1 &rarr; T2；r1(A) 在 w3(A) 前，得 T1 &rarr; T3；w2(A) 在 w3(A) 前，得 T2 &rarr; T3。B 上 r2(B) 在 w1(B) 前，得 T2 &rarr; T1；w1(B) 在 r3(B) 前，得 T1 &rarr; T3。</p>
+            <p><strong>结论：</strong>图中同时有 T1 &rarr; T2 和 T2 &rarr; T1，形成环，所以该调度不是冲突可串行化。</p>
+            <p><strong>常见错因：</strong>只看同一数据项但忘了“至少一个写”；或把同一事务内部操作也画边。冲突边只在不同事务之间画。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>TX-2 两段锁 2PL</h3>
+        <p><strong>事务 T1：</strong>lock-X(A), read(A), write(A), unlock(A), lock-S(B), read(B), unlock(B), commit。T1 是否满足 2PL？</p>
+        <textarea data-note="day3-tx-2" placeholder="先找第一次 unlock；第一次释放锁之后，还能不能再申请新锁？"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>不满足 2PL。</strong>两段锁要求一个事务在释放任何锁之后，不能再申请新的锁。T1 在 unlock(A) 之后又执行 lock-S(B)，这违反了 2PL。</p>
+            <p><strong>第一步模板：</strong>不要逐条背锁类型，先找第一次 unlock。第一次 unlock 之前是增长阶段，之后是收缩阶段；收缩阶段不能再 lock。</p>
+            <p><strong>变式提醒：</strong>如果问严格 2PL，还要看写锁是否保持到 commit/abort，目的是避免别人读到未提交数据。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="recover">
+      <h2>3. 恢复关：先分事务状态，再谈 Undo/Redo</h2>
+      <article class="drill">
+        <h3>REC-1 日志恢复分流</h3>
+        <p><strong>日志：</strong>&lt;T1 start&gt;, &lt;T1, A, 10, 20&gt;, &lt;T2 start&gt;, &lt;T2, B, 30, 40&gt;, &lt;T1 commit&gt;, &lt;T3 start&gt;, &lt;T3, C, 50, 60&gt;, crash。问恢复时哪些事务 Redo，哪些 Undo？</p>
+        <textarea data-note="day3-rec-1" placeholder="先写两栏：已 commit / 未 commit。不要先算 A/B/C。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>已提交：</strong>T1 已 commit，所以需要 Redo 或确认其结果持久化。</p>
+            <p><strong>未提交：</strong>T2 没有 commit，T3 没有 commit，所以需要 Undo。</p>
+            <p><strong>恢复动作：</strong>Redo T1，把 A 恢复到新值 20；Undo T2，把 B 从 40 撤回旧值 30；Undo T3，把 C 从 60 撤回旧值 50。</p>
+            <p><strong>常见错因：</strong>看到日志值就急着算变量，忘了事务状态。恢复题第一步永远是按 commit 分组。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>REC-2 Undo/Redo 的人话解释</h3>
+        <p><strong>题干：</strong>简答：为什么系统崩溃后，已经提交的事务要 Redo，未提交的事务要 Undo？</p>
+        <textarea data-note="day3-rec-2" placeholder="先写：提交代表承诺要保留；未提交代表不能留下半截修改。分别对应持久性和原子性。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>标准答法：</strong>已经提交的事务代表数据库已经向用户承诺其结果有效，为满足持久性，系统崩溃恢复时要确保这些修改最终出现在数据库中，因此需要 Redo。未提交事务在崩溃前尚未完成，不能让半截修改留在数据库中，为满足原子性，需要 Undo 撤销其已经写入的影响。</p>
+            <p><strong>关键词：</strong>提交事务、持久性、未提交事务、原子性、半截修改。</p>
+            <p><strong>变式提醒：</strong>如果题目出现检查点，还要从检查点位置缩小需要扫描和恢复的范围，但“提交 Redo、未提交 Undo”的原则不变。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="er">
+      <h2>4. ER 关：业务题先圈实体、属性、联系、基数</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 900 340" role="img" aria-label="ER 抽取四步">
+          <rect width="900" height="340" fill="#fff"/>
+          <g font-family="sans-serif" font-size="17" fill="#18212a">
+            <rect x="60" y="70" width="160" height="70" rx="10" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+            <text x="100" y="100" font-weight="700">实体</text>
+            <text x="86" y="126">可独立存在</text>
+            <rect x="270" y="70" width="160" height="70" rx="10" fill="#eef9f3" stroke="#24724f" stroke-width="2"/>
+            <text x="310" y="100" font-weight="700">属性</text>
+            <text x="296" y="126">描述实体</text>
+            <rect x="480" y="70" width="160" height="70" rx="10" fill="#fff9e6" stroke="#936b12" stroke-width="2"/>
+            <text x="520" y="100" font-weight="700">联系</text>
+            <text x="506" y="126">实体间动作</text>
+            <rect x="690" y="70" width="160" height="70" rx="10" fill="#fff2ef" stroke="#a23b32" stroke-width="2"/>
+            <text x="730" y="100" font-weight="700">基数</text>
+            <text x="704" y="126">1:1 / 1:N / M:N</text>
+            <path d="M220 106 H270 M430 106 H480 M640 106 H690" stroke="#687581" stroke-width="3" marker-end="url(#arrowEr3)"/>
+            <rect x="150" y="235" width="600" height="58" rx="10" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="180" y="270">ER 题不是画得花，而是实体、联系、基数、主键外键别漏。</text>
+          </g>
+          <defs><marker id="arrowEr3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+
+      <article class="drill">
+        <h3>ER-1 门诊预约系统抽取</h3>
+        <p><strong>题干：</strong>医院有医生、患者和科室。一个科室有多名医生；患者可以预约医生的门诊号源；一次预约记录包含预约时间、状态和挂号费用；医生可以开具多张处方，处方包含多个药品及用量。</p>
+        <textarea data-note="day3-er-1" placeholder="先圈实体、属性、联系和基数。不要急着画图。"></textarea>
+        <details>
+          <summary>展开标准答案与解析</summary>
+          <div class="answer">
+            <p><strong>实体：</strong>Doctor、Patient、Department、Appointment、Prescription、Drug。</p>
+            <p><strong>主要属性：</strong>Appointment 有 appointmentTime、status、fee；Prescription 有 prescriptionId、createdAt；Drug 有 drugName、specification；Doctor/Patient/Department 各有编号和姓名/名称。</p>
+            <p><strong>联系与基数：</strong>Department 1:N Doctor；Patient 1:N Appointment；Doctor 1:N Appointment；Doctor 1:N Prescription；Patient 1:N Prescription；Prescription 与 Drug 是 M:N，联系属性可包含 dosage、frequency。</p>
+            <p><strong>转换提示：</strong>M:N 的 Prescription-Drug 通常转成中间关系 PrescriptionDrug(prescriptionId, drugId, dosage, frequency)。Appointment 作为实体比单纯联系更稳，因为它有时间、状态、费用等自己的属性。</p>
+            <p><strong>常见错因：</strong>把“预约时间、状态、费用”画成实体；漏掉 M:N 的处方-药品中间表；只画医生和患者，漏科室。</p>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="review">
+      <h2>5. 回炉模板：数据库大题后半错题怎么记</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>范式错题</strong>
+          写：候选码算错在哪一步；哪个依赖左边不是超码；分解第一刀如何写。
+        </div>
+        <div class="box">
+          <strong>事务错题</strong>
+          写：漏了哪条冲突边；是否误把同一事务画边；优先图是否有环。
+        </div>
+        <div class="box">
+          <strong>恢复错题</strong>
+          写：事务状态分错了吗；Undo/Redo 集合是否反了；旧值新值有没有看反。
+        </div>
+        <div class="box">
+          <strong>ER 错题</strong>
+          写：漏了哪个实体/联系/基数；哪个属性不该独立成实体；M:N 是否转中间表。
+        </div>
+      </div>
+      <p style="margin-top:14px"><a href="./index.html">回到学习舱</a> · <a href="./day3_master_route.html">回到 Day3 总路线</a> · <a href="./day3_database_fd_tx_er.html">回到 Day3 数据库深学讲义</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-day3-db-big-four-notes";
+    const saved = JSON.parse(localStorage.getItem(noteKey) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const key = area.dataset.note;
+      area.value = saved[key] || "";
+      area.addEventListener("input", () => {
+        saved[key] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

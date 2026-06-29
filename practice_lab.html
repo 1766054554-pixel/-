@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>真题训练台 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛真题训练台：按课程、题型和训练阶段进入交互卷、真题包、专项训练和错题回炉。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(246, 185, 207, .40), transparent 28%),
+        radial-gradient(circle at 86% 8%, rgba(155, 201, 236, .42), transparent 25%),
+        radial-gradient(circle at 78% 78%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+    body::before {
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .22) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    body::after {
+      background:
+        linear-gradient(120deg, transparent 12%, rgba(255,255,255,.65) 13%, transparent 14%) 8% 20% / 240px 140px no-repeat,
+        linear-gradient(120deg, transparent 12%, rgba(255,255,255,.52) 13%, transparent 14%) 82% 68% / 260px 150px no-repeat;
+      animation: cloudFloat 28s ease-in-out infinite alternate;
+      opacity: .72;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes cloudFloat {
+      from { transform: translateX(-12px); }
+      to { transform: translateX(16px); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-4px) scale(1.02); }
+    }
+    a { color: inherit; }
+    button,
+    input {
+      font: inherit;
+    }
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo,
+    .icon {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo { width: 40px; height: 40px; }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks,
+    .actions,
+    .filter-row,
+    .tag-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .navlinks { justify-content: flex-end; }
+    .btn,
+    .navlinks a,
+    .filter-btn,
+    .check-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      cursor: pointer;
+    }
+    .btn:hover,
+    .navlinks a:hover,
+    .filter-btn:hover,
+    .check-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary,
+    .filter-btn.active,
+    .check-btn.done {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+    .btn.dark {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #46506f, #6c5f98);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .metric,
+    .mode-card,
+    .resource-card,
+    .pack-card {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .hero-main {
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 92% 14%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 10ch;
+      margin: 18px 0 10px;
+      font-size: clamp(50px, 7vw, 88px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 76ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions { margin-top: 22px; }
+    .metric {
+      padding: 18px;
+      display: grid;
+      gap: 4px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.94), rgba(249,252,255,.78)),
+        radial-gradient(circle at 84% 12%, rgba(201, 185, 244, .28), transparent 38%);
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .metric strong {
+      font-size: 34px;
+      line-height: 1.1;
+      color: #2f5c84;
+    }
+    .section {
+      padding: 22px 0;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-head p {
+      max-width: 72ch;
+    }
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .mode-card {
+      min-height: 190px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(249,252,255,.78)),
+        radial-gradient(circle at 90% 12%, rgba(246, 185, 207, .20), transparent 35%);
+    }
+    .mode-card strong {
+      color: #493d6c;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+    .lab-shell {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .lab-aside {
+      position: sticky;
+      top: 84px;
+      display: grid;
+      gap: 14px;
+    }
+    .search {
+      width: 100%;
+      min-height: 48px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.74);
+      color: var(--ink);
+      box-shadow: inset 0 1px 4px rgba(49, 64, 89, .04);
+      outline: none;
+    }
+    .search:focus {
+      border-color: rgba(126, 101, 176, .48);
+      box-shadow: 0 0 0 4px rgba(201, 185, 244, .24);
+    }
+    .filter-row {
+      margin-top: 10px;
+    }
+    .filter-btn {
+      min-height: 34px;
+      padding: 6px 9px;
+      font-size: 13px;
+    }
+    .resource-list {
+      display: grid;
+      gap: 12px;
+    }
+    .resource-card {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(249,252,255,.82)),
+        radial-gradient(circle at 92% 8%, rgba(246, 185, 207, .22), transparent 34%);
+    }
+    .resource-card.done {
+      border-color: rgba(117, 172, 151, .42);
+      background:
+        linear-gradient(145deg, rgba(238, 255, 248, .92), rgba(255,255,255,.82)),
+        radial-gradient(circle at 92% 8%, rgba(159, 218, 203, .24), transparent 34%);
+    }
+    .icon {
+      width: 46px;
+      height: 46px;
+      color: #67558f;
+      flex: 0 0 auto;
+    }
+    .icon svg { width: 30px; height: 30px; }
+    .resource-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      background: rgba(255,255,255,.70);
+      color: #56657e;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .priority {
+      color: #7d5c93;
+      background: rgba(255, 231, 241, .74);
+      border-color: rgba(246, 185, 207, .46);
+    }
+    .tag-row { margin-top: 12px; }
+    .resource-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(104, 122, 154, .28);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+    }
+    .pack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .pack-card {
+      padding: 16px;
+      background: rgba(255,255,255,.86);
+    }
+    .pack-card h3 { font-size: 18px; }
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 30;
+      max-width: min(420px, calc(100% - 36px));
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.82);
+      background: rgba(255,255,255,.92);
+      color: #493d6c;
+      box-shadow: var(--shadow);
+      font-weight: 850;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      animation: pulse .8s ease;
+    }
+    .footer {
+      margin-top: 32px;
+      padding: 28px 0 38px;
+      color: var(--muted);
+      border-top: 1px solid rgba(104, 122, 154, .18);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .lab-shell { grid-template-columns: 1fr; }
+      .lab-aside { position: static; }
+      .mode-grid,
+      .pack-grid { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1180px); }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .navlinks { justify-content: flex-start; }
+      h1 { font-size: 46px; }
+      .resource-card,
+      .resource-head { grid-template-columns: 1fr; display: block; }
+      .resource-head .pill { margin-top: 8px; }
+      .resource-actions .btn,
+      .resource-actions .check-btn,
+      .actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="主导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M32 8l5.6 13.6L52 24.4 40.8 34l3.6 14.4L32 40.8 19.6 48.4 23.2 34 12 24.4l14.4-2.8L32 8z" fill="#f7df8b" stroke="#6d618c" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M18 50c8 6 20 6 28 0" stroke="#9fdacb" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        星光学习岛
+      </a>
+      <div class="navlinks">
+        <a href="./start_here.html">新手向导</a>
+        <a href="./index.html">首页</a>
+        <a href="./dashboard.html">继续学习</a>
+        <a href="./resources.html">资源库</a>
+        <a href="./progress_vault.html">存档室</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div class="panel hero-main">
+        <div>
+          <span class="eyebrow">Practice Lab</span>
+          <h1>真题训练台</h1>
+          <p class="lead">
+            不再从文件名里猜该做哪套题。这里把<span class="key">交互卷</span>、<span class="key">真题包</span>、<span class="key">专项训练</span>和<span class="key">错题回炉</span>按科目收束起来：
+            先做必做入口，再用补洞题把不会的地方追回来。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="#lab">开始选题</a>
+            <button class="btn mint" type="button" id="makePackTop">生成 3 项训练包</button>
+            <a class="btn" href="./dashboard.html">看学习进度</a>
+          </div>
+        </div>
+        <p class="lead">训练台和精品资源库共用同一份完成记录。这里打勾，仪表盘也会知道你推进了。</p>
+      </div>
+
+      <aside class="hero-side" aria-label="训练概览">
+        <article class="metric">
+          <span>训练资源</span>
+          <strong id="totalCount">0</strong>
+          <p>来自精品资源库，不额外复制一套内容。</p>
+        </article>
+        <article class="metric">
+          <span>必做入口</span>
+          <strong id="requiredCount">0</strong>
+          <p>优先校准考试样子，避免只看讲义不上手。</p>
+        </article>
+        <article class="metric">
+          <span>已完成</span>
+          <strong id="doneCount">0</strong>
+          <p>保存在浏览器本机，可用存档室导出。</p>
+        </article>
+      </aside>
+    </section>
+
+    <section class="wrap section" id="mode">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">三种训练动作</span>
+          <h2>先校准，再补洞，最后回炉。</h2>
+        </div>
+        <p>不是把题目一股脑甩给你，而是把练习分成三种可执行动作。基础薄弱时也知道下一步该点哪里。</p>
+      </div>
+      <div class="mode-grid">
+        <article class="mode-card">
+          <span class="pill">动作 1</span>
+          <strong>整卷校准</strong>
+          <p>先做真题卷或综合卷，知道这门课到底怎么考、题干长什么样、自己卡在哪里。</p>
+          <button class="btn primary mode-jump" type="button" data-mode="papers">只看真题/交互卷</button>
+        </article>
+        <article class="mode-card">
+          <span class="pill">动作 2</span>
+          <strong>专项补洞</strong>
+          <p>把做卷暴露出的洞补上：画图、证明第一句、公式题眼、背诵召回都放在这里。</p>
+          <button class="btn mint mode-jump" type="button" data-mode="drills">只看补洞训练</button>
+        </article>
+        <article class="mode-card">
+          <span class="pill">动作 3</span>
+          <strong>错题回炉</strong>
+          <p>最后别贪多，回头看错题、速查包和最终回炉，把“眼熟”变成“能写”。</p>
+          <button class="btn mode-jump" type="button" data-mode="review">只看回炉/速查</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap section" id="lab">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">训练入口</span>
+          <h2>按科目和题型筛选。</h2>
+        </div>
+        <p>想冲刺就选“必做”，想练卷面就选“真题”，想补基础就搜关键词。每张卡都可以直接开始或标记完成。</p>
+      </div>
+      <div class="lab-shell">
+        <aside class="lab-aside">
+          <section class="panel">
+            <h3>筛选器</h3>
+            <input class="search" id="searchInput" placeholder="搜：离散、UML、公式、背诵、OS..." aria-label="搜索训练资源">
+            <div class="filter-row" id="courseFilters"></div>
+            <div class="filter-row" id="modeFilters"></div>
+          </section>
+          <section class="panel">
+            <h3>今日 3 项训练包</h3>
+            <p>优先从未完成的必做资源里抽：一项整卷、一项补洞、一项回炉。很适合不知道先点哪的时候。</p>
+            <div class="actions">
+              <button class="btn primary" type="button" id="makePack">生成训练包</button>
+            </div>
+          </section>
+        </aside>
+
+        <div>
+          <section class="panel" id="packPanel" hidden>
+            <span class="eyebrow">今日训练包</span>
+            <h2>先完成这 3 项。</h2>
+            <div class="pack-grid" id="packGrid"></div>
+          </section>
+          <div class="resource-list" id="resourceList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p><strong>真题训练台</strong> 是精品资源库的练题视图。想按全部资料筛选，去 <a href="./resources.html">资源库</a>；想看下一步建议，去 <a href="./dashboard.html">继续学习仪表盘</a>。</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    (() => {
+      const STORAGE_KEY = "starlight-resource-done-v1";
+      const PACK_KEY = "starlight-practice-pack-v1";
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+      const catalog = window.STARLIGHT_RESOURCE_CATALOG || [];
+      const quality = window.STARLIGHT_RESOURCE_QUALITY || {};
+      const courses = manifest.courses || [];
+      const courseMap = new Map(courses.map(course => [course.id, course]));
+      const trainingTypes = new Set(["真题卷", "交互卷", "真题包", "专项训练", "变式题", "闸门题", "召回题", "背诵舱", "开卷包", "闪卡", "错题本", "速查包"]);
+      const paperTypes = new Set(["真题卷", "交互卷", "真题包"]);
+      const drillTypes = new Set(["专项训练", "变式题", "闸门题", "召回题", "背诵舱", "开卷包", "闪卡"]);
+      const reviewTypes = new Set(["错题本", "速查包"]);
+      let activeCourse = "all";
+      let activeMode = "all";
+      let search = "";
+      let done = readDone();
+
+      const $ = selector => document.querySelector(selector);
+
+      function escapeHtml(text) {
+        return String(text ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function readDone() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveDone() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+      }
+
+      function qualityOf(item) {
+        return quality[item.id] || { level: "draft" };
+      }
+
+      function trainingCatalog() {
+        return catalog.filter(item => trainingTypes.has(item.type) && qualityOf(item).level !== "archive");
+      }
+
+      function hydrateFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const course = params.get("course");
+        const mode = params.get("mode");
+        const query = params.get("q") || params.get("search") || "";
+        if (course === "all" || courses.some(item => item.id === course)) activeCourse = course;
+        if (["all", "required", "papers", "drills", "review"].includes(mode)) activeMode = mode;
+        search = query;
+      }
+
+      function syncUrl() {
+        const params = new URLSearchParams();
+        if (activeCourse !== "all") params.set("course", activeCourse);
+        if (activeMode !== "all") params.set("mode", activeMode);
+        if (search.trim()) params.set("q", search.trim());
+        const next = params.toString() ? `${location.pathname}?${params}` : location.pathname;
+        history.replaceState(null, "", next);
+      }
+
+      function iconSvg(type) {
+        const icons = {
+          database: `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="14" rx="19" ry="8" fill="#dff4ff" stroke="currentColor" stroke-width="3"/><path d="M13 14v28c0 5 8.5 9 19 9s19-4 19-9V14" fill="#eef9ff" stroke="currentColor" stroke-width="3"/><path d="M13 28c0 5 8.5 9 19 9s19-4 19-9M13 40c0 5 8.5 9 19 9s19-4 19-9" fill="none" stroke="currentColor" stroke-width="3"/></svg>`,
+          ai: `<svg viewBox="0 0 64 64"><rect x="16" y="14" width="32" height="32" rx="10" fill="#f2ebff" stroke="currentColor" stroke-width="3"/><path d="M24 25h16M24 33h16M24 41h10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="8" r="4" fill="#ffd76f"/><circle cx="48" cy="52" r="5" fill="#aee2d6"/></svg>`,
+          "software-engineering": `<svg viewBox="0 0 64 64"><rect x="12" y="13" width="40" height="30" rx="6" fill="#fff4d8" stroke="currentColor" stroke-width="3"/><path d="M20 23h24M20 32h14M20 51h24M28 43v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="44" cy="32" r="5" fill="#ffc2dc" stroke="currentColor" stroke-width="2"/></svg>`,
+          military: `<svg viewBox="0 0 64 64"><path d="M32 9l21 8v14c0 12-8 20-21 25C19 51 11 43 11 31V17l21-8Z" fill="#e8fbf3" stroke="currentColor" stroke-width="3"/><path d="M32 18v26M22 29h20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
+          discrete: `<svg viewBox="0 0 64 64"><path d="M10 48 C18 22 44 20 54 48Z" fill="#b9e4f6" stroke="currentColor" stroke-width="3"/><path d="M18 48h28M22 40h22M26 32h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="20" r="8" fill="#fff3a8" stroke="currentColor" stroke-width="3"/></svg>`,
+          marx: `<svg viewBox="0 0 64 64"><path d="M16 12h26a8 8 0 0 1 8 8v34H24a8 8 0 0 1-8-8Z" fill="#ffeef5" stroke="currentColor" stroke-width="3"/><path d="M24 24h18M24 34h18M24 44h12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+          "operating-system": `<svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40" rx="8" fill="#eef1ff" stroke="currentColor" stroke-width="3"/><rect x="22" y="22" width="20" height="20" rx="4" fill="#fff" stroke="currentColor" stroke-width="3"/><path d="M8 24h8M8 40h8M48 24h8M48 40h8M24 8v8M40 8v8M24 48v8M40 48v8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`,
+          global: `<svg viewBox="0 0 64 64"><path d="M32 8l5.5 13.4L52 24.3 40.7 33.7l3.7 14.2L32 40.4 19.6 47.9l3.7-14.2L12 24.3l14.5-2.9L32 8z" fill="#f7df8b" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>`
+        };
+        return icons[type] || icons.global;
+      }
+
+      function courseName(id) {
+        return courseMap.get(id)?.title || "全科工具";
+      }
+
+      function modeOf(item) {
+        if (paperTypes.has(item.type)) return "papers";
+        if (drillTypes.has(item.type)) return "drills";
+        if (reviewTypes.has(item.type)) return "review";
+        return "all";
+      }
+
+      function filteredResources() {
+        const text = search.trim().toLowerCase();
+        return trainingCatalog().filter(item => {
+          const courseOk = activeCourse === "all" || item.courseId === activeCourse;
+          const modeOk = activeMode === "all" ||
+            (activeMode === "required" && item.priority === "必做") ||
+            modeOf(item) === activeMode;
+          const q = qualityOf(item);
+          const hay = [item.title, item.description, item.type, item.stage, item.priority, courseName(item.courseId), q.level, q.source, q.next, ...(item.tags || [])]
+            .join(" ")
+            .toLowerCase();
+          return courseOk && modeOk && (!text || hay.includes(text));
+        });
+      }
+
+      function resourceScore(item) {
+        const required = item.priority === "必做" ? 0 : 10;
+        const donePenalty = done[item.id] ? 50 : 0;
+        const modeBonus = paperTypes.has(item.type) ? 0 : drillTypes.has(item.type) ? 2 : 4;
+        const qualityBonus = qualityOf(item).level === "exam-like" ? 0 : qualityOf(item).level === "reviewed" ? 1 : 6;
+        return donePenalty + required + modeBonus + qualityBonus;
+      }
+
+      function makePack() {
+        const source = filteredResources().slice().sort((a, b) => resourceScore(a) - resourceScore(b));
+        const buckets = [
+          source.find(item => paperTypes.has(item.type)),
+          source.find(item => drillTypes.has(item.type)),
+          source.find(item => reviewTypes.has(item.type) || item.priority === "必做")
+        ].filter(Boolean);
+        const seen = new Set();
+        const pack = [...buckets, ...source].filter(item => {
+          if (seen.has(item.id)) return false;
+          seen.add(item.id);
+          return true;
+        }).slice(0, 3);
+        localStorage.setItem(PACK_KEY, JSON.stringify(pack.map(item => item.id)));
+        renderPack(pack);
+        toast("训练包生成好了：先做一项真题，再补一个洞，最后回炉。");
+      }
+
+      function renderPack(pack) {
+        const items = pack || [];
+        $("#packPanel").hidden = items.length === 0;
+        $("#packGrid").innerHTML = items.map((item, index) => `
+          <article class="pack-card">
+            <span class="pill">第 ${index + 1} 项 · ${escapeHtml(courseName(item.courseId))}</span>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+            <div class="resource-actions">
+              <a class="btn primary" href="${escapeHtml(item.href)}">开始</a>
+              <button class="check-btn ${done[item.id] ? "done" : ""}" type="button" data-id="${escapeHtml(item.id)}">${done[item.id] ? "已完成" : "完成"}</button>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      function renderFilters() {
+        const courseButtons = [
+          { id: "all", title: "全部课程" },
+          ...courses.map(course => ({ id: course.id, title: course.title }))
+        ];
+        $("#courseFilters").innerHTML = courseButtons.map(course => `
+          <button class="filter-btn ${activeCourse === course.id ? "active" : ""}" type="button" data-course="${escapeHtml(course.id)}">${escapeHtml(course.title)}</button>
+        `).join("");
+        const modes = [
+          ["all", "全部训练"],
+          ["required", "必做"],
+          ["papers", "真题/交互卷"],
+          ["drills", "补洞训练"],
+          ["review", "回炉/速查"]
+        ];
+        $("#modeFilters").innerHTML = modes.map(([id, title]) => `
+          <button class="filter-btn ${activeMode === id ? "active" : ""}" type="button" data-mode="${escapeHtml(id)}">${escapeHtml(title)}</button>
+        `).join("");
+      }
+
+      function renderStats() {
+        const all = trainingCatalog();
+        $("#totalCount").textContent = String(all.length);
+        $("#requiredCount").textContent = String(all.filter(item => item.priority === "必做").length);
+        $("#doneCount").textContent = String(all.filter(item => done[item.id]).length);
+      }
+
+      function renderResources() {
+        const items = filteredResources().sort((a, b) => resourceScore(a) - resourceScore(b));
+        if (!items.length) {
+          $("#resourceList").innerHTML = `<div class="empty">这组筛选没有结果。换一个科目、题型或关键词试试。</div>`;
+          return;
+        }
+        $("#resourceList").innerHTML = items.map(item => {
+          const course = courseName(item.courseId);
+          const isDone = Boolean(done[item.id]);
+          return `
+            <article class="resource-card ${isDone ? "done" : ""}">
+              <span class="icon" aria-hidden="true">${iconSvg(item.courseId)}</span>
+              <div>
+                <div class="resource-head">
+                  <div>
+                    <span class="pill">${escapeHtml(course)} · ${escapeHtml(item.type)}</span>
+                    <h3>${escapeHtml(item.title)}</h3>
+                  </div>
+                  <span class="pill priority">${escapeHtml(item.priority)} · ${escapeHtml(item.stage)}</span>
+                </div>
+                <p>${escapeHtml(item.description)}</p>
+                <div class="tag-row">${(item.tags || []).map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}</div>
+                <div class="resource-actions">
+                  <a class="btn primary" href="${escapeHtml(item.href)}">开始训练</a>
+                  ${item.courseId !== "global" ? `<a class="btn" href="./course.html?id=${encodeURIComponent(item.courseId)}">课程岛</a>` : ""}
+                  <button class="check-btn ${isDone ? "done" : ""}" type="button" data-id="${escapeHtml(item.id)}">${isDone ? "已完成" : "标记完成"}</button>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function restorePack() {
+        try {
+          const ids = JSON.parse(localStorage.getItem(PACK_KEY) || "[]");
+          const pack = ids.map(id => trainingCatalog().find(item => item.id === id)).filter(Boolean);
+          renderPack(pack);
+        } catch {
+          renderPack([]);
+        }
+      }
+
+      function renderAll() {
+        renderFilters();
+        renderStats();
+        renderResources();
+        restorePack();
+        $("#searchInput").value = search;
+      }
+
+      function toast(message) {
+        const node = $("#toast");
+        node.textContent = message;
+        node.classList.add("show");
+        clearTimeout(node._timer);
+        node._timer = setTimeout(() => node.classList.remove("show"), 2200);
+      }
+
+      document.addEventListener("click", event => {
+        const courseBtn = event.target.closest("[data-course]");
+        if (courseBtn) {
+          activeCourse = courseBtn.dataset.course;
+          syncUrl();
+          renderAll();
+          return;
+        }
+        const modeBtn = event.target.closest("[data-mode]");
+        if (modeBtn) {
+          activeMode = modeBtn.dataset.mode;
+          syncUrl();
+          renderAll();
+          document.querySelector("#lab").scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        const checkBtn = event.target.closest(".check-btn[data-id]");
+        if (checkBtn) {
+          const id = checkBtn.dataset.id;
+          done[id] = !done[id];
+          if (!done[id]) delete done[id];
+          saveDone();
+          renderStats();
+          renderResources();
+          const savedIds = JSON.parse(localStorage.getItem(PACK_KEY) || "[]");
+          const pack = savedIds.map(savedId => trainingCatalog().find(item => item.id === savedId)).filter(Boolean);
+          renderPack(pack);
+          toast(done[id] ? "已收进完成记录，星光值默默亮了一点。" : "已取消完成标记，可以重新练。");
+        }
+      });
+
+      $("#searchInput").addEventListener("input", event => {
+        search = event.target.value;
+        syncUrl();
+        renderResources();
+      });
+      $("#makePack").addEventListener("click", makePack);
+      $("#makePackTop").addEventListener("click", () => {
+        makePack();
+        document.querySelector("#packPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      hydrateFromUrl();
+      renderAll();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>文科低成本过关包：军理 + 马原</title>
+  <style>
+    :root {
+      --bg: #f5f7f3;
+      --ink: #1e261f;
+      --muted: #6d756b;
+      --panel: #ffffff;
+      --line: #dbe3d4;
+      --green: #2f6f4f;
+      --blue: #315f8f;
+      --red: #a23b32;
+      --yellow: #8a6814;
+      --shadow: 0 14px 34px rgba(30, 38, 31, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #edf5ea 0, rgba(245,247,243,0) 320px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      border: 1px solid #cfe0c8;
+      border-radius: 6px;
+      background: #f6fbf4;
+      padding: 1px 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 22px rgba(30, 38, 31, .05); }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .toc a, .pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fbfdf9;
+      color: var(--blue);
+      text-decoration: none;
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+    .hot { color: var(--red); border-color: #e3bbb5; background: #fff5f2; }
+    .good { color: var(--green); border-color: #acd1bb; background: #f1faf4; }
+    .warn { color: var(--yellow); border-color: #d7c58d; background: #fff9e8; }
+    .focus {
+      border-radius: 6px;
+      background: #fff0b8;
+      box-shadow: inset 0 -2px 0 rgba(138,104,20,.22);
+      padding: 1px 5px;
+      font-weight: 850;
+      color: #654a0a;
+    }
+    .key { color: var(--blue); font-weight: 850; }
+    .hl { color: var(--red); font-weight: 850; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--green); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      border-radius: 6px;
+      background: #f1faf4;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff6f3; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e8; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 10px 0 12px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7eb; color: var(--green); }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 800; }
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      margin-top: 8px;
+    }
+    .quiz-list { display: grid; gap: 12px; margin-top: 12px; }
+    .quiz-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+      padding: 14px;
+    }
+    .quiz-card.done { border-color: #a8d0b6; background: #f2faf4; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+    .choice {
+      border: 1px solid #cfe0c8;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      padding: 10px 11px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .choice:hover { border-color: var(--green); background: #f5fbf2; }
+    .choice.correct { border-color: #84c399; background: #eef9f1; color: #155a36; }
+    .choice.wrong { border-color: #e1a49d; background: #fff3f0; color: #8c2e25; }
+    .feedback {
+      display: none;
+      border-left: 4px solid var(--blue);
+      border-radius: 6px;
+      background: #f3f8ff;
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+    .feedback.show { display: block; }
+    .flash-tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .flash-tools button, .flash-card button {
+      border: 1px solid #cfe0c8;
+      border-radius: 8px;
+      background: #fbfdf9;
+      color: var(--blue);
+      padding: 7px 10px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .flash-tools button.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .flash-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .flash-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+      padding: 14px;
+      min-height: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .flash-card.mastered { border-color: #a8d0b6; background: #f1faf4; }
+    .flash-card .front { font-weight: 850; font-size: 17px; }
+    .flash-card .back { display: none; border-left: 4px solid var(--green); background: #f1faf4; border-radius: 6px; padding: 10px; }
+    .flash-card.flipped .back { display: block; }
+    .flash-card .ops { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+    .checklist label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdf9;
+      padding: 9px 10px;
+      margin: 8px 0;
+    }
+    .micro { color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .choices, .flash-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>文科低成本过关包</h1>
+      <p class="muted">这页原本只服务两件事：6.26 军理不拖后腿，6.30 马原纸质开卷不乱翻。现在军理已升级为正式闭卷背诵模块：先去“军理闭卷背诵舱”系统背五章重点，再回本页做低成本回炉。</p>
+      <div class="strip">
+        <span class="pill hot">军理 6.26</span>
+        <span class="pill good">马原 6.30 纸质开卷</span>
+        <span class="pill warn">低成本兜底</span>
+      </div>
+      <div class="toc">
+        <a href="./day8_military_closed_book_sprint.html">军理闭卷背诵舱</a>
+        <a href="#use">怎么用</a>
+        <a href="#military">军理关键词</a>
+        <a href="#military-flashcards">军理闪卡</a>
+        <a href="#military-quiz">军理小测</a>
+        <a href="#marx">马原开卷框架</a>
+        <a href="#marx-quiz">马原小测</a>
+        <a href="#gate">上场闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="use">
+      <h2>0. 怎么用：文科只做“定位 + 框架 + 关键词”</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>军理目标</strong>
+          <p>闭卷时最怕“看过但想不起关键词”。所以军理只背<span class="focus">定义短句、并列要点、典型选择题信号</span>。大题按“定义 -> 要点 -> 联系现实”展开。</p>
+        </div>
+        <div class="box">
+          <strong>马原目标</strong>
+          <p>纸质开卷时最怕“资料在手但找不到”。马原要先建立<span class="focus">关键词索引</span>，答题时按“原理 -> 材料 -> 分析 -> 结论”写，不在考场临时翻散页。</p>
+        </div>
+      </div>
+      <div class="mark danger">
+        <strong>时间纪律：</strong>数据库/AI/软工/离散没过闸门时，文科每天最多 20-35 分钟。到 6.26 前一天军理再加到 60-90 分钟；到 6.29 马原再加到 90 分钟做开卷索引。
+      </div>
+    </section>
+
+    <section class="card" id="military">
+      <h2>1. 军理低成本关键词：先拿闭卷保底分</h2>
+      <p>资料依据：`2024军理期末考试重点整理.md`、2015/2016 军理往年题信号。往年题提示题型通常有<span class="key">选择、填空、简答、论述</span>，层级是“了解、了解与记忆、了解与展开”。</p>
+      <table>
+        <thead><tr><th>板块</th><th>必须记住的关键词</th><th>考试怎么问</th><th>一句答题动作</th></tr></thead>
+        <tbody>
+          <tr><td>中国国防</td><td>自卫型国防、积极防御、武装力量三部分、国防动员</td><td>中国国防类型？武装力量组成？国防动员定义和内容？</td><td>先写定义，再列组成：解放军、武警、民兵；动员写政治/武装/经济/防空/交通。</td></tr>
+          <tr><td>国家安全</td><td>总体国家安全观、“一个总体”和“十个坚持”、政治安全首位</td><td>总体国家安全观核心是什么？中国周边安全环境特点？</td><td>抓“大安全理念”：领域多、动态扩展、统筹发展和安全。</td></tr>
+          <tr><td>军事思想</td><td>《孙子兵法》、知彼知己、毛泽东军事思想、积极防御</td><td>古代军事思想代表？毛泽东军事思想历史地位？</td><td>先定位“理论体系”，再说“马克思主义军事理论与中国革命战争实践结合”。</td></tr>
+          <tr><td>现代战争</td><td>信息化战争、体系对抗、多维空间、OODA、作战节奏快速化</td><td>信息化战争定义、要素、基本特征、作战样式？</td><td>定义里必须出现：网络化信息系统、信息化武器、陆海空天网电认知、体系对抗。</td></tr>
+          <tr><td>信息化装备</td><td>新概念武器、定向能、动能、军用机器人、北斗、歼-20</td><td>新概念武器有哪些？微波武器/精确制导/卫星导航怎么判断？</td><td>按“原理不同 -> 毁伤机理不同 -> 运用方式不同”解释新概念武器。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>军理大题万能骨架：</strong>定义一句话 -> 分点列 3-5 个关键词 -> 每点补一句解释 -> 最后联系现实。比如“信息化战争”：定义 -> 资源主导、装备信息化、空间多维、指挥扁平、行动精确 -> 联系网络空间/无人化/精确打击。
+      </div>
+    </section>
+
+    <section class="card" id="military-flashcards">
+      <h2>1.5 军理闪卡：睡前刷关键词</h2>
+      <p>资料依据：<code>2024军理期末考试重点整理.md</code>。先点“看答案”，能说出关键词就点“记住”；不会的留在“再背”。这组卡专门服务闭卷回忆。</p>
+      <div class="flash-tools" id="militaryFlashFilters"></div>
+      <p class="micro" id="militaryFlashStats"></p>
+      <div class="flash-grid" id="militaryFlashcards"></div>
+    </section>
+
+    <section class="card" id="military-quiz">
+      <h2>2. 军理 10 题小测：只测高频信号</h2>
+      <p>这组题不是为了为难你，而是让关键词从“眼熟”变成“能叫出来”。选错就看解析里的下次口令。</p>
+      <div id="militaryQuiz" class="quiz-list"></div>
+    </section>
+
+    <section class="card" id="marx">
+      <h2>3. 马原纸质开卷：先建材料题四段式</h2>
+      <p>资料依据：2013-2014 北航马原期末卷、必备文章《发展新质生产力》《促进高质量充分就业》。2013-2014 卷面几乎全是论述题，主题包括认识论、人与自然、资本主义基本矛盾、政治经济关系、价值创造、矛盾同一性、社会存在与社会意识等。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>开卷不是现场找答案</strong>
+          <p>你要提前在纸质材料边上标出关键词：<span class="focus">认识论、实践、矛盾、生产力生产关系、经济基础上层建筑、资本主义基本矛盾、价值规律、人与自然、新质生产力、就业</span>。</p>
+        </div>
+        <div class="box">
+          <strong>材料题四段式</strong>
+          <p><span class="focus">原理</span>：先写课本概念。<span class="focus">材料</span>：摘题干关键词。<span class="focus">分析</span>：说明材料如何体现原理。<span class="focus">结论</span>：回到现实意义或方法论。</p>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>题干信号</th><th>优先调用原理</th><th>第一句话模板</th><th>材料怎么接</th></tr></thead>
+        <tbody>
+          <tr><td>“从直观到抽象，再到实践”</td><td>认识论：实践、感性认识、理性认识、认识回到实践</td><td>马克思主义认识论认为，实践是认识的来源、动力、目的和检验标准。</td><td>把“生动直观 -> 抽象思维 -> 实践”解释成认识深化过程。</td></tr>
+          <tr><td>水污染、生态、资源约束</td><td>人与自然关系、社会实践的客观约束、绿色发展</td><td>人类社会与自然界相互联系，人通过实践改造自然，也必须尊重自然规律。</td><td>材料中的污染事件说明违背客观规律会反过来制约社会发展。</td></tr>
+          <tr><td>资本主义繁荣、科技进步、福利改良</td><td>资本主义基本矛盾、生产社会化和资本主义私人占有</td><td>资本主义的新变化没有消除其基本矛盾，只是矛盾表现形式发生变化。</td><td>承认改良和发展，再指出不能根本消除资本逻辑和矛盾。</td></tr>
+          <tr><td>“政治是经济的集中表现”</td><td>经济基础和上层建筑、政治与经济关系</td><td>经济基础决定上层建筑，上层建筑对经济基础具有反作用。</td><td>用政策、制度、国家治理对经济发展的作用接材料。</td></tr>
+          <tr><td>无人车间、专利技术、价值来源</td><td>劳动价值论、活劳动创造价值、科技提高劳动生产率</td><td>科技本身不创造价值，价值的唯一源泉仍是人的劳动，但科技会提高劳动生产率。</td><td>把自动化理解为劳动方式变化，不是价值源泉变化。</td></tr>
+          <tr><td>新质生产力、高质量发展</td><td>生产力决定生产关系、科技创新、发展方式转变</td><td>生产力是社会发展的根本动力，新质生产力体现先进生产力质态。</td><td>材料可接创新、产业升级、绿色发展、体制机制和人才。</td></tr>
+          <tr><td>高质量充分就业</td><td>人民群众、社会发展、生产关系调整、民生</td><td>人民群众是历史创造者，发展必须坚持以人民为中心。</td><td>把就业写成民生之本、发展成果共享和社会稳定的连接点。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>考场写法提醒：</strong>开卷材料题不要大段抄材料。每段控制在“原理 1-2 句 + 材料关键词 1 句 + 分析 2-3 句”。看起来像你在运用原理，而不是在搬书。
+      </div>
+    </section>
+
+    <section class="card" id="marx-quiz">
+      <h2>4. 马原 8 题小测：练“题干 -> 原理”</h2>
+      <p>马原高分不靠玄学，靠题干分流。先判断该用哪个原理，再组织语言。</p>
+      <div id="marxQuiz" class="quiz-list"></div>
+    </section>
+
+    <section class="card" id="write">
+      <h2>5. 两个作答区：提前写出第一段</h2>
+      <div class="drill">
+        <h3>军理简答｜信息化战争的定义和特征</h3>
+        <p>请用“定义 + 4 个特征 + 联系现实”的结构写 6-8 行。</p>
+        <textarea data-save="military-info-war" placeholder="先写定义：依托网络化信息系统，使用信息化武器装备..."></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <p><strong>定义：</strong>信息化战争是依托网络化信息系统，使用信息化武器装备及相应作战方法，在陆、海、空、天、网络电磁和认知领域进行的以体系对抗为主要形式的战争。</p>
+          <p><strong>特征：</strong>信息资源主导化、武器装备信息化、作战空间多维化、作战节奏快速化、作战要素一体化、指挥扁平化、行动精确化。考试时间紧时写 4-5 个即可。</p>
+        </details>
+      </div>
+      <div class="drill">
+        <h3>马原论述｜用生产力原理分析新质生产力</h3>
+        <p>请用“原理 + 材料 + 分析 + 结论”的结构写第一段。</p>
+        <textarea data-save="marx-new-quality" placeholder="原理：生产力是社会发展的根本动力... 材料：新质生产力以创新为主导..."></textarea>
+        <details>
+          <summary>展开参考骨架</summary>
+          <p><strong>原理：</strong>生产力是人类社会发展的根本动力，生产力发展会推动生产关系和上层建筑调整。</p>
+          <p><strong>材料：</strong>新质生产力以创新为主导，具有高科技、高效能、高质量特征，以全要素生产率提升为核心标志。</p>
+          <p><strong>分析：</strong>发展新质生产力要求科技创新、产业创新、绿色转型、体制机制创新和人才机制创新协同推进，体现了先进生产力对高质量发展的支撑作用。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>6. 上场闸门：勾完就停，不要贪多</h2>
+      <div class="checklist">
+        <label><input type="checkbox" data-check="g1"> 军理能说出国防、总体国家安全观、信息化战争、国防动员、毛泽东军事思想的关键词。</label>
+        <label><input type="checkbox" data-check="g2"> 军理能用“定义 -> 要点 -> 联系现实”写一题简答或论述。</label>
+        <label><input type="checkbox" data-check="g3"> 马原纸质材料已标出认识论、矛盾、生产力、新质生产力、就业、资本主义基本矛盾、人与自然等关键词。</label>
+        <label><input type="checkbox" data-check="g4"> 马原能看到材料先判断原理，而不是上来翻书找整段答案。</label>
+        <label><input type="checkbox" data-check="g5"> 我知道文科只是低成本保底，不会拿它挤掉专业课主时间。</label>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const pageKey = "liberal-low-cost-sprint";
+    const quizzes = {
+      militaryQuiz: [
+        {
+          tag: "中国国防",
+          q: "中国的国防类型和军事战略方针最稳的搭配是？",
+          choices: ["进攻型国防 + 先发制人", "自卫型国防 + 积极防御", "联盟型国防 + 海外扩张", "中立型国防 + 放弃武备"],
+          answer: 1,
+          explain: "资料中明确：中国社会主义制度和国家政策决定其国防是自卫型国防，军事战略方针是积极防御。下次口令：国防类型问中国，先答自卫型；战略方针问军事，先答积极防御。"
+        },
+        {
+          tag: "武装力量",
+          q: "中国武装力量由哪三部分组成？",
+          choices: ["陆军、海军、空军", "解放军、武警、民兵", "公安、法院、检察院", "火箭军、战略支援、联勤保障"],
+          answer: 1,
+          explain: "教材重点是总体组成：中华人民共和国武装力量由中国人民解放军、中国人民武装警察部队、民兵组成。陆海空火等是军种/力量结构，不是这道题的三部分。"
+        },
+        {
+          tag: "总体国家安全观",
+          q: "总体国家安全观最核心的理解信号是什么？",
+          choices: ["只重视军事安全", "大安全理念，统筹多领域并动态扩展", "只重视经济增长", "完全依靠国际组织"],
+          answer: 1,
+          explain: "总体国家安全观的关键是“总体”，强调大安全理念，涵盖政治、军事、经济、科技、网络、生态、海外利益、人工智能、数据等领域，并随社会发展动态调整。"
+        },
+        {
+          tag: "国防动员",
+          q: "国防动员的核心含义是？",
+          choices: ["国家为应对战争或安全威胁，使社会领域由平时转入战时或紧急状态", "个人自发报名运动会", "只购买武器装备", "只进行课堂教育"],
+          answer: 0,
+          explain: "国防动员强调国家层面的组织转换：为应对战争或其他安全威胁，使社会诸领域全部或部分由平时状态转入战时或紧急状态。"
+        },
+        {
+          tag: "信息化战争",
+          q: "信息化战争定义中最不能漏的是哪组词？",
+          choices: ["骑兵冲锋、冷兵器、城墙", "网络化信息系统、信息化武器、体系对抗", "农业生产、手工业、市场交换", "纸质地图、口头命令、单兵格斗"],
+          answer: 1,
+          explain: "信息化战争定义必须抓住三件事：依托网络化信息系统，使用信息化武器装备，以体系对抗为主要形式。"
+        },
+        {
+          tag: "新概念武器",
+          q: "新概念武器的判断核心是？",
+          choices: ["价格一定更低", "颜色更鲜艳", "工作原理、毁伤机理或作战运用方式与传统武器显著不同", "只能用于训练"],
+          answer: 2,
+          explain: "新概念武器定义不是“新买的武器”，而是原理、毁伤机理、作战运用方式与传统武器显著不同。例子包括定向能武器、动能武器、军用机器人等。"
+        },
+        {
+          tag: "毛泽东军事思想",
+          q: "毛泽东军事思想的性质最稳表述是？",
+          choices: ["个人经验随笔", "马克思主义基本原理与中国革命战争具体实践相结合的科学理论体系", "古代兵书汇编", "只适用于海战的技术手册"],
+          answer: 1,
+          explain: "这类题要背“理论体系”句式：以毛泽东为代表的中国共产党人关于中国革命战争和军队问题的科学理论体系，是马克思主义基本原理与中国革命战争具体实践相结合的产物。"
+        },
+        {
+          tag: "周边安全",
+          q: "中国周边安全环境特点不包括哪一项？",
+          choices: ["陆地和海洋邻国多", "边界漫长、海域辽阔", "大国利益交汇因素复杂", "没有任何边界和海洋权益问题"],
+          answer: 3,
+          explain: "往年题强调中国周边环境复杂：邻国多、边界漫长、海域辽阔、争议和纠纷较多、受大国因素影响。说“没有任何问题”明显相反。"
+        },
+        {
+          tag: "兵役义务",
+          q: "兵役义务题里常见数字信号是？",
+          choices: ["18 周岁男性公民、22 周岁以前仍可征集、普通高校毕业生可放宽至 24 周岁", "10 周岁入伍", "只征集 60 岁以上公民", "完全没有年龄规定"],
+          answer: 0,
+          explain: "资料里给出：每年 12 月 31 日前年满 18 周岁的男性公民应当被征集；未被征集的 22 周岁以前仍可征集，普通高校毕业生可放宽至 24 周岁。"
+        },
+        {
+          tag: "论述骨架",
+          q: "军理论述题最稳的展开顺序是？",
+          choices: ["只写一个口号", "定义 -> 具体要点 -> 联系实际", "先画流程图不写字", "把所有记得的词随便堆上去"],
+          answer: 1,
+          explain: "2015/2016 往年题材料明确提示“定义、具体要求、联系实际”。这就是军理大题最稳骨架。"
+        }
+      ],
+      marxQuiz: [
+        {
+          tag: "认识论",
+          q: "题干出现“从生动直观到抽象思维，再到实践”，优先调用哪个原理？",
+          choices: ["认识论：实践和认识的辩证过程", "资本主义地租", "货币流通规律", "国防动员"],
+          answer: 0,
+          explain: "这是 2013-2014 真题第一题的核心信号。答题先写实践是认识的来源、动力、目的和检验标准，再解释感性认识到理性认识、认识回到实践。"
+        },
+        {
+          tag: "人与自然",
+          q: "材料讲水污染、生态破坏、资源约束，最合适的马原原理是？",
+          choices: ["人与自然关系及尊重客观规律", "SVM 最大间隔", "两段锁协议", "用例图 include"],
+          answer: 0,
+          explain: "自然环境材料通常接人与自然的辩证关系：人通过实践改造自然，但实践必须尊重客观规律，否则自然会反过来制约社会发展。"
+        },
+        {
+          tag: "资本主义",
+          q: "题干说资本主义科技发达、福利改良，问基本矛盾是否消除。正确第一句是？",
+          choices: ["已经彻底消除", "没有消除，基本矛盾只是表现形式变化", "与马克思主义无关", "只能从个人道德解释"],
+          answer: 1,
+          explain: "2013-2014 真题第三题就是这个方向。承认资本主义新变化，再指出生产社会化与资本主义私人占有之间的基本矛盾没有根本消除。"
+        },
+        {
+          tag: "经济与政治",
+          q: "“政治是经济的集中表现”优先调用哪组关系？",
+          choices: ["经济基础和上层建筑", "命题逻辑合取", "数据库外键", "卷积核大小"],
+          answer: 0,
+          explain: "这句话可以从经济基础决定上层建筑、上层建筑反作用于经济基础展开。答题时可以联系政策、制度和国家治理对经济发展的作用。"
+        },
+        {
+          tag: "劳动价值论",
+          q: "无人车间、自动化、专利技术让产量大增，是否说明活劳动不再是价值创造源泉？",
+          choices: ["是，机器自己创造价值", "不是，科技提高劳动生产率，但价值源泉仍是人的劳动", "无法作答", "只和国防有关"],
+          answer: 1,
+          explain: "科技和自动化改变劳动方式、提高劳动生产率，却不改变劳动价值论的基本判断。答题要区分财富增长、使用价值增加和价值创造。"
+        },
+        {
+          tag: "新质生产力",
+          q: "新质生产力材料最适合优先连接哪个马原主线？",
+          choices: ["生产力是社会发展的根本动力，科技创新推动生产力跃升", "三段论大前提", "网络安全攻击手段", "SQL GROUP BY"],
+          answer: 0,
+          explain: "必备文章明确：新质生产力是创新起主导作用的先进生产力质态，以全要素生产率提升为核心标志。马原答题可接生产力、生产关系、创新和高质量发展。"
+        },
+        {
+          tag: "就业材料",
+          q: "高质量充分就业材料最稳的价值立场是？",
+          choices: ["坚持以人民为中心，人民群众是历史创造者", "就业与社会发展无关", "只谈个人运气", "只谈武器装备"],
+          answer: 0,
+          explain: "就业材料可以接人民群众、民生、社会发展和生产关系调整。第一句可写：人民群众是历史创造者，发展必须坚持以人民为中心。"
+        },
+        {
+          tag: "开卷方法",
+          q: "马原开卷材料题最危险的做法是？",
+          choices: ["先判断原理，再用材料关键词分析", "大段抄材料和课本，不说明原理如何作用于材料", "按原理-材料-分析-结论组织", "提前给纸质材料做关键词索引"],
+          answer: 1,
+          explain: "开卷不等于抄书。阅卷看的是你能不能运用原理分析材料。大段复制会显得没有分析。"
+        }
+      ]
+    };
+    const militaryFlashcards = [
+      { chapter: "中国国防", front: "国防的定义要抓哪 4 个核心？", back: "防备和抵抗侵略；制止武装颠覆和分裂；保卫主权、统一、领土完整、安全和发展利益；军事活动及相关政治、经济、外交、科技、教育活动。" },
+      { chapter: "中国国防", front: "国防的地位作用三句话？", back: "国家生存与发展的安全保障；国家独立自主的前提；国家繁荣富强的重要条件。" },
+      { chapter: "中国国防", front: "中国国防类型 + 军事战略方针？", back: "自卫型国防；军事战略方针是积极防御。看到“中国国防类型”先答自卫型，看到“战略方针”先答积极防御。" },
+      { chapter: "中国国防", front: "中国国防时代内涵新变化是哪“四个拓展”？", back: "范围拓展、目标拓展、任务拓展、手段拓展。记忆口令：范围目标任务手段。" },
+      { chapter: "中国国防", front: "国防法规体系三层？", back: "宪法之下分为法律层、法规层、规章层。定义关键词：现行国防法律规范，按层次和门类构成的有机整体。" },
+      { chapter: "中国国防", front: "兵役义务常考年龄数字？", back: "当年 12 月 31 日前年满 18 周岁的男性公民应征；未被征集的 22 周岁以前仍可征集；普通高校毕业生可放宽至 24 周岁。" },
+      { chapter: "中国国防", front: "中国武装力量由哪三部分组成？", back: "中国人民解放军、中国人民武装警察部队、民兵。" },
+      { chapter: "中国国防", front: "陆海空火武警的战略要求怎么背？", back: "陆军：机动作战、立体攻防；海军：近海防御、远海防卫；空军：空天一体、攻防兼备；火箭军：核常兼备、全域慑战；武警：多能一体、维稳维权。" },
+      { chapter: "中国国防", front: "民兵的定义？", back: "不脱离生产的群众武装组织；中华人民共和国武装力量组成部分；中国人民解放军的助手和后备力量。" },
+      { chapter: "中国国防", front: "国防动员的定义？", back: "国家为应对战争或其他安全威胁，使社会诸领域全部或部分由平时状态转入战时状态或紧急状态的活动。" },
+      { chapter: "国家安全", front: "总体国家安全观的关键是什么？", back: "关键是“总体”，强调大安全理念，涵盖政治、军事、国土、经济、金融、文化、社会、科技、网络、粮食、生态、资源、核、海外利益、太空、深海、极地、生物、人工智能、数据等领域，并动态调整。" },
+      { chapter: "国家安全", front: "总体国家安全观“十个坚持”里最容易先答哪几个？", back: "党对国家安全工作的绝对领导；中国特色国家安全道路；以人民安全为宗旨；统筹发展和安全；把政治安全放在首要位置；防范化解国家安全风险。" },
+      { chapter: "国家安全", front: "中国地缘环境常考数字？", back: "位于亚洲东部；陆地边界线 2.2 万多千米；有共同边界的国家 14 个。" },
+      { chapter: "国家安全", front: "国际战略形势总体表现四条？", back: "世界多极化进程加快；经济全球化进程出现波折；大国战略博弈更加激烈；全球性问题和挑战空前增多。" },
+      { chapter: "国家安全", front: "全球性问题和挑战可列哪些？", back: "恐怖主义威胁不减；网络成为犯罪分子甚至恐怖组织活动平台；难民问题；大国在战略军备与军控领域博弈加剧。" },
+      { chapter: "军事思想", front: "军事思想内涵包括什么？", back: "关于军事领域基本问题的理性认识，通常包括战争观、军事问题认识论和方法论、战争指导思想、国防和军队建设思想等。" },
+      { chapter: "军事思想", front: "《孙子兵法》的定位？", back: "我国现存最早的兵书，春秋末孙武所著，属于《武经七书》重要代表。" },
+      { chapter: "军事思想", front: "中国古代军事思想代表要点？", back: "慎战、备战；知彼知己百战不殆；以谋略制胜为核心的用兵思想；文武兼施、恩威并用；朴素唯物论和原始辩证法。" },
+      { chapter: "军事思想", front: "毛泽东军事思想发展阶段？", back: "中共成立到遵义会议：产生时期；遵义会议到抗战胜利：形成时期；解放战争、抗美援朝和社会主义建设时期：全面丰富和发展。" },
+      { chapter: "军事思想", front: "新时代强军目标？", back: "建设一支听党指挥、能打胜仗、作风优良的人民军队；到 2035 年基本实现国防和军队现代化；到本世纪中叶全面建成世界一流军队。" },
+      { chapter: "现代战争", front: "战争定义和基本特点？", back: "定义：国家或政治集团之间，为一定政治、经济等目的，使用武装力量进行的大规模激烈交战的军事斗争。特点：激烈暴力对抗、快速流动变化、充满盖然性或偶然性。" },
+      { chapter: "现代战争", front: "新军事革命定义和主要标志？", back: "20 世纪末以来，以信息化为核心的全面深刻军事革命。标志：信息化武器系统主宰战场、知识密集型信息化军队、一体化联合作战、军事理论革新、信息化战争取代机械化战争。" },
+      { chapter: "现代战争", front: "中国特色军事变革六个关键词？", back: "方向：信息化；目标：建设信息化军队；途径：机械化与信息化复合发展；步骤：与国家发展战略相适应；动力：改革创新；保证：坚持党的绝对领导。" },
+      { chapter: "现代战争", front: "机械化战争基本特征？", back: "机动速度快、火力毁伤重、战场范围广、战争消耗大。" },
+      { chapter: "现代战争", front: "信息化战争定义里最不能漏的词？", back: "依托网络化信息系统；使用信息化武器装备及相应作战方法；在陆、海、空、天和网络电磁等空间及认知领域；以体系对抗为主要形式。" },
+      { chapter: "现代战争", front: "信息化战争战场范围相比机械化战争多了什么？", back: "机械化战争强调陆、海、空、天、电多维对抗；信息化战争初期除了物理域有形空间，还出现信息域、认知域等无形空间。" },
+      { chapter: "信息化装备", front: "指挥信息系统定义抓哪些分系统？", back: "以计算机网络为核心，由指挥控制、情报、通信、信息对抗、综合保障等分系统组成；用于实时获取、传输、处理作战信息，保障科学高效指挥控制。" },
+      { chapter: "信息化装备", front: "新概念武器定义和种类？", back: "工作原理、毁伤机理、作战运用方式与传统武器显著不同的高技术武器。种类：定向能武器、动能武器、军用机器人、非致命武器。" }
+    ];
+    const renderFlashcards = () => {
+      const root = document.getElementById("militaryFlashcards");
+      const filters = document.getElementById("militaryFlashFilters");
+      const stats = document.getElementById("militaryFlashStats");
+      if (!root || !filters || !stats) return;
+      const chapters = ["全部", ...Array.from(new Set(militaryFlashcards.map(card => card.chapter)))];
+      let active = localStorage.getItem(`${pageKey}:militaryFlashFilter`) || "全部";
+      const masteredKey = index => `${pageKey}:militaryFlash:${index}:mastered`;
+      const drawFilters = () => {
+        filters.innerHTML = chapters.map(ch => `<button type="button" data-filter="${ch}" class="${ch === active ? "active" : ""}">${ch}</button>`).join("");
+      };
+      const updateStats = () => {
+        const mastered = militaryFlashcards.filter((_, index) => localStorage.getItem(masteredKey(index)) === "1").length;
+        stats.textContent = `已记住 ${mastered}/${militaryFlashcards.length} 张。建议先刷“再背”的卡，不要从头机械重看。`;
+      };
+      const drawCards = () => {
+        const list = militaryFlashcards
+          .map((card, index) => ({ ...card, index }))
+          .filter(card => active === "全部" || card.chapter === active);
+        root.innerHTML = list.map(card => {
+          const mastered = localStorage.getItem(masteredKey(card.index)) === "1";
+          return `<article class="flash-card ${mastered ? "mastered" : ""}" data-index="${card.index}">
+            <span class="pill">${card.chapter}</span>
+            <div class="front">${card.front}</div>
+            <div class="back">${card.back}</div>
+            <div class="ops">
+              <button type="button" data-flip>看答案</button>
+              <button type="button" data-master>${mastered ? "改为再背" : "记住"}</button>
+            </div>
+          </article>`;
+        }).join("");
+        updateStats();
+      };
+      filters.addEventListener("click", event => {
+        const btn = event.target.closest("[data-filter]");
+        if (!btn) return;
+        active = btn.dataset.filter;
+        localStorage.setItem(`${pageKey}:militaryFlashFilter`, active);
+        drawFilters();
+        drawCards();
+      });
+      root.addEventListener("click", event => {
+        const card = event.target.closest(".flash-card");
+        if (!card) return;
+        const index = Number(card.dataset.index);
+        if (event.target.closest("[data-flip]")) {
+          card.classList.toggle("flipped");
+          event.target.textContent = card.classList.contains("flipped") ? "收起答案" : "看答案";
+        }
+        if (event.target.closest("[data-master]")) {
+          const key = masteredKey(index);
+          const next = localStorage.getItem(key) === "1" ? "0" : "1";
+          localStorage.setItem(key, next);
+          drawCards();
+        }
+      });
+      drawFilters();
+      drawCards();
+    };
+    const renderQuiz = (rootId, items) => {
+      const root = document.getElementById(rootId);
+      if (!root) return;
+      const stats = document.createElement("p");
+      stats.className = "micro";
+      root.before(stats);
+      const update = () => {
+        const done = items.filter((_, index) => localStorage.getItem(`${pageKey}:${rootId}:${index}`)).length;
+        stats.textContent = `已完成 ${done}/${items.length} 题。`;
+      };
+      items.forEach((item, index) => {
+        const card = document.createElement("article");
+        card.className = "quiz-card";
+        card.innerHTML = `
+          <h3>${index + 1}. ${item.tag}</h3>
+          <p>${item.q}</p>
+          <div class="choices">
+            ${item.choices.map((choice, choiceIndex) => `<button class="choice" type="button" data-choice="${choiceIndex}">${choice}</button>`).join("")}
+          </div>
+          <div class="feedback">${item.explain}</div>
+        `;
+        const feedback = card.querySelector(".feedback");
+        const buttons = card.querySelectorAll(".choice");
+        const saved = localStorage.getItem(`${pageKey}:${rootId}:${index}`);
+        const reveal = (choiceIndex) => {
+          buttons.forEach((button) => {
+            const isAnswer = Number(button.dataset.choice) === item.answer;
+            button.classList.toggle("correct", isAnswer);
+            button.classList.toggle("wrong", Number(button.dataset.choice) === choiceIndex && !isAnswer);
+          });
+          feedback.classList.add("show");
+          card.classList.add("done");
+          localStorage.setItem(`${pageKey}:${rootId}:${index}`, String(choiceIndex));
+          update();
+        };
+        buttons.forEach((button) => button.addEventListener("click", () => reveal(Number(button.dataset.choice))));
+        root.appendChild(card);
+        if (saved !== null) reveal(Number(saved));
+      });
+      update();
+    };
+    renderFlashcards();
+    renderQuiz("militaryQuiz", quizzes.militaryQuiz);
+    renderQuiz("marxQuiz", quizzes.marxQuiz);
+    document.querySelectorAll("textarea[data-save]").forEach((el) => {
+      const key = `${pageKey}:${el.dataset.save}`;
+      el.value = localStorage.getItem(key) || "";
+      el.addEventListener("input", () => localStorage.setItem(key, el.value));
+    });
+    document.querySelectorAll("input[data-check]").forEach((el) => {
+      const key = `${pageKey}:${el.dataset.check}`;
+      el.checked = localStorage.getItem(key) === "1";
+      el.addEventListener("change", () => localStorage.setItem(key, el.checked ? "1" : "0"));
+    });
+  </script>
+</body>
+</html>

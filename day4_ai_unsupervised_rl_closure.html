@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Day4 无监督、生成与强化学习：参考习题后半闭环</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 300px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .focus {
+      background: linear-gradient(180deg, rgba(255, 244, 189, 0) 58%, rgba(255, 231, 129, .72) 58%);
+      font-weight: 760;
+      padding: 0 2px;
+    }
+    .concept-drill {
+      border: 1px solid #cfe1ec;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 11px 13px;
+      margin: 12px 0;
+    }
+    .concept-drill strong { color: var(--blue); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula-cell .display-eq {
+      font-size: 16px !important;
+      white-space: normal;
+    }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 780px; height: auto; display: block; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .memory-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 14px;
+    }
+    .memory-card h3 { color: var(--blue); }
+    .cue {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 9px 10px;
+      margin: 8px 0;
+    }
+    .cue strong { color: var(--green); }
+    .compare-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .compare-strip div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+    .compare-strip strong { display: block; color: var(--blue); margin-bottom: 4px; }
+    .source-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .source-list div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+    }
+    .source-list strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .memory-grid, .compare-strip, .rubric, .source-list { grid-template-columns: 1fr; }
+      .diagram svg { min-width: 640px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>AI Day4 无监督、生成与强化学习：参考习题后半闭环</h1>
+      <p class="muted">这页对应《人工智能参考习题》后半和第14讲课程总结：K-means、PCA、EM、生成模型、强化学习。它们很适合出选择、填空、简答和小综合题。目标不是把整章啃成论文，而是让你看到题干能立刻识别：这是聚类、降维、生成，还是强化学习里的状态、动作、价值、策略。</p>
+      <div class="strip">
+        <span class="pill hot">人工智能 6/23</span>
+        <span class="pill info">参考习题第 9-14 页</span>
+        <span class="pill warn">选择/填空/简答高频</span>
+        <span class="pill good">先讲懂，再做题卡</span>
+      </div>
+      <div class="toc">
+        <a href="#route">0. 今天怎么用</a>
+        <a href="#sources">资料依据</a>
+        <a href="#memory">1. 后半三条线怎么记</a>
+        <a href="#unsupervised">2. 无监督学习</a>
+        <a href="#estimation">3. EM 与统计估计</a>
+        <a href="#generation">4. 生成模型辨析</a>
+        <a href="#rl">5. 强化学习</a>
+        <a href="#rl-map">5.5 算法地图</a>
+        <a href="#cards">6. 参考习题题卡</a>
+        <a href="#gate">7. 过关闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 今天怎么用：后半题型先拿“识别力”</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>第一遍只抓主线</strong>
+          无监督学习是在“没有标签”的情况下找结构：分组叫聚类，压缩表示叫降维，估计隐藏变量叫 EM。
+        </div>
+        <div class="box">
+          <strong>第二遍背关键词</strong>
+          K-means 看“距离/中心/簇内平方和”；PCA 看“方差最大/正交主成分”；强化学习看“状态/动作/奖励/策略/价值”。
+        </div>
+        <div class="box">
+          <strong>第三遍做题卡</strong>
+          每张卡先写题眼，再展开答案。别直接点开解析，你要把“我认出了什么”写出来。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>这页不是新开一条很重的线。</strong>数据库考前仍优先。AI Day4 的作用是把参考习题后半可能考的知识点先关上门，防止考前只记得回归、SVM、神经网络，后面强化学习和无监督却空着。
+      </div>
+      <div class="mark" id="sources">
+        <strong>本页资料依据：</strong>无监督学习主线来自 `人工智能/复习.pdf` 第 23、26 页和 `人工智能/笔记.pdf` 第 73、76、82 页：K-means、PCA、自编码器与 PCA 对比；PCA/AE/VAE/扩散/GAN 的复习补充来自第 14 讲课程总结第 90、94-105 页和最后一节课老师口头强调：生成模型重在基本概念、核心思想和对比，不要求复杂推导计算。强化学习主线来自 `复习.pdf` 第 29-36 页、`笔记.pdf` 第 102、106、117-118 页，以及强化学习第 12 讲第 9、28-30、66 页、第 13 讲第 5-9、46 页、第 14 讲第 109-111 页。参考习题后半负责出题形式，本页负责把题眼和作答步骤讲透。
+      </div>
+      <div class="source-list">
+        <div><strong>无监督与生成前置</strong>K-means 看聚类、中心、簇内误差；PCA 看方差最大、正交主成分、降维和重构；这部分常以选择、填空、简答辨析出现。</div>
+        <div><strong>强化学习定义</strong>课件反复用“状态、动作、奖励、策略”建立闭环；考题喜欢让你把一个场景翻译成这四件套。</div>
+        <div><strong>MDP 与价值函数</strong>MDP 五元组、V(s)、Q(s,a)、贝尔曼思想，是小计算和概念辨析的核心，不需要大计算器但步骤必须稳。</div>
+        <div><strong>探索与利用</strong>Q-learning、Sarsa、epsilon-greedy、Boltzmann exploration 都围绕“别只相信当前最大值，要保留探索”展开。</div>
+      </div>
+    </section>
+
+    <section class="card" id="memory">
+      <h2>1. 后半三条线怎么记：没有标签、看不见、靠奖励</h2>
+      <p>AI Day4 这几个词看起来散，其实只是在回答三个问题：没有标准答案时怎么发现结构？有隐藏信息时怎么估计参数？没有正确标签、只有奖励时怎么学决策？先把这三条线串起来，后面公式就不再像空中飘着。</p>
+      <div class="compare-strip">
+        <div><strong>监督学习</strong>有标准答案。像老师批改作业，输入 x，答案 y，模型学 x 到 y。</div>
+        <div><strong>无监督学习</strong>没有标准答案。像整理一堆资料，看哪些相似、哪些方向最重要。</div>
+        <div><strong>强化学习</strong>没有逐题答案，但有奖励。像玩游戏，靠试错学策略。</div>
+      </div>
+
+      <h3>新词先过桥：别让术语把你挡在门外</h3>
+      <table>
+        <thead><tr><th>新词</th><th>先用人话理解</th><th>考试看到什么信号</th><th>第一句怎么写</th></tr></thead>
+        <tbody>
+          <tr><td>聚类</td><td>没有标签时，把相似样本自动分成几堆。</td><td>分组、簇、最近中心、K-means。</td><td>这是无监督学习中的聚类任务，目标是让同簇样本更相似。</td></tr>
+          <tr><td>簇中心</td><td>一堆样本的代表点，常用均值表示。</td><td>centroid、中心点、更新中心。</td><td>K-means 每轮把中心更新为该簇样本均值。</td></tr>
+          <tr><td>主成分</td><td>一条新的坐标轴，尽量保留数据变化。</td><td>PCA、方差最大、正交、降维。</td><td>PCA 选择方差最大的正交方向作为主成分。</td></tr>
+          <tr><td>隐藏变量</td><td>真实影响数据但你看不见的量，比如样本属于哪个混合成分。</td><td>隐变量、混合模型、EM。</td><td>EM 先估计隐藏变量分布，再更新模型参数。</td></tr>
+          <tr><td>MDP</td><td>把“状态里选动作会影响未来”写成数学框架。</td><td>状态、动作、转移概率、奖励、折扣因子。</td><td>MDP 比 MRP 多动作，因此要学习策略。</td></tr>
+          <tr><td>离策略 / 在策略</td><td>更新时用不用实际采样到的下一动作。</td><td>Q-learning、Sarsa、off-policy、on-policy。</td><td>Q-learning 用下一状态最大 Q 更新，是离策略；Sarsa 用实际下一动作，是在策略。</td></tr>
+          <tr><td>探索 / 利用</td><td>利用是选目前最好的，探索是试没试过的。</td><td>epsilon-greedy、Boltzmann、随机性。</td><td>探索机制避免智能体过早卡在当前估计的局部最优。</td></tr>
+        </tbody>
+      </table>
+
+      <div class="memory-grid">
+        <div class="memory-card">
+          <h3>K-means：整理文件夹</h3>
+          <p>想象你有一堆文件，不知道应该分几类。K-means 先放 K 个临时文件夹中心，然后把每个文件放进最近的文件夹，再重新给每个文件夹取“中心主题”。</p>
+          <div class="cue"><strong>记忆钩子：</strong>分堆 -> 找最近中心 -> 重算中心 -> 让堆内距离小。</div>
+          <p><strong>考试题眼：</strong>聚类、K 个簇、中心点、最近距离、簇内平方误差、局部最优。</p>
+        </div>
+        <div class="memory-card">
+          <h3>PCA：换一个更会看数据的坐标系</h3>
+          <p>PCA 不是随便删掉某几列，而是把坐标轴旋转到“数据最分散”的方向。保留前几个方向，就像拍照时选最能看清轮廓的角度。</p>
+          <div class="cue"><strong>记忆钩子：</strong>找方向 -> 方差最大 -> 主成分正交 -> 保留主要信息。</div>
+          <p><strong>考试题眼：</strong>降维、方差最大、主成分、正交、特征脸、SVD、LSA。</p>
+        </div>
+        <div class="memory-card">
+          <h3>EM：看不见的东西先猜，再用猜测改参数</h3>
+          <p>如果你不知道每个样本来自哪个隐藏类别，就先根据当前参数猜一个概率分布；再把这个猜测当依据更新参数。猜得更准一点，参数也更准一点。</p>
+          <div class="cue"><strong>记忆钩子：</strong>E 步猜隐藏变量，M 步改模型参数。</div>
+          <p><strong>考试题眼：</strong>隐藏变量、混合模型、迭代估计、Expectation、Maximization、K-means 特殊情况。</p>
+        </div>
+        <div class="memory-card">
+          <h3>强化学习：不是告诉你答案，而是告诉你得分</h3>
+          <p>监督学习会告诉你“正确标签是什么”；强化学习只告诉你“这步或这一局得了多少奖励”。所以它要学的不是分类边界，而是策略：在什么状态下做什么动作。</p>
+          <div class="cue"><strong>记忆钩子：</strong>状态看局面，动作做选择，奖励给反馈，策略定行为，价值看长期。</div>
+          <p><strong>考试题眼：</strong>Agent、环境、状态、动作、奖励、策略、价值函数、MDP、Q-learning、Sarsa、ε-greedy。</p>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>题干说法</th><th>你脑内第一反应</th><th>别掉进的坑</th></tr></thead>
+        <tbody>
+          <tr><td>“没有类别标签，把样本自动分组”</td><td>K-means / 聚类</td><td>不要答监督分类。</td></tr>
+          <tr><td>“高维数据压到低维，尽量保留变化”</td><td>PCA / 降维</td><td>不要说主成分越相关越好。</td></tr>
+          <tr><td>“存在未知的隐变量，要估计参数”</td><td>EM</td><td>不要把 E 步和 M 步写反。</td></tr>
+          <tr><td>“状态、动作、奖励、策略”</td><td>强化学习</td><td>不要说它有每一步标准标签。</td></tr>
+          <tr><td>“下一状态最大 Q 值”</td><td>Q-learning</td><td>不要更新整张 Q 表，只更新当前格。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>读题顺序：</strong>先问有没有标签；没有标签再问是在分组、降维还是估计隐藏变量；如果题干出现奖励和动作，就切到强化学习，不要和无监督混在一起。
+      </div>
+    </section>
+
+    <section class="card" id="unsupervised">
+      <h2>2. 无监督学习：没有标准答案时，机器还能学什么</h2>
+      <p>监督学习像老师批改作业：每个样本都有正确答案，比如“这张图是猫”。无监督学习没有答案，它只能观察数据本身的结构：哪些样本彼此像，哪些维度其实重复，能不能用更少的信息表示原数据。</p>
+      <div class="diagram" aria-label="无监督学习结构图">
+        <svg viewBox="0 0 980 260" role="img">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect x="30" y="86" width="180" height="88" rx="8" fill="#eef7fc" stroke="#b3d2e7"></rect>
+          <text x="120" y="122" text-anchor="middle" font-size="18" font-weight="700" fill="#1f5f8b">没有标签的数据</text>
+          <text x="120" y="150" text-anchor="middle" font-size="14" fill="#4b5a66">只有样本特征，没有答案</text>
+          <line x1="210" y1="130" x2="305" y2="130" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <rect x="305" y="34" width="190" height="70" rx="8" fill="#f3faf6" stroke="#a7d8bf"></rect>
+          <text x="400" y="65" text-anchor="middle" font-size="17" font-weight="700" fill="#24724f">聚类 K-means</text>
+          <text x="400" y="89" text-anchor="middle" font-size="13" fill="#4b5a66">把相似样本分到一组</text>
+          <rect x="305" y="118" width="190" height="70" rx="8" fill="#fff9e6" stroke="#dcc682"></rect>
+          <text x="400" y="149" text-anchor="middle" font-size="17" font-weight="700" fill="#936b12">降维 PCA / LSA</text>
+          <text x="400" y="173" text-anchor="middle" font-size="13" fill="#4b5a66">用少数方向保留主要信息</text>
+          <rect x="305" y="202" width="190" height="44" rx="8" fill="#f6f2ff" stroke="#c9bee8"></rect>
+          <text x="400" y="230" text-anchor="middle" font-size="17" font-weight="700" fill="#66519a">隐藏变量 EM</text>
+          <line x1="495" y1="69" x2="615" y2="69" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <line x1="495" y1="153" x2="615" y2="153" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <line x1="495" y1="224" x2="615" y2="224" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <rect x="615" y="34" width="320" height="212" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="775" y="70" text-anchor="middle" font-size="18" font-weight="700" fill="#18212a">考试问法</text>
+          <text x="645" y="108" font-size="14" fill="#4b5a66">1. 这种方法属于监督/无监督/强化哪一类？</text>
+          <text x="645" y="140" font-size="14" fill="#4b5a66">2. 它的优化目标是什么？</text>
+          <text x="645" y="172" font-size="14" fill="#4b5a66">3. 每一步在更新什么？为什么会收敛？</text>
+          <text x="645" y="204" font-size="14" fill="#4b5a66">4. 哪个选项混淆了相关、独立、正交、标签？</text>
+        </svg>
+      </div>
+
+      <h3>K-means：把样本分堆，堆中心要能代表这一堆</h3>
+      <p>K-means 的 K 是“想分成 K 类”。它先随便给 K 个中心，然后不断重复两件事：把每个样本分给最近的中心；再用每一堆样本的平均位置更新中心。它像你整理资料：先粗分几堆，再看每堆的共同点，把堆名改得更准。</p>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">J</span><span class="op">=</span>
+          <span class="sum"><span class="top">K</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+          <span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot"><span class="mi">x</span>∈<span class="mi">C</span><sub>i</sub></span></span>
+          ||<span class="mi">x</span><span class="op">−</span><span class="mi">c</span><sub>i</sub>||<sup>2</sup>
+        </div>
+        <div class="math-note">读法：把每个样本到自己簇中心的平方距离全加起来；K-means 想让这个总距离尽量小。</div>
+        <ul>
+          <li><strong>x：</strong>某个样本。</li>
+          <li><strong>C<sub>i</sub>：</strong>第 i 个簇，也就是第 i 堆样本。</li>
+          <li><strong>c<sub>i</sub>：</strong>第 i 个簇的中心，一般是这一堆样本的均值。</li>
+        </ul>
+      </div>
+      <div class="mark">
+        <strong>为什么目标函数会下降？</strong>分配样本时，每个样本都去最近的中心，距离不会变大；更新中心时，平均值就是让一堆点到中心平方距离最小的位置。所以两步交替做，目标函数不增。它通常收敛到局部最优，不保证全局最优。
+      </div>
+      <div class="concept-drill">
+        <strong>学完 K-means 立刻做：</strong>
+        <p>选择题说“每个样本归属于与其距离最近的聚类质心所在集合”，这是 K-means 的哪一步？答案是<span class="focus">分配步骤</span>。如果题目说“更新质心为簇内样本均值”，那是更新步骤。两步交替，目标函数不增。</p>
+      </div>
+      <article class="drill">
+        <h3>小例题：K-means 的目标函数为什么不是“质心相加最小”</h3>
+        <p><strong>题目：</strong>选择题说：“K-means 最小化每个聚类质心加起来的值。”这个说法对吗？如果不对，正确目标是什么？</p>
+        <textarea data-key="ai4-inline-kmeans" placeholder="先写：目标函数在衡量谁到谁的距离？为什么不是质心本身越小越好？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p>这个说法不对。K-means 的目标不是让质心坐标本身相加最小，而是让<span class="focus">每个样本到所属簇中心的平方距离之和</span>尽量小。质心只是代表这一簇的位置，质心数值大小没有直接好坏；真正要小的是“簇内样本围绕质心的分散程度”。</p>
+            <p>考试遇到这类选项，要先问：它是不是在说“样本到中心的距离”？如果说“质心相加”“簇数越少越好”“每个点离所有中心都近”，都不是 K-means 的标准目标。</p>
+          </div>
+          <div class="rubric"><span>迁移</span><span>参考习题中 K-means 常用干扰项偷换“簇内方差/距离”和“质心本身”。你只要抓住“样本到自己簇中心”这句话，就不会被绕走。</span></div>
+        </details>
+      </article>
+
+      <h3>PCA：不是随便删列，而是找最能保留变化的方向</h3>
+      <p>PCA 的核心词是“方差最大”。你可以把方差理解成数据在某个方向上散得有多开。散得越开，说明这个方向越能区分样本、越有信息。PCA 找一组彼此正交的新方向，第一个方向保留最多方差，第二个在和第一个垂直的条件下继续保留最多方差。</p>
+      <table>
+        <thead><tr><th>概念</th><th>从零理解</th><th>考试常见坑</th></tr></thead>
+        <tbody>
+          <tr><td>PCA</td><td>把原特征换成一组新坐标轴，优先保留数据变化最大的方向。</td><td>不是“完全不丢信息”，降维通常会丢一部分信息。</td></tr>
+          <tr><td>主成分</td><td>新坐标轴，每个主成分是一条方向。</td><td>主成分之间是正交/不相关，不是相关越大越好。</td></tr>
+          <tr><td>特征脸</td><td>把人脸图像看成高维向量，用 PCA 找典型变化方向。</td><td>特征脸维度和原图像向量维度一致，但使用时只保留前若干主成分。</td></tr>
+          <tr><td>LSA</td><td>对词-文档矩阵做分解，把词和文档放进低维语义空间。</td><td>它不依赖人工给每篇文档标类别。</td></tr>
+        </tbody>
+      </table>
+	      <div class="mark danger">
+	        <strong>选择题高频信号：</strong>看到“相关度尽可能大”“维度之间极大相关”“需要文档类别标签”这类说法要警惕。PCA/LSA 的考点常常不是计算，而是辨别这些偷换词。
+	      </div>
+      <div class="concept-drill">
+        <strong>学完 PCA 立刻做：</strong>
+        <p>题干说“主成分分析所得低维数据中每一维之间具有极大相关度”，应判错。正确说法是主成分之间<span class="focus">正交/不相关</span>，PCA 想保留最大方差，不是让新维度高度相关。</p>
+      </div>
+      <article class="drill">
+        <h3>小例题：PCA 的“方差最大”到底在保留什么</h3>
+        <p><strong>题目：</strong>为什么 PCA 喜欢把数据投影到方差最大的方向？主成分之间应该相关还是正交？</p>
+        <textarea data-key="ai4-inline-pca" placeholder="先写：方差大说明什么？正交/不相关为什么重要？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p>方差大表示数据沿这个方向分散得更开，样本之间差异更明显，通常保留的信息更多。PCA 选择方差最大的方向作为第一主成分，再在与前面主成分正交的限制下选择后续方向。</p>
+            <p>主成分之间应当正交或线性不相关。这样每个主成分提供的是新的信息方向，而不是重复表达同一类变化。考试里看到“主成分之间相关度极大”通常要判错。</p>
+          </div>
+          <div class="rubric"><span>第一句</span><span>PCA 是无监督降维方法，通过寻找方差最大的正交方向尽量保留数据主要变化。</span></div>
+        </details>
+      </article>
+
+	      <h3>PCA -> 自编码器 -> VAE：它们为什么会在课程总结里连着出现</h3>
+	      <p>课程总结把 PCA、自编码器和 VAE 放在一起，不是因为它们名字像，而是因为它们都在回答“能不能用更小的表示保存原数据的重要信息”。PCA 用线性正交方向压缩数据；自编码器用神经网络先编码再解码，靠重构误差训练；VAE 在自编码器基础上让隐空间变成可采样的概率分布，所以更接近生成模型。</p>
+	      <div class="diagram" aria-label="PCA 自编码器 VAE 桥接图">
+	        <svg viewBox="0 0 980 330" role="img">
+	          <rect width="980" height="330" fill="#fbfdfe"/>
+	          <g font-family="sans-serif" fill="#18212a" font-size="15">
+	            <rect x="42" y="82" width="210" height="136" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+	            <text x="147" y="116" text-anchor="middle" font-size="19" font-weight="700" fill="#1f5f8b">PCA</text>
+	            <text x="68" y="148">线性投影</text>
+	            <text x="68" y="174">主成分正交</text>
+	            <text x="68" y="200">最大方差 / 最小重构误差</text>
+
+	            <rect x="382" y="82" width="210" height="136" rx="10" fill="#eef9f3" stroke="#24724f"/>
+	            <text x="487" y="116" text-anchor="middle" font-size="19" font-weight="700" fill="#24724f">Autoencoder</text>
+	            <text x="408" y="148">神经网络编码</text>
+	            <text x="408" y="174">再解码重构输入</text>
+	            <text x="408" y="200">通常不要求正交约束</text>
+
+	            <rect x="722" y="82" width="210" height="136" rx="10" fill="#fff9e6" stroke="#936b12"/>
+	            <text x="827" y="116" text-anchor="middle" font-size="19" font-weight="700" fill="#936b12">VAE</text>
+	            <text x="748" y="148">学隐变量分布</text>
+	            <text x="748" y="174">重构损失 + 分布约束</text>
+	            <text x="748" y="200">能从隐空间采样生成</text>
+
+	            <path d="M252 150 H382 M592 150 H722" stroke="#687581" stroke-width="3" marker-end="url(#arrowPcaAe)"/>
+	            <text x="296" y="132" fill="#687581">从线性到非线性</text>
+	            <text x="620" y="132" fill="#687581">从编码到生成</text>
+	            <text x="96" y="270" fill="#687581">考试区分点：PCA 有正交主成分；AE 是编码-解码重构；VAE 让编码变成概率分布。</text>
+	          </g>
+	          <defs><marker id="arrowPcaAe" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+	        </svg>
+	      </div>
+	      <table>
+	        <thead><tr><th>方法</th><th>输入到哪里去</th><th>训练目标</th><th>考试一句话</th></tr></thead>
+	        <tbody>
+	          <tr><td>PCA</td><td>投影到方差最大的正交方向。</td><td>最大化投影方差，等价于最小化线性重构误差。</td><td>PCA 是线性降维方法，主成分互相正交。</td></tr>
+	          <tr><td>自编码器 AE</td><td>编码器把输入压到隐表示，解码器再还原。</td><td>最小化重构误差。</td><td>AE 可看成非线性降维/特征学习，不要求 PCA 那种正交主成分。</td></tr>
+	          <tr><td>VAE</td><td>编码器输出隐变量分布，再采样解码。</td><td>重构损失 + 分布约束。这里的 KL 散度可以先理解成“让学到的隐变量分布别太乱，尽量贴近可采样的标准分布”。</td><td>VAE 把隐空间变成可采样分布，因此能做生成。</td></tr>
+	        </tbody>
+	      </table>
+	    </section>
+
+    <section class="card" id="estimation">
+      <h2>3. EM 与统计估计：有些东西看不见，但可以轮流猜</h2>
+      <p>EM 用来处理“有隐藏变量”的参数估计。你不知道每个样本背后属于哪个隐藏类别，但你又想估计模型参数。EM 的思路不是一次猜到底，而是轮流做两件事：先根据当前参数估计隐藏变量的分布，再根据估计出的隐藏变量更新参数。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>E-step：Expectation</strong>
+          根据当前参数，估计隐藏变量的概率。人话：先猜“每个样本可能来自谁”。
+        </div>
+        <div class="box">
+          <strong>M-step：Maximization</strong>
+          用刚才估计出的隐藏变量概率，重新估计模型参数。人话：拿这轮猜测去改参数。
+        </div>
+      </div>
+      <p>K-means 可以看成 EM 的一种“硬分配”版本：E 步不是给概率，而是直接把点分给最近中心；M 步用这一堆点的平均值更新中心。</p>
+      <div class="concept-drill">
+        <strong>学完 EM 立刻做：</strong>
+        <p>如果题目问“硬币 A/B 来源未知，如何估计每枚硬币正面概率”，第一反应是 EM。E 步先估计每轮观测来自 A/B 的概率，M 步再用这些概率更新 A/B 的正面概率。不要把它写成普通监督学习，因为隐藏来源不是已知标签。</p>
+      </div>
+      <table>
+        <thead><tr><th>题眼</th><th>该反应</th><th>标准答法</th></tr></thead>
+        <tbody>
+          <tr><td>隐藏变量、混合模型、硬币来源未知</td><td>EM</td><td>先估计隐藏变量，再更新参数；迭代直到收敛。</td></tr>
+          <tr><td>聚类中心、最近中心、簇内平方误差</td><td>K-means</td><td>分配样本到最近中心，再更新中心为均值。</td></tr>
+          <tr><td>样本均值是否无偏</td><td>统计估计</td><td>样本均值是总体均值的无偏估计。</td></tr>
+          <tr><td>为什么样本方差除以 n-1</td><td>自由度修正</td><td>用样本均值替代总体均值会低估方差，所以无偏样本方差使用 n-1。</td></tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">x̄</span><span class="op">=</span>
+          <span class="frac"><span>1</span><span>n</span></span>
+          <span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+          <span class="mi">x</span><sub>i</sub>
+        </div>
+        <div class="display-eq">
+          <span class="mi">s</span><sup>2</sup><span class="op">=</span>
+          <span class="frac"><span>1</span><span>n−1</span></span>
+          <span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+          <span class="op">(</span><span class="mi">x</span><sub>i</sub><span class="op">−</span><span class="mi">x̄</span><span class="op">)</span><sup>2</sup>
+        </div>
+        <div class="math-note">为什么 n−1：因为 x̄ 是用同一批样本算出来的，一个自由度已经被“用掉”；若还除以 n，方差会偏小。</div>
+      </div>
+    </section>
+
+    <section class="card" id="generation">
+      <h2>4. 生成模型辨析：先看训练信号，再报模型名</h2>
+      <p>第14讲和老师最后一节课都说明：生成式 AI 这一章更重<span class="focus">基本概念、核心思想、模型对比</span>，不追求你推复杂公式。你要会的是看见题干后判断：它是在重构、采样、对抗，还是去噪。</p>
+      <table>
+        <thead><tr><th>题干最强信号</th><th>模型</th><th>高分第一句</th><th>常见坑</th></tr></thead>
+        <tbody>
+          <tr><td>压缩输入，再尽量还原输入；重构误差</td><td>AE 自编码器</td><td>自编码器通过编码器学习低维表示，再由解码器重构输入。</td><td>不要把 AE 说成一定能从随机噪声稳定生成高质量样本。</td></tr>
+          <tr><td>μ、σ、logσ²、KL、z = μ + σ·ε</td><td>VAE 变分自编码器</td><td>VAE 让隐空间变成可采样分布，训练目标包含重构损失和分布约束。</td><td>不要只写“也是自编码器”，要写可采样隐空间。</td></tr>
+          <tr><td>生成器、判别器、真假样本、对抗训练</td><td>GAN</td><td>GAN 通过生成器和判别器博弈，使生成分布逐渐接近真实数据分布。</td><td>损失小不等于样本一定好，训练可能不稳定或模式崩塌。</td></tr>
+          <tr><td>前向加噪，反向去噪，逐步生成</td><td>Diffusion 扩散模型</td><td>扩散模型先逐步加噪，再训练网络学习反向去噪过程生成样本。</td><td>不要写成“一个判别器判断真假”，那是 GAN 信号。</td></tr>
+        </tbody>
+      </table>
+      <div class="grid">
+        <article class="drill">
+          <h3>小例题 1：AE 和 VAE 的分界线</h3>
+          <p><strong>题目：</strong>模型把输入图片编码成一个向量，再解码重构图片；另一个模型输出 μ 和 logσ²，并从隐空间采样生成。二者分别是什么？</p>
+          <textarea data-key="ai4-gen-ae-vae" placeholder="先写：固定编码 vs 隐变量分布；重构工具 vs 生成工具。"></textarea>
+          <details>
+            <summary>查看答案与丰满解析</summary>
+            <div class="answer-block">
+              <p>第一种更像 AE，自编码器的主线是<span class="focus">编码-解码-重构</span>：把输入压缩成隐表示，再尽量还原输入。第二种更像 VAE，因为 μ/logσ² 和采样说明它不是只学一个固定编码，而是在学隐变量分布。</p>
+              <p>标准简答要补作用：AE 常用于降维、表示学习和重构；VAE 通过让隐空间可采样，更适合生成新样本。</p>
+            </div>
+          </details>
+        </article>
+        <article class="drill">
+          <h3>小例题 2：GAN 和 Diffusion 不要混</h3>
+          <p><strong>题目：</strong>A 模型有生成器和判别器；B 模型从噪声开始一步步去噪。分别对应什么？各写一句设计目的。</p>
+          <textarea data-key="ai4-gen-gan-diff" placeholder="A：模型名 + 对抗目的。B：模型名 + 加噪/去噪目的。"></textarea>
+          <details>
+            <summary>查看答案与丰满解析</summary>
+            <div class="answer-block">
+              <p>A 是 GAN。设计目的是让生成器产生样本，判别器判断真假，二者对抗训练，推动生成样本越来越接近真实样本。</p>
+              <p>B 是 Diffusion。设计目的是通过前向逐步加噪构造训练过程，再学习反向去噪，从随机噪声逐步恢复出清晰样本。它的题眼是<span class="focus">加噪/去噪/预测噪声</span>，不是判别器。</p>
+            </div>
+          </details>
+        </article>
+      </div>
+      <div class="mark">
+        <strong>生成模型作答模板：</strong>先写模型名，再写训练信号，最后写它解决什么问题。比如“这是 VAE，因为题干出现 μ、σ 和隐变量采样；VAE 通过重构损失保证样本还原，通过 KL 约束让隐空间可采样，因此能生成新样本。”
+      </div>
+    </section>
+
+    <section class="card" id="rl">
+      <h2>5. 强化学习：不是给答案，而是给奖励</h2>
+      <p>强化学习的学习方式和监督学习很不一样。监督学习给的是“这题正确答案是什么”；强化学习给的是“你这样做最后得了多少分”。智能体要在环境里行动，观察状态，选择动作，拿到奖励，再慢慢学出策略。</p>
+      <div class="diagram" aria-label="强化学习闭环图">
+        <svg viewBox="0 0 980 300" role="img">
+          <defs>
+            <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect x="90" y="96" width="230" height="112" rx="8" fill="#eef7fc" stroke="#b3d2e7"></rect>
+          <text x="205" y="139" text-anchor="middle" font-size="20" font-weight="700" fill="#1f5f8b">智能体 Agent</text>
+          <text x="205" y="169" text-anchor="middle" font-size="14" fill="#4b5a66">根据策略选择动作</text>
+          <rect x="660" y="96" width="230" height="112" rx="8" fill="#f3faf6" stroke="#a7d8bf"></rect>
+          <text x="775" y="139" text-anchor="middle" font-size="20" font-weight="700" fill="#24724f">环境 Environment</text>
+          <text x="775" y="169" text-anchor="middle" font-size="14" fill="#4b5a66">返回新状态和奖励</text>
+          <line x1="320" y1="128" x2="660" y2="128" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow2)"></line>
+          <text x="490" y="108" text-anchor="middle" font-size="15" fill="#18212a">动作 a</text>
+          <line x1="660" y1="178" x2="320" y2="178" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow2)"></line>
+          <text x="490" y="202" text-anchor="middle" font-size="15" fill="#18212a">状态 s' + 奖励 r</text>
+          <rect x="354" y="230" width="270" height="44" rx="8" fill="#fff9e6" stroke="#dcc682"></rect>
+          <text x="489" y="258" text-anchor="middle" font-size="16" font-weight="700" fill="#936b12">目标：学到长期回报最大的策略</text>
+          <line x1="489" y1="230" x2="489" y2="194" stroke="#936b12" stroke-width="2" marker-end="url(#arrow2)"></line>
+        </svg>
+      </div>
+      <h3>五个基础词：考试一问就要能写</h3>
+      <table>
+        <thead><tr><th>词</th><th>人话解释</th><th>标准表达</th></tr></thead>
+        <tbody>
+          <tr><td>状态 s</td><td>智能体现在看到的局面。</td><td>环境在某一时刻的信息描述。</td></tr>
+          <tr><td>动作 a</td><td>智能体现在能做的选择。</td><td>在状态 s 下可采取的行为。</td></tr>
+          <tr><td>奖励 r</td><td>环境对这一步的即时打分。</td><td>执行动作后得到的即时反馈。</td></tr>
+          <tr><td>策略 π</td><td>看到状态后怎么选动作。</td><td>从状态到动作或动作概率分布的映射。</td></tr>
+          <tr><td>价值 V / Q</td><td>这个状态或动作长期有多值钱。</td><td>V(s) 是状态价值；Q(s,a) 是动作-价值函数。</td></tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">Q</span><sub>new</sub><span class="op">(</span><span class="mi">s</span><span class="op">,</span><span class="mi">a</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="mi">Q</span><sub>old</sub><span class="op">(</span><span class="mi">s</span><span class="op">,</span><span class="mi">a</span><span class="op">)</span>
+          <span class="op">+</span><span class="mi">α</span>
+          <span class="op">[</span>
+          <span class="mi">r</span><span class="op">+</span><span class="mi">γ</span><span class="func">max</span><sub>a′</sub><span class="mi">Q</span><span class="op">(</span><span class="mi">s′</span><span class="op">,</span><span class="mi">a′</span><span class="op">)</span>
+          <span class="op">−</span><span class="mi">Q</span><sub>old</sub><span class="op">(</span><span class="mi">s</span><span class="op">,</span><span class="mi">a</span><span class="op">)</span>
+          <span class="op">]</span>
+        </div>
+        <div class="math-note">读法：旧 Q 值往“即时奖励 + 折扣后的下一状态最好 Q 值”靠近一点。</div>
+        <ul>
+          <li><strong>α：</strong>学习率，这次新信息听多少。</li>
+          <li><strong>γ：</strong>折扣因子，未来奖励算多重。</li>
+          <li><strong>max Q(s′,a′)：</strong>下一状态里最好的动作价值，这是 Q-learning 的强题眼。</li>
+        </ul>
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>Q-learning</strong>
+          离策略算法。更新时假设下一步会选最大 Q 的动作，不一定等于采样时实际选的动作。
+        </div>
+        <div class="box">
+          <strong>Sarsa</strong>
+          在策略算法。更新时使用实际采样到的下一动作，所以更新和行为策略一致。
+        </div>
+        <div class="box">
+          <strong>探索与利用</strong>
+          利用是选当前看起来最好的动作；探索是试试看别的动作。ε-greedy 是常见机制。
+        </div>
+        <div class="box">
+          <strong>MDP 比 MRP 多什么</strong>
+          多了动作。MRP 只看状态转移和奖励；MDP 要考虑“选择哪个动作”会改变转移和奖励。
+        </div>
+      </div>
+      <div class="concept-drill">
+        <strong>学完强化学习立刻做：</strong>
+        <p>题干说“在状态 s 采取动作 a 后未来回报的期望”，答案是 <span class="focus">Q(s,a) 动作-价值函数</span>；如果没有动作，只说“在状态 s 按策略行动后未来回报的期望”，答案是 V(s) 状态价值函数。</p>
+      </div>
+      <article class="drill">
+        <h3>小例题：Q-learning 一步更新先找谁</h3>
+        <p><strong>题目：</strong>已知 Q(s,a)=0.2，α=0.5，γ=0.9，执行动作后奖励 r=1，下一状态中最大 Q 值为 0.6。更新后的 Q(s,a) 是多少？</p>
+        <textarea data-key="ai4-inline-qlearn" placeholder="先写目标值：r + gamma * max Q(s',a')，再写旧值往目标值靠近。"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p>第一步先算目标值：1 + 0.9 × 0.6 = 1.54。第二步算新旧差距：1.54 - 0.2 = 1.34。第三步旧值往目标靠近 α 倍：0.2 + 0.5 × 1.34 = 0.87。</p>
+            <p>所以更新后 Q(s,a)=0.87。考试里这类题不难算，关键是别把 max Q(s′,a′) 看成当前 Q，也别更新所有格子；Q-learning 一步更新只改当前这个状态-动作对。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>给 α、γ、r、下一状态最大 Q，就是 Q-learning 一步更新；第一步永远先写目标值。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="rl-map">
+      <h2>5.5 强化学习算法地图：先分坐标，不要被名字吓住</h2>
+      <p>参考习题和第14讲课程总结都把强化学习算法放进一张“关系图”里。你不需要把每个算法推导成论文，但要会用两个坐标分流：<span class="focus">有没有环境模型</span>，以及<span class="focus">主要学价值函数还是直接学策略</span>。这能把动态规划、Q-learning、Sarsa、Actor-Critic、REINFORCE 放到同一张脑图里。</p>
+      <div class="diagram" aria-label="强化学习算法两维地图">
+        <svg viewBox="0 0 980 430" role="img">
+          <rect width="980" height="430" fill="#fbfdfe"/>
+          <g font-family="sans-serif" fill="#18212a" font-size="15">
+            <text x="490" y="36" text-anchor="middle" font-size="22" font-weight="700">强化学习算法先用两刀切</text>
+            <line x1="120" y1="210" x2="860" y2="210" stroke="#9aa8b3" stroke-width="2"/>
+            <line x1="490" y1="74" x2="490" y2="360" stroke="#9aa8b3" stroke-width="2"/>
+            <text x="245" y="82" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5f8b">有环境模型 model-based</text>
+            <text x="735" y="82" text-anchor="middle" font-size="16" font-weight="700" fill="#a23b32">无环境模型 model-free</text>
+            <text x="90" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="#24724f" transform="rotate(-90 90 150)">学价值 value-based</text>
+            <text x="90" y="295" text-anchor="middle" font-size="16" font-weight="700" fill="#66519a" transform="rotate(-90 90 295)">学策略 policy-based</text>
+
+            <rect x="154" y="104" width="260" height="78" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="284" y="134" text-anchor="middle" font-size="18" font-weight="700">动态规划 DP</text>
+            <text x="284" y="160" text-anchor="middle" fill="#4b5a66">策略迭代 / 价值迭代</text>
+
+            <rect x="566" y="104" width="260" height="78" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="696" y="134" text-anchor="middle" font-size="18" font-weight="700">时序差分 TD</text>
+            <text x="696" y="160" text-anchor="middle" fill="#4b5a66">Q-learning / Sarsa</text>
+
+            <rect x="154" y="246" width="260" height="78" rx="10" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="284" y="276" text-anchor="middle" font-size="18" font-weight="700">策略优化思想</text>
+            <text x="284" y="302" text-anchor="middle" fill="#4b5a66">有模型时可用转移概率评估</text>
+
+            <rect x="566" y="246" width="260" height="78" rx="10" fill="#fff9e6" stroke="#936b12"/>
+            <text x="696" y="276" text-anchor="middle" font-size="18" font-weight="700">策略梯度 / Actor-Critic</text>
+            <text x="696" y="302" text-anchor="middle" fill="#4b5a66">REINFORCE / A2C / A3C</text>
+
+            <text x="490" y="388" text-anchor="middle" fill="#687581">考试答题：先说它属于哪一格，再写核心更新对象：价值函数、动作价值函数，还是策略函数。</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="grid">
+        <div class="box">
+          <strong>第一刀：有没有环境模型</strong>
+          有模型 means 你知道或能使用状态转移概率和奖励规则，例如动态规划里的策略迭代、价值迭代。无模型 means 你不直接知道环境怎么转移，只能通过采样经验学习，例如 Q-learning、Sarsa。
+        </div>
+        <div class="box">
+          <strong>第二刀：学价值还是学策略</strong>
+          价值类方法先学“状态或动作有多值钱”，再据此选动作；策略类方法直接学习“状态下选各动作的概率”。Actor-Critic 同时有 Actor 学策略、Critic 评估价值。
+        </div>
+      </div>
+
+      <h3>通用策略迭代：强化学习不是瞎试，是“评估-改进”来回转</h3>
+      <p>第14讲总结里提到：很多强化学习方法都可以看成<span class="focus">策略评估</span>和<span class="focus">策略优化</span>交替。评估是问“当前策略到底好不好”；优化是问“知道它哪里好以后，下一步该怎么改”。你可以把它理解成做卷子：先批改找问题，再调整做题策略，然后再批改。</p>
+      <table>
+        <thead><tr><th>阶段</th><th>人话解释</th><th>常见算法怎么体现</th></tr></thead>
+        <tbody>
+          <tr><td>策略评估</td><td>在当前策略下，估计状态/动作长期价值。</td><td>V(s)、Q(s,a)、TD 误差、Critic。</td></tr>
+          <tr><td>策略优化</td><td>根据价值估计，让策略更倾向于高价值动作。</td><td>贪心选择、ε-greedy、策略梯度、Actor。</td></tr>
+          <tr><td>交替迭代</td><td>边评估边改进，直到策略变稳。</td><td>策略迭代、价值迭代、Actor-Critic。</td></tr>
+        </tbody>
+      </table>
+
+      <article class="drill">
+        <h3>算法分流题：Q-learning、Sarsa、Actor-Critic 先怎么区分</h3>
+        <p><strong>题目：</strong>给三个描述：A. 更新时用下一状态最大 Q；B. 更新时用实际采样到的下一动作；C. 一个模块选动作，一个模块评估价值。分别对应什么？</p>
+        <textarea data-key="ai4-rlmap1" placeholder="先写 A/B/C 的模型名，再写为什么。"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>A 是 Q-learning。</strong>强题眼是 max<sub>a′</sub> Q(s′,a′)，它更新时假设下一步会选最优动作，所以是离策略 off-policy。</p>
+            <p><strong>B 是 Sarsa。</strong>Sarsa 名字来自 s, a, r, s′, a′，它使用实际采样到的下一动作 a′ 来更新，因此是更典型的在策略 on-policy。</p>
+            <p><strong>C 是 Actor-Critic。</strong>Actor 负责产生或更新策略，Critic 负责评价状态/动作价值，二者配合让策略优化更稳定。</p>
+          </div>
+          <div class="rubric"><span>迁移</span><span>考试只要出现“采样策略和更新策略是否一致”，就先写 on-policy/off-policy；出现 Actor/Critic，就写策略函数和价值函数的分工。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>探索利用题：ε-greedy 和 Boltzmann 都在解决什么</h3>
+        <p><strong>题目：</strong>如果智能体永远选当前 Q 值最大的动作，可能有什么问题？ε-greedy 和 Boltzmann exploration 的共同目标是什么？</p>
+        <textarea data-key="ai4-rlmap2" placeholder="先写：利用是什么，探索是什么，为什么需要平衡。"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p>永远选当前最大 Q 的动作，是纯利用。问题是早期 Q 值估计可能很不准，某些动作没试过就被放弃，智能体可能陷入局部最优。</p>
+            <p>ε-greedy 用小概率随机探索其他动作，用大概率选择当前最优动作；Boltzmann exploration 则按动作价值转成概率，价值高的动作更可能被选，但其他动作仍有机会。它们共同目标都是在<span class="focus">利用已有经验</span>和<span class="focus">探索未知空间</span>之间折中。</p>
+          </div>
+          <div class="rubric"><span>写法</span><span>不要只写“随机”。要写清为什么随机：当前估计不一定可靠，探索能发现潜在更优动作。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>6. 参考习题题卡：先写题眼，再看答案</h2>
+
+      <article class="drill">
+        <h3>题卡 1：K-means 的目标到底在最小化什么</h3>
+        <p><strong>题目：</strong>K-means 聚类通常最小化的目标是什么？如果某个选项说“让每个簇的中心点之和最小”，为什么不对？</p>
+        <textarea data-key="ai4-card1" placeholder="先写：题眼是什么？目标函数是什么？错误选项偷换了什么词？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>K-means 最小化簇内平方误差，即每个样本到所属簇中心的平方距离之和。错误选项把“样本到中心的距离之和”偷换成“中心点本身之和”，中心点坐标加起来没有聚类质量意义。</p>
+            <div class="math-card">
+              <div class="display-eq">
+                <span class="mi">J</span><span class="op">=</span>
+                <span class="sum"><span class="top">K</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+                <span class="sum"><span class="top"></span><span class="sym">∑</span><span class="bot"><span class="mi">x</span>∈<span class="mi">C</span><sub>i</sub></span></span>
+                ||<span class="mi">x</span><span class="op">−</span><span class="mi">c</span><sub>i</sub>||<sup>2</sup>
+              </div>
+            </div>
+            <div class="rubric"><span>题眼</span><span>看到 K-means、cluster、centroid、objective，就想“最近中心 + 簇内平方误差”。</span></div>
+            <div class="rubric"><span>迁移</span><span>如果题目问“为什么迭代会收敛”，答“分配到最近中心不增大目标，中心取均值也不增大目标，目标函数单调不增，有限分配下会收敛到局部最优”。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 2：相关性和独立性，谁能推出谁</h3>
+        <p><strong>题目：</strong>两个随机变量独立时，是否一定线性不相关？反过来，线性不相关是否一定独立？</p>
+        <textarea data-key="ai4-card2" placeholder="先写：独立更强还是不相关更强？考试选项怎么绕你？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>独立通常可以推出线性不相关；但线性不相关不能推出独立。线性相关只关心“线性关系”，独立要求联合分布能拆成边缘分布的乘积，是更强的条件。</p>
+            <div class="rubric"><span>题眼</span><span>看到“相关”“独立”“Pearson”“线性相关”，先比较强弱：独立更强，不相关更弱。</span></div>
+            <div class="rubric"><span>坑</span><span>考试常把“没有线性相关”说成“没有任何关系”。这不对，变量可能有非线性关系。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 3：PCA 为什么选“方差最大”的方向</h3>
+        <p><strong>题目：</strong>PCA 降维时为什么选择方差最大的方向？主成分之间应当相关还是正交？</p>
+        <textarea data-key="ai4-card3" placeholder="先写：方差代表什么？主成分之间的关系是什么？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>PCA 选择方差最大的方向，是因为数据在该方向上变化最大、信息量最大，投影后更能保留样本差异。不同主成分之间通常正交、线性不相关，不是相关度越大越好。</p>
+            <div class="rubric"><span>题眼</span><span>PCA、principal component、最大方差、降维、特征脸、SVD 都是一条线。</span></div>
+            <div class="rubric"><span>迁移</span><span>特征脸题里，“每个特征脸维度与原图像向量维度一致”是合理的；“特征脸之间相关度尽量大”是危险说法。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 4：LSA 到底需不需要文档类别标签</h3>
+        <p><strong>题目：</strong>潜在语义分析 LSA 对词-文档矩阵做分解，它属于监督学习吗？是否需要预先给文档标类别？</p>
+        <textarea data-key="ai4-card4" placeholder="先写：LSA 输入是什么？输出是什么？有没有标签？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>LSA 通常对词-文档矩阵做矩阵分解，把词和文档映射到低维潜在语义空间。它不需要预先提供文档类别标签，因此不是典型监督学习分类任务。</p>
+            <div class="rubric"><span>题眼</span><span>词-文档矩阵、SVD、潜在语义空间，是 LSA 的关键词。</span></div>
+            <div class="rubric"><span>坑</span><span>“能用于文本分类/检索”不等于“训练时必须有类别标签”。用途和训练监督信号不是一回事。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 5：EM 与 K-means 的关系</h3>
+        <p><strong>题目：</strong>为什么说 K-means 可以看作 EM 的特殊情况？E 步和 M 步分别对应什么？</p>
+        <textarea data-key="ai4-card5" placeholder="先写：EM 两步是什么？K-means 的两步怎么对应？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>EM 的 E 步估计隐藏变量，M 步更新参数。K-means 中，E 步对应把每个样本硬分配给最近的簇中心；M 步对应根据每个簇中的样本重新计算中心。它是硬分配、常见距离假设下的 EM 特殊形式。</p>
+            <div class="rubric"><span>题眼</span><span>隐藏类别、分配、更新参数、迭代收敛，一般都能往 EM/K-means 的两步上套。</span></div>
+            <div class="rubric"><span>写法</span><span>简答题不要只写“一个是另一个特殊情况”，要把 E/M 两步对应写出来，分才稳。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 6：样本方差为什么除以 n-1</h3>
+        <p><strong>题目：</strong>样本均值是否是总体均值的无偏估计？样本方差为什么常用 n−1 而不是 n？</p>
+        <textarea data-key="ai4-card6" placeholder="先写：样本均值、总体均值、自由度、低估方差这几个词怎么连起来？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>样本均值是总体均值的无偏估计。计算样本方差时，如果用样本均值代替未知总体均值，会让样本到均值的距离总体偏小，从而低估总体方差。因此无偏样本方差使用 n−1，这叫自由度修正。</p>
+            <div class="math-card">
+              <div class="display-eq">
+                <span class="mi">s</span><sup>2</sup><span class="op">=</span>
+                <span class="frac"><span>1</span><span>n−1</span></span>
+                <span class="sum"><span class="top">n</span><span class="sym">∑</span><span class="bot">i=1</span></span>
+                <span class="op">(</span><span class="mi">x</span><sub>i</sub><span class="op">−</span><span class="mi">x̄</span><span class="op">)</span><sup>2</sup>
+              </div>
+            </div>
+            <div class="rubric"><span>题眼</span><span>“无偏”“样本均值”“样本方差”“n-1”都是统计估计题。</span></div>
+            <div class="rubric"><span>人话</span><span>样本均值是用这批样本自己算出来的，它天然更贴近这批样本，所以方差会被算小一点。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 7：强化学习、监督学习、深度卷积网络怎么对应</h3>
+        <p><strong>题目：</strong>把三种描述对应起来：强化学习、监督学习、深度卷积神经网络学习。描述包括“评估学习方式”“有标注信息学习方式”“端到端学习方式”。</p>
+        <textarea data-key="ai4-card7" placeholder="先写：强化学习拿到什么反馈？监督学习有没有标签？CNN 为什么叫端到端？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>强化学习对应评估学习方式，监督学习对应有标注信息学习方式，深度卷积神经网络常被描述为端到端学习方式。</p>
+            <div class="rubric"><span>题眼</span><span>强化学习不是“无标注学习”那么简单，它有奖励反馈，只是不给每一步的标准答案。</span></div>
+            <div class="rubric"><span>坑</span><span>“端到端”常指从原始输入直接学到输出，中间特征由模型自己学习；这和有没有标签是两个维度。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 8：MDP 比 MRP 多了什么</h3>
+        <p><strong>题目：</strong>马尔可夫决策过程 MDP 相比马尔可夫奖励过程 MRP 引入了哪个关键元素？</p>
+        <textarea data-key="ai4-card8" placeholder="先写：为什么叫“决策”？多了什么才需要决策？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>MDP 相比 MRP 引入了动作。MRP 只有状态转移和奖励，智能体不需要选择动作；MDP 中不同动作会影响状态转移概率和奖励，因此需要学习策略。</p>
+            <div class="rubric"><span>题眼</span><span>看到 decision process，就抓住 action。没有动作，就谈不上策略优化。</span></div>
+            <div class="rubric"><span>迁移</span><span>如果题目问 MDP 的基本元素，可写状态、动作、转移概率、奖励、折扣因子。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 9：V(s) 和 Q(s,a) 区别在哪里</h3>
+        <p><strong>题目：</strong>“在状态 s 下遵循策略能获得的期望回报”和“在状态 s 先采取动作 a 后再遵循策略的期望回报”分别是什么函数？</p>
+        <textarea data-key="ai4-card9" placeholder="先写：一个只看状态，一个看状态+动作。"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>前者是状态价值函数 V(s)，后者是动作-价值函数 Q(s,a)。V 评价“这个状态有多好”，Q 评价“在这个状态做这个动作有多好”。</p>
+            <div class="rubric"><span>题眼</span><span>只出现 state，就是 V；同时出现 state 和 action，就是 Q。</span></div>
+            <div class="rubric"><span>写法</span><span>简答题可以补一句：Q 更适合直接选择动作，因为比较同一状态下不同动作的 Q 值即可。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 10：Q-learning 和 Sarsa 的一句话区分</h3>
+        <p><strong>题目：</strong>采样时的策略和更新时的策略不同，这类算法叫什么？Q-learning 对应的在策略版本是什么？</p>
+        <textarea data-key="ai4-card10" placeholder="先写：off-policy / on-policy 的区别，Q-learning 和 Sarsa 怎么对应？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>采样策略和更新策略不同的是离策略算法，Q-learning 是典型离策略算法。对应的在策略版本是 Sarsa，它更新时使用实际采样到的下一动作。</p>
+            <div class="rubric"><span>题眼</span><span>Q-learning 更新式里有下一状态最大 Q，说明它按“最优下一动作”更新，不一定等于实际走的下一动作。</span></div>
+            <div class="rubric"><span>迁移</span><span>Sarsa 名字来自 state、action、reward、next state、next action，记住它更新时真的用到了下一步实际动作 a′。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 11：探索与利用为什么需要 ε-greedy</h3>
+        <p><strong>题目：</strong>强化学习中为什么不能永远选当前 Q 值最大的动作？ε-greedy 解决什么矛盾？</p>
+        <textarea data-key="ai4-card11" placeholder="先写：利用和探索分别是什么？ε 的作用是什么？"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>永远选当前最优动作可能过早陷入局部最优，因为有些动作没试过，估计值可能不准。ε-greedy 以较大概率选择当前最优动作进行利用，以小概率随机选择其他动作进行探索，在利用已有知识和发现更优策略之间折中。</p>
+            <div class="rubric"><span>题眼</span><span>exploration-exploitation、探索利用矛盾，第一反应就是 ε-greedy。</span></div>
+            <div class="rubric"><span>写法</span><span>不要只写“随机一下”。要写清“多数时间利用，少数时间探索”，这样更像标准答案。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 12：Q-learning 一步更新小计算</h3>
+        <p><strong>题目：</strong>已知 Q(s,a)=2，学习率 α=0.5，折扣因子 γ=0.8，即时奖励 r=1，下一状态最大动作价值为 4。更新后的 Q(s,a) 是多少？</p>
+        <textarea data-key="ai4-card12" placeholder="先写公式，再代入。别跳步。"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>目标值为 1 + 0.8 × 4 = 4.2。TD 误差为 4.2 − 2 = 2.2。更新后 Q(s,a) = 2 + 0.5 × 2.2 = 3.1。</p>
+            <div class="math-card">
+              <div class="display-eq">
+                <span class="mi">Q</span><sub>new</sub><span class="op">=</span>
+                2<span class="op">+</span>0.5<span class="op">×</span><span class="op">[</span>1<span class="op">+</span>0.8<span class="op">×</span>4<span class="op">−</span>2<span class="op">]</span>
+                <span class="op">=</span>3.1
+              </div>
+            </div>
+            <div class="rubric"><span>题眼</span><span>给 Q、α、γ、r、下一状态最大 Q，就是 Q-learning 一步更新。</span></div>
+            <div class="rubric"><span>步骤</span><span>考试不用计算器，数值通常很小。写成“目标值 -> TD 误差 -> 旧值加学习率乘误差”最稳。</span></div>
+          </div>
+        </details>
+      </article>
+
+	      <article class="drill">
+	        <h3>题卡 13：四个题眼混合分流</h3>
+        <p><strong>题目：</strong>分别判断下面四个题眼最应该想到什么方法，并写出第一句作答：A. 没有标签，自动把样本分成 K 堆；B. 高维数据降到低维，保留最大方差；C. 有看不见的隐藏变量，需要迭代估计参数；D. 状态、动作、奖励、Q 表更新。</p>
+        <textarea data-key="ai4-card13" placeholder="按 A/B/C/D 写：方法名 -> 第一句 -> 容易混的对象。"></textarea>
+        <details>
+          <summary>查看答案与丰满解析</summary>
+          <div class="answer-block">
+            <p><strong>标准答案：</strong>A 是 K-means 聚类，第一句写“这是无监督聚类任务，K-means 通过最近中心分配和均值更新中心来最小化簇内平方误差”。B 是 PCA，第一句写“PCA 通过寻找方差最大的正交方向实现降维，尽量保留数据主要变化”。C 是 EM，第一句写“EM 先在 E 步估计隐藏变量分布，再在 M 步更新参数，反复迭代”。D 是强化学习里的 Q-learning，第一句写“Q-learning 把当前 Q 值往即时奖励加折扣后下一状态最大 Q 值靠近”。</p>
+            <div class="rubric"><span>题眼</span><span>K 堆/中心 -> K-means；最大方差/正交 -> PCA；隐藏变量 -> EM；状态动作奖励/Q 表 -> 强化学习或 Q-learning。</span></div>
+            <div class="rubric"><span>迁移</span><span>考试综合题常把这些放在同一题里考“识别”。你要先分流，再展开，不要一看“无标签”就把所有无监督方法混成一个答案。</span></div>
+          </div>
+	        </details>
+	      </article>
+
+	      <article class="drill">
+	        <h3>题卡 14：PCA、AE、VAE 三者不要混</h3>
+	        <p><strong>题目：</strong>老师问：PCA、自编码器、VAE 都和“低维表示/重构”有关。请分别说明它们的核心思想，并指出 VAE 为什么更接近生成模型。</p>
+	        <textarea data-key="ai4-card14" placeholder="先写三行：PCA、AE、VAE。每行写核心思想 + 一个考试关键词。"></textarea>
+	        <details>
+	          <summary>查看答案与丰满解析</summary>
+	          <div class="answer-block">
+	            <p><strong>PCA：</strong>寻找方差最大的正交主成分，把高维数据投影到少数方向上，尽量保留主要变化。它是线性降维方法，也可从最小化重构误差角度理解。</p>
+	            <p><strong>自编码器：</strong>用编码器把输入压缩成隐表示，再用解码器重构输入。训练目标通常是让重构误差尽量小。它可以做非线性特征学习，不要求主成分正交。</p>
+	            <p><strong>VAE：</strong>编码器不是输出一个固定编码，而是输出隐变量分布；训练时同时考虑重构损失和分布约束。这里的 KL 散度先记成人话：“让隐空间别散成奇怪形状，而是靠近一个容易采样的标准分布”。因此 VAE 可以从隐空间采样再解码，生成新样本。</p>
+	          </div>
+	          <div class="rubric"><span>题眼</span><span>PCA -> 方差最大/正交；AE -> 编码解码/重构误差；VAE -> 隐变量分布/分布约束/采样生成。</span></div>
+	          <div class="rubric"><span>常见坑</span><span>不要把 AE 说成一定正交；不要把 VAE 只说成普通压缩工具，它和生成的联系在“隐空间可采样”。</span></div>
+	        </details>
+	      </article>
+	    </section>
+
+    <section class="card" id="gate">
+      <h2>7. 过关闸门：AI 后半先到 B，再冲 A</h2>
+      <table>
+        <thead><tr><th>等级</th><th>你能做到什么</th><th>检查方式</th></tr></thead>
+        <tbody>
+          <tr><td>D</td><td>看到 K-means/PCA/MDP/Q-learning 只觉得眼熟。</td><td>回到本页 1-3 节，只读人话解释和关键词表。</td></tr>
+          <tr><td>C</td><td>能说出概念，但题目换成选项辨析就会犹豫。</td><td>做题卡 1-9，只要求先写题眼。</td></tr>
+	          <tr><td>B</td><td>能做参考习题同类选择/填空，能解释为什么干扰项错。</td><td>题卡 1-11 不看答案完成，错题能复述。</td></tr>
+	          <tr><td>A</td><td>能做 Q-learning 小计算，能把 K-means/PCA/EM/生成模型/RL 串成模型比较简答，并能区分 PCA、AE、VAE、GAN、Diffusion。</td><td>题卡 12-14 + 自己写一段“无监督 vs 生成式 AI vs 强化学习”的对比。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>下一步：</strong>AI 已经有从零地图、参考题前半、神经网络、公式模型、无监督/生成/强化学习。继续打开 <a href="./day5_ai_exam_sprint_mixed.html">AI Day5 考前速查与混合小测</a>，把这些页压成考前 60-90 分钟能复盘的版本。
+      </div>
+      <p class="muted">返回：<a href="./index.html">期末陪跑学习舱</a> · <a href="./study_update_roadmap.html">讲义与学习舱同步路线</a> · <a href="./day3_ai_formula_model_closure.html">AI Day3 公式与模型闭环</a> · <a href="./day5_ai_exam_sprint_mixed.html">接 AI Day5 考前速查小测</a></p>
+    </section>
+  </main>
+  <script>
+    const keyPrefix = 'ai-day4-unsup-rl:';
+    document.querySelectorAll('textarea[data-key]').forEach((textarea) => {
+      const key = keyPrefix + textarea.dataset.key;
+      textarea.value = localStorage.getItem(key) || '';
+      textarea.addEventListener('input', () => localStorage.setItem(key, textarea.value));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>资料覆盖审计台账：每科资料、往年题、整卷练习路线</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #627283;
+      --line: #dbe4ec;
+      --paper: #fbfdff;
+      --blue: #1f6fa8;
+      --green: #1c7c54;
+      --red: #b43b33;
+      --amber: #a86913;
+      --soft: #f1f6fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #eef4f8;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 26px 18px 70px; }
+    .hero, .card {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(34, 59, 84, .08);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { margin: 8px 0 10px; font-size: clamp(28px, 4vw, 44px); line-height: 1.12; }
+    h2 { margin: 0 0 12px; font-size: 25px; }
+    h3 { margin: 16px 0 8px; }
+    .muted { color: var(--muted); }
+    .strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; padding: 6px 10px;
+      background: var(--soft); color: #31566f; font-weight: 800; font-size: 13px;
+      border: 1px solid #d7e5ef;
+    }
+    .hot { background: #fff1ee; color: var(--red); border-color: #f4c6be; }
+    .good { background: #effaf4; color: var(--green); border-color: #bfe4cc; }
+    .warn { background: #fff7e8; color: var(--amber); border-color: #f0d59f; }
+    .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .toc a, a.btn {
+      color: var(--blue); text-decoration: none; font-weight: 800;
+      background: #eef7ff; border: 1px solid #cfe3f4; border-radius: 8px; padding: 8px 10px;
+    }
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 10px; margin: 12px 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; }
+    th { background: #eaf3fa; color: #244a63; text-align: left; }
+    tr:nth-child(even) td { background: #fbfdff; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+    .box {
+      background: #f7fbfe; border: 1px solid var(--line); border-radius: 10px; padding: 14px;
+    }
+    .box strong { display: block; margin-bottom: 6px; }
+    .status { font-weight: 900; }
+    .done { color: var(--green); }
+    .doing { color: var(--amber); }
+    .todo { color: var(--red); }
+    details { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fff; margin: 10px 0; }
+    summary { cursor: pointer; font-weight: 900; color: #244a63; }
+    ul { padding-left: 22px; margin: 8px 0; }
+    .note {
+      border-left: 5px solid var(--blue);
+      background: #f4f9fd;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px) {
+      main { padding: 16px 10px 48px; }
+      .grid { grid-template-columns: 1fr; }
+      .hero, .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="strip">
+      <span class="pill hot">资料防漏台账</span>
+      <span class="pill good">整卷交互路线</span>
+      <span class="pill warn">按考试顺序推进</span>
+    </div>
+    <h1>资料覆盖审计台账</h1>
+    <p class="muted">这页专门回应“临考前每科每份资料和往年题都要被认真看过”。它不是正课，而是我的质检表：哪些资料已经进讲义，哪些往年题已经整卷化，哪些还需要在对应科目前二次核查；没有核查完的资料不会被假装标成全覆盖。</p>
+    <div class="toc">
+      <a href="./index.html">回学习舱</a>
+      <a href="#rule">审计规则</a>
+      <a href="#full-paper">整卷练习路线</a>
+      <a href="#db">数据库</a>
+      <a href="#ai">AI</a>
+      <a href="#se">软工</a>
+      <a href="#discrete">离散</a>
+      <a href="./pastpaper_ingestion_radar.html">软工&离散吞吐雷达</a>
+    </div>
+  </section>
+
+  <section class="card" id="rule">
+    <h2>0. 审计规则：不是“文件在文件夹里”就算读过</h2>
+    <div class="grid">
+      <div class="box"><strong>一级：已读入</strong>文本/OCR/截图已被打开，题型信号被记录。</div>
+      <div class="box"><strong>二级：已进入讲义</strong>对应知识点、题眼、模板、解析已经放进 Day 页或学习舱。</div>
+      <div class="box"><strong>三级：已题卡化</strong>至少有一道同类题，能练“第一动作”和常见坑。</div>
+      <div class="box"><strong>四级：已整卷化</strong>临考前有一套完整或近完整的交互卷，可限时练手。</div>
+    </div>
+    <div class="note">
+      <strong>当前策略：</strong>按考试顺序走“三道闸门”：资料清单二次扫尾 -> 整卷/整套限时练手 -> 错题变式回炉。已补整卷不代表停止改进；如果扫尾发现新题型，会回灌到对应交互卷或 Day 最终排雷页。
+    </div>
+  </section>
+
+  <section class="card" id="full-paper">
+    <h2>1. 整卷交互路线：先完整见过卷面，再做灵活变式</h2>
+    <div class="note">
+      <strong>使用规则：</strong>整卷不是用来替代讲义的。先按 Day 主线学会工具，再用整卷检验“看到题干能不能调用出来”。每套整卷至少做两遍：第一遍限时写骨架，第二遍只刷错题并换问法复述。
+    </div>
+    <table>
+      <thead><tr><th>科目</th><th>整卷/整套练习</th><th>当前状态</th><th>考前使用方式</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>数据库</td>
+          <td><a href="./db_final_variant_drill.html">临考变式训练营</a> + <a href="./db_oldpaper_edge_sweep.html">老卷边角排雷</a> + <a href="./db_2023a_full_interactive.html">2023A 参考卷整卷交互练习</a></td>
+          <td><span class="status done">本轮补齐入口</span></td>
+          <td>6/21：先用变式训练营练 20 题分流和 8 个大题骨架；再用老卷边角排雷扫 SQL 语法坑、三值逻辑、锁协议、索引/安全/ER 计数；6/21 晚或 6/22 上午再做 2023A 整卷。关系代数必须按 <span class="status done">σ/Π/×/⋈/−/÷/ρ</span> 这种卷面符号写。</td>
+        </tr>
+        <tr>
+          <td>AI</td>
+          <td><a href="./ai_reference_final_interactive.html">参考习题 + 第14讲总纲综合交互卷</a></td>
+          <td><span class="status done">已补整套入口，考前继续补变式</span></td>
+          <td>6/22 晚：按选择/填空/计算/简答/综合混排，避免只背模型名；错题再回 Day5/Day7。重点训练“公式能解释变量、模型能说适用场景”。</td>
+        </tr>
+        <tr>
+          <td>软工</td>
+          <td><a href="./se_pastpaper_variant_drill.html">往年题变式训练营</a> + <a href="./se_official_final_interactive.html">官方五类题型综合卷</a></td>
+          <td><span class="status done">已补变式入口和整套入口，考前继续补边角</span></td>
+          <td>6/24：先用概念边界强化营把过程/需求/设计/实现/测试叫醒，再用变式训练营把 2020/12级/14级/2016 老题题眼练成动作，最后做官方五类题型综合卷和 CodeArts 检查。客观题不再出资料元问题，只练概念边界、应用判断和为什么排除。</td>
+        </tr>
+        <tr>
+          <td>离散</td>
+          <td><a href="./discrete_pastpaper_proof_gate.html">多年题眼证明闸门</a> + <a href="./discrete_proof_chain_lab.html">证明链条工坊</a> + <a href="./discrete_final_mixed_interactive.html">2024 信号/多年真题混合卷</a></td>
+          <td><span class="status done">已补证明闸门和整套入口，考前继续补老卷边角</span></td>
+          <td>6/27-6/28：先用证明闸门练 12 题分流和 6 个证明起手，再用证明链条工坊练“第一句之后下一句凭什么成立”，Day7 闸门达到 7/10 后再做混合卷；先稳前 70 分，再练证明 30 分第一句和证据链。证明题要训练“目标识别 -> 可用定义/定理 -> 证明骨架 -> 每一步证据”。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="db">
+    <h2>2. 数据库资料覆盖</h2>
+    <table>
+      <thead><tr><th>资料</th><th>用途</th><th>状态</th><th>下一步</th></tr></thead>
+      <tbody>
+        <tr><td>数据管理技术2023A卷（参考）.pdf</td><td>卷面结构、SQL、事务恢复、BCNF、ER。</td><td><span class="status done">已抽取并整卷化</span></td><td>进入 2023A 交互整卷。</td></tr>
+        <tr><td>数据管理技术-2020试卷.doc</td><td>单选/判断、外键级联、SQL、事务、范式、ER。</td><td><span class="status done">已用于客观题排雷</span></td><td>继续补 2020 风格整卷题眼。</td></tr>
+        <tr><td>SQL1.doc / SQL2.docx</td><td>SQL 专题：全部、没有、分组、ALL/平均、DML、视图。</td><td><span class="status done">已进入 Day6 往年题矩阵和临考变式训练营</span></td><td><a href="./db_final_variant_drill.html">考前回炉全称查询、HAVING、DML 子查询和 ALL/MAX/AVG 区分。</a></td></tr>
+        <tr><td>Transaction and Recovery Exam.docx</td><td>事务、冲突图、2PL、Undo/Redo。</td><td><span class="status done">已进入 Day6 分流和临考变式训练营</span></td><td><a href="./db_final_variant_drill.html">继续用作事务专项变式。</a></td></tr>
+        <tr><td>2016 数据库.pdf、2014/13/12/09 等老卷</td><td>补充题型边界和老题风格。</td><td><span class="status done">核心边角已题卡化，2016 文本层仍风险提示</span></td><td><a href="./db_oldpaper_edge_sweep.html">已回灌老卷边角排雷</a>：关系代数符号/结果、SQL 语法坑、LIKE ESCAPE、三值逻辑、范式客观题、2PL 与锁协议、索引/安全/完整性、ER 转关系计数。2016 PDF 抽取只有 2 行，不标“完整读透”。</td></tr>
+        <tr><td>PPT 01-14、期末复习、期末复习-大题、学长笔记</td><td>知识主线、SQL、关系代数、范式、事务、恢复、设计。</td><td><span class="status done">已进入 Day1-Day6</span></td><td>NoSQL/云数据库只做低频速查。</td></tr>
+      </tbody>
+    </table>
+    <details>
+      <summary>数据库往年题文件清单</summary>
+      <ul>
+        <li>14级数据库例卷.doc、A卷2014答案.doc、2014a卷.docx/pdf、14级例卷-1/2、14级数据库期末试题.docx、14年期末试题带部分答案.doc</li>
+        <li>12级数据库考试题.docx、13级数据库.doc、09年数据库试题.doc、09年答案.docx、2016 数据库.pdf</li>
+        <li>数据管理技术2023A卷（参考）.pdf、数据管理技术-2020试卷.doc、SQL1.doc、SQL2.docx、Transaction and Recovery Exam.docx</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="card" id="ai">
+    <h2>3. 人工智能资料覆盖</h2>
+    <table>
+      <thead><tr><th>资料</th><th>用途</th><th>状态</th><th>下一步</th></tr></thead>
+      <tbody>
+        <tr><td>人工智能参考习题.pdf</td><td>最像考试的题源：选择、填空、计算、简答、综合。</td><td><span class="status done">已 OCR/渲染并进入 Day1-Day5，且已整套化</span></td><td><a href="./ai_reference_final_interactive.html">进入 AI 综合交互卷</a>。</td></tr>
+        <tr><td>第14讲-课程总结.pdf、最后一课转写</td><td>老师划重点：机器学习、深度、生成式、强化学习。</td><td><span class="status done">已进入 Day7，并接入综合交互卷</span></td><td>6/22 晚终局核对。</td></tr>
+        <tr><td>PPT 第2-13讲</td><td>线性回归/分类、LDA/SVM、树/集成、神经网络、CNN/Transformer、生成、RL。</td><td><span class="status doing">主线已覆盖，考前按第14讲总纲查漏</span></td><td>6/22 白天按老师总结逐项核验；缺一项就补综合卷变式，不再开散页。</td></tr>
+        <tr><td>复习.pdf、笔记.pdf、人工智能理论.md、人工智能lab.md</td><td>公式、模型对比、实验/作业里的应用题。</td><td><span class="status done">已进入多页讲义</span></td><td>后续只做例题化和错题回炉。</td></tr>
+      </tbody>
+    </table>
+    <details>
+      <summary>AI PPT 主资料清单</summary>
+      <ul>
+        <li>第2讲线性回归、第3讲线性分类、第4讲LDA/SVM、第5讲决策树与集成、第6讲前馈神经网络与训练策略</li>
+        <li>第7讲CNN与自注意力、第8讲Transformer/BERT、第9讲GPT与智能体、第10讲AE/VAE、第11讲Diffusion/GAN、第12/13讲强化学习、第14讲课程总结</li>
+        <li>人工智能和信号处理基础期末复习笔记：边界待继续核查，低频则只做速查。</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="card" id="se">
+    <h2>4. 软件工程资料覆盖</h2>
+    <table>
+      <thead><tr><th>资料</th><th>用途</th><th>状态</th><th>下一步</th></tr></thead>
+      <tbody>
+        <tr><td>2026-软工十讲-合集-杨任宇.pdf、笔记 01-07</td><td>最重要主线：过程、需求、设计、实现、测试。</td><td><span class="status done">已进入 Day1-Day6，并补入概念边界强化页</span></td><td><a href="./se_concept_boundary_sprint.html">先用概念边界强化营</a>稳住过程模型、项目管理、需求类型、设计层次、实现协作、测试方法和简答模板，再迁移成纸质 PPT 边注。</td></tr>
+        <tr><td>6/18 官方考试通知</td><td>题型：单选、多选、判断、简答、综合；CodeArts Modeling。</td><td><span class="status done">已进入 Day5/覆盖板，并已整套化</span></td><td><a href="./se_official_final_interactive.html">进入软工综合交互卷</a>。</td></tr>
+        <tr><td>画图题.pdf、lab5 UML 资料</td><td>用例图、类图、顺序图、状态图、活动图、操作合约。</td><td><span class="status done">已进入画图微课和索引</span></td><td>继续补图题检查清单。</td></tr>
+        <tr><td>2020上机、12/13/14/2015/2016 老题、2011 图片卷、朱辉参考答案</td><td>老题风格、图题、测试、项目管理/工具保温。</td><td><span class="status doing">已批量抽取 12 份文本/OCR，核心题眼已进雷达、概念边界和变式训练营</span></td><td>先用 <a href="./se_concept_boundary_sprint.html">概念边界强化营</a>分清过程/需求/设计/实现/测试；再做 <a href="./se_pastpaper_variant_drill.html">往年题变式训练营：18 题客观分流、5 类材料变式、测试设计模板。</a> 之后再回 <a href="./pastpaper_ingestion_radar.html#se">吞吐雷达</a> 查 2011/2015 图片卷二次 OCR 风险。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="discrete">
+    <h2>5. 离散资料覆盖</h2>
+    <table>
+      <thead><tr><th>资料</th><th>用途</th><th>状态</th><th>下一步</th></tr></thead>
+      <tbody>
+        <tr><td>2024 参考卷</td><td>最新高价值卷面：范式、前束/Skolem、语义构造、公理证明。</td><td><span class="status done">已分块进入 Day5，并作为混合卷题型信号</span></td><td>Day5 负责分块学习；整套调用见离散混合交互卷。</td></tr>
+        <tr><td>2022春季、2020春季、2018/2019/2016/2014/2013/2012 等真题与 12-13 到 19-20 复习题</td><td>定义、语义推论、反例、自然语言符号化、主范式、公理证明、归结、偏序/函数证明。</td><td><span class="status doing">已批量抽取 23 份文本，核心题眼已进雷达、证明闸门、链条工坊和混合卷</span></td><td><a href="./discrete_pastpaper_proof_gate.html">先做多年题眼证明闸门：八个盒子、12 题分流、6 个证明起手。</a> 再做 <a href="./discrete_proof_chain_lab.html">证明链条工坊</a>：2022 语义推出、2020 反例、公理证明、量词反例、Skolem 依赖、最大元/双射证明的下一步证据。之后再回 <a href="./pastpaper_ingestion_radar.html#discrete">吞吐雷达</a> 查 18-19 文本层异常和老卷边角。</td></tr>
+        <tr><td>定义（必须背）、离散1.md、PPT 第1-5章、总复习/串讲</td><td>定义表、证明骨架、元定理、语义/公理系统。</td><td><span class="status done">已进入 Day1-Day7 与混合卷</span></td><td>考前做定义闪卡 + 证明拼图 + 混合卷错题回炉。</td></tr>
+      </tbody>
+    </table>
+    <details>
+      <summary>离散往年题文件清单</summary>
+      <ul>
+        <li>往年真题：2012秋、2013秋、2014秋、2016秋/暑期、2018春、2019春、2020春、2022春，以及暑期答案卷。</li>
+        <li>复习题：12-13、13-14、14-15、15-16、17-18、18-19、19-20、2017/2018/2019暑期答案、2020春季答案。</li>
+      </ul>
+    </details>
+  </section>
+</main>
+</body>
+</html>

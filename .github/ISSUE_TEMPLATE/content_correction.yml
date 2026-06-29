@@ -1,0 +1,47 @@
+name: Content correction
+description: Report a wrong answer, unclear explanation, missing source, or exam-style issue.
+title: "[Content] "
+labels: ["content", "needs-review"]
+body:
+  - type: input
+    id: resource
+    attributes:
+      label: Resource id or page
+      description: Use the resource id if possible, otherwise paste the page name.
+      placeholder: "ai-reference-paper, discrete-hiji-hub, ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: course
+    attributes:
+      label: Course
+      options:
+        - 数据管理技术
+        - 人工智能
+        - 软件工程
+        - 军事理论
+        - 离散数学
+        - 马克思主义基本原理
+        - 操作系统
+        - 全局工具
+  - type: textarea
+    id: issue
+    attributes:
+      label: What should be corrected?
+      description: Include the question number, explanation, formula, or section title.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source or reasoning
+      description: Mention courseware, teacher note, textbook, past paper, or your reasoning.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Blocks exam practice
+        - Wrong or misleading
+        - Unclear but usable
+        - Style / wording improvement

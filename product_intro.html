@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>星光学习岛 · 产品介绍</title>
+  <meta name="description" content="星光学习岛是一个面向大学期末冲刺的开源交互学习平台，整合课程岛、真题训练、深学讲义、错题回炉和本地进度。">
+  <meta name="theme-color" content="#f7c9d8">
+  <meta property="og:title" content="星光学习岛 · 开源期末复习平台">
+  <meta property="og:description" content="从不知道怎么复习，到敢打开真题。课程岛、交互卷、错题宝箱和本地进度整合在一个纯静态网页里。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./assets/brand/hero-study-island.png">
+  <link rel="icon" type="image/svg+xml" href="./assets/brand/icon.svg">
+  <link rel="manifest" href="./site.webmanifest">
+  <style>
+    :root {
+      --ink: #223044;
+      --muted: #66738b;
+      --line: rgba(98, 118, 150, .22);
+      --paper: rgba(255, 255, 255, .82);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f7c9d8;
+      --blue: #a9d7ee;
+      --mint: #aee2d4;
+      --sun: #f8dd8d;
+      --violet: #cfc4f5;
+      --peach: #f6c89f;
+      --shadow: 0 24px 70px rgba(64, 79, 112, .15);
+      --soft-shadow: 0 12px 32px rgba(69, 84, 117, .10);
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(247, 201, 216, .54), transparent 28%),
+        radial-gradient(circle at 90% 16%, rgba(169, 215, 238, .48), transparent 26%),
+        radial-gradient(circle at 72% 80%, rgba(174, 226, 212, .34), transparent 30%),
+        linear-gradient(135deg, #fff8fb 0%, #eefaff 52%, #fff8ec 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+    body::before {
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.96) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(112, 93, 169, .20) 0 1px, transparent 3px);
+      background-size: 128px 128px, 78px 78px;
+      animation: drift 38s linear infinite;
+      opacity: .66;
+    }
+    body::after {
+      background:
+        linear-gradient(115deg, transparent 14%, rgba(255,255,255,.58) 15%, transparent 16%) 8% 16% / 260px 150px no-repeat,
+        linear-gradient(115deg, transparent 14%, rgba(255,255,255,.46) 15%, transparent 16%) 76% 70% / 280px 160px no-repeat;
+      animation: cloudFloat 30s ease-in-out infinite alternate;
+    }
+    .constellation {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: .48;
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-128px, 72px, 0); }
+    }
+    @keyframes cloudFloat {
+      from { transform: translateX(-14px); }
+      to { transform: translateX(18px); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0) rotate(var(--rotate, 0deg)); }
+      50% { transform: translateY(-10px) rotate(var(--rotate, 0deg)); }
+    }
+    @keyframes shimmer {
+      from { transform: translateX(-120%); }
+      to { transform: translateX(120%); }
+    }
+    @keyframes railMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    a { color: inherit; }
+    .wrap {
+      width: min(1180px, calc(100% - 34px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.66);
+      background: rgba(255, 250, 253, .74);
+      backdrop-filter: blur(18px);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+    }
+    .brand,
+    .navlinks,
+    .actions,
+    .chip-row,
+    .stat-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .brand {
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe6f0, #e8f9ff 55%, #fff0c2);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo svg { width: 30px; height: 30px; }
+    .navlinks {
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .navlinks a,
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      color: #31516f;
+      text-decoration: none;
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .navlinks a:hover,
+    .btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 14px 28px rgba(66, 86, 122, .13);
+    }
+    .btn.primary {
+      color: #273047;
+      border-color: rgba(201, 144, 176, .48);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 56%, #fff3c7);
+    }
+    .btn.dark {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #40516e, #6b5d99);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(500px, 1.08fr);
+      gap: 44px;
+      align-items: center;
+      min-height: calc(100vh - 68px);
+      padding: 54px 0 64px;
+    }
+    .hero-copy,
+    .scene,
+    .panel,
+    .feature,
+    .timeline-card,
+    .course-dot {
+      animation: riseIn .6s ease both;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5b90;
+      font-weight: 950;
+      box-shadow: 0 8px 20px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 10ch;
+      margin: 18px 0 14px;
+      font-size: clamp(54px, 7.4vw, 98px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; }
+    .lead {
+      max-width: 66ch;
+      color: var(--muted);
+      font-size: clamp(16px, 1.58vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(248, 221, 141, .72) 58%);
+    }
+    .actions {
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .chip-row {
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .chip,
+    .stat {
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #56647d;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .chip { padding: 5px 10px; }
+
+    .scene {
+      position: relative;
+      min-height: 620px;
+      border: 1px solid rgba(255,255,255,.74);
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.12)),
+        url("./assets/brand/hero-study-island.png") center / cover no-repeat;
+      box-shadow: var(--shadow);
+      isolation: isolate;
+      transform-style: preserve-3d;
+      transition: transform .18s ease;
+    }
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(35, 46, 68, .06), rgba(35, 46, 68, .24)),
+        radial-gradient(circle at 20% 15%, rgba(255,255,255,.76), transparent 20%);
+      z-index: -1;
+    }
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.26), transparent 46%);
+      animation: shimmer 7.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .orbit {
+      position: absolute;
+      inset: 42px;
+      border: 1px solid rgba(255,255,255,.46);
+      border-radius: 50%;
+      transform: rotate(-9deg);
+      opacity: .74;
+    }
+    .floating-card {
+      position: absolute;
+      width: min(265px, 42%);
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 8px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 18px 38px rgba(52, 66, 96, .14);
+      backdrop-filter: blur(14px);
+      animation: floatCard 6.8s ease-in-out infinite;
+    }
+    .floating-card strong {
+      display: block;
+      color: #273047;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+    .floating-card span {
+      display: block;
+      margin-top: 6px;
+      color: #65718a;
+      font-size: 14px;
+      font-weight: 780;
+    }
+    .floating-card.one {
+      left: 28px;
+      top: 34px;
+      --rotate: -2deg;
+    }
+    .floating-card.two {
+      right: 26px;
+      top: 154px;
+      --rotate: 2deg;
+      animation-delay: .6s;
+    }
+    .floating-card.three {
+      left: 48px;
+      bottom: 112px;
+      --rotate: 1.2deg;
+      animation-delay: 1.1s;
+    }
+    .floating-card.four {
+      right: 34px;
+      bottom: 34px;
+      --rotate: -1.6deg;
+      animation-delay: 1.8s;
+    }
+    .path-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 58%;
+      max-width: 410px;
+      transform: translate(-50%, -50%);
+      opacity: .94;
+    }
+    .scroll-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      color: #6a7892;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .scroll-hint::before {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: currentColor;
+      opacity: .62;
+    }
+
+    section { padding: 56px 0; }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(340px, 1.18fr);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+    .section-head p {
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .panel,
+    .feature,
+    .timeline-card,
+    .course-dot {
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .feature {
+      min-height: 220px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature::before {
+      content: attr(data-index);
+      position: absolute;
+      right: 14px;
+      top: 6px;
+      color: rgba(91, 77, 138, .10);
+      font-size: 68px;
+      font-weight: 1000;
+      line-height: 1;
+    }
+    .feature svg {
+      width: 46px;
+      height: 46px;
+      margin-bottom: 14px;
+    }
+    .feature p,
+    .timeline-card p,
+    .course-dot p {
+      color: var(--muted);
+      font-weight: 720;
+    }
+    .showcase {
+      position: relative;
+      padding-top: 38px;
+    }
+    .showcase-shell {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(520px, 1.2fr);
+      gap: 34px;
+      align-items: center;
+    }
+    .showcase-copy {
+      position: sticky;
+      top: 96px;
+      align-self: start;
+    }
+    .showcase-copy .lead {
+      font-size: 17px;
+    }
+    .stack-scene {
+      position: relative;
+      min-height: 760px;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+    }
+    .stack-card {
+      position: sticky;
+      top: 96px;
+      min-height: 210px;
+      margin-bottom: 28px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.86);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.92), rgba(247,251,255,.76)),
+        radial-gradient(circle at 16% 14%, rgba(255,226,238,.76), transparent 30%);
+      box-shadow: 0 26px 60px rgba(57, 70, 100, .14);
+      transform:
+        translateY(var(--lift, 0))
+        rotateX(var(--rx, 0deg))
+        rotateY(var(--ry, 0deg))
+        rotateZ(var(--rz, 0deg));
+      transform-origin: center;
+      overflow: hidden;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .stack-card:nth-child(1) { --rz: -1.6deg; }
+    .stack-card:nth-child(2) { --rz: 1.3deg; top: 126px; }
+    .stack-card:nth-child(3) { --rz: -1deg; top: 156px; }
+    .stack-card:nth-child(4) { --rz: 1.6deg; top: 186px; }
+    .stack-card:hover {
+      box-shadow: 0 34px 74px rgba(57, 70, 100, .19);
+      --lift: -4px;
+    }
+    .stack-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 22px 0;
+      height: 4px;
+      border-radius: 999px 999px 0 0;
+      background: linear-gradient(90deg, var(--pink), var(--blue), var(--sun));
+      opacity: .78;
+    }
+    .stack-card header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .stack-card h3 {
+      font-size: clamp(24px, 3vw, 36px);
+    }
+    .stack-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      border: 1px solid rgba(98,118,150,.18);
+      background: linear-gradient(135deg, #fff4d5, #eef8ff);
+      color: #665487;
+      font-weight: 1000;
+    }
+    .card-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .card-meta span {
+      min-height: 68px;
+      padding: 10px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      border-radius: 8px;
+      background: rgba(255,255,255,.64);
+      color: #5c6880;
+      font-size: 13px;
+      font-weight: 820;
+    }
+    .card-meta strong {
+      display: block;
+      color: #28354b;
+      font-size: 16px;
+    }
+    .shot-rail {
+      position: relative;
+      overflow: hidden;
+      margin-top: 24px;
+      padding: 10px 0;
+      border-block: 1px solid rgba(255,255,255,.62);
+    }
+    .rail-track {
+      display: flex;
+      width: max-content;
+      gap: 10px;
+      animation: railMove 24s linear infinite;
+    }
+    .shot {
+      min-width: 220px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      box-shadow: 0 12px 26px rgba(60, 84, 115, .08);
+      color: #56647d;
+      font-size: 13px;
+      font-weight: 880;
+    }
+    .shot strong {
+      display: block;
+      color: #29354b;
+      font-size: 16px;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .demo-shell {
+      display: grid;
+      grid-template-columns: minmax(280px, .84fr) minmax(0, 1.16fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .panel { padding: 22px; }
+    .tab-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .tab-button {
+      width: 100%;
+      min-height: 66px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.62);
+      color: #35445d;
+      text-align: left;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .tab-button:hover,
+    .tab-button.active {
+      transform: translateY(-2px);
+      border-color: rgba(155, 201, 236, .7);
+      background: linear-gradient(135deg, rgba(255,228,239,.84), rgba(232,249,255,.78));
+    }
+    .tab-button span {
+      display: block;
+      margin-top: 2px;
+      color: #69748c;
+      font-size: 13px;
+      font-weight: 760;
+    }
+    .preview-board {
+      position: relative;
+      min-height: 420px;
+      padding: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at top left, rgba(255,226,238,.85), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(169,215,238,.65), transparent 34%),
+        rgba(255,255,255,.62);
+      box-shadow: var(--shadow);
+    }
+    .preview-board h3 {
+      font-size: 30px;
+    }
+    .preview-board .mock-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .mock-card {
+      min-height: 132px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: rgba(255,255,255,.74);
+      box-shadow: 0 12px 28px rgba(60, 84, 115, .09);
+    }
+    .mock-card strong {
+      display: block;
+      font-size: 18px;
+    }
+    .mock-card span {
+      display: block;
+      margin-top: 8px;
+      color: #68748b;
+      font-weight: 760;
+    }
+    .course-map {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .course-dot {
+      min-height: 160px;
+      padding: 16px;
+    }
+    .course-dot .mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 55%, #fff2c4);
+      font-weight: 1000;
+      color: #5d4e7d;
+    }
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .timeline-card {
+      padding: 20px;
+      min-height: 210px;
+    }
+    .timeline-card .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      background: #fff4d1;
+      color: #604f78;
+      font-weight: 1000;
+      border: 1px solid rgba(98,118,150,.18);
+    .stat-row {
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .stat {
+      padding: 8px 12px;
+    }
+    .cta {
+      padding: 38px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 16% 20%, rgba(247,201,216,.58), transparent 24%),
+        radial-gradient(circle at 82% 28%, rgba(174,226,212,.52), transparent 28%),
+        rgba(255,255,255,.78);
+    }
+    .cta h2 { margin-inline: auto; max-width: 13ch; }
+    .cta .lead { margin: 0 auto; }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-head,
+      .demo-shell,
+      .showcase-shell {
+        grid-template-columns: 1fr;
+      }
+      .hero { min-height: auto; padding-top: 32px; }
+      .scene { min-height: 560px; }
+      .showcase-copy { position: static; }
+      .stack-scene { min-height: auto; }
+      .stack-card,
+      .stack-card:nth-child(2),
+      .stack-card:nth-child(3),
+      .stack-card:nth-child(4) {
+        position: relative;
+        top: auto;
+      }
+      .story-grid,
+      .timeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .course-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .navlinks { display: none; }
+    }
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 24px, 1180px); }
+      h1 { font-size: clamp(48px, 16vw, 74px); }
+      h2 { font-size: clamp(28px, 10vw, 42px); }
+      .scene { min-height: 520px; }
+      .floating-card {
+        width: calc(100% - 36px);
+        left: 18px !important;
+        right: auto !important;
+      }
+      .floating-card.one { top: 22px; }
+      .floating-card.two { top: 142px; }
+      .floating-card.three { bottom: 128px; }
+      .floating-card.four { bottom: 18px; }
+      .story-grid,
+      .timeline,
+      .course-map,
+      .preview-board .mock-grid,
+      .card-meta {
+        grid-template-columns: 1fr;
+      }
+      .actions .btn { width: 100%; }
+      .cta { padding: 26px 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <canvas class="constellation" id="constellationCanvas" aria-hidden="true"></canvas>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="产品介绍导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M32 7l6.8 13.8L54 23l-11 10.7 2.6 15.1L32 41.6 18.4 48.8 21 33.7 10 23l15.2-2.2L32 7Z" fill="#ffd76f" stroke="#6b5a92" stroke-width="2"/>
+            <circle cx="22" cy="38" r="4" fill="#ffc2d8"/>
+            <circle cx="43" cy="37" r="4" fill="#a9dfd2"/>
+          </svg>
+        </span>
+        <span>星光学习岛</span>
+      </a>
+      <div class="navlinks">
+        <a href="#showcase">沉浸展示</a>
+        <a href="#story">产品能力</a>
+        <a href="#demo">交互路径</a>
+        <a href="#courses">课程覆盖</a>
+        <a href="#open">开源路线</a>
+        <a href="./index.html">进入学习站</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Open Source Finals Companion</span>
+        <h1>把期末复习做成一座岛。</h1>
+        <p class="lead">
+          星光学习岛是一个面向大学期末冲刺的<span class="key">开源交互学习平台</span>。它把分散的讲义、真题、闪卡、错题和进度记录整理成一条清楚路线：先进入课程岛，再做真题训练，最后回炉薄弱点。
+        </p>
+        <div class="actions">
+          <a class="btn primary" href="./index.html">进入学习站</a>
+          <a class="btn" href="./practice_lab.html">体验真题训练</a>
+          <a class="btn dark" href="./docs/demo_script.md">查看演示路线</a>
+        </div>
+        <div class="chip-row" aria-label="项目特点">
+          <span class="chip">纯静态网页</span>
+          <span class="chip">GitHub Pages 友好</span>
+          <span class="chip">本地进度保存</span>
+          <span class="chip">课程包可扩展</span>
+        </div>
+        <div class="scroll-hint">往下看：从资料堆变成学习路径</div>
+      </div>
+
+      <div class="scene" aria-label="星光学习岛产品视觉">
+        <div class="orbit" aria-hidden="true"></div>
+        <svg class="path-line" viewBox="0 0 520 220" aria-hidden="true">
+          <path d="M35 170 C130 40 220 64 274 114 S406 206 485 64" fill="none" stroke="rgba(255,255,255,.78)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M35 170 C130 40 220 64 274 114 S406 206 485 64" fill="none" stroke="rgba(255,216,118,.72)" stroke-width="3" stroke-linecap="round" stroke-dasharray="12 14"/>
+          <circle cx="35" cy="170" r="10" fill="#f8dd8d"/>
+          <circle cx="274" cy="114" r="10" fill="#aee2d4"/>
+          <circle cx="485" cy="64" r="10" fill="#f7c9d8"/>
+        </svg>
+        <article class="floating-card one">
+          <strong>课程岛</strong>
+          <span>七门课各自有入口，不再被资料堆淹没。</span>
+        </article>
+        <article class="floating-card two">
+          <strong>真题训练</strong>
+          <span>选择判分，大题分步展开，先题眼再解析。</span>
+        </article>
+        <article class="floating-card three">
+          <strong>错题宝箱</strong>
+          <span>卡住的题隔天回炉，复习不靠熟悉感。</span>
+        </article>
+        <article class="floating-card four">
+          <strong>开源扩展</strong>
+          <span>新增课程包、题库和质量标注都能接入。</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap showcase" id="showcase">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Immersive Product Deck</span>
+          <h2>一层层展开复习系统。</h2>
+        </div>
+        <p>参考 Codrops 式的滚动叙事和高级 motion，但用纯 CSS 与原生 JS 实现。页面是艺术化门面，真正学习入口仍保持清晰。</p>
+      </div>
+      <div class="showcase-shell">
+        <aside class="showcase-copy">
+          <h3>从“我什么都不会”开始，也能进入一条路线。</h3>
+          <p class="lead">这组层叠卡片把项目的四个核心产品面讲清楚：课程岛负责认路，真题舱负责校准，错题宝箱负责回炉，开源工作台负责让后来的同学继续扩展。</p>
+          <div class="shot-rail" aria-label="功能快照">
+            <div class="rail-track">
+              <div class="shot"><strong>课程入口</strong>7 门课统一入口</div>
+              <div class="shot"><strong>真题交互</strong>选择判分与大题展开</div>
+              <div class="shot"><strong>错题回炉</strong>本地状态可继续</div>
+              <div class="shot"><strong>质量元数据</strong>来源、等级、待改进</div>
+              <div class="shot"><strong>开源发布</strong>Actions + Pages</div>
+              <div class="shot"><strong>课程入口</strong>7 门课统一入口</div>
+              <div class="shot"><strong>真题交互</strong>选择判分与大题展开</div>
+              <div class="shot"><strong>错题回炉</strong>本地状态可继续</div>
+              <div class="shot"><strong>质量元数据</strong>来源、等级、待改进</div>
+              <div class="shot"><strong>开源发布</strong>Actions + Pages</div>
+            </div>
+          </div>
+        </aside>
+        <div class="stack-scene" aria-label="产品层叠展示">
+          <article class="stack-card reveal">
+            <header>
+              <div>
+                <span class="eyebrow">Layer 01</span>
+                <h3>课程岛：先选一门课。</h3>
+              </div>
+              <span class="stack-index">01</span>
+            </header>
+            <p class="lead">数据库、AI、软工、军理、离散、马原、操作系统不再散落在文件夹里，而是变成统一课程入口。每张卡只回答一个问题：这门课怎么考、先做什么、有哪些真题资源。</p>
+            <div class="card-meta">
+              <span><strong>重点清楚</strong>考试形态、主线动作、资源数量分开展示。</span>
+              <span><strong>入口统一</strong>每门课都进入同一个课程岛模板。</span>
+              <span><strong>减少迷路</strong>旧资料沉入资源库，不压在首页。</span>
+            </div>
+          </article>
+          <article class="stack-card reveal">
+            <header>
+              <div>
+                <span class="eyebrow">Layer 02</span>
+                <h3>真题舱：像考试一样练。</h3>
+              </div>
+              <span class="stack-index">02</span>
+            </header>
+            <p class="lead">交互卷不是简单贴答案，而是把选择判断、大题骨架、证明第一句、题眼识别拆开。用户先尝试，再打开解析，避免“看答案会，换个问法不会”。</p>
+            <div class="card-meta">
+              <span><strong>整卷校准</strong>离散、OS、数据库等真题可直接练。</span>
+              <span><strong>分步解析</strong>主观题先写第一步，再看完整答案。</span>
+              <span><strong>质量优先</strong>exam-like 和 reviewed 资源优先出现。</span>
+            </div>
+          </article>
+          <article class="stack-card reveal">
+            <header>
+              <div>
+                <span class="eyebrow">Layer 03</span>
+                <h3>进度层：回来还能接上。</h3>
+              </div>
+              <span class="stack-index">03</span>
+            </header>
+            <p class="lead">纯静态网站也能有轻量产品感：完成状态、今日学习包、错题、闯关记录都保存在本机。学生不登录，也能看到自己一步步推进。</p>
+            <div class="card-meta">
+              <span><strong>localStorage</strong>无需后端即可保留学习记录。</span>
+              <span><strong>仪表盘</strong>总进度、必做完成度和下一步建议。</span>
+              <span><strong>存档室</strong>支持导出、导入和清空本地学习状态。</span>
+            </div>
+          </article>
+          <article class="stack-card reveal">
+            <header>
+              <div>
+                <span class="eyebrow">Layer 04</span>
+                <h3>开源层：后来的人能维护。</h3>
+              </div>
+              <span class="stack-index">04</span>
+            </header>
+            <p class="lead">它已经有课程包生成器、质量看板、Issue/PR 模板、CHANGELOG、GitHub Actions 和 Pages 工作流。这个项目可以从“个人救火”继续变成“课程资料共建”。</p>
+            <div class="card-meta">
+              <span><strong>质量看板</strong>标注来源、校对等级和下一步改进。</span>
+              <span><strong>发布检查</strong>脚本检查链接、脚本、入口和隐私路径。</span>
+              <span><strong>协作外壳</strong>模板、文档、发布手册都已准备。</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="story">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Product System</span>
+          <h2>不是资料合集，是学习路径。</h2>
+        </div>
+        <p>这个项目的核心不是把文件堆上网页，而是把“零基础学生怎么开始、怎么练题、怎么复盘、怎么继续”设计成可重复的产品流程。</p>
+      </div>
+      <div class="story-grid">
+        <article class="feature" data-index="01">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 48 C18 24 44 22 52 48Z" fill="#dff4ff" stroke="#52708c" stroke-width="3"/><path d="M20 48h24M24 40h18M28 32h10" stroke="#52708c" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="20" r="8" fill="#fff2bd" stroke="#8b773a" stroke-width="3"/></svg>
+          <h3>先认路</h3>
+          <p>首页只保留课程入口和主动作，新手先知道该点哪里，避免被几十个旧页面吓退。</p>
+        </article>
+        <article class="feature" data-index="02">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="12" width="38" height="42" rx="8" fill="#fff2f7" stroke="#8d6076" stroke-width="3"/><path d="M23 24h18M23 34h18M23 44h10" stroke="#8d6076" stroke-width="3" stroke-linecap="round"/><path d="M44 12v15l-6-4-6 4V12" fill="#f8dd8d" stroke="#8d6076" stroke-width="3"/></svg>
+          <h3>再学习</h3>
+          <p>深学讲义负责铺垫概念、连接题型和卷面表达，让低基础用户能跟上。</p>
+        </article>
+        <article class="feature" data-index="03">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 18h32v30H16Z" fill="#e8fbf3" stroke="#527d6d" stroke-width="3"/><path d="M23 28l7 7 13-15M23 42h20" stroke="#527d6d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>做真题</h3>
+          <p>交互卷把选择、判断、简答和证明拆开训练，答完再看解析和题眼。</p>
+        </article>
+        <article class="feature" data-index="04">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 24h40v26a6 6 0 0 1-6 6H18a6 6 0 0 1-6-6Z" fill="#eef1ff" stroke="#626f8e" stroke-width="3"/><path d="M20 24l6-10h12l6 10" fill="none" stroke="#626f8e" stroke-width="3"/><path d="M32 31l3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z" fill="#ffd76f" stroke="#8d7540" stroke-width="2"/></svg>
+          <h3>回炉错题</h3>
+          <p>本地进度、错题、今日学习包和完成状态都保存在浏览器里，回来还能接着学。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="demo">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Interactive Demo</span>
+          <h2>四种角色，都能找到入口。</h2>
+        </div>
+        <p>对学生，它是复习工具；对贡献者，它是课程包框架；对项目展示，它能讲清产品设计、前端实现和内容工程。</p>
+      </div>
+      <div class="demo-shell">
+        <aside class="panel">
+          <h3>选择一个演示视角</h3>
+          <p>右侧会切换成对应的产品路径。这个小交互用来给访问者快速理解项目，不需要他们先阅读长文档。</p>
+          <div class="tab-list" role="tablist" aria-label="演示视角">
+            <button class="tab-button active" type="button" data-demo="student">低基础学生<span>从课程岛开始，按三步路线复习。</span></button>
+            <button class="tab-button" type="button" data-demo="practice">考前刷题者<span>进真题训练台，整卷校准再补洞。</span></button>
+            <button class="tab-button" type="button" data-demo="maintainer">课程维护者<span>用课程包、质量看板和发布检查扩展。</span></button>
+            <button class="tab-button" type="button" data-demo="portfolio">项目展示者<span>讲产品闭环、配置驱动和静态校验。</span></button>
+          </div>
+        </aside>
+        <article class="preview-board" id="demoBoard">
+          <span class="eyebrow" id="demoLabel">Student Route</span>
+          <h3 id="demoTitle">从“不知道看什么”到“先做这一组”。</h3>
+          <p class="lead" id="demoCopy">进入首页后先选课程岛，系统把核心资源、推荐路线和完成状态收束到单科页面。用户不用理解项目结构，也能知道下一步该打开什么。</p>
+          <div class="mock-grid" id="demoCards"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="courses">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Course Coverage</span>
+          <h2>七门课，七种考试形态。</h2>
+        </div>
+        <p>课程不是平铺链接，而是按考试形态组织：理工题、证明题、开卷定位、闭卷背诵、上机建模和往年题交互，各自有不同训练动作。</p>
+      </div>
+      <div class="course-map" aria-label="课程覆盖">
+        <article class="course-dot"><div class="mark">DB</div><h3>数据库</h3><p>SQL、关系代数、范式、事务和 ER 作图。</p></article>
+        <article class="course-dot"><div class="mark">AI</div><h3>人工智能</h3><p>模型对比、公式变量、计算题和综合问法。</p></article>
+        <article class="course-dot"><div class="mark">SE</div><h3>软工</h3><p>客观题、简答、UML、需求与 CodeArts 建模。</p></article>
+        <article class="course-dot"><div class="mark">MT</div><h3>军理</h3><p>关键词、数字、定义和闭卷召回。</p></article>
+        <article class="course-dot"><div class="mark">DM</div><h3>离散</h3><p>符号、范式、谓词、证明骨架和近三年真题。</p></article>
+        <article class="course-dot"><div class="mark">MX</div><h3>马原</h3><p>老师重点、开卷定位、材料题框架。</p></article>
+        <article class="course-dot"><div class="mark">OS</div><h3>操作系统</h3><p>三套往年题、调度、同步、内存和文件。</p></article>
+      </div>
+    </section>
+
+    <section class="wrap" id="open">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Open Source Path</span>
+          <h2>从个人救火工具，到可维护项目。</h2>
+        </div>
+        <p>它已经有开源协作模板、GitHub Pages 工作流、内容质量元数据和发布检查。下一步接上 GitHub 仓库后，就可以让同学访问、fork 和继续贡献。</p>
+      </div>
+      <div class="timeline">
+        <article class="timeline-card"><span class="num">1</span><h3>清理入口</h3><p>把旧材料沉到资料库，首页只讲课程入口、主动作和进度。</p></article>
+        <article class="timeline-card"><span class="num">2</span><h3>质量标注</h3><p>每个资源记录来源、校对等级、适用场景和下一步改进。</p></article>
+        <article class="timeline-card"><span class="num">3</span><h3>自动发布</h3><p>GitHub Actions 先跑静态检查，再发布到 GitHub Pages。</p></article>
+        <article class="timeline-card"><span class="num">4</span><h3>课程扩展</h3><p>后续同学按课程包规范新增题库、讲义、闪卡和真题卷。</p></article>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="panel cta">
+        <span class="eyebrow">Ready to Study</span>
+        <h2>现在可以直接进入学习站。</h2>
+        <p class="lead">如果你是学生，先选一门课；如果你是维护者，先看资源库和发布检查台；如果你是面试展示，先从这个介绍页讲产品故事。</p>
+        <div class="actions" style="justify-content:center;">
+          <a class="btn primary" href="./index.html">进入星光学习岛</a>
+          <a class="btn" href="./resources.html">打开资源库</a>
+          <a class="btn" href="./release_status.html">查看发布检查台</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const demos = {
+      student: {
+        label: "Student Route",
+        title: "从“不知道看什么”到“先做这一组”。",
+        copy: "进入首页后先选课程岛，系统把核心资源、推荐路线和完成状态收束到单科页面。用户不用理解项目结构，也能知道下一步该打开什么。",
+        cards: [
+          ["选择课程岛", "数据库、AI、软工、军理、离散、马原、OS 都有独立入口。"],
+          ["看推荐路线", "每科先给考试形态、三步动作和必做资源。"],
+          ["标记完成", "资源库完成状态会同步到仪表盘。"],
+          ["隔天回炉", "错题宝箱和今日学习包帮你继续接上。"]
+        ]
+      },
+      practice: {
+        label: "Practice Lab",
+        title: "真题不是最后才碰，而是用来校准会不会。",
+        copy: "训练台把交互卷、专项补洞和错题回炉放在同一个视图，先做真题级资源，再按卡住的题型回讲义补洞。",
+        cards: [
+          ["整卷校准", "数据库、离散、OS 等真题包按考试样子练。"],
+          ["专项补洞", "SQL、证明、UML、公式计算都能单独回炉。"],
+          ["解析展开", "选择题即时反馈，大题先写骨架再看参考。"],
+          ["质量优先", "exam-like 和 reviewed 资源会优先推荐。"]
+        ]
+      },
+      maintainer: {
+        label: "Maintainer Flow",
+        title: "新增课程不是重写网页，而是补课程包。",
+        copy: "维护者可以用课程包生成器、资源质量看板和发布检查台，把新课程按同一套数据结构接入主站。",
+        cards: [
+          ["课程包生成器", "生成课程清单和资源清单片段。"],
+          ["质量看板", "标注 draft、reviewed、exam-like、archive。"],
+          ["发布检查台", "确认全科入口、必做资源和 GitHub Pages 准备。"],
+          ["协作模板", "Issue、PR、CHANGELOG 和维护手册已准备好。"]
+        ]
+      },
+      portfolio: {
+        label: "Portfolio Story",
+        title: "可以讲产品设计，也可以讲前端工程。",
+        copy: "它不是一个单页玩具，而是多页面静态产品：配置驱动课程入口，本地状态保存，自动校验兜底，内容工程持续扩展。",
+        cards: [
+          ["产品闭环", "课程入口 -> 学习 -> 真题 -> 错题 -> 继续学习。"],
+          ["配置驱动", "manifest、catalog、quality 三层数据承载站点。"],
+          ["本地状态", "localStorage 保存进度、错题、今日学习包。"],
+          ["发布工程", "PWA 外壳、Pages workflow、静态校验和文档齐全。"]
+        ]
+      }
+    };
+
+    const buttons = Array.from(document.querySelectorAll(".tab-button"));
+    const label = document.querySelector("#demoLabel");
+    const title = document.querySelector("#demoTitle");
+    const copy = document.querySelector("#demoCopy");
+    const cards = document.querySelector("#demoCards");
+
+    function renderDemo(key) {
+      const item = demos[key] || demos.student;
+      label.textContent = item.label;
+      title.textContent = item.title;
+      copy.textContent = item.copy;
+      cards.innerHTML = item.cards.map(([name, text]) => `
+        <div class="mock-card">
+          <strong>${name}</strong>
+          <span>${text}</span>
+        </div>
+      `).join("");
+      buttons.forEach(button => button.classList.toggle("active", button.dataset.demo === key));
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener("click", () => renderDemo(button.dataset.demo));
+    });
+    renderDemo("student");
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const canvas = document.querySelector("#constellationCanvas");
+    const ctx = canvas?.getContext("2d");
+    let stars = [];
+
+    function resizeConstellation() {
+      if (!canvas || !ctx) return;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(window.innerWidth * ratio);
+      canvas.height = Math.floor(window.innerHeight * ratio);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const count = Math.min(76, Math.max(34, Math.floor(window.innerWidth / 24)));
+      stars = Array.from({ length: count }, (_, index) => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: index % 7 === 0 ? 1.8 : 1 + Math.random() * 1.2,
+        vx: -.08 + Math.random() * .16,
+        vy: .04 + Math.random() * .12,
+        alpha: .26 + Math.random() * .48
+      }));
+    }
+
+    function drawConstellation() {
+      if (!canvas || !ctx || reducedMotion) return;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      stars.forEach((star, index) => {
+        star.x += star.vx;
+        star.y += star.vy;
+        if (star.x < -10) star.x = window.innerWidth + 10;
+        if (star.x > window.innerWidth + 10) star.x = -10;
+        if (star.y > window.innerHeight + 10) star.y = -10;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+        ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+        ctx.fill();
+        for (let j = index + 1; j < stars.length; j += 1) {
+          const other = stars[j];
+          const distance = Math.hypot(star.x - other.x, star.y - other.y);
+          if (distance < 118) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(130, 110, 172, ${(1 - distance / 118) * .16})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(star.x, star.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(drawConstellation);
+    }
+
+    function addTiltEffect(element, strength = 9, directTransform = false) {
+      if (!element || reducedMotion) return;
+      element.addEventListener("mousemove", event => {
+        const rect = element.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - .5;
+        const y = (event.clientY - rect.top) / rect.height - .5;
+        element.style.setProperty("--rx", `${(-y * strength).toFixed(2)}deg`);
+        element.style.setProperty("--ry", `${(x * strength).toFixed(2)}deg`);
+        if (directTransform) {
+          element.style.transform = `rotateX(${(-y * strength).toFixed(2)}deg) rotateY(${(x * strength).toFixed(2)}deg)`;
+        }
+      });
+      element.addEventListener("mouseleave", () => {
+        element.style.removeProperty("--rx");
+        element.style.removeProperty("--ry");
+        if (directTransform) element.style.transform = "";
+      });
+    }
+
+    resizeConstellation();
+    window.addEventListener("resize", resizeConstellation);
+    drawConstellation();
+    addTiltEffect(document.querySelector(".scene"), 4, true);
+    document.querySelectorAll(".stack-card").forEach(card => addTiltEffect(card, 5));
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    }, { threshold: .16 });
+    document.querySelectorAll(".reveal").forEach(item => observer.observe(item));
+  </script>
+</body>
+</html>

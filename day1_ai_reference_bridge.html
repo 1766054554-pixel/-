@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 1 AI 参考习题逐题桥接</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .question { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .focus {
+      border-radius: 6px;
+      background: #fff3bf;
+      box-shadow: inset 0 -2px 0 rgba(147,107,18,.24);
+      padding: 1px 5px;
+      font-weight: 840;
+      color: #60440a;
+    }
+    .key { color: var(--blue); font-weight: 840; }
+    .hl { color: var(--red); font-weight: 840; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .options {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .options li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px 12px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 98px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .skill {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      color: #23485f;
+      padding: 9px 10px;
+      margin: 8px 0 10px;
+      font-size: 14px;
+    }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .source-img {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 10px;
+    }
+    .source-img img {
+      display: block;
+      width: 100%;
+      max-height: 420px;
+      height: auto;
+      object-fit: contain;
+      background: #fff;
+    }
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+    }
+    .small { font-size: 13px; color: var(--muted); }
+    @media (max-width: 860px) {
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 1 AI 参考习题逐题桥接</h1>
+      <p class="muted">这版不再把整页截图扔给你。参考习题 PDF 是扫描图，我会一页页拆成题卡：先补必要概念，再让你作答，最后展开答案和解析。今天先做第 1 页，也就是 AI 概念、搜索、学习范式和简答比较。</p>
+      <div class="strip">
+        <span class="pill hot">人工智能参考习题 PDF</span>
+        <span class="pill info">第 1 页逐题提取</span>
+        <span class="pill good">先作答，再看解析</span>
+        <span class="pill warn">截图只作原题核对</span>
+      </div>
+      <div class="toc">
+        <a href="#prep">0. 先补概念</a>
+        <a href="#method">0.5 做题方法</a>
+        <a href="#choice">1. 选择题 1-6</a>
+        <a href="#short">2. 简答题 7-11</a>
+        <a href="#source">3. 原页核对</a>
+        <a href="#next">4. 后续页计划</a>
+      </div>
+    </section>
+
+    <section class="card" id="prep">
+      <h2>0. 做第 1 页前，先补这 6 个概念</h2>
+      <p>这页题不是难算，而是容易把名词混在一起。你先把下面这些“题眼”放进脑子，再开始做题。</p>
+      <table>
+        <thead><tr><th>概念</th><th>从零解释</th><th>看到什么词要想到它</th></tr></thead>
+        <tbody>
+          <tr><td>形式化系统</td><td>用明确符号、规则和推理过程表示知识或推理。常关注可靠性、一致性、完备性等性质。</td><td>形式系统、有效性、完备性、可靠性、一致性。</td></tr>
+          <tr><td>AlphaGo</td><td>围棋 AI 的经典例子，代表路线是深度学习、强化学习和蒙特卡洛树搜索结合。</td><td>AlphaGo、围棋、自我博弈、树搜索。</td></tr>
+          <tr><td>因果推理三层</td><td>Judea Pearl 常讲关联、介入、反事实：看见现象、动手改变、思考如果当初不同。</td><td>关联、介入、反事实。</td></tr>
+          <tr><td>启发式搜索</td><td>搜索时不盲目展开所有路径，而是用估价函数指路。A* 是典型代表。</td><td>启发式、估价函数、A*。</td></tr>
+          <tr><td>监督/无监督/强化学习</td><td>监督学习有标准答案标签；无监督学习找结构；强化学习通过状态、动作、奖励学策略。</td><td>标签、聚类、奖励、策略。</td></tr>
+          <tr><td>人机混合增强</td><td>人和机器互补：机器擅长计算/检索/识别，人擅长目标判断、价值判断和复杂情境理解。</td><td>人机协同、外界帮助、增强能力。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark warnbox">
+        <strong>使用规则：</strong>每题先写<span class="focus">题眼 + 我选什么 + 为什么不选其他项</span>。你不用一开始完美，但不能只点选项。
+      </div>
+    </section>
+
+    <section class="card" id="method">
+      <h2>0.5 这页真正训练什么：不是背答案，是练“概念边界”</h2>
+      <p>第 1 页看起来是 AI 基础常识，但它的考试价值很高：它训练你把相近名词分开。选择题要快，简答题要稳，所以每题都按下面四步走。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>第一步：圈题眼</strong>
+          例如 AlphaGo 题先圈 <span class="key">AlphaGo</span>，立刻想到“深度学习 + 强化学习 + 蒙特卡洛树搜索”。
+        </div>
+        <div class="box">
+          <strong>第二步：说人话</strong>
+          例如启发式搜索就是“搜索时有一个估价函数帮我挑方向”，不是盲目 BFS/DFS。
+        </div>
+        <div class="box">
+          <strong>第三步：排干扰项</strong>
+          真题不会总给离谱选项。你要能说明为什么相邻概念不对，比如“逻辑推理”和 AlphaGo 路线不同。
+        </div>
+        <div class="box">
+          <strong>第四步：转简答句</strong>
+          每道选择题都要能扩成一句简答，例如“监督学习像老师给标准答案，强化学习像环境给奖励”。
+        </div>
+      </div>
+      <div class="mark">
+        <strong>过关标准：</strong>做完这页后，你要能闭眼说出：形式系统三性质、AlphaGo 三件套、因果三层、A* 的启发式、三种学习范式、监督学习和强化学习反馈差异。
+      </div>
+    </section>
+
+    <section class="card" id="choice">
+      <h2>1. 第 1 页选择题 1-6</h2>
+
+      <article class="question">
+        <h3>题 1：形式化系统性质</h3>
+        <p class="skill"><strong>本题训练：</strong>区分逻辑系统的性质，不把“看起来也重要”的词都当成必备性质。</p>
+        <p>为保证形式化系统的有效性，下面哪个选项不是形式化系统通常需要具有的性质？</p>
+        <ul class="options">
+          <li>A. 完备性</li>
+          <li>B. 可靠性</li>
+          <li>C. 一致性</li>
+          <li>D. 可判定性</li>
+        </ul>
+        <textarea data-note="p1q1" placeholder="先写：题眼是什么？你选哪个？为什么？"></textarea>
+        <details>
+          <summary>看正确答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>参考答案：D。</strong></p>
+            <p><strong>题眼：</strong>“形式化系统的有效性”通常先看<span class="focus">可靠性、一致性、完备性</span>这类性质。可判定性当然很重要，但很多有表达力的系统并不一定可判定；它不是所有形式系统有效性必须满足的性质。</p>
+            <p><strong>为什么不是 A：</strong>完备性关注“语义上真的东西能不能被证明出来”，是形式系统常见核心性质。</p>
+            <p><strong>为什么不是 B：</strong>可靠性也叫 soundness，关注“能证明出来的是否都是真的”。这不是工程软件的可靠性，而是逻辑里的可靠性。</p>
+            <p><strong>为什么不是 C：</strong>一致性关注系统不会同时推出命题及其否定，否则系统会崩掉。</p>
+            <p><strong>小提醒：</strong>如果老师 PPT 对“有效性”列了固定三性质，以 PPT 为准；这题的核心不是背 D，而是分清这四个词。</p>
+            <div class="rubric"><span>变式</span><span>如果题目问“能证明出来的命题都是真的”，选可靠性；问“真的命题都能被证明出来”，选完备性；问“不会同时推出 P 和非 P”，选一致性。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 2：AlphaGo 没有使用哪种能力方法</h3>
+        <p class="skill"><strong>本题训练：</strong>把具体系统归到 AI 方法组合，不靠“哪个词眼熟”猜。</p>
+        <p>DeepMind 研制的 AlphaGo 算法没有使用哪个人工智能方法？</p>
+        <ul class="options">
+          <li>A. 强化学习</li>
+          <li>B. 深度学习</li>
+          <li>C. 蒙特卡洛树搜索</li>
+          <li>D. 逻辑推理</li>
+        </ul>
+        <textarea data-note="p1q2" placeholder="先写：AlphaGo 的三件套是什么？"></textarea>
+        <details>
+          <summary>看正确答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：D。</strong></p>
+            <p><strong>题眼：</strong>AlphaGo 的经典组合是<span class="focus">深度学习、强化学习、蒙特卡洛树搜索</span>。逻辑推理是符号主义路线，不是 AlphaGo 的代表方法。</p>
+            <p><strong>怎么记：</strong>深度学习负责从棋盘状态学表示和评估；强化学习通过自我博弈改进策略；蒙特卡洛树搜索负责在对局中搜索候选走法。</p>
+            <p><strong>考试迁移：</strong>如果简答题问 AlphaGo 为什么是多方法结合，就按<span class="focus">模型评估 + 自我改进 + 搜索决策</span>三句话写。</p>
+            <div class="rubric"><span>变式</span><span>问“AlphaGo 如何选择下一步棋”，优先写 MCTS 搜索候选走法；问“如何通过自我对弈变强”，优先写强化学习。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 3：Pearl 因果推理三层</h3>
+        <p class="skill"><strong>本题训练：</strong>区分“看到相关”和“真正动手改变”的因果层次。</p>
+        <p>图灵奖获得者 Judea Pearl 将推理按照由易到难程度分成三个层次：____。</p>
+        <ul class="options">
+          <li>A. 介入、关联、反事实</li>
+          <li>B. 关联、介入、反事实</li>
+          <li>C. 反事实、介入、关联</li>
+          <li>D. 关系、介入、反事实</li>
+        </ul>
+        <textarea data-note="p1q3" placeholder="先写：三层分别对应“看见、动手、如果当初”中的哪一个？"></textarea>
+        <details>
+          <summary>看正确答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>题眼：</strong>Pearl 的因果阶梯常见表述是 association、intervention、counterfactual，对应<span class="focus">关联、介入、反事实</span>。</p>
+            <p><strong>从零理解：</strong>关联是“观察到 A 和 B 同时出现”；介入是“我主动改变 A 看 B 怎么变”；反事实是“如果当初没有 A，B 会不会不同”。难度逐层上升。</p>
+            <p><strong>为什么 D 不稳：</strong>“关系”太泛，不是这组三层的规范关键词。</p>
+            <div class="rubric"><span>变式</span><span>“熬夜者成绩更差”是关联；“安排实验让一组人不熬夜再比较”是介入；“如果这个人昨晚没有熬夜会怎样”是反事实。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 4：启发式搜索</h3>
+        <p class="skill"><strong>本题训练：</strong>识别搜索算法的“有没有估价函数”。</p>
+        <p>以下哪种搜索方法属于启发式搜索？</p>
+        <ul class="options">
+          <li>A. 广度优先搜索</li>
+          <li>B. 蒙特卡洛树搜索</li>
+          <li>C. 深度优先搜索</li>
+          <li>D. A* 搜索</li>
+        </ul>
+        <textarea data-note="p1q4" placeholder="先写：启发式搜索的题眼是什么？"></textarea>
+        <details>
+          <summary>看正确答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：D。</strong></p>
+            <p><strong>题眼：</strong>启发式搜索会用估价函数指导搜索方向。A* 搜索使用 <span class="focus">f(n)=g(n)+h(n)</span>，其中 h(n) 就是启发式估计。</p>
+            <p><strong>为什么不是 A/C：</strong>广度优先和深度优先是按固定展开顺序搜索，不依靠问题相关的启发式函数。</p>
+            <p><strong>为什么 B 不选：</strong>蒙特卡洛树搜索通过随机模拟和统计评估扩展搜索树，和 A* 这种典型启发式搜索不是同一类基础答案。</p>
+            <div class="rubric"><span>变式</span><span>如果题干出现“估计当前结点到目标的代价”，优先想到 h(n)；如果出现“已走代价 + 估计剩余代价”，优先想到 A*。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 5：监督学习排除题</h3>
+        <p class="skill"><strong>本题训练：</strong>用“有没有标签”区分监督学习和无监督学习。</p>
+        <p>以下哪一种算法不属于监督学习算法？</p>
+        <ul class="options">
+          <li>A. 隐马尔可夫链</li>
+          <li>B. 支持向量机</li>
+          <li>C. 聚类</li>
+          <li>D. 决策树</li>
+        </ul>
+        <textarea data-note="p1q5" placeholder="先写：监督学习最关键的判断标准是什么？"></textarea>
+        <details>
+          <summary>看正确答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：C。</strong></p>
+            <p><strong>题眼：</strong>监督学习的核心是<span class="focus">有标签</span>，也就是样本有标准答案 y。聚类通常没有标签，是让算法自己找相似样本组成的结构，所以属于无监督学习。</p>
+            <p><strong>为什么 B/D 常属于监督：</strong>SVM 和决策树分类都常用带标签样本训练分类器。</p>
+            <p><strong>关于 A：</strong>隐马尔可夫模型本身是概率序列模型，可用于监督或非监督场景；但这道单选的最明确排除项是聚类。</p>
+            <div class="rubric"><span>变式</span><span>“垃圾邮件/非垃圾邮件分类”是监督；“把用户自动分群”是无监督；“玩游戏拿奖励”是强化学习。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 6：学习数据分布模式</h3>
+        <p class="skill"><strong>本题训练：</strong>识别无监督学习不是“没有学习”，而是在学数据结构。</p>
+        <p>以下哪种学习方法的学习目标是学习同一类数据的分布模式？</p>
+        <ul class="options">
+          <li>A. 监督学习</li>
+          <li>B. 无监督学习</li>
+          <li>C. 强化学习</li>
+          <li>D. 博弈对抗</li>
+        </ul>
+        <textarea data-note="p1q6" placeholder="先写：没有标签时，模型主要在学什么？"></textarea>
+        <details>
+          <summary>看正确答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答案：B。</strong></p>
+            <p><strong>题眼：</strong>“学习数据的分布模式”说明没有直接标准答案，而是从数据本身找<span class="focus">结构、分布、相似性</span>，这就是无监督学习。</p>
+            <p><strong>为什么不是 A：</strong>监督学习学的是输入到标签的映射，比如图片到类别。</p>
+            <p><strong>为什么不是 C：</strong>强化学习学的是在环境中如何选动作以获得长期奖励。</p>
+            <p><strong>为什么不是 D：</strong>博弈对抗描述多智能体或生成对抗等场景，不是这题的基础学习范式答案。</p>
+            <div class="rubric"><span>变式</span><span>如果题干说 PCA、聚类、密度估计、数据分布，优先往无监督想；如果题干说奖励和策略，再切强化学习。</span></div>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="short">
+      <h2>2. 第 1 页简答题 7-11</h2>
+
+      <article class="question">
+        <h3>题 7：比较 AI 不同方法的优势</h3>
+        <p class="skill"><strong>本题训练：</strong>把 AI 方法按“适合什么问题”比较，而不是把名词排队。</p>
+        <p>题目要点：以机器为载体模拟人类智能的某一方面，可通过符号主义的逻辑推理、问题求解的探寻搜索、数据驱动的机器学习、行为主义的强化学习、博弈对抗的决策智能等方法实现。请比较上述人工智能不同方法的优势。</p>
+        <textarea data-note="p1q7" placeholder="先按“方法 -> 适合做什么 -> 优势”写，不要堆名词。"></textarea>
+        <details>
+          <summary>看参考答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>答题框架：</strong>这题不是让你背定义，而是让你比较<span class="focus">各路线适合解决什么问题</span>。可以分点写。</p>
+            <p><strong>符号主义/逻辑推理：</strong>优势是规则清楚、可解释性强，适合专家系统、定理证明、规则推断等需要明确知识和推理链的任务。缺点是获取规则困难，面对噪声和开放环境不够灵活。</p>
+            <p><strong>探寻搜索：</strong>优势是能在状态空间中系统寻找解，适合路径规划、游戏搜索、问题求解。配合启发式函数可以减少盲目搜索。</p>
+            <p><strong>机器学习：</strong>优势是从数据中自动学习规律，不需要人工写死所有规则，适合图像、语音、文本、推荐等数据丰富任务。</p>
+            <p><strong>强化学习：</strong>优势是能通过试错和奖励学习序贯决策策略，适合游戏、机器人控制、资源调度等“当前动作影响未来收益”的任务。</p>
+            <p><strong>博弈对抗：</strong>优势是能处理竞争和对抗环境中的策略选择，适合棋类、网络安全攻防、多智能体决策等。</p>
+            <div class="rubric"><span>模板</span><span>方法名 -> 核心机制 -> 适合任务 -> 优势 -> 局限。简答题按这个写，不会散。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 8：图灵机模型计算 (5+2)*3</h3>
+        <p class="skill"><strong>本题训练：</strong>用“输入-规则-中间状态-输出”解释计算模型。</p>
+        <p>请参考图 1.1，画出使用图灵机模型计算 (5+2)*3 的过程示意图。</p>
+        <textarea data-note="p1q8" placeholder="先写：输入是什么？中间步骤是什么？输出是什么？如果不会画，先用文字列流程。"></textarea>
+        <details>
+          <summary>看参考答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>这题 Day1 不要求画得很工整，先会表达过程。</strong></p>
+            <p><strong>文字流程：</strong>输入带上写入表达式 (5+2)*3；控制器读取符号并根据规则先处理括号；计算 5+2 得到 7；再计算 7*3 得到 21；最后在输出区域留下结果 21 并停机。</p>
+            <p><strong>图示骨架：</strong>可以画“输入纸带 -> 读写头/控制器 -> 中间纸带状态 -> 输出纸带”。中间状态写成：(5+2)*3 -> 7*3 -> 21。</p>
+            <p><strong>拿分点：</strong>题目不一定要求你真的模拟每个低级状态转换，通常是让你理解图灵机作为计算模型：<span class="focus">有限控制 + 纸带存储 + 读写移动 + 按规则一步步变换</span>。</p>
+            <div class="rubric"><span>模板</span><span>输入写在纸带上 -> 读写头扫描符号 -> 控制器按规则改写/移动 -> 形成中间状态 -> 停机输出。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 9：归纳、演绎、因果推理举例</h3>
+        <p class="skill"><strong>本题训练：</strong>把三种推理从生活例子里区分出来。</p>
+        <p>推理方法在生活中无处不在，请你针对归纳推理、演绎推理和因果推理分别举出实际例子。</p>
+        <textarea data-note="p1q9" placeholder="先各写一个生活例子，再标注它为什么属于这类推理。"></textarea>
+        <details>
+          <summary>看参考答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>归纳推理：</strong>从多个具体例子总结一般规律。例如连续几天看到早高峰地铁拥挤，于是推断工作日早高峰地铁通常拥挤。它是从样本到规律，结论有概率性。</p>
+            <p><strong>演绎推理：</strong>从一般规则推出具体结论。例如“所有课程考试都需要带学生证；人工智能是课程考试；所以人工智能考试需要带学生证”。只要前提真且推理形式正确，结论必真。</p>
+            <p><strong>因果推理：</strong>分析一个因素是否导致另一个结果。例如发现熬夜后第二天注意力下降，进一步比较不熬夜时状态，推断熬夜可能导致注意力下降。</p>
+            <p><strong>区别：</strong><span class="focus">归纳</span>是从例子总结规律，<span class="focus">演绎</span>是从规则推出结论，<span class="focus">因果</span>是问“改变 A 是否会导致 B 改变”。</p>
+            <div class="rubric"><span>变式</span><span>题目让“举例”时，每个例子后必须补一句为什么属于这类推理，否则容易像流水账。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 10：监督学习和强化学习如何利用反馈信息</h3>
+        <p class="skill"><strong>本题训练：</strong>抓住 AI 考试里最常见的学习范式比较。</p>
+        <p>监督学习和强化学习在做出预测后，都需要某种“反馈信息”来提升学习性能。请描述两种学习方法中利用“反馈信息”的不同。</p>
+        <textarea data-note="p1q10" placeholder="先写：监督学习反馈是什么？强化学习反馈是什么？反馈是否即时、是否直接告诉正确答案？"></textarea>
+        <details>
+          <summary>看参考答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>监督学习：</strong>反馈通常是明确标签或标准答案。模型预测后，可以直接比较预测值和真实标签，计算损失，再调整参数。比如图片分类预测错了，标签会告诉模型正确类别是什么。</p>
+            <p><strong>强化学习：</strong>反馈通常是环境给出的奖励或惩罚，不一定直接告诉正确动作，而且可能延迟出现。智能体需要根据状态、动作、奖励和未来回报来调整策略。</p>
+            <p><strong>核心区别：</strong><span class="focus">监督学习像老师批改答案，反馈明确</span>；<span class="focus">强化学习像在环境里试错，反馈是奖励信号</span>，需要自己探索哪些动作长期更好。</p>
+            <div class="rubric"><span>必背句</span><span>监督学习的反馈是标签/损失，强化学习的反馈是奖励/回报；前者学输入到标签的映射，后者学状态到动作的策略。</span></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>题 11：人机混合增强举例</h3>
+        <p class="skill"><strong>本题训练：</strong>把“机器替代人”改写成“人机互补增强”。</p>
+        <p>题目续页要点：机器智能和人类智能可以相互协同形成人机混合增强。人类可以通过外界帮助提升能力。请列举若干人机混合增强的例子。</p>
+        <textarea data-note="p1q11" placeholder="写 3-5 个例子，并说明人和机器分别贡献什么。"></textarea>
+        <details>
+          <summary>看参考答案和解析</summary>
+          <div class="answer-block">
+            <p><strong>例 1：医生 + AI 影像辅助诊断。</strong>AI 快速筛查 CT/MRI 中的可疑区域，医生结合病史和临床经验做最终判断。</p>
+            <p><strong>例 2：学生 + 智能学习系统。</strong>系统根据错题和掌握度推荐练习，学生负责理解、复述和迁移。</p>
+            <p><strong>例 3：驾驶员 + 自动驾驶辅助。</strong>机器负责车道保持、碰撞预警、自动泊车，人负责复杂交通情境下的目标判断和接管。</p>
+            <p><strong>例 4：程序员 + 代码助手。</strong>AI 提供代码建议、解释报错、生成测试，人负责需求判断、架构选择和最终审查。</p>
+            <p><strong>答题句式：</strong>人机混合增强不是机器替代人，而是<span class="focus">机器提供感知、检索、计算、推荐等能力，人类提供目标、价值、常识和最终责任</span>。</p>
+            <div class="rubric"><span>变式</span><span>如果题目联系“假舆马者，非利足也，而致千里”，就写人类借助外部工具扩展能力，AI 是新的认知工具。</span></div>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="source">
+      <h2>3. 原页核对：截图只作来源，不作学习主体</h2>
+      <p>如果你想确认题目来源，再展开原图。平时学习请优先看上面的题卡。</p>
+      <details>
+        <summary>展开参考习题第 1 页原图</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p1.png" alt="人工智能参考习题 PDF 第 1 页">
+          <div class="caption">人工智能参考习题 PDF 第 1 页：题 1-10 和题 11 开头。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开参考习题第 2 页原图：题 11 续页</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/ai-ref-p2.png" alt="人工智能参考习题 PDF 第 2 页">
+          <div class="caption">人工智能参考习题 PDF 第 2 页：题 11 续页。</div>
+        </div>
+      </details>
+    </section>
+
+    <section class="card" id="next">
+      <h2>4. 后续页怎么做</h2>
+      <p>后面我会按同样方式继续拆第 3 页、第 4 页……不会再把整页图直接扔给你。每页都按这个标准做：</p>
+      <div class="grid">
+        <div class="box"><strong>先提取题目</strong>把扫描页里的题干和选项整理成可读题卡。</div>
+        <div class="box"><strong>先补概念</strong>题目前放必须知道的术语，不让你硬猜。</div>
+        <div class="box"><strong>留作答区</strong>每题有题眼/答案/理由输入框，训练主动回忆。</div>
+        <div class="box"><strong>解析丰满</strong>讲正确答案、干扰项、迁移到简答/计算题的模板。</div>
+      </div>
+      <div class="mark">
+        <strong>下一页已经开始：</strong>参考习题第 3-5 页的机器学习题已拆成 <a href="./day2_ai_reference_ml_cards.html">AI 参考习题机器学习题卡</a>，覆盖 LDA、熵、SVM、AdaBoost、误差曲线和 L2 正则化。
+      </div>
+      <div class="mark warnbox">
+        <strong>本页质量闸门：</strong>你完成后至少能不看答案说出 6 条：AlphaGo 三件套、Pearl 三层、A* 为什么是启发式、聚类为什么无监督、监督/强化反馈差异、人机混合增强的答题句式。少于 4 条就先别急着进 Day2 机器学习题卡。
+      </div>
+      <p><a href="./day2_ai_reference_ml_cards.html">继续做机器学习题卡</a> · <a href="./day1_ai_se_visual.html">回到 Day 1 AI 从零深学讲义</a> · <a href="./index.html">回到期末陪跑学习舱</a></p>
+    </section>
+  </main>
+
+  <script>
+    const noteKey = "buaa-finals-ai-reference-bridge-notes-v2";
+    let savedNotes = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+  </script>
+</body>
+</html>

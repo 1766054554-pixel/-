@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散 Day3 等值演算 主范式 谓词辖域：计算题先稳住</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 300px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: inherit;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .math-card {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 14px;
+      margin: 12px 0;
+    }
+    .math-card .eq {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--blue);
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-bottom: 8px;
+    }
+    .math-card ul { margin: 8px 0 0 20px; padding: 0; }
+    .mini-svg {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .mini-svg svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .purplebox { border-left-color: var(--purple); background: #f8f5ff; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .rubric { grid-template-columns: 1fr; }
+      .mini-svg svg { min-width: 700px; }
+    }
+  </style>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>离散 Day3 等值演算 主范式 谓词辖域：计算题先稳住</h1>
+      <p class="muted">这页开始桥接 2024 参考卷，但仍然不直接硬啃整卷。先把最能拿分、最能训练“严谨感”的基础计算题稳住：复杂度、真值表、主析取/主合取、等值演算、辖域、替换、谓词翻译。</p>
+      <div class="strip">
+        <span class="pill hot">离散数学 6/28</span>
+        <span class="pill info">Day1/Day2 后续</span>
+        <span class="pill warn">先计算题，后整卷</span>
+        <span class="pill good">依据离散1.md + 2024 参考卷题型</span>
+      </div>
+      <div class="toc">
+        <a href="#route">0. 使用路线</a>
+        <a href="#laws">1. 等值演算</a>
+        <a href="#truth">2. 真值表与主范式</a>
+        <a href="#predicate">3. 谓词辖域与替换</a>
+        <a href="#translation">4. 自然语言符号化</a>
+        <a href="#proof">5. 证明骨架预热</a>
+        <a href="#cards">6. 题卡</a>
+        <a href="#gate">7. 闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 使用路线：今天先抢“计算型基本盘”</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>已经看过 Day1</strong>
+          你知道命题、联结词、谓词、量词和证明第一句是什么。
+        </div>
+        <div class="box">
+          <strong>已经看过 Day2</strong>
+          你知道全称/存在/蕴涵/语义蕴含/反例题如何起手。
+        </div>
+        <div class="box">
+          <strong>本页目标</strong>
+          把“会读符号”推进到“会算、会化、会填表、会写规范步骤”。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>为什么不直接做 2024 整卷：</strong>2024 里有公理系统、前束范式、Skolem、语义构造、公理证明。如果你现在直接做，会变成看答案。Day3 先铺能迁移的工具，后面分析整卷才有含金量。
+      </div>
+    </section>
+
+    <section class="card" id="laws">
+      <h2>1. 等值演算：把公式一步步变成你想要的样子</h2>
+      <p>等值演算不是“随便变形”。每一步都必须用一个等值公式做理由。你要像写化学方程式一样：每一行和上一行等价，最后得到目标。</p>
+      <table>
+        <thead><tr><th>工具</th><th>公式</th><th>什么时候用</th></tr></thead>
+        <tbody>
+          <tr><td>去蕴涵</td><td>A -> B ≡ ¬A ∨ B</td><td>看到箭头先消掉，后面才好用 ∧/∨/¬ 化简。</td></tr>
+          <tr><td>去等价</td><td>A ↔ B ≡ (A -> B) ∧ (B -> A)</td><td>等价题先拆成两个方向。</td></tr>
+          <tr><td>德摩根</td><td>¬(A ∧ B) ≡ ¬A ∨ ¬B；¬(A ∨ B) ≡ ¬A ∧ ¬B</td><td>否定压进括号。</td></tr>
+          <tr><td>双重否定</td><td>¬¬A ≡ A</td><td>化简。</td></tr>
+          <tr><td>分配律</td><td>A ∨ (B ∧ C) ≡ (A∨B) ∧ (A∨C)</td><td>化合取范式。</td></tr>
+          <tr><td>分配律</td><td>A ∧ (B ∨ C) ≡ (A∧B) ∨ (A∧C)</td><td>化析取范式。</td></tr>
+          <tr><td>吸收律</td><td>A ∨ (A∧B) ≡ A；A ∧ (A∨B) ≡ A</td><td>遇到“自己已经够了”时消元。</td></tr>
+          <tr><td>零一律</td><td>A∨1≡1，A∧0≡0，A∨0≡A，A∧1≡A</td><td>最后收尾。</td></tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="math-note"><strong>考试写法：</strong>每一行和上一行等值，旁边写理由；这比只写最后答案稳得多。</div>
+        <div class="display-eq"><span class="mi">F</span></div>
+        <div class="display-eq"><span class="op">≡</span> <span class="op">…</span> <span class="math-note">（去蕴涵）</span></div>
+        <div class="display-eq"><span class="op">≡</span> <span class="op">…</span> <span class="math-note">（德摩根律）</span></div>
+        <div class="display-eq"><span class="op">≡</span> <span class="op">…</span> <span class="math-note">（分配律 / 吸收律）</span></div>
+        <div class="display-eq"><span class="op">≡</span> 1 <span class="math-note">（零一律）</span></div>
+      </div>
+    </section>
+
+    <section class="card" id="truth">
+      <h2>2. 真值表与主范式：表格不是笨方法，是保底方法</h2>
+      <p>2024 参考卷里直接出现了补真值表、写主析取范式和主合取范式。你只要把规则记牢，这类题可以机械拿分。</p>
+      <h3>主析取范式：找结果为 1 的行</h3>
+      <p>主析取范式由极小项组成。极小项内部用 ∧，每个变量出现一次。行里变量为 1 写原变量，为 0 写否定。</p>
+      <h3>主合取范式：找结果为 0 的行</h3>
+      <p>主合取范式由极大项组成。极大项内部用 ∨，每个变量出现一次。这里是反直觉规则：行里变量为 0 写原变量，为 1 写否定。</p>
+      <div class="mini-svg" aria-label="主析取和主合取范式流程图">
+        <svg viewBox="0 0 960 360" role="img">
+          <rect width="960" height="360" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">主范式不是靠背答案，是从真值表读出来</text>
+            <rect x="60" y="90" width="180" height="66" rx="12" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="106" y="128" font-weight="700">列真值表</text>
+            <path d="M244 123 H330" stroke="#687581" stroke-width="3" marker-end="url(#nfArrow)"/>
+            <rect x="345" y="70" width="210" height="66" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="388" y="108" font-weight="700">结果为 1 的行</text>
+            <rect x="345" y="158" width="210" height="66" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="388" y="196" font-weight="700">结果为 0 的行</text>
+            <path d="M558 103 H650" stroke="#687581" stroke-width="3" marker-end="url(#nfArrow)"/>
+            <path d="M558 191 H650" stroke="#687581" stroke-width="3" marker-end="url(#nfArrow)"/>
+            <rect x="665" y="70" width="230" height="66" rx="12" fill="#eef9f3" stroke="#24724f"/>
+            <text x="697" y="100" font-weight="700">写极小项，用 ∧</text>
+            <text x="699" y="123" fill="#687581">1 写原变量，0 写否定</text>
+            <rect x="665" y="158" width="230" height="66" rx="12" fill="#fff9e6" stroke="#936b12"/>
+            <text x="697" y="188" font-weight="700">写极大项，用 ∨</text>
+            <text x="699" y="211" fill="#687581">0 写原变量，1 写否定</text>
+            <rect x="160" y="272" width="650" height="44" rx="10" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="220" y="300" fill="#687581">最后：极小项之间用 ∨ 连接；极大项之间用 ∧ 连接。</text>
+          </g>
+          <defs><marker id="nfArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#687581"/></marker></defs>
+        </svg>
+      </div>
+      <table>
+        <thead><tr><th>p</th><th>q</th><th>行号</th><th>极小项 m_i</th><th>极大项 M_i</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>¬p ∧ ¬q</td><td>p ∨ q</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>¬p ∧ q</td><td>p ∨ ¬q</td></tr>
+          <tr><td>1</td><td>0</td><td>2</td><td>p ∧ ¬q</td><td>¬p ∨ q</td></tr>
+          <tr><td>1</td><td>1</td><td>3</td><td>p ∧ q</td><td>¬p ∨ ¬q</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>记忆法：</strong>极小项像“精准命中这一行”，所以 1 写原变量、0 写否定；极大项像“排除这一行”，所以规则反过来。
+      </div>
+    </section>
+
+    <section class="card" id="predicate">
+      <h2>3. 谓词辖域与替换：先画括号，再动变量</h2>
+      <p>谓词题的坑不是符号多，而是量词到底管到哪里。量词只管它后面紧跟的公式范围；如果没有大括号/括号，通常只管最近的合式公式。考试里“填写变元 y 的辖域”“求替换式”就是在考这个。</p>
+      <div class="mini-svg" aria-label="谓词量词辖域括号图">
+        <svg viewBox="0 0 960 300" role="img">
+          <rect width="960" height="300" fill="#fff"/>
+          <g font-family="sans-serif" font-size="16" fill="#18212a">
+            <text x="55" y="42" font-size="21" font-weight="700" fill="#1f5f8b">辖域题先画括号：量词只管自己后面的公式范围</text>
+            <text x="78" y="102" font-size="20" font-family="monospace">∃x ∀z ∃w ( R(w) -> ∀y Q(y) ∨ P(x,z) )</text>
+            <path d="M83 118 C83 185 855 185 855 118" stroke="#1f5f8b" stroke-width="3" fill="none"/>
+            <text x="392" y="210" fill="#1f5f8b" font-weight="700">∃x 的辖域很大</text>
+            <path d="M455 118 C455 155 580 155 580 118" stroke="#24724f" stroke-width="3" fill="none"/>
+            <text x="442" y="178" fill="#24724f" font-weight="700">∀y 只管 Q(y)</text>
+            <rect x="92" y="238" width="760" height="34" rx="8" fill="#f4fbff" stroke="#9dc7de"/>
+            <text x="146" y="261" fill="#687581">做题动作：先补括号，再判断变量是否在这个括号里、名字是否相同。</text>
+          </g>
+        </svg>
+      </div>
+      <table>
+        <thead><tr><th>概念</th><th>人话</th><th>考试动作</th></tr></thead>
+        <tbody>
+          <tr><td>辖域</td><td>量词能管住的范围。</td><td>先给量词后面的公式画括号。</td></tr>
+          <tr><td>约束变元</td><td>被某个量词绑定的变量。</td><td>在辖域里、名字相同，才被绑定。</td></tr>
+          <tr><td>自由变元</td><td>没被量词管住的变量。</td><td>出现在量词外，或名字不匹配。</td></tr>
+          <tr><td>代换</td><td>把命题变元整体替换。</td><td>全局替换所有匹配项。</td></tr>
+          <tr><td>替换</td><td>把某个子公式换成等价式或指定公式。</td><td>看题目指定的子公式，别换错范围。</td></tr>
+          <tr><td>可代入</td><td>替换项里的自由变量不会被新量词捕获。</td><td>若会被捕获，先换名。</td></tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="math-note"><strong>例：</strong>先把整条公式看成“量词前缀 + 后面的大括号”，再逐层缩小辖域。</div>
+        <div class="display-eq">∃<span class="mi">x</span> ∀<span class="mi">z</span> ∃<span class="mi">w</span> <span class="op">(</span><span class="mi">R</span><span class="op">(</span><span class="mi">w</span><span class="op">)</span> → ∀<span class="mi">y</span> <span class="mi">Q</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">z</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq">∃<span class="mi">x</span> 的辖域：∀<span class="mi">z</span> ∃<span class="mi">w</span> <span class="op">(</span><span class="mi">R</span><span class="op">(</span><span class="mi">w</span><span class="op">)</span> → ∀<span class="mi">y</span> <span class="mi">Q</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">z</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq">∀<span class="mi">z</span> 的辖域：∃<span class="mi">w</span> <span class="op">(</span><span class="mi">R</span><span class="op">(</span><span class="mi">w</span><span class="op">)</span> → ∀<span class="mi">y</span> <span class="mi">Q</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">z</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq">∃<span class="mi">w</span> 的辖域：<span class="op">(</span><span class="mi">R</span><span class="op">(</span><span class="mi">w</span><span class="op">)</span> → ∀<span class="mi">y</span> <span class="mi">Q</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span> ∨ <span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">,</span><span class="mi">z</span><span class="op">)</span><span class="op">)</span></div>
+        <div class="display-eq">∀<span class="mi">y</span> 的辖域：<span class="mi">Q</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span></div>
+        <ul>
+          <li>y 只被 ∀y 管住 Q(y)，不会管住后面的 P(x,z)。</li>
+          <li>x 被最外层 ∃x 管住，所以 P(x,z) 里的 x 是约束变元。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" id="translation">
+      <h2>4. 自然语言符号化：全称配蕴涵，存在配合取</h2>
+      <p>自然语言符号化看着像语文题，本质是套结构。你先把论域和谓词解释写清楚，再搭量词骨架。</p>
+      <div class="grid">
+        <div class="box">
+          <strong>所有 A 都 B</strong>
+          <div class="display-eq">∀<span class="mi">x</span><span class="op">(</span><span class="mi">A</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span> → <span class="mi">B</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span><span class="op">)</span></div>
+          全称句常用蕴涵，因为不是 A 的对象不需要满足 B。
+        </div>
+        <div class="box">
+          <strong>存在 A 是 B</strong>
+          <div class="display-eq">∃<span class="mi">x</span><span class="op">(</span><span class="mi">A</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span> ∧ <span class="mi">B</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span><span class="op">)</span></div>
+          存在句要找一个对象同时满足 A 和 B。
+        </div>
+        <div class="box">
+          <strong>唯一存在</strong>
+          <div class="display-eq">∃<span class="mi">x</span><span class="op">(</span><span class="mi">P</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span> ∧ ∀<span class="mi">y</span><span class="op">(</span><span class="mi">P</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span> → <span class="mi">y</span><span class="op">=</span><span class="mi">x</span><span class="op">)</span><span class="op">)</span></div>
+          先存在一个，再说明所有满足者都等于它。
+        </div>
+        <div class="box">
+          <strong>严格单调递减</strong>
+          <div class="display-eq">∀<span class="mi">x</span>∀<span class="mi">y</span><span class="op">(</span><span class="mi">x</span><span class="op">&lt;</span><span class="mi">y</span> → <span class="mi">f</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span><span class="op">&gt;</span><span class="mi">f</span><span class="op">(</span><span class="mi">y</span><span class="op">)</span><span class="op">)</span></div>
+          注意是 x&lt;y 时，函数值反向变大。
+        </div>
+      </div>
+      <div class="mark purplebox">
+        <strong>2024 参考卷信号：</strong>“若函数 f(x) 是严格单调递减的，则 f(x) 有唯一一最大值点”这种题不是要你背中文，而是要你搭出“若...则...”“严格单调递减”“唯一最大值点”三层结构。
+      </div>
+    </section>
+
+    <section class="card" id="proof">
+      <h2>5. 证明骨架预热：今天只接到“能写规范开头”</h2>
+      <p>2024 后半有公理证明题，但今天还不完整展开。你先记住：公理证明不是写感想，而是一行公式一行理由。理由只能是前提、公理、已知定理、推理规则或前面步骤。</p>
+      <table>
+        <thead><tr><th>证明目标</th><th>起手骨架</th><th>后续常用动作</th></tr></thead>
+        <tbody>
+          <tr><td>证明 Γ ⊨ Q</td><td>任取一个使 Γ 中所有公式为真的解释/赋值。</td><td>推出 Q 也为真。</td></tr>
+          <tr><td>证明 Γ 不可满足</td><td>假设存在一个解释使 Γ 全真。</td><td>推出矛盾。</td></tr>
+          <tr><td>证明 ⊢ A -> B</td><td>可用演绎定理思路：假设 A，推出 B。</td><td>再得到 A -> B。</td></tr>
+          <tr><td>证明 ∀x∀y(...)</td><td>任取 x、y。</td><td>用全称引入收束。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>后面再做：</strong>前束范式、Skolem 范式、公理系统可靠性/完全性、公理证明长题会单独开 Day4。今天把计算基础打好，否则证明会变成抄答案。
+      </div>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>6. 题卡：先写过程，再展开答案</h2>
+
+      <article class="drill">
+        <h3>题卡 1：复杂度计算</h3>
+        <p><strong>题目：</strong>计算公式 ¬P(x) ∨ R(y) -> ∃x(Q(z) ∧ P(x) ∧ R(x)) 的复杂度。约定原子公式复杂度为 0，¬/量词加 1，二元联结词取两边最大值加 1。</p>
+        <textarea data-key="d3-q1" placeholder="先分层：左边复杂度、右边复杂度、最外层箭头。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>左边 ¬P(x) 的复杂度是 1，R(y) 是 0，所以 ¬P(x) ∨ R(y) 的复杂度是 max(1,0)+1=2。右边 Q(z)、P(x)、R(x) 都是 0，Q(z)∧P(x) 是 1，再与 R(x) 合取是 2，外面 ∃x 加 1 得 3。最外层是蕴涵，所以总复杂度 max(2,3)+1=4。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>复杂度题不要凭感觉数符号，要画语法树：一元加 1，二元取最大加 1。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 2：等值演算化成永真式</h3>
+        <p><strong>题目：</strong>用等值演算证明 P -> (P ∧ (Q -> R) ∨ (¬R ∧ P)) 是永真式。</p>
+        <textarea data-key="d3-q2" placeholder="先消箭头：A->B 等于 ¬A∨B，再用吸收/分配。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <pre>P -> (P ∧ (Q -> R) ∨ (¬R ∧ P))
+≡ ¬P ∨ (P ∧ (Q -> R)) ∨ (¬R ∧ P)       （去蕴涵）
+≡ ¬P ∨ (P ∧ (¬Q ∨ R)) ∨ (P ∧ ¬R)       （去蕴涵）
+≡ ¬P ∨ P ∧ ((¬Q ∨ R) ∨ ¬R)             （提取 P）
+≡ ¬P ∨ P ∧ (¬Q ∨ 1)                    （R ∨ ¬R ≡ 1）
+≡ ¬P ∨ P ∧ 1                           （A ∨ 1 ≡ 1）
+≡ ¬P ∨ P                               （A ∧ 1 ≡ A）
+≡ 1                                    （排中律）</pre>
+          <div class="rubric"><span>关键</span><span>把含 P 的两项合并：P∧X ∨ P∧Y ≡ P∧(X∨Y)。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 3：主析取/主合取</h3>
+        <p><strong>题目：</strong>若二元公式 F(p,q) 的真值表结果在行号 0、3 为 1，在行号 1、2 为 0，写出主析取范式和主合取范式。</p>
+        <textarea data-key="d3-q3" placeholder="先写行号 0,1,2,3 对应 p,q 取值，再写 m 和 M。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>行号 0 是 p=0,q=0，对应极小项 ¬p∧¬q；行号 3 是 p=1,q=1，对应极小项 p∧q。所以主析取范式为 (¬p∧¬q)∨(p∧q)。</p>
+            <p>行号 1 是 p=0,q=1，对应极大项 p∨¬q；行号 2 是 p=1,q=0，对应极大项 ¬p∨q。所以主合取范式为 (p∨¬q)∧(¬p∨q)。</p>
+          </div>
+          <div class="rubric"><span>记忆</span><span>主析取看 1 行；主合取看 0 行。极大项规则反过来。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 4：辖域识别</h3>
+        <p><strong>题目：</strong>公式 ∃x∀z∃w(R(w) -> ∀yQ(y) ∨ P(x,z)) 中，写出 y 和 x 的辖域。</p>
+        <textarea data-key="d3-q4" placeholder="先给每个量词后面的公式加括号。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>∀y 的辖域是 Q(y)，所以 y 的辖域是 Q(y)。∃x 位于最外层，辖域是 ∀z∃w(R(w) -> ∀yQ(y) ∨ P(x,z))。</p>
+          </div>
+          <div class="rubric"><span>坑</span><span>∀y 不会管到 P(x,z)。量词只管它后面紧跟的合式公式。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 5：替换式</h3>
+        <p><strong>题目：</strong>求 ((P∨R) -> (P∨R∧S) -> P∨R)[(P∨R)/(P↔R)]。按“把子公式 P∨R 替换成 P↔R”理解。</p>
+        <textarea data-key="d3-q5" placeholder="先圈出所有完整出现的 P∨R。注意 R∧S 里的 P∨R∧S 按优先级可能不是完整 P∨R。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>若按题目指定的完整子公式 P∨R 替换，则外层前件 P∨R 替换为 P↔R，最后的 P∨R 替换为 P↔R。中间 P∨R∧S 若按优先级理解为 P∨(R∧S)，并不完整等于 P∨R，因此不替换。结果可写为 ((P↔R) -> (P∨R∧S) -> (P↔R))。</p>
+            <p>若老师的括号约定把中间也显式看成 (P∨R)∧S，则中间可替换成 (P↔R)∧S。考试按题面括号和优先级来，必要时说明你的理解。</p>
+          </div>
+          <div class="rubric"><span>关键</span><span>替换要匹配完整子公式，不是看到 P 和 R 挨得近就换。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 6：唯一最大值点符号化骨架</h3>
+        <p><strong>题目：</strong>论域为自然数，P(x,y) 表示 x&lt;y，E(x,y) 表示 x=y，f(x) 表示函数值。写出“若 f 严格单调递减，则 f 有唯一一最大值点”的骨架。</p>
+        <textarea data-key="d3-q6" placeholder="先写：严格递减 -> 唯一最大值点。最大值点是存在 m，所有 x 都 f(x)≤f(m)，且唯一。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>严格单调递减可写为：∀x∀y(P(x,y) -> P(f(y), f(x)))，即 x&lt;y 时 f(y)&lt;f(x)。唯一最大值点可写为：∃m(∀x( P(f(x), f(m)) ∨ E(f(x), f(m)) ) ∧ ∀n((∀x(P(f(x), f(n)) ∨ E(f(x), f(n)))) -> E(n,m)))。</p>
+            <p>整句骨架：严格单调递减 -> 唯一最大值点。不同教材对“≤”的表达可能不同，这里用 P(a,b)∨E(a,b) 表示 a≤b。</p>
+          </div>
+          <div class="rubric"><span>重点</span><span>这类题重点是结构：若...则...；严格递减；存在唯一最大值点。不要一开始就被函数符号吓住。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 7：语义蕴含起手</h3>
+        <p><strong>题目：</strong>证明 Γ ⊨ Q 的标准起手怎么写？如果要证 Γ 不可满足，标准起手又怎么写？</p>
+        <textarea data-key="d3-q7" placeholder="先写模型/解释/赋值，不要直接说显然。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>证明 Γ ⊨ Q：任取一个解释/赋值 v，假设 v 使 Γ 中所有公式为真，下面证明 v 也使 Q 为真。证明 Γ 不可满足：反设存在解释/赋值 v 使 Γ 中所有公式为真，推出矛盾，因此 Γ 不可满足。</p>
+          </div>
+          <div class="rubric"><span>规范</span><span>语义证明一定要出现“任取解释/赋值/模型”这样的语言，因为它在讨论所有模型下的真假。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 8：判断题辨析</h3>
+        <p><strong>题目：</strong>“命题逻辑合式公式与其对偶式的析取，一定是永真式。”这句话对吗？给出反例。</p>
+        <textarea data-key="d3-q8" placeholder="先找最简单反例，比如 P∧Q 的对偶式。"></textarea>
+        <details>
+          <summary>查看答案</summary>
+          <div class="answer-block">
+            <p>错误。取公式 A=P∧Q，它的对偶式 A*=P∨Q。A∨A*=(P∧Q)∨(P∨Q)≡P∨Q。当 P=0,Q=0 时结果为 0，不是永真式。</p>
+          </div>
+          <div class="rubric"><span>技巧</span><span>判断“一定”类命题，优先找小反例。两个变量、全 0 常常够用。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>7. 过关闸门：Day3 到 B，才适合碰 2024 大题后半</h2>
+      <table>
+        <thead><tr><th>等级</th><th>表现</th><th>下一步</th></tr></thead>
+        <tbody>
+          <tr><td>C</td><td>能看懂符号，但主范式和辖域还要看答案。</td><td>重做题卡 1、3、4、5。</td></tr>
+          <tr><td>B</td><td>能独立做复杂度、真值表主范式、辖域、替换、基础等值演算。</td><td>可以进入前束/Skolem 和 2024 参考卷分块解析。</td></tr>
+          <tr><td>A</td><td>能把语义蕴含证明、公理证明目标写出规范起手，并知道下一步用什么规则。</td><td>进入离散 Day4：前束范式、Skolem、语义构造、公理证明。</td></tr>
+        </tbody>
+      </table>
+      <textarea data-key="d3-summary" placeholder="闭眼写：1. 主析取/主合取规则；2. 辖域怎么找；3. 等值演算第一步通常做什么；4. 你最怕的离散题型。"></textarea>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day1_discrete_logic_proof.html">回离散 Day1</a> · <a href="./day2_discrete_proof_starter.html">回离散 Day2</a> · <a href="./day4_discrete_prenex_skolem_axiom.html">进入离散 Day4 前束 Skolem 公理证明</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-discrete-day3-equiv-normal-predicate";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-key]").forEach(area => {
+      const id = area.dataset.key;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

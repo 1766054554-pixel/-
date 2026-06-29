@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>发布检查台 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛发布前检查台：核对全科入口、核心资源、静态校验和 GitHub Pages 发布准备。">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255, 255, 255, .88);
+      --paper-strong: rgba(255, 255, 255, .96);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --violet: #c9b9f4;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69, 84, 117, .14);
+      --soft-shadow: 0 10px 30px rgba(79, 93, 126, .10);
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(246, 185, 207, .40), transparent 28%),
+        radial-gradient(circle at 86% 10%, rgba(155, 201, 236, .42), transparent 26%),
+        radial-gradient(circle at 78% 80%, rgba(159, 218, 203, .34), transparent 28%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 42%, #fff9ec 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.95) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(156, 124, 214, .20) 0 1px, transparent 3px);
+      background-size: 120px 120px, 86px 86px;
+      animation: drift 34s linear infinite;
+      opacity: .62;
+    }
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-120px, 80px, 0); }
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    a { color: inherit; }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.78);
+      color: #4f4777;
+      font-weight: 850;
+    }
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.64);
+      backdrop-filter: blur(18px);
+      background: rgba(255, 250, 253, .74);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 950;
+    }
+    .logo,
+    .icon {
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff 48%, #fff0c8);
+      box-shadow: var(--soft-shadow);
+    }
+    .logo { width: 40px; height: 40px; }
+    .logo svg { width: 28px; height: 28px; }
+    .navlinks,
+    .actions,
+    .tag-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .navlinks { justify-content: flex-end; }
+    .btn,
+    .navlinks a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.70);
+      text-decoration: none;
+      font-weight: 850;
+      color: #31516f;
+      box-shadow: 0 6px 16px rgba(60, 84, 115, .07);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .btn:hover,
+    .navlinks a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(66, 86, 122, .13);
+      background: rgba(255,255,255,.96);
+    }
+    .btn.primary {
+      color: #293047;
+      border-color: rgba(196, 142, 180, .46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+    .btn.mint { background: linear-gradient(135deg, #e4fbf3, #f4f1ff); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: stretch;
+      padding: 42px 0 26px;
+    }
+    .panel,
+    .course-card,
+    .resource-card,
+    .step-card,
+    .metric {
+      animation: riseIn .55s ease both;
+      border: 1px solid rgba(255,255,255,.84);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--soft-shadow);
+    }
+    .panel { padding: 22px; }
+    .hero-main {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(246,250,255,.80)),
+        radial-gradient(circle at 92% 14%, rgba(247, 223, 139, .34), transparent 32%);
+    }
+    .hero-side {
+      display: grid;
+      gap: 12px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #7d5c93;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(97, 82, 126, .08);
+    }
+    h1 {
+      max-width: 10ch;
+      margin: 18px 0 10px;
+      font-size: clamp(48px, 7vw, 82px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(25px, 3vw, 38px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    p { margin: 0; color: var(--muted); }
+    .lead {
+      max-width: 74ch;
+      font-size: clamp(16px, 1.55vw, 20px);
+    }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255, 224, 139, .62) 58%);
+    }
+    .actions { margin-top: 22px; }
+    .metric {
+      padding: 18px;
+      display: grid;
+      gap: 4px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.94), rgba(249,252,255,.78)),
+        radial-gradient(circle at 84% 12%, rgba(201, 185, 244, .28), transparent 38%);
+    }
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .metric strong {
+      font-size: 34px;
+      line-height: 1.1;
+      color: #2f5c84;
+    }
+    .section {
+      padding: 22px 0;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .section-head p {
+      max-width: 72ch;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .course-card,
+    .resource-card,
+    .step-card {
+      padding: 18px;
+      min-height: 100%;
+    }
+    .course-card {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 12px;
+      background: rgba(255,255,255,.86);
+    }
+    .icon {
+      width: 46px;
+      height: 46px;
+      color: #67558f;
+    }
+    .icon svg { width: 30px; height: 30px; }
+    .course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 28px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(104, 122, 154, .18);
+      background: rgba(255,255,255,.70);
+      color: #56657e;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .resource-card {
+      display: grid;
+      gap: 8px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.92), rgba(249,252,255,.82)),
+        radial-gradient(circle at 92% 8%, rgba(246, 185, 207, .24), transparent 34%);
+    }
+    .resource-card a,
+    .course-card a,
+    .step-card a {
+      font-weight: 900;
+      color: #2f5c84;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+    .step-card {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+    }
+    .step-no {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ffe7f1, #e7f7ff);
+      font-weight: 950;
+      color: #5d5b8c;
+    }
+    .checkline {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-weight: 760;
+    }
+    .checkline::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      margin-top: 5px;
+      border-radius: 50%;
+      background:
+        linear-gradient(135deg, rgba(159, 218, 203, .90), rgba(247, 223, 139, .86));
+      box-shadow: 0 0 0 4px rgba(159, 218, 203, .18);
+    }
+    .footer {
+      margin-top: 32px;
+      padding: 28px 0 38px;
+      color: var(--muted);
+      border-top: 1px solid rgba(104, 122, 154, .18);
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-top: 26px; }
+      .grid { grid-template-columns: 1fr 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1160px); }
+      .nav { align-items: flex-start; flex-direction: column; }
+      .navlinks { justify-content: flex-start; }
+      h1 { font-size: 46px; }
+      .grid { grid-template-columns: 1fr; }
+      .course-card,
+      .step-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="wrap nav" aria-label="主导航">
+      <a class="brand" href="./index.html">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M32 8l5.6 13.6L52 24.4 40.8 34l3.6 14.4L32 40.8 19.6 48.4 23.2 34 12 24.4l14.4-2.8L32 8z" fill="#f7df8b" stroke="#6d618c" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M18 50c8 6 20 6 28 0" stroke="#9fdacb" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        星光学习岛
+      </a>
+      <div class="navlinks">
+        <a href="./index.html">学生首页</a>
+        <a href="./start_here.html">新手向导</a>
+        <a href="./practice_lab.html">训练台</a>
+        <a href="./resources.html">精品资源库</a>
+        <a href="./dashboard.html">继续学习</a>
+        <a href="./course_pack_builder.html">课程包生成器</a>
+        <a href="./quality_board.html">质量看板</a>
+        <a href="./progress_vault.html">存档室</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div class="panel hero-main">
+        <div>
+          <span class="eyebrow">Release Status</span>
+          <h1>发布检查台</h1>
+          <p class="lead">
+            这里用来确认星光学习岛已经准备好给同学使用：<span class="key">七门课入口完整</span>、核心资源可打开、进度能本地保存、发布前能通过 <code>npm run validate</code>。
+            它是维护侧页面，不替代学生首页。
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="./index.html">打开学生首页</a>
+            <a class="btn primary" href="./start_here.html">打开新手向导</a>
+            <a class="btn mint" href="./practice_lab.html">打开真题训练台</a>
+            <a class="btn" href="./course_pack_builder.html">课程包生成器</a>
+            <a class="btn" href="./quality_board.html">内容质量看板</a>
+            <a class="btn mint" href="./docs/github_launch_checklist.md">看 GitHub Pages 清单</a>
+            <a class="btn" href="./resources.html">核对资源库</a>
+          </div>
+        </div>
+        <div class="checkline">学生入口保持学习导向；维护、发布、课程扩展说明集中放在文档和本页。</div>
+      </div>
+
+      <aside class="hero-side" aria-label="发布概览">
+        <article class="metric">
+          <span>课程入口</span>
+          <strong id="courseCount">7</strong>
+          <p>数据库、AI、软工、军理、离散、马原、操作系统都必须可见。</p>
+        </article>
+        <article class="metric">
+          <span>精品资源</span>
+          <strong id="resourceCount">0</strong>
+          <p>真题卷、讲义、背诵舱、闪卡、错题回炉统一进入资源库。</p>
+        </article>
+        <article class="metric">
+          <span>质量元数据</span>
+          <strong id="qualityCount">0/0</strong>
+          <p>每个资源都应有校对等级、来源依据和下一步改进点。</p>
+        </article>
+        <article class="metric">
+          <span>发布方式</span>
+          <strong>静态</strong>
+          <p>无后端依赖，适合 GitHub Pages；学习进度保存在浏览器本机。</p>
+        </article>
+      </aside>
+    </section>
+
+    <section class="wrap section" id="courses">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">全科覆盖</span>
+          <h2>每一科都要有清楚入口</h2>
+        </div>
+        <p>这块专门防止“材料其实有，但入口藏起来了”。每张卡都来自 <code>data/starlight_manifest.js</code>，发布前请逐门点开课程岛。</p>
+      </div>
+      <div class="grid" id="courseGrid"></div>
+    </section>
+
+    <section class="wrap section" id="resources">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">核心资源</span>
+          <h2>每门课至少保留一个必做入口</h2>
+        </div>
+        <p>资源库是给学生真正使用的入口收束层。发布前重点检查“必做”资源，不要把旧页面散落成迷宫。</p>
+      </div>
+      <div class="grid" id="requiredGrid"></div>
+    </section>
+
+    <section class="wrap section" id="publish">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">GitHub Pages</span>
+          <h2>发布前 5 步</h2>
+        </div>
+        <p>流程越固定，越不容易把本地临时文件、断链或隐藏入口发出去。</p>
+      </div>
+      <div class="grid">
+        <article class="step-card">
+          <span class="step-no">1</span>
+          <div>
+            <h3>跑静态检查</h3>
+            <p>在项目根目录运行 <code>npm run validate</code>，先让脚本检查链接、脚本语法、课程入口和私有路径。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">2</span>
+          <div>
+            <h3>手动打开主线</h3>
+            <p>依次打开 <code>index.html</code>、<code>start_here.html</code>、<code>practice_lab.html</code>、<code>dashboard.html</code>、<code>resources.html</code> 和 <code>progress_vault.html</code>。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">3</span>
+          <div>
+            <h3>抽查全科资料</h3>
+            <p>至少点开数据库、人工智能、软件工程、军事理论、离散数学、马原和操作系统的必做资源。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">4</span>
+          <div>
+            <h3>提交仓库根目录</h3>
+            <p>保留 <code>.nojekyll</code>、<code>package.json</code>、<code>README.md</code>、<code>docs/</code>、<code>data/</code> 和核心 HTML 文件。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">5</span>
+          <div>
+            <h3>开启 Pages</h3>
+            <p>GitHub Pages 选择 <code>main</code> 分支和 <code>/root</code> 目录；推送后 Actions 会再次执行静态检查。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">✓</span>
+          <div>
+            <h3>展示给同学</h3>
+            <p>对外只推荐学生首页、课程岛、资源库和仪表盘；本页用于维护者复核，不占学习动线。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">+</span>
+          <div>
+            <h3>扩展新课程</h3>
+            <p>维护者先用 <code>course_pack_builder.html</code> 生成课程与资源片段，再补 <code>data/resource_quality.js</code> 并按质量清单人工校对。</p>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-no">Q</span>
+          <div>
+            <h3>校对内容质量</h3>
+            <p>用 <code>quality_board.html</code> 检查 reviewed、exam-like、archive，记录待改进备注并回写稳定结论。</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p><strong>发布检查台</strong> 只记录项目能否顺利交付给学习者。正式学习请从 <a href="./index.html">学生首页</a>、<a href="./dashboard.html">继续学习仪表盘</a> 或 <a href="./resources.html">精品资源库</a> 进入。</p>
+  </footer>
+
+  <script src="./data/starlight_manifest.js"></script>
+  <script src="./data/resource_catalog.js"></script>
+  <script src="./data/resource_quality.js"></script>
+  <script>
+    (() => {
+      const manifest = window.STARLIGHT_MANIFEST || { courses: [] };
+      const catalog = window.STARLIGHT_RESOURCE_CATALOG || [];
+      const quality = window.STARLIGHT_RESOURCE_QUALITY || {};
+      const courseMap = new Map((manifest.courses || []).map(course => [course.id, course]));
+      const requiredResources = catalog.filter(item => item.priority === "必做");
+
+      const iconSvg = `
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <path d="M32 8l5.5 13.4L52 24.3 40.7 33.7l3.7 14.2L32 40.4 19.6 47.9l3.7-14.2L12 24.3l14.5-2.9L32 8z" fill="#f7df8b" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M20 52c7.6 5.2 16.4 5.2 24 0" stroke="#9fdacb" stroke-width="4" stroke-linecap="round"/>
+        </svg>`;
+
+      document.querySelector("#courseCount").textContent = String((manifest.courses || []).length);
+      document.querySelector("#resourceCount").textContent = String(catalog.length);
+      document.querySelector("#qualityCount").textContent = `${Object.keys(quality).length}/${catalog.length}`;
+
+      document.querySelector("#courseGrid").innerHTML = (manifest.courses || []).map(course => {
+        const required = requiredResources.filter(item => item.courseId === course.id).length;
+        const all = catalog.filter(item => item.courseId === course.id).length;
+        return `
+          <article class="course-card">
+            <span class="icon">${iconSvg}</span>
+            <div>
+              <h3>${course.title}</h3>
+              <p>${course.description}</p>
+              <div class="course-meta">
+                <span class="pill">${course.status}</span>
+                <span class="pill">必做 ${required}</span>
+                <span class="pill">资源 ${all}</span>
+              </div>
+              <a href="./course.html?id=${course.id}">打开课程岛</a>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelector("#requiredGrid").innerHTML = requiredResources.map(item => {
+        const course = courseMap.get(item.courseId);
+        const courseName = course ? course.title : "全科工具";
+        return `
+          <article class="resource-card">
+            <span class="pill">${courseName} · ${item.type}</span>
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+            <div class="tag-row">${(item.tags || []).map(tag => `<span class="pill">${tag}</span>`).join("")}</div>
+            <a href="${item.href}">打开资源</a>
+          </article>
+        `;
+      }).join("");
+    })();
+  </script>
+</body>
+</html>

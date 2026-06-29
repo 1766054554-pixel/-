@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>离线中 | 星光学习岛</title>
+  <meta name="description" content="星光学习岛离线提示页。">
+  <link rel="icon" type="image/svg+xml" href="./assets/brand/icon.svg">
+  <style>
+    :root {
+      --ink: #243044;
+      --muted: #65718a;
+      --line: rgba(104, 122, 154, .24);
+      --paper: rgba(255,255,255,.86);
+      --pink: #f6b9cf;
+      --mint: #9fdacb;
+      --blue: #9bc9ec;
+      --sun: #f7df8b;
+      --shadow: 0 18px 52px rgba(69,84,117,.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 16% 16%, rgba(246,185,207,.46), transparent 28%),
+        radial-gradient(circle at 84% 10%, rgba(155,201,236,.42), transparent 26%),
+        linear-gradient(135deg, #fff8fb 0%, #f1fbff 48%, #fff9ec 100%);
+    }
+    main {
+      width: min(760px, 100%);
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 5vw, 42px);
+    }
+    img {
+      width: 82px;
+      height: 82px;
+      display: block;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(34px, 8vw, 68px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+    p { margin: 0 0 12px; color: var(--muted); font-size: 17px; }
+    .key {
+      font-weight: 950;
+      color: #493d6c;
+      background: linear-gradient(transparent 58%, rgba(255,224,139,.62) 58%);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    a, button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.72);
+      color: #31516f;
+      font: inherit;
+      font-weight: 850;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .primary {
+      color: #293047;
+      border-color: rgba(196,142,180,.46);
+      background: linear-gradient(135deg, #ffe4ef, #e9f8ff 54%, #fff3c9);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="./assets/brand/icon.svg" alt="星光学习岛图标">
+    <h1>星光暂时离线</h1>
+    <p>当前网络没有连上。已经访问过的页面可能还能从浏览器缓存里打开；新页面需要恢复网络后继续加载。</p>
+    <p>复习先别断线：可以回到<span class="key">首页、课程岛、资源库或真题训练台</span>试试。如果仍打不开，刷新网络后再回来。</p>
+    <div class="actions">
+      <a class="primary" href="./index.html">回首页</a>
+      <a href="./resources.html">资源库</a>
+      <a href="./practice_lab.html">真题训练台</a>
+      <button type="button" onclick="location.reload()">重新连接</button>
+    </div>
+  </main>
+</body>
+</html>

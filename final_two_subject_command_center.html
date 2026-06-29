@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>只剩离散 + 马原：最后四天作战台</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --panel: #ffffff;
+      --ink: #17212b;
+      --muted: #66727c;
+      --line: #d9e2dc;
+      --blue: #205f8b;
+      --green: #26724e;
+      --red: #a23d35;
+      --amber: #8b6718;
+      --soft-blue: #edf6fc;
+      --soft-green: #eef9f2;
+      --soft-red: #fff3ef;
+      --soft-amber: #fff8e7;
+      --shadow: 0 14px 34px rgba(23, 33, 43, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #edf6f1 0, rgba(246,247,244,0) 310px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.75;
+      letter-spacing: 0;
+    }
+    main { width: min(1180px, calc(100% - 30px)); margin: 0 auto; padding: 28px 0 72px; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); font-weight: 760; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.98);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .muted { color: var(--muted); }
+    .key {
+      font-weight: 900;
+      color: #10202d;
+      background: linear-gradient(transparent 58%, #ffe59c 58%);
+      padding: 0 2px;
+    }
+    .pillrow, .actions, .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill, .btn, .tab {
+      border: 1px solid #bdd5e8;
+      border-radius: 999px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 6px 11px;
+      font-size: 14px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+    .btn, .tab { border-radius: 8px; cursor: pointer; font-family: inherit; }
+    .btn.primary, .tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .pill.hot { color: var(--red); border-color: #dfaaa3; background: var(--soft-red); }
+    .pill.good { color: var(--green); border-color: #a8d1b7; background: var(--soft-green); }
+    .pill.warn { color: var(--amber); border-color: #dac184; background: var(--soft-amber); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fbfdfb, #ffffff);
+      padding: 12px;
+      min-width: 0;
+      position: relative;
+    }
+    .step b {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .step strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .step p { font-size: 14px; margin-bottom: 7px; }
+    .coach-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .coach-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfb;
+      padding: 14px;
+    }
+    .coach-card h3 { color: var(--green); }
+    .coach-card ul { margin: 8px 0 0; padding-left: 20px; }
+    .coach-card li { margin: 5px 0; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfb;
+      padding: 15px;
+      min-width: 0;
+    }
+    .card strong { color: var(--blue); }
+    .auto-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .progress-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fbfdfb, #ffffff);
+      padding: 14px;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--blue);
+    }
+    .progress-card.good::before { background: var(--green); }
+    .progress-card.warn::before { background: var(--amber); }
+    .progress-card.hot::before { background: var(--red); }
+    .progress-card strong {
+      display: block;
+      color: var(--blue);
+      margin-top: 4px;
+    }
+    .progress-card.good strong { color: var(--green); }
+    .progress-card.warn strong { color: var(--amber); }
+    .progress-card.hot strong { color: var(--red); }
+    .progress-card .num {
+      color: var(--red);
+      font-size: 28px;
+      font-weight: 950;
+      line-height: 1.16;
+      margin: 5px 0;
+    }
+    .progress-card.good .num { color: var(--green); }
+    .progress-card.warn .num { color: var(--amber); }
+    .progress-card.hot .num { color: var(--red); }
+    .progress-card p {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
+    .auto-advice {
+      border: 1px solid #d7c694;
+      border-left: 5px solid var(--amber);
+      border-radius: 8px;
+      background: var(--soft-amber);
+      padding: 13px 15px;
+      margin-top: 12px;
+    }
+    .auto-advice b { color: var(--red); }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      margin-top: 12px;
+    }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .route { display: grid; gap: 10px; }
+    .route-row {
+      display: grid;
+      grid-template-columns: 185px minmax(0, 1fr);
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfb;
+      padding: 12px;
+    }
+    .route-row b { color: var(--green); }
+    .route-row div:last-child { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .route-row a {
+      border: 1px solid #bdd5e8;
+      border-radius: 8px;
+      background: #f7fbff;
+      padding: 5px 9px;
+      text-decoration: none;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid var(--line); padding: 10px 11px; vertical-align: top; text-align: left; }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .checklist label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfb;
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+    .pack { display: none; }
+    .pack.active { display: block; }
+    .todo {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .todo label {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 9px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 11px;
+    }
+    .todo label.done { background: var(--soft-green); border-color: #a8d1b7; }
+    .micro { color: var(--muted); font-size: 13px; }
+    @media (max-width: 880px) {
+      main { width: min(100% - 22px, 1180px); padding-top: 18px; }
+      .grid, .grid.three, .route-row, .flow, .coach-grid, .auto-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>只剩离散 + 马原：最后四天作战台</h1>
+      <p class="muted">数据库、AI、软工、军理都不要再抢主屏了。现在的目标很清楚：<span class="key">6/28 离散先上岸</span>，然后 <span class="key">6/30 马原开卷稳收口</span>。这页只负责告诉你“现在打开哪一页、练到什么程度、卡住回哪里补”。</p>
+      <div class="pillrow">
+        <span class="pill hot">主战：离散证明 + 真题</span>
+        <span class="pill warn">马原：纸质索引，不临场乱翻</span>
+        <span class="pill good">少开新坑，重在会做</span>
+      </div>
+      <div class="actions">
+        <a class="btn primary" href="#auto">自动进度</a>
+        <a class="btn primary" href="./focus_dual_exam_game.html">分心急救小游戏</a>
+        <a class="btn primary" href="./final_two_wrong_review.html">错题回炉台</a>
+        <a class="btn primary" href="./discrete_last36_learning_ladder.html">离散先学后练</a>
+        <a class="btn primary" href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">先做离散精练闸门</a>
+        <a class="btn" href="./final48_discrete_score_booster.html">离散48小时查漏</a>
+        <a class="btn" href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">希冀近三年真题</a>
+        <a class="btn" href="./day7_discrete_final_recall.html">离散 Day7 速查</a>
+        <a class="btn" href="./marx_openbook_final_sprint.html#teacher">马原老师重点</a>
+        <a class="btn" href="./marx_openbook_final_sprint.html#case-walkthrough">马原材料拆题</a>
+        <a class="btn" href="./marx_openbook_final_sprint.html#locator">马原30秒定位</a>
+        <a class="btn" href="./marx_openbook_final_sprint.html#surplus">剩余价值专项</a>
+        <a class="btn" href="./index.html">回学习舱首页</a>
+      </div>
+    </header>
+
+    <section id="auto">
+      <h2>0. 自动进度：离散现在该学、闸门、真题，还是收口？</h2>
+      <p class="muted">这里读取你在本机做过的记录：先学后练、精练闸门、2024/2025/2023 希冀卷、Day7 上场闸门、小游戏错题和马原开卷进度。它的作用是防止“页面很多但不知道先点哪个”。</p>
+      <div class="auto-grid" id="autoProgress"></div>
+      <div class="auto-advice" id="autoAdvice">
+        <b>加载中：</b>正在读取本机学习记录。
+      </div>
+      <div class="note good">
+        离散进真题的核心不是“我看过讲义”，而是：<span class="key">能识别题型盒子、能写第一句、能解释错项为什么错</span>。自动建议会优先保护这三件事。
+      </div>
+    </section>
+
+    <section>
+      <h2>1. 从今天起怎么走</h2>
+      <div class="route">
+        <div class="route-row">
+          <b>6/26 晚</b>
+          <div>
+            <span>离散把符号、范式、语义、证明第一句叫醒；马原只花 20 分钟看老师重点并建关键词索引。</span>
+            <a href="./final_two_wrong_review.html">错题回炉台</a>
+            <a href="./discrete_last36_learning_ladder.html">离散先学后练阶梯</a>
+            <a href="./marx_openbook_final_sprint.html#teacher">老师最后一课重点</a>
+            <a href="./tips_discrete_formula_visual_handbook.html">公式视觉手册</a>
+            <a href="./day4_discrete_prenex_skolem_axiom.html">Day4 长题工具</a>
+            <a href="./marx_openbook_final_sprint.html#index">马原索引</a>
+          </div>
+        </div>
+        <div class="route-row">
+          <b>6/27</b>
+          <div>
+            <span>离散主战：先精练闸门，再用 48 小时查漏题补模板，然后 2024 主战卷、2025 客观查漏、2023 主观表达。</span>
+            <a href="./discrete_last36_learning_ladder.html">先学后练阶梯</a>
+            <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">精练闸门</a>
+            <a href="./final48_discrete_score_booster.html">48小时查漏</a>
+            <a href="./discrete_hiji_ingest/discrete_2024_hiji_interactive.html">2024</a>
+            <a href="./discrete_hiji_ingest/discrete_2025_hiji_interactive.html">2025</a>
+            <a href="./discrete_hiji_ingest/discrete_2023_hiji_interactive.html">2023</a>
+          </div>
+        </div>
+        <div class="route-row">
+          <b>6/28 考前</b>
+          <div>
+            <span>不再钻偏题：Day7 最终速查、错题、证明第一句、14 题下一句链条、反例三件套。考完立刻切马原。</span>
+            <a href="./final_two_wrong_review.html">错题回炉台</a>
+            <a href="./day7_discrete_final_recall.html">Day7 速查</a>
+            <a href="./day6_discrete_proof_sprint.html">证明训练营</a>
+            <a href="./discrete_proof_chain_lab.html">证明链条14题</a>
+          </div>
+        </div>
+        <div class="route-row">
+          <b>6/29-6/30</b>
+          <div>
+            <span>马原开卷收口：先看老师最后一课重点，补剩余价值难点，再建 13 个页边钉子；随后看材料题手把手拆题，最后做 30 秒定位、原理分流小测和材料题第一段。</span>
+            <a href="./marx_openbook_final_sprint.html#teacher">老师重点雷达</a>
+            <a href="./marx_openbook_final_sprint.html#surplus">剩余价值专项</a>
+            <a href="./marx_openbook_final_sprint.html#case-walkthrough">材料题拆题</a>
+            <a href="./marx_openbook_final_sprint.html#locator">30秒定位</a>
+            <a href="./marx_openbook_final_sprint.html">马原新版开卷冲刺</a>
+            <a href="./marx_openbook_final_sprint.html#writing">材料题第一段</a>
+          </div>
+        </div>
+      </div>
+      <div class="flow" aria-label="先学后刷五步">
+        <div class="step">
+          <b>1</b>
+          <strong>学小块</strong>
+          <p>只学一个盒子：符号、范式、语义、公理、关系结构，别同时开五条线。</p>
+          <a href="./discrete_last36_learning_ladder.html">离散阶梯</a>
+        </div>
+        <div class="step">
+          <b>2</b>
+          <strong>闭眼叫醒</strong>
+          <p>离开页面说出题眼和第一句。说不出就没过，不急着刷卷。</p>
+          <a href="./final_two_wrong_review.html">错题回炉</a>
+        </div>
+        <div class="step">
+          <b>3</b>
+          <strong>闸门小测</strong>
+          <p>用精练闸门查“能不能归盒子”。18 题错 5 题以上，回讲义补；错 0-4 题可进真题但要回炉。</p>
+          <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">精练闸门</a>
+        </div>
+        <div class="step">
+          <b>4</b>
+          <strong>真题上手</strong>
+          <p>先 2024 主战，再 2025 客观查漏，最后 2023 主观表达。</p>
+          <a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">近三年真题</a>
+        </div>
+        <div class="step">
+          <b>5</b>
+          <strong>回炉收口</strong>
+          <p>错题只追三件事：我被什么骗、正确题眼是什么、下次第一句怎么写。</p>
+          <a href="./focus_dual_exam_game.html">分心急救</a>
+        </div>
+      </div>
+      <div class="coach-grid">
+        <div class="coach-card">
+          <h3>离散今天不要硬刚整卷</h3>
+          <ul>
+            <li><span class="key">先补符号：</span>∈、⊆、⊨、⊢、∀、∃ 必须能读成人话。</li>
+            <li><span class="key">再补题型：</span>每题先归盒子，再写第一句。</li>
+            <li><span class="key">最后真题：</span>主观题至少写一步再看解析，不然答案会变成“看懂了但不会写”。</li>
+          </ul>
+        </div>
+        <div class="coach-card">
+          <h3>马原现在只做低成本启动</h3>
+          <ul>
+            <li><span class="key">离散考前：</span>每天 20-30 分钟标纸质资料，不抢主时间。</li>
+            <li><span class="key">离散考后：</span>集中做老师重点、材料题拆题、30 秒定位。</li>
+            <li><span class="key">开卷核心：</span>不是背完，是能把材料信号接到正确原理和第一段。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. 今天按状态选一个包</h2>
+      <div class="tabs" id="packTabs"></div>
+      <div id="packs"></div>
+      <p class="micro" id="packStats"></p>
+    </section>
+
+    <section>
+      <h2>2.5 先学再进真题：最后两科闸门</h2>
+      <p class="muted">你现在不是“先把卷子硬刷完”就会了。先用小块知识把题型入口叫醒，再进入希冀真题和马原材料题，才不会变成看答案熟悉、自己下笔卡住。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>离散 A：符号识字</h3>
+          <p><span class="key">要会：</span>∈、⊆、⊨、⊢、∀、∃、自由/约束、辖域。看到公式先能翻成人话。</p>
+          <p><span class="key">过关：</span>能解释“任取 x∈D”“Γ⊨Q 的失败情形”“∃ 的见证能不能依赖前面的变量”。</p>
+          <p><a class="btn" href="./tips_discrete_formula_visual_handbook.html">公式视觉手册</a> <a class="btn" href="./discrete_last36_learning_ladder.html">先学后练</a></p>
+        </div>
+        <div class="card">
+          <h3>离散 B：计算与范式</h3>
+          <p><span class="key">要会：</span>主析取/主合取、等值演算、替换式、前束范式、Skolem。</p>
+          <p><span class="key">过关：</span>主析取看真行；主合取看假行；前束先改名；Skolem 参数只看左侧全称变量。</p>
+          <p><a class="btn" href="./day3_discrete_equiv_normal_predicate.html">Day3</a> <a class="btn" href="./day4_discrete_prenex_skolem_axiom.html">Day4</a></p>
+        </div>
+        <div class="card">
+          <h3>离散 C：证明入口</h3>
+          <p><span class="key">要会：</span>语义证明、反例三件套、公理证明行来源、可靠性/完全性方向、偏序/函数定义展开。</p>
+          <p><span class="key">过关：</span>每类至少能写第一句和下一句依据；不会完整证明也不能空白。</p>
+          <p><a class="btn" href="./day6_discrete_proof_sprint.html">证明训练营</a> <a class="btn" href="./discrete_proof_chain_lab.html">链条14题</a></p>
+        </div>
+        <div class="card">
+          <h3>离散 D：真题进入条件</h3>
+          <p><span class="key">先做：</span>精练闸门、48小时查漏、错题回炉台。若 18 题里错了 5 题以上，先别整卷，回对应盒子。</p>
+          <p><span class="key">再做：</span>2024 主战卷、2025 客观查漏、2023 主观表达。主观题至少写第一步再看答案。</p>
+          <p><a class="btn" href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">精练闸门</a> <a class="btn" href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">三年真题</a></p>
+        </div>
+        <div class="card">
+          <h3>马原 A：开卷定位</h3>
+          <p><span class="key">要会：</span>看到材料信号能翻到老师重点、剩余价值、实践认识、矛盾、新质生产力、社会存在/意识。</p>
+          <p><span class="key">过关：</span>30 秒内说出“这题翻哪块、第一句写什么、不能抄哪段空话”。</p>
+          <p><a class="btn" href="./marx_openbook_final_sprint.html#locator">30秒定位</a> <a class="btn" href="./marx_openbook_final_sprint.html#teacher">老师重点</a></p>
+        </div>
+        <div class="card">
+          <h3>马原 B：材料题第一段</h3>
+          <p><span class="key">要会：</span>原理句、材料关键词、分析连接句、结论句。开卷不是抄书，而是把材料挂到原理上。</p>
+          <p><span class="key">过关：</span>新质生产力、剩余价值、实践认识、矛盾分析、共产主义实践运动各能开一段。</p>
+          <p><a class="btn" href="./marx_openbook_final_sprint.html#case-walkthrough">手把手拆题</a> <a class="btn" href="./marx_openbook_final_sprint.html#writing">第一段训练</a> <a class="btn" href="./marx_openbook_final_sprint.html#quiz">原理分流</a></p>
+        </div>
+      </div>
+      <div class="note good">
+        <strong>进入真题的标准：</strong>不是“我看过讲义”，而是“看到题能归盒子、能写第一句、能说出为什么”。如果这三件事做不到，整卷真题会变成看答案；如果做得到，真题才会变成提分。
+      </div>
+    </section>
+
+    <section>
+      <h2>3. 离散题型分流表：看到题先归盒子</h2>
+      <p class="muted">离散不是靠“灵感突然降临”。你要先判断题目属于哪一盒，再写第一句。第一句写对，过程分就开始回来了。</p>
+      <table>
+        <thead><tr><th>题眼</th><th>题型盒子</th><th>第一步</th><th>去哪里练</th></tr></thead>
+        <tbody>
+          <tr><td>主析取、主合取、成真赋值</td><td>真值表/主范式</td><td>固定变量顺序，列完整真值表；真行为主析取，假行为主合取。</td><td><a href="./day7_discrete_final_recall.html">Day7</a>、<a href="./discrete_final_mixed_interactive.html">混合卷</a></td></tr>
+          <tr><td>自由变元、约束变元、辖域</td><td>谓词基础</td><td>先标每个量词管到哪里；只在辖域内的同名变量被约束。</td><td><a href="./day3_discrete_equiv_normal_predicate.html">Day3</a></td></tr>
+          <tr><td>前束范式、Skolem、量词依赖</td><td>长题工具</td><td>先改名避免冲突，再把量词前移；Skolem 函数参数取决于前面全称变量。</td><td><a href="./day4_discrete_prenex_skolem_axiom.html">Day4</a></td></tr>
+          <tr><td>Γ |= Q、语义方法、反例</td><td>语义推论</td><td>证明成立：假设前提全真且结论假；推翻：给出前提真、结论假的解释。</td><td><a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">精练闸门</a></td></tr>
+          <tr><td>|-、公理系统、MP、不可用演绎定理</td><td>形式证明</td><td>先写允许用的公理模式/规则；每行说明来源，别偷用语义解释。</td><td><a href="./day6_discrete_proof_sprint.html">Day6</a>、<a href="./discrete_proof_chain_lab.html">链条工坊</a></td></tr>
+          <tr><td>偏序、最大元、上界、唯一</td><td>关系/结构证明</td><td>把符号翻成人话：x∈D 任取，(x,y)∈R 表示 xRy；唯一要写存在 + 任意两个相等。</td><td><a href="./tips_discrete_formula_visual_handbook.html">公式手册</a></td></tr>
+          <tr><td>替换式 F[G/H]</td><td>语法结构题</td><td>先给完整子公式 H 画框，只替换完整出现，不替换长得像的片段。</td><td><a href="./discrete_hiji_ingest/discrete_2023_hiji_interactive.html">2023 主观</a></td></tr>
+          <tr><td>推演序列、是否为推演依据</td><td>公理系统客观题</td><td>每一行找身份证：前提、公理实例、前面行经规则推出；永真式不是行来源。</td><td><a href="./discrete_hiji_ingest/discrete_2024_hiji_interactive.html">2024 客观</a></td></tr>
+          <tr><td>完全集、极小完全集、联结词</td><td>真值函数题</td><td>回到真值表和表达能力；极小性还要检查删任一元素后不完备。</td><td><a href="./focus_dual_exam_game.html">小游戏复刷</a></td></tr>
+          <tr><td>函数复合、双射、单射/满射</td><td>关系/函数证明</td><td>双射拆成单射和满射；单射逐层消，满射逐层找原像。</td><td><a href="./discrete_proof_chain_lab.html">链条工坊</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. 马原只做开卷能力</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>你要提前做好的纸质东西</h3>
+          <p>不是把所有内容背完，而是在纸质资料上能快速定位：<span class="key">老师最后一课重点、剩余价值、认识论、矛盾、生产力/生产关系、经济基础/上层建筑、资本主义基本矛盾、人与自然、新质生产力、就业</span>。</p>
+        </div>
+        <div class="card">
+          <h3>材料题四段式</h3>
+          <p><strong>原理</strong>先写课本句；<strong>材料</strong>摘题干关键词；<strong>分析</strong>说明材料如何体现原理；<strong>结论</strong>回到方法论或现实意义。开卷最怕大段抄书但没有分析。</p>
+        </div>
+      </div>
+      <div class="note warn">
+        马原现在不要抢离散主时间。离散考前每天只给马原 20-30 分钟做索引；6/28 离散考完后，马原再进入主线。
+        <p><a class="btn" href="./marx_openbook_final_sprint.html#teacher">老师重点</a> <a class="btn" href="./marx_openbook_final_sprint.html#surplus">剩余价值专项</a> <a class="btn" href="./marx_openbook_final_sprint.html#case-walkthrough">材料题拆题</a> <a class="btn" href="./marx_openbook_final_sprint.html#locator">30秒定位</a> <a class="btn" href="./marx_openbook_final_sprint.html#exam-rules">答题禁区</a></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4.5 马原材料题信号表：先定位，再展开</h2>
+      <p class="muted">开卷最怕翻到了资料却不知道怎么用。下面这张表只做考场第一分钟：材料出现什么词、翻哪块、第一段怎么起。</p>
+      <table>
+        <thead><tr><th>材料信号</th><th>优先原理</th><th>第一段开头</th><th>去哪里练</th></tr></thead>
+        <tbody>
+          <tr><td>现实问题、检验、指导行动</td><td>实践与认识</td><td>实践是认识的基础，认识来源于实践并回到实践中接受检验。</td><td><a href="./marx_openbook_final_sprint.html#locator">30秒定位</a></td></tr>
+          <tr><td>关系、冲突、协调、既区别又统一</td><td>矛盾分析法/对立统一</td><td>矛盾双方既相互区别又相互联系，应在对立统一中把握其关系。</td><td><a href="./focus_dual_exam_game.html">小游戏马原局</a></td></tr>
+          <tr><td>科技创新、产业升级、高质量发展</td><td>新质生产力/生产力生产关系</td><td>生产力是社会发展的最终决定力量，新质生产力体现生产力的新跃升。</td><td><a href="./marx_openbook_final_sprint.html#quiz">原理分流</a></td></tr>
+          <tr><td>资本增殖、雇佣劳动、G-W...P...W'-G'</td><td>剩余价值</td><td>剩余价值来源于雇佣工人的剩余劳动，资本增殖的秘密在生产领域。</td><td><a href="./marx_openbook_final_sprint.html#surplus">剩余价值专项</a></td></tr>
+          <tr><td>制度改革、法律政策、治理体系</td><td>经济基础与上层建筑</td><td>经济基础决定上层建筑，上层建筑对经济基础具有反作用。</td><td><a href="./marx_openbook_final_sprint.html#writing">第一段训练</a></td></tr>
+          <tr><td>经济危机、生产过剩、贫富分化</td><td>资本主义基本矛盾</td><td>资本主义基本矛盾是生产社会化与生产资料资本主义私人占有之间的矛盾。</td><td><a href="./focus_dual_exam_game.html">小游戏复刷</a></td></tr>
+          <tr><td>生态文明、绿色发展、自然规律</td><td>人与自然</td><td>人类实践活动必须尊重自然界客观规律，推动人与自然和谐共生。</td><td><a href="./marx_openbook_final_sprint.html#writing">第一段训练</a></td></tr>
+          <tr><td>未来理想、现实运动、人的解放</td><td>共产主义实践运动</td><td>共产主义既是远大理想，也是现实中不断推进人的自由全面发展的实践运动。</td><td><a href="./marx_openbook_final_sprint.html#teacher">老师重点</a></td></tr>
+        </tbody>
+      </table>
+      <div class="note good">
+        <strong>马原答题模板：</strong>第一句写原理，第二句贴材料关键词，第三句说明“材料怎样体现原理”，最后一句回到方法论或现实意义。不要只抄资料，也不要只写口号。
+      </div>
+    </section>
+
+    <section>
+      <h2>5. 上场闸门</h2>
+      <div class="checklist" id="finalGate">
+        <label><input type="checkbox" data-gate="d1"> 离散能把题先分到：真值表/主范式、辖域、谓词翻译、前束/Skolem、语义反例、公理证明、偏序结构。</label>
+        <label><input type="checkbox" data-gate="d2"> 看到 Γ |= Q 能写“假设前提全真且 Q 假”；看到不成立能给反例三件套。</label>
+        <label><input type="checkbox" data-gate="d3"> 看到公理证明题知道不能随便用语义解释，至少能写公理实例、MP 和证明第一句。</label>
+        <label><input type="checkbox" data-gate="d4"> 希冀 2024/2025/2023 至少完成一轮：客观题判分，主观题写第一步并看解析。</label>
+        <label><input type="checkbox" data-gate="m1"> 马原纸质资料已经标出老师最后一课重点、剩余价值专项和 8 类高频原理关键词。</label>
+        <label><input type="checkbox" data-gate="m2"> 马原材料题能先判断原理，再按“原理-材料-分析-结论”写第一段。</label>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const key = "final-two-subject-command-center";
+    const paperMeta = {
+      "2024": { objective: 14, briefs: 7, label: "2024 主战卷", url: "./discrete_hiji_ingest/discrete_2024_hiji_interactive.html" },
+      "2025": { objective: 20, briefs: 10, label: "2025 查漏卷", url: "./discrete_hiji_ingest/discrete_2025_hiji_interactive.html" },
+      "2023": { objective: 10, briefs: 9, label: "2023 表达卷", url: "./discrete_hiji_ingest/discrete_2023_hiji_interactive.html" }
+    };
+    const packs = [
+      {
+        id: "rescue",
+        title: "救火包 90 分钟",
+        desc: "状态一般时只保命：离散要能起手，马原只打一个索引钉。",
+        items: [
+          "分心先打一局 <a href=\"./focus_dual_exam_game.html\">专注闯关小游戏</a>，只把脑子拉回来；做完马上进入 <a href=\"./discrete_last36_learning_ladder.html\">离散先学后练阶梯</a> 20 分钟。",
+          "打开 <a href=\"./final_two_wrong_review.html\">错题回炉台</a>，只看最近 3 个错题的第一动作，不重新翻所有讲义。",
+          "看 <a href=\"./tips_discrete_formula_visual_handbook.html\">离散公式视觉手册</a> 20 分钟：只管 ∈、⊆、⊨、⊢、∀、∃、前束/Skolem 读法。",
+          "做 <a href=\"./discrete_hiji_ingest/discrete_hiji_precision_drill.html\">精练闸门</a> 的 8 个题型盒子，不求全对，只求每题写第一句。",
+          "做 <a href=\"./final48_discrete_score_booster.html\">48小时查漏</a> 前 6 题；每错一题只写“假线索 -> 真题眼 -> 下次第一句”。",
+          "打开 <a href=\"./day7_discrete_final_recall.html\">Day7 速查</a> 勾 5 项：主范式、辖域、语义推论、反例、公理证明。",
+          "马原只标纸质资料 5 个词：实践、矛盾、生产力、新质生产力、剩余价值；入口用 <a href=\"./marx_openbook_final_sprint.html#teacher\">老师重点</a>。"
+        ]
+      },
+      {
+        id: "standard",
+        title: "标准包 3-4 小时",
+        desc: "最推荐：离散真题推进，马原保持低成本索引。",
+        items: [
+          "先用 <a href=\"./focus_dual_exam_game.html\">专注闯关</a> 热身一局，再做 <a href=\"./discrete_last36_learning_ladder.html\">离散先学后练阶梯</a> 完整一轮；确认 8 个盒子至少能写第一动作。",
+          "打开 <a href=\"./final_two_wrong_review.html\">错题回炉台</a>，按前三格补离散错题；没有错题记录就继续做精练闸门。",
+          "<a href=\"./discrete_hiji_ingest/discrete_hiji_precision_drill.html\">精练闸门</a> 完整一轮：18 题错 0-4 题可进真题但要回炉，错 5+ 题先回对应讲义。",
+          "<a href=\"./final48_discrete_score_booster.html\">48小时查漏</a> 12 题做完，错题写成“题型盒子 + 假线索 + 下次第一句”。",
+          "<a href=\"./discrete_hiji_ingest/discrete_2024_hiji_interactive.html\">2024 希冀卷</a>：客观题判分，主观题至少写第一步，再看解析。",
+          "<a href=\"./day6_discrete_proof_sprint.html\">Day6 证明训练营</a> 挑 2 类：语义证明 + 公理证明或反例构造；每类背熟开头句。",
+          "<a href=\"./day7_discrete_final_recall.html\">Day7 最终速查</a> 做 10 项闸门，卡住就回 <a href=\"./discrete_proof_chain_lab.html\">证明链条14题</a>。",
+          "马原看 <a href=\"./marx_openbook_final_sprint.html#teacher\">老师重点雷达</a> 和 <a href=\"./marx_openbook_final_sprint.html#locator\">30秒定位</a>，给纸质资料补 8 个关键词。"
+        ]
+      },
+      {
+        id: "sprint",
+        title: "冲分包 5-6 小时",
+        desc: "状态很好时：离散接近整卷，马原提前建完索引。",
+        items: [
+          "<a href=\"./discrete_last36_learning_ladder.html\">离散先学后练阶梯</a> 12 题小测全核对，错题回对应讲义，不允许只看答案点头。",
+          "<a href=\"./discrete_hiji_ingest/discrete_2024_hiji_interactive.html\">2024 希冀卷</a> 完整做；主观题至少写骨架，再核对图片和解析。",
+          "<a href=\"./discrete_hiji_ingest/discrete_2025_hiji_interactive.html\">2025 希冀卷</a> 限时做客观题，用错题补概念边界。",
+          "<a href=\"./discrete_hiji_ingest/discrete_2023_hiji_interactive.html\">2023 希冀卷</a> 挑主观题练表达：定义、语义、证明第一句。",
+          "<a href=\"./discrete_proof_chain_lab.html\">离散证明链条工坊</a> 14 题练一轮：第一句之后怎么接证据。",
+          "马原看 <a href=\"./marx_openbook_final_sprint.html#case-walkthrough\">材料题手把手拆题</a> 2 个例子，再做 <a href=\"./marx_openbook_final_sprint.html#locator\">30秒定位</a> 10 题，最后写两段材料题第一段：新质生产力、剩余价值、共产主义实践运动任选。"
+        ]
+      }
+    ];
+    const state = JSON.parse(localStorage.getItem(key) || "{}");
+    let activePack = state.activePack || "standard";
+    const save = () => localStorage.setItem(key, JSON.stringify(state));
+    const readJSON = (storageKey, fallback) => {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || JSON.stringify(fallback));
+      } catch {
+        return fallback;
+      }
+    };
+    const safeValues = obj => Object.values(obj || {});
+    const sameSet = (a, b) => {
+      const aa = [...(a || [])].map(String).sort().join("|");
+      const bb = [...(b || [])].map(String).sort().join("|");
+      return aa === bb;
+    };
+    const countLast36 = () => {
+      const quiz = readJSON("discrete-last36-quiz-v1", {});
+      const todo = readJSON("discrete-last36-todo-v1", {});
+      const done = safeValues(quiz).filter(x => x && x.checked).length;
+      const correct = Object.entries(quiz).filter(([_, s]) => s && s.checked && s.selected === 0).length;
+      return { done, correct, wrong: Math.max(0, done - correct), todo: safeValues(todo).filter(x => x === "1").length, total: 12 };
+    };
+    const countPrecision = () => {
+      const answers = readJSON("discrete_hiji_precision_answers_v1", {});
+      const done = safeValues(answers).filter(x => x && x.checked).length;
+      const wrong = safeValues(answers).filter(x => x && x.checked && !x.correct).length;
+      return { done, wrong, correct: Math.max(0, done - wrong), total: 18 };
+    };
+    const countPaper = year => {
+      const meta = paperMeta[year];
+      const paper = readJSON(`discrete-hiji-${year}`, {});
+      const objectiveDone = Object.entries(paper).filter(([id, s]) => !id.startsWith("brief") && s && s.checked).length;
+      const objectiveCorrect = Object.entries(paper).filter(([id, s]) => !id.startsWith("brief") && s && s.checked && s.correct).length;
+      const objectiveWrong = Math.max(0, objectiveDone - objectiveCorrect);
+      const briefNotes = Object.entries(paper).filter(([id, s]) => id.startsWith("brief") && s && String(s.note || "").replace(/\s+/g, "").length >= 10).length;
+      return { year, ...meta, objectiveDone, objectiveCorrect, objectiveWrong, briefNotes };
+    };
+    const countGameWrong = () => {
+      const last = readJSON("focus-game-last-wrong", { wrong: [] });
+      return Array.isArray(last.wrong) ? last.wrong.length : 0;
+    };
+    const countDay7 = () => {
+      const base = "buaa-finals-discrete-day7-final";
+      const gates = Array.from({ length: 10 }, (_, i) => localStorage.getItem(`${base}:gate:g${i + 1}`) === "1").filter(Boolean).length;
+      const drills = Array.from({ length: 8 }, (_, i) => {
+        const text = localStorage.getItem(`${base}:d7-q${i + 1}`) || "";
+        return text.replace(/\s+/g, "").length >= 10;
+      }).filter(Boolean).length;
+      return { gates, drills, gateTotal: 10, drillTotal: 8 };
+    };
+    const countMarx = () => {
+      const todoKeys = ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"];
+      const todoDone = todoKeys.filter(k => localStorage.getItem("marxTodoV2:" + k) === "1").length;
+      const locator = readJSON("marxLocatorStateV1", {});
+      const locatorDone = safeValues(locator).filter(x => x && x.checked).length;
+      const quiz = readJSON("marxQuizStateV2", {});
+      const quizDone = safeValues(quiz).filter(x => x && x.checked).length;
+      return { todoDone, locatorDone, quizDone };
+    };
+    const clsFor = (done, total, wrong = 0, target = total) => {
+      if (wrong >= 5) return "hot";
+      if (done >= target) return "good";
+      if (done > 0) return "warn";
+      return "hot";
+    };
+    const progressCard = (title, num, text, cls) => `
+      <div class="progress-card ${cls}">
+        <strong>${title}</strong>
+        <div class="num">${num}</div>
+        <p>${text}</p>
+      </div>
+    `;
+    const renderAutoProgress = () => {
+      const box = document.getElementById("autoProgress");
+      const advice = document.getElementById("autoAdvice");
+      if (!box || !advice) return;
+      const last36 = countLast36();
+      const precision = countPrecision();
+      const papers = ["2024", "2025", "2023"].map(countPaper);
+      const p2024 = papers[0], p2025 = papers[1], p2023 = papers[2];
+      const gameWrong = countGameWrong();
+      const day7 = countDay7();
+      const marx = countMarx();
+      const objectiveDoneAll = papers.reduce((sum, p) => sum + p.objectiveDone, 0);
+      const objectiveWrongAll = papers.reduce((sum, p) => sum + p.objectiveWrong, 0);
+      const briefNotesAll = papers.reduce((sum, p) => sum + p.briefNotes, 0);
+
+      box.innerHTML = [
+        progressCard(
+          "先学后练",
+          `${last36.done}/${last36.total}`,
+          `错 ${last36.wrong} 题，盒子勾选 ${last36.todo} 项。目标：先能归盒子和写第一句。`,
+          clsFor(last36.done, last36.total, last36.wrong, 8)
+        ),
+        progressCard(
+          "精练闸门",
+          `${precision.done}/${precision.total}`,
+          `错 ${precision.wrong} 题。错 0-4 可进真题；错 5+ 先回讲义。`,
+          clsFor(precision.done, precision.total, precision.wrong, 18)
+        ),
+        progressCard(
+          "希冀真题",
+          `${objectiveDoneAll}/44`,
+          `客观错 ${objectiveWrongAll} 题；主观骨架 ${briefNotesAll}/26。主观必须先写骨架。`,
+          clsFor(objectiveDoneAll, 44, objectiveWrongAll, 14)
+        ),
+        progressCard(
+          "Day7 收口",
+          `${day7.gates}/${day7.gateTotal}`,
+          `混合题已写 ${day7.drills}/${day7.drillTotal}。目标：闸门 7 项、混合题 5 题。`,
+          day7.gates >= 7 && day7.drills >= 5 ? "good" : (day7.gates || day7.drills ? "warn" : "hot")
+        ),
+        progressCard(
+          "回炉与马原",
+          `${gameWrong} / ${marx.todoDone}`,
+          `小游戏错题 ${gameWrong} 个；马原纸质索引 ${marx.todoDone}/9，定位 ${marx.locatorDone} 题。`,
+          marx.todoDone >= 5 ? "good" : (gameWrong || marx.todoDone ? "warn" : "hot")
+        )
+      ].join("");
+
+      let html = "";
+      if (last36.done < 8) {
+        html = `<b>下一步：先做离散先学后练阶梯。</b> 现在还不适合硬刷整卷，先把符号、范式、语义、公理、关系这些题型盒子叫醒。目标不是全对，而是每题能说“题眼是什么，第一句怎么写”。 <a href="./discrete_last36_learning_ladder.html">去先学后练</a>`;
+      } else if (last36.wrong >= 4) {
+        html = `<b>下一步：回炉先学后练错题。</b> 你在 12 题里错了 ${last36.wrong} 题，说明概念边界还会串。只补错题对应盒子，不整页重读。 <a href="./final_two_wrong_review.html">去错题回炉</a>`;
+      } else if (precision.done < 18) {
+        html = `<b>下一步：做精练闸门 18 题。</b> 先学后练已经能跑起来了，现在用闸门确认能不能进整卷真题。做题时每题写“假线索 -> 真题眼 -> 下次第一句”。 <a href="./discrete_hiji_ingest/discrete_hiji_precision_drill.html">去精练闸门</a>`;
+      } else if (precision.wrong >= 5) {
+        html = `<b>下一步：先别整卷，回对应讲义补 ${precision.wrong} 个错题盒子。</b> 精练闸门错 5+ 会导致真题变成看答案。先去错题回炉台按盒子补。 <a href="./final_two_wrong_review.html">去回炉台</a>`;
+      } else if (p2024.objectiveDone < 10) {
+        html = `<b>下一步：2024 主战卷。</b> 这是助教新发、参考价值最高的一套。先做客观题到至少 10 题核对；主观题至少写第一步再展开答案。 <a href="${p2024.url}">去做 2024</a>`;
+      } else if (p2024.objectiveWrong >= 4) {
+        html = `<b>下一步：回炉 2024 错题。</b> 2024 客观错 ${p2024.objectiveWrong} 题，先看错项解析和题眼，不急着开新卷。 <a href="./final_two_wrong_review.html">去回炉台</a>`;
+      } else if (p2025.objectiveDone < 12) {
+        html = `<b>下一步：2025 客观查漏。</b> 2024 已经能推进，接 2025 的客观题补概念边界，尤其命题、项/公式、范式、可判定和完全集。 <a href="${p2025.url}">去做 2025</a>`;
+      } else if (briefNotesAll < 5) {
+        html = `<b>下一步：补主观题骨架。</b> 你客观题已经有推进，但主观骨架只有 ${briefNotesAll}/26。考场证明题不能空白，至少挑 5 道写“题眼 + 第一动作 + 关键步骤”。 <a href="./discrete_hiji_ingest/discrete_hiji_pastpaper_hub.html">去三年真题首页</a>`;
+      } else if (day7.gates < 7) {
+        html = `<b>下一步：回 Day7 过上场闸门。</b> 真题已经推进，现在别再铺新题了。先把 Day7 闸门补到 7/10，尤其主范式、辖域、语义反例、前束 Skolem、公理证明第一句。 <a href="./day7_discrete_final_recall.html#gate">去 Day7 闸门</a>`;
+      } else if (day7.drills < 5) {
+        html = `<b>下一步：做 Day7 混合训练。</b> 你已经能进入收口，但混合题只写了 ${day7.drills}/8。至少写到 5 题，每题只追“题眼、第一步、考场句”，不要再开新讲义。 <a href="./day7_discrete_final_recall.html#drills">去 Day7 混合训练</a>`;
+      } else if (gameWrong > 0) {
+        html = `<b>下一步：清小游戏错题。</b> 分心闯关里还有 ${gameWrong} 个最近错题。只读假线索和正确题眼，别重新刷整页。 <a href="./final_two_wrong_review.html">去错题回炉</a>`;
+      } else if (marx.todoDone < 5) {
+        html = `<b>下一步：给马原 20 分钟建索引。</b> 离散仍是主战，但马原纸质开卷至少要有 5 个页边钉子，避免 6/28 后从零开始翻。 <a href="./marx_openbook_final_sprint.html#progress">去马原自动进度</a>`;
+      } else {
+        html = `<b>下一步：离散考前收口。</b> 现在不要再开新坑。公式快背、证明第一句、错题回炉三件事各走一遍，然后休息。 <a href="./day7_discrete_final_recall.html#formula">看公式快背</a> <a href="./day7_discrete_final_recall.html#first">看第一句生成器</a>`;
+      }
+      advice.innerHTML = html;
+    };
+    const drawTabs = () => {
+      const tabs = document.getElementById("packTabs");
+      tabs.innerHTML = packs.map(pack => `<button class="tab ${pack.id === activePack ? "active" : ""}" data-pack="${pack.id}">${pack.title}</button>`).join("");
+      tabs.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activePack = btn.dataset.pack;
+          state.activePack = activePack;
+          save();
+          render();
+        });
+      });
+    };
+    const render = () => {
+      drawTabs();
+      const root = document.getElementById("packs");
+      root.innerHTML = packs.map(pack => `
+        <article class="pack ${pack.id === activePack ? "active" : ""}">
+          <div class="note ${pack.id === "rescue" ? "hot" : pack.id === "standard" ? "good" : "warn"}">
+            <strong>${pack.title}</strong>
+            <p>${pack.desc}</p>
+          </div>
+          <div class="todo">
+            ${pack.items.map((item, index) => {
+              const id = `${pack.id}-${index}`;
+              const done = !!state[id];
+              return `<label class="${done ? "done" : ""}"><input type="checkbox" data-id="${id}" ${done ? "checked" : ""}><span>${item}</span></label>`;
+            }).join("")}
+          </div>
+        </article>
+      `).join("");
+      root.querySelectorAll("input").forEach(input => {
+        input.addEventListener("change", () => {
+          state[input.dataset.id] = input.checked;
+          save();
+          render();
+        });
+      });
+      document.querySelectorAll("[data-gate]").forEach(input => {
+        input.checked = !!state[`gate-${input.dataset.gate}`];
+        input.addEventListener("change", () => {
+          state[`gate-${input.dataset.gate}`] = input.checked;
+          save();
+        });
+      });
+      const active = packs.find(pack => pack.id === activePack);
+      const done = active.items.filter((_, i) => state[`${active.id}-${i}`]).length;
+      document.getElementById("packStats").textContent = `${active.title} 完成 ${done}/${active.items.length}。完成标准不是“看过”，是能说出下一步怎么做。`;
+      renderAutoProgress();
+    };
+    render();
+  </script>
+</body>
+</html>

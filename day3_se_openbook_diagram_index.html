@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>软工 Day3 纸质开卷索引与 CodeArts 画图模板：从题干到可交卷答案</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 300px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .focus {
+      border-radius: 6px;
+      background: #fff3bf;
+      box-shadow: inset 0 -2px 0 rgba(147,107,18,.24);
+      padding: 1px 5px;
+      font-weight: 840;
+      color: #60440a;
+    }
+    .key { color: var(--blue); font-weight: 840; }
+    .hl { color: var(--red); font-weight: 840; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .diagram {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { width: 100%; min-width: 780px; height: auto; display: block; }
+    .teach-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .teach-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 14px;
+    }
+    .teach-card h3 { color: var(--blue); }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .tag {
+      border: 1px solid #cfe1ec;
+      border-radius: 999px;
+      background: #f4fbff;
+      color: var(--blue);
+      padding: 3px 8px;
+      font-size: 13px;
+    }
+    .mini-diagram {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+    .mini-diagram svg { width: 100%; min-width: 500px; height: auto; display: block; }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .teach-grid, .rubric { grid-template-columns: 1fr; }
+      .diagram svg { min-width: 660px; }
+      .mini-diagram svg { min-width: 560px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>软工 Day3 纸质开卷索引与 CodeArts 画图模板：从题干到可交卷答案</h1>
+      <p class="muted">这页已按 6/18 课程群正式通知回炉。软工不是“带 PDF 进考场”式开卷：考场只能带纸质 PPT、装订在一起的个人笔记和指定教材；画图只允许使用 <span class="key">CodeArts Modeling</span>。你要提前把题眼写到可带材料上，把画图模板练到<span class="focus">不用临场查电子资料也能下第一笔</span>。</p>
+      <div class="strip">
+        <span class="pill hot">软工 6/25</span>
+        <span class="pill info">纸质资料开卷</span>
+        <span class="pill warn">希冀 + CodeArts Modeling</span>
+        <span class="pill good">单多判 + 简答 + 综合</span>
+      </div>
+      <div class="toc">
+        <a href="#route">0. 使用路线</a>
+        <a href="#notice">0.1 正式要求</a>
+        <a href="#spine">0.2 建模主线</a>
+        <a href="#index">1. 纸质索引</a>
+        <a href="#flow">2. 图题分流</a>
+        <a href="#walkthrough">3. 题干拆解示范</a>
+        <a href="#templates">4. 五类图模板</a>
+        <a href="#testing">5. 测试题模板</a>
+        <a href="#drills">6. 场景题卡</a>
+        <a href="#gate">7. 过关闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="notice">
+      <h2>0.1 6/18 正式通知：复习策略改成“纸质索引 + 在线画图”</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>考试时间与分值</strong>
+          2026-06-25 18:30-20:30，信息平台本科生实验室，考试共 30 分。题型包括单选题、多选题、判断题、简答题、综合题。
+        </div>
+        <div class="box">
+          <strong>允许携带什么</strong>
+          仅限授课讲义 PPT 打印纸质版、标注在纸质 PPT 上或与 PPT 装订在一起的个人笔记、指定教材《软件工程》（彭蓉主编，101计划核心教材，清华大学出版社）。
+        </div>
+        <div class="box">
+          <strong>不能带什么</strong>
+          其他纸质材料和电子材料一概不能带入；不能使用 U 盘、云盘、微信、编程辅助工具，也不能使用 <span class="hl">CodeArts 除 Modeling 之外的组件</span>。
+        </div>
+        <div class="box">
+          <strong>平台与画图</strong>
+          平台是希冀；画图工具是 <span class="key">CodeArts Modeling</span>。考前应提前建好干净的考试专用 CodeArts project，熟悉建图、命名、连线、保存和提交流程。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>这对复习的影响：</strong>现在的“开卷索引”不能做成单独电子 PDF 依赖。复习时可以参考 HTML 和资料，但最终必须迁移到可带的纸质 PPT 边注或装订笔记里：<span class="focus">题眼 -> PPT/教材位置 -> 第一笔 -> 扣分点</span>。
+      </div>
+      <div class="mark">
+        <strong>题型权重感：</strong>客观题会考软件过程模型、项目管理对象、测试方法等概念边界；简答题会考故障/错误/失效、过程模型、测试设计等可背可解释问题；综合题重点是 <span class="key">UML 需求分析与建模、系统概要设计与详细设计</span>。
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 使用路线：软工不是背定义，是带着模板查资料</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>先学 Day1</strong>
+          <a href="./day1_se_diagram_zero.html">软工画图从零</a>负责建立语言：用例图、顺序图、类图、状态图、活动图分别回答什么问题。
+        </div>
+        <div class="box">
+          <strong>再做 Day2</strong>
+          <a href="./day2_se_2020_diagram_workshop.html">2020 三图手把手</a>负责把同一段题干拆成用例图、类图、顺序图。
+        </div>
+        <div class="box">
+          <strong>本页 Day3</strong>
+          本页负责纸质开卷：题眼写到哪里、CodeArts 里怎么下第一笔、图旁文字怎么写、测试题怎么答。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>软工考试策略：</strong>画图题先拿结构分，再拿说明分。图不一定要和标准答案一模一样，但必须<span class="focus">对象合理、关系清楚、箭头方向对、文字说明能自圆其说</span>。考场上先在草稿区列元素，再去 CodeArts Modeling 画，不要边想边乱拖组件。
+      </div>
+    </section>
+
+    <section class="card" id="spine">
+      <h2>0.2 软工建模主线：同一段材料，按小问落到不同产物</h2>
+      <p>软工综合题通常给一段系统材料，然后让你做需求分析、概要设计、详细设计。你不能看到“系统”就默认画类图。真正的第一步是<span class="focus">先判断小问所在层次，再选择产物</span>：需求题答“系统该做什么”，概要题答“系统怎么分块”，详细题答“对象和方法怎么协作”。</p>
+      <div class="diagram" aria-label="软工从题干到建模产物主线">
+        <svg viewBox="0 0 1040 390" role="img">
+          <defs>
+            <marker id="spineArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0 0 L10 5 L0 10z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect width="1040" height="390" fill="#fff"/>
+          <g font-family="sans-serif" fill="#18212a" font-size="14">
+            <rect x="36" y="136" width="150" height="84" rx="10" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="111" y="169" text-anchor="middle" font-size="18" font-weight="800">题干材料</text>
+            <text x="111" y="196" text-anchor="middle" fill="#687581">角色 / 动作 / 对象</text>
+
+            <rect x="250" y="42" width="190" height="92" rx="10" fill="#eef9f3" stroke="#24724f"/>
+            <text x="345" y="72" text-anchor="middle" font-size="18" font-weight="800">需求分析</text>
+            <text x="345" y="100" text-anchor="middle">用例图 / 系统顺序图</text>
+            <text x="345" y="122" text-anchor="middle">操作合约 / 概念类图</text>
+
+            <rect x="250" y="154" width="190" height="92" rx="10" fill="#fff9e6" stroke="#936b12"/>
+            <text x="345" y="184" text-anchor="middle" font-size="18" font-weight="800">概要设计</text>
+            <text x="345" y="212" text-anchor="middle">包图 / 组件图</text>
+            <text x="345" y="234" text-anchor="middle">架构层次 / 接口关系</text>
+
+            <rect x="250" y="266" width="190" height="92" rx="10" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="345" y="296" text-anchor="middle" font-size="18" font-weight="800">详细设计</text>
+            <text x="345" y="324" text-anchor="middle">设计类图 / 顺序图</text>
+            <text x="345" y="346" text-anchor="middle">状态图 / 活动图 / 数据模型</text>
+
+            <line x1="186" y1="178" x2="250" y2="88" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#spineArrow)"/>
+            <line x1="186" y1="178" x2="250" y2="200" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#spineArrow)"/>
+            <line x1="186" y1="178" x2="250" y2="312" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#spineArrow)"/>
+
+            <rect x="520" y="42" width="430" height="316" rx="10" fill="#fbfdfe" stroke="#dce3e8"/>
+            <text x="735" y="78" text-anchor="middle" font-size="18" font-weight="800" fill="#1f5f8b">考场第一反应</text>
+            <text x="548" y="120">1. 题目问“谁能做什么” -> 需求分析 -> 用例图</text>
+            <text x="548" y="158">2. 题目问“一次系统操作前后变化” -> 需求分析 -> 操作合约</text>
+            <text x="548" y="196">3. 题目问“系统拆成哪些模块/组件” -> 概要设计 -> 包图/组件图</text>
+            <text x="548" y="234">4. 题目问“类、方法、消息、状态如何实现” -> 详细设计</text>
+            <text x="548" y="272">5. 题目问“输入怎么测、路径怎么覆盖” -> 测试 -> 测试表</text>
+            <text x="548" y="320" fill="#a23b32" font-weight="800">危险：需求题提前写数据库表，概要题只画一堆类，详细题只有空泛架构。</text>
+          </g>
+        </svg>
+      </div>
+      <div class="grid three">
+        <div class="box"><strong>需求分析看外部视角</strong>用户、系统边界、系统操作、业务概念。对应十讲里的系统接口、系统操作、领域概念。</div>
+        <div class="box"><strong>概要设计看系统分块</strong>模块、包、组件、接口、架构风格。它不该直接陷入某个方法内部代码。</div>
+        <div class="box"><strong>详细设计看对象协作</strong>类的属性方法、消息顺序、状态变化、数据持久化。这里才适合设计类图和实现顺序图。</div>
+      </div>
+      <div class="mark warnbox">
+        <strong>记住这一句：</strong><span class="focus">需求说“系统应该做什么”，概要说“系统分成哪些部分”，详细说“对象和方法怎么协作实现”。</span>
+      </div>
+    </section>
+
+    <section class="card" id="index">
+      <h2>1. 纸质开卷索引：考试时别翻整本，按题眼定位</h2>
+      <p>下面这张表是你可带纸质资料的“边注地图”。复习时可以用 PDF 定位来源，但考前必须把这些题眼转写到纸质 PPT 边上或装订笔记里。你要记的是<span class="focus">题眼、资料位置、第一笔、扣分点</span>，不是重新抄一遍 PPT。</p>
+      <table>
+        <thead><tr><th>题眼</th><th>优先翻什么</th><th>要找的内容</th><th>作答输出</th></tr></thead>
+        <tbody>
+          <tr><td>谁使用系统做什么</td><td>纸质 PPT：需求工程/用例模型；个人笔记边注“用例图”</td><td>参与者、系统边界、用例、include/extend/generalization</td><td>CodeArts 用例图 + 参与者/用例说明</td></tr>
+          <tr><td>某个操作前后对象如何变化</td><td>纸质 PPT：系统操作合约；个人笔记边注“后置三类变化”</td><td>前置条件、后置条件三类变化：创建对象、属性变化、形成/消除关联</td><td>操作合约表或文字骨架</td></tr>
+          <tr><td>一次查询/提交/管理流程如何发生</td><td>纸质 PPT：系统顺序图/组件顺序图；个人笔记边注“生命线顺序”</td><td>生命线、消息顺序、边界对象/控制对象/实体对象</td><td>CodeArts 顺序图 + 流程说明</td></tr>
+          <tr><td>系统有哪些类、属性、方法、关系</td><td>纸质 PPT：概念类图/设计类图；详细设计章节</td><td>候选类、关联、多重性、继承、聚合、组合</td><td>CodeArts 类图 + 关系说明</td></tr>
+          <tr><td>一个对象从创建到结束经历哪些状态</td><td>纸质 PPT：状态图；个人笔记边注“对象生命周期”</td><td>初态、状态、事件、转移、终态</td><td>CodeArts 状态图</td></tr>
+          <tr><td>业务步骤、分支、并行、泳道</td><td>纸质 PPT：活动图；个人笔记边注“流程/分支/泳道”</td><td>动作、判断、分支合并、泳道</td><td>CodeArts 活动图</td></tr>
+          <tr><td>等价类、边界值、覆盖</td><td>软件测试 PPT/笔记；往年题参考答案</td><td>有效/无效等价类、测试用例、语句/判定/条件/路径覆盖</td><td>测试表或覆盖说明</td></tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>考场禁止线：</strong>不要想着临场打开电子 PDF、微信、云盘或其他 CodeArts 组件。现在所有索引的终点都应该是“纸质 PPT/装订笔记/指定教材”。
+      </div>
+      <div class="mark">
+        <strong>资料依据：</strong>教学日历显示课程主线包括需求工程、概要设计、详细设计、软件测试、部署维护；2020 上机题第一部分 60 分是类图、用例图、顺序图；往年笔试资料反复出现 include/extend、等价类、白盒覆盖、状态图/活动图/顺序图/类图。
+      </div>
+    </section>
+
+    <section class="card" id="flow">
+      <h2>2. 图题分流：先判断“它要你回答什么问题”</h2>
+      <div class="diagram" aria-label="软工图题分流图">
+        <svg viewBox="0 0 1040 360" role="img">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f5f8b"></path>
+            </marker>
+          </defs>
+          <rect x="40" y="130" width="180" height="80" rx="8" fill="#eef7fc" stroke="#b3d2e7"></rect>
+          <text x="130" y="163" text-anchor="middle" font-size="18" font-weight="700" fill="#1f5f8b">读题四支笔</text>
+          <text x="130" y="188" text-anchor="middle" font-size="13" fill="#4b5a66">角色/动作/对象/状态</text>
+          <line x1="220" y1="170" x2="305" y2="170" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <rect x="305" y="32" width="220" height="54" rx="8" fill="#f3faf6" stroke="#a7d8bf"></rect>
+          <text x="415" y="65" text-anchor="middle" font-size="16" font-weight="700" fill="#24724f">谁使用系统做什么</text>
+          <rect x="305" y="96" width="220" height="54" rx="8" fill="#fff9e6" stroke="#dcc682"></rect>
+          <text x="415" y="129" text-anchor="middle" font-size="16" font-weight="700" fill="#936b12">一次流程按时间发生</text>
+          <rect x="305" y="160" width="220" height="54" rx="8" fill="#f6f2ff" stroke="#c9bee8"></rect>
+          <text x="415" y="193" text-anchor="middle" font-size="16" font-weight="700" fill="#66519a">有哪些类和关系</text>
+          <rect x="305" y="224" width="220" height="54" rx="8" fill="#fff2ef" stroke="#e5b3ad"></rect>
+          <text x="415" y="257" text-anchor="middle" font-size="16" font-weight="700" fill="#a23b32">对象状态或业务步骤</text>
+          <rect x="305" y="288" width="220" height="44" rx="8" fill="#eef7fc" stroke="#b3d2e7"></rect>
+          <text x="415" y="316" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5f8b">操作前后变化</text>
+          <line x1="525" y1="59" x2="690" y2="59" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <line x1="525" y1="123" x2="690" y2="123" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <line x1="525" y1="187" x2="690" y2="187" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <line x1="525" y1="251" x2="690" y2="251" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <line x1="525" y1="310" x2="690" y2="310" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow)"></line>
+          <rect x="690" y="32" width="250" height="54" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="815" y="65" text-anchor="middle" font-size="16" font-weight="700" fill="#18212a">用例图</text>
+          <rect x="690" y="96" width="250" height="54" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="815" y="129" text-anchor="middle" font-size="16" font-weight="700" fill="#18212a">顺序图</text>
+          <rect x="690" y="160" width="250" height="54" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="815" y="193" text-anchor="middle" font-size="16" font-weight="700" fill="#18212a">类图</text>
+          <rect x="690" y="224" width="250" height="54" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="815" y="257" text-anchor="middle" font-size="16" font-weight="700" fill="#18212a">状态图 / 活动图</text>
+          <rect x="690" y="288" width="250" height="44" rx="8" fill="#ffffff" stroke="#dce3e8"></rect>
+          <text x="815" y="316" text-anchor="middle" font-size="16" font-weight="700" fill="#18212a">系统操作合约</text>
+        </svg>
+      </div>
+      <div class="mark danger">
+        <strong>高频误画：</strong>把用例图画成流程图；把顺序图画成“学生 -> 系统”两条线；把类图画成数据库 ER；把状态图画成活动图；把操作合约写成操作步骤。考试最容易扣分的是<span class="hl">图类型错位</span>，所以每次下笔前先问：<span class="focus">这道小问到底让我回答什么问题？</span>
+      </div>
+    </section>
+
+    <section class="card" id="walkthrough">
+      <h2>3. 题干拆解示范：同一句话怎么变成三种图</h2>
+      <p>软工画图最怕“一看题干就画线”。真正稳的做法是先把自然语言拆成四类词：<span class="key">角色</span>、<span class="key">动作</span>、<span class="key">对象</span>、<span class="key">约束</span>。下面用同一个场景演示：同一句话，问法不同，图就不同。</p>
+      <div class="formula">场景：
+学生登录实验上机安排系统后，可以查询某课程的实验项目和实验机房安排。
+系统根据课程编号查询课程实验项目，再查询该项目对应的实验机房、时间和地点，最后把安排结果显示给学生。</div>
+      <div class="tag-row">
+        <span class="tag">角色：学生</span>
+        <span class="tag">动作：登录、查询、显示</span>
+        <span class="tag">对象：课程、实验项目、实验安排、机房</span>
+        <span class="tag">顺序：输入课程编号 -> 查项目 -> 查安排 -> 返回结果</span>
+      </div>
+
+      <div class="teach-grid">
+        <div class="teach-card">
+          <h3>第一问：如果画用例图，题干在问什么？</h3>
+          <p>用例图不关心“先查项目还是先查机房”，它关心的是：<span class="focus">谁在系统外使用系统，系统提供了哪些功能</span>。</p>
+          <p><strong>从题干抽取：</strong>学生是参与者；查询课程实验项目、查询实验机房安排是用例；登录可能是公共用例。</p>
+          <div class="mini-diagram">
+            <svg viewBox="0 0 620 230" role="img" aria-label="用例图最小骨架">
+              <rect x="210" y="28" width="340" height="170" rx="8" fill="#fbfdfe" stroke="#1f5f8b" stroke-width="2"/>
+              <text x="380" y="54" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5f8b">实验上机安排系统</text>
+              <circle cx="92" cy="72" r="18" fill="#fff" stroke="#18212a" stroke-width="2"/>
+              <line x1="92" y1="90" x2="92" y2="142" stroke="#18212a" stroke-width="2"/>
+              <line x1="62" y1="108" x2="122" y2="108" stroke="#18212a" stroke-width="2"/>
+              <line x1="92" y1="142" x2="66" y2="184" stroke="#18212a" stroke-width="2"/>
+              <line x1="92" y1="142" x2="118" y2="184" stroke="#18212a" stroke-width="2"/>
+              <text x="92" y="210" text-anchor="middle" font-size="15">学生</text>
+              <ellipse cx="370" cy="88" rx="92" ry="26" fill="#eef7fc" stroke="#1f5f8b"/>
+              <text x="370" y="94" text-anchor="middle" font-size="14">查询实验项目</text>
+              <ellipse cx="370" cy="150" rx="112" ry="26" fill="#eef9f3" stroke="#24724f"/>
+              <text x="370" y="156" text-anchor="middle" font-size="14">查询实验机房安排</text>
+              <line x1="122" y1="108" x2="280" y2="88" stroke="#687581" stroke-width="2"/>
+              <line x1="122" y1="108" x2="262" y2="150" stroke="#687581" stroke-width="2"/>
+            </svg>
+          </div>
+          <p><strong>交卷句：</strong>本用例图描述学生在实验上机安排系统中的查询功能边界，学生可查询课程实验项目和机房安排。</p>
+        </div>
+
+        <div class="teach-card">
+          <h3>第二问：如果画顺序图，题干在问什么？</h3>
+          <p>顺序图关心<span class="focus">一次具体场景按时间怎么发生</span>。所以要把“系统”拆成界面、控制对象、数据对象，不能只画学生和系统两根线。</p>
+          <p><strong>从题干抽取：</strong>学生发起查询；查询界面接收课程编号；查询控制器协调；课程项目库和安排库返回数据。</p>
+          <div class="mini-diagram">
+            <svg viewBox="0 0 680 300" role="img" aria-label="顺序图最小骨架">
+              <g font-family="sans-serif" font-size="13" fill="#18212a">
+                <rect x="28" y="22" width="88" height="34" rx="6" fill="#eef7fc" stroke="#1f5f8b"/><text x="72" y="44" text-anchor="middle">学生</text>
+                <rect x="170" y="22" width="105" height="34" rx="6" fill="#eef9f3" stroke="#24724f"/><text x="222" y="44" text-anchor="middle">查询界面</text>
+                <rect x="330" y="22" width="115" height="34" rx="6" fill="#fff9e6" stroke="#936b12"/><text x="388" y="44" text-anchor="middle">查询控制器</text>
+                <rect x="500" y="22" width="125" height="34" rx="6" fill="#f6f2ff" stroke="#66519a"/><text x="562" y="44" text-anchor="middle">安排数据</text>
+                <line x1="72" y1="56" x2="72" y2="270" stroke="#9aa6af" stroke-dasharray="5 5"/>
+                <line x1="222" y1="56" x2="222" y2="270" stroke="#9aa6af" stroke-dasharray="5 5"/>
+                <line x1="388" y1="56" x2="388" y2="270" stroke="#9aa6af" stroke-dasharray="5 5"/>
+                <line x1="562" y1="56" x2="562" y2="270" stroke="#9aa6af" stroke-dasharray="5 5"/>
+                <defs><marker id="seqArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#1f5f8b"/></marker></defs>
+                <line x1="72" y1="92" x2="222" y2="92" stroke="#1f5f8b" stroke-width="2" marker-end="url(#seqArrow)"/><text x="147" y="84" text-anchor="middle">输入课程编号</text>
+                <line x1="222" y1="128" x2="388" y2="128" stroke="#1f5f8b" stroke-width="2" marker-end="url(#seqArrow)"/><text x="305" y="120" text-anchor="middle">提交查询请求</text>
+                <line x1="388" y1="164" x2="562" y2="164" stroke="#1f5f8b" stroke-width="2" marker-end="url(#seqArrow)"/><text x="475" y="156" text-anchor="middle">查询项目和安排</text>
+                <line x1="562" y1="200" x2="388" y2="200" stroke="#687581" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#seqArrow)"/><text x="475" y="192" text-anchor="middle">返回安排列表</text>
+                <line x1="388" y1="236" x2="222" y2="236" stroke="#687581" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#seqArrow)"/><text x="305" y="228" text-anchor="middle">整理结果</text>
+                <line x1="222" y1="262" x2="72" y2="262" stroke="#687581" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#seqArrow)"/><text x="147" y="254" text-anchor="middle">显示结果</text>
+              </g>
+            </svg>
+          </div>
+          <p><strong>交卷句：</strong>本顺序图描述学生查询课程实验安排的一次完整交互，时间顺序自上而下。</p>
+        </div>
+
+        <div class="teach-card">
+          <h3>第三问：如果画类图，题干在问什么？</h3>
+          <p>类图关心静态结构：<span class="focus">系统里有哪些长期存在的对象，它们有什么属性，彼此有什么关系</span>。它不关心一次点击流程。</p>
+          <p><strong>从题干抽取：</strong>学生、课程、实验项目、实验安排、机房是候选类；实验安排连接实验项目和机房。</p>
+          <div class="mini-diagram">
+            <svg viewBox="0 0 650 300" role="img" aria-label="类图最小骨架">
+              <g font-family="sans-serif" font-size="13" fill="#18212a">
+                <rect x="38" y="44" width="120" height="74" fill="#eef7fc" stroke="#1f5f8b"/><text x="98" y="66" text-anchor="middle" font-weight="700">Student</text><line x1="38" y1="76" x2="158" y2="76" stroke="#1f5f8b"/><text x="48" y="98">studentId</text>
+                <rect x="250" y="38" width="130" height="88" fill="#eef9f3" stroke="#24724f"/><text x="315" y="60" text-anchor="middle" font-weight="700">ExperimentProject</text><line x1="250" y1="70" x2="380" y2="70" stroke="#24724f"/><text x="260" y="92">projectId</text><text x="260" y="112">courseId</text>
+                <rect x="250" y="178" width="130" height="88" fill="#fff9e6" stroke="#936b12"/><text x="315" y="200" text-anchor="middle" font-weight="700">ExperimentSchedule</text><line x1="250" y1="210" x2="380" y2="210" stroke="#936b12"/><text x="260" y="232">time</text><text x="260" y="252">location</text>
+                <rect x="492" y="178" width="110" height="88" fill="#f6f2ff" stroke="#66519a"/><text x="547" y="200" text-anchor="middle" font-weight="700">LabRoom</text><line x1="492" y1="210" x2="602" y2="210" stroke="#66519a"/><text x="502" y="232">roomId</text><text x="502" y="252">capacity</text>
+                <line x1="158" y1="82" x2="250" y2="82" stroke="#687581" stroke-width="2"/><text x="185" y="73">queries</text>
+                <line x1="315" y1="126" x2="315" y2="178" stroke="#687581" stroke-width="2"/><text x="326" y="155">1..*</text>
+                <line x1="380" y1="222" x2="492" y2="222" stroke="#687581" stroke-width="2"/><text x="418" y="214">1</text><text x="462" y="214">1</text>
+              </g>
+            </svg>
+          </div>
+          <p><strong>交卷句：</strong>本类图抽取了查询安排相关的核心领域类，ExperimentSchedule 作为安排记录关联实验项目与机房。</p>
+        </div>
+
+        <div class="teach-card">
+          <h3>第四问：如果题目没说图类型怎么办？</h3>
+          <p>用这四个问题判断：</p>
+          <table>
+            <tbody>
+              <tr><td>题干在问谁用系统做什么？</td><td>用例图</td></tr>
+              <tr><td>题干在问一次操作按时间怎么走？</td><td>顺序图</td></tr>
+              <tr><td>题干在问有哪些对象和关系？</td><td>类图</td></tr>
+              <tr><td>题干在问某对象状态怎么变，或业务步骤怎么分支？</td><td>状态图/活动图</td></tr>
+            </tbody>
+          </table>
+          <div class="mark">
+            <strong>临场口诀：</strong>谁用什么功能是用例；谁先给谁发消息是顺序；谁和谁长期有关是类图；东西活到哪一步是状态；人和系统按步骤办事是活动。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="templates">
+      <h2>4. 五类图模板：先画最低得分骨架，再补细节</h2>
+      <table>
+        <thead><tr><th>图/模板</th><th>第一笔</th><th>必备元素</th><th>文字说明模板</th></tr></thead>
+        <tbody>
+          <tr><td>用例图</td><td>画系统边界框，框外列参与者</td><td>参与者、用例椭圆、系统边界、include/extend/泛化</td><td>“本图描述 X 系统的功能边界。参与者包括...，主要用例包括...”</td></tr>
+          <tr><td>顺序图</td><td>列生命线：参与者、边界对象、控制对象、实体/数据对象</td><td>生命线、激活条、同步消息、返回消息可选、时间自上而下</td><td>“本图描述 X 场景的一次交互流程，从用户发起请求到系统返回结果。”</td></tr>
+          <tr><td>类图</td><td>先写候选类名，不急着补属性方法</td><td>类名、必要属性、必要方法、关联、多重性、继承/聚合/组合</td><td>“本图抽取了系统的核心领域类，类之间关系和多重性如下...”</td></tr>
+          <tr><td>状态图</td><td>选一个有生命周期的对象</td><td>初态、状态、事件/条件、转移、终态</td><td>“本图描述 X 对象从创建到结束的状态变化。”</td></tr>
+          <tr><td>活动图</td><td>列业务步骤，必要时分泳道</td><td>开始、动作、判断、分支、合并、结束、泳道</td><td>“本图描述 X 业务流程，泳道区分用户与系统职责。”</td></tr>
+          <tr><td>操作合约</td><td>写操作名和前置条件</td><td>操作、交叉引用、前置条件、后置条件</td><td>后置条件按“创建对象、属性改变、形成/消除关联”三类写。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>include / extend / 泛化：不要只记英文</h3>
+      <div class="grid three">
+        <div class="box">
+          <strong>include</strong>
+          必做公共步骤。比如“提交订单”必须“验证登录”，提交订单 include 验证登录。箭头指向被包含用例。
+        </div>
+        <div class="box">
+          <strong>extend</strong>
+          可选扩展行为。比如“查询安排”之后可以“打印报表”，打印报表 extend 查询安排。箭头指向被扩展的基础用例。
+        </div>
+        <div class="box">
+          <strong>泛化</strong>
+          “是一种”。学生/教师/管理员都是用户，箭头指向更一般的父类或父参与者。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>箭头方向一句话：</strong><span class="focus">include 箭头指向“必做的公共步骤”；extend 箭头指向“被扩展的基础用例”；泛化箭头指向“更一般的父类/父参与者”。</span>考试不怕你忘英文，怕你把方向画反。
+      </div>
+
+      <h3>类图关系：先判断语义，再选线</h3>
+      <table>
+        <thead><tr><th>关系</th><th>人话</th><th>例子</th><th>扣分点</th></tr></thead>
+        <tbody>
+          <tr><td>关联</td><td>长期知道对方或有业务联系</td><td>教师提交课程实验项目</td><td>忘记多重性</td></tr>
+          <tr><td>聚合</td><td>整体-部分，但部分可独立存在</td><td>课程包含多个实验项目</td><td>把所有包含都画成组合</td></tr>
+          <tr><td>组合</td><td>强整体-部分，整体没了部分通常也没了</td><td>订单与订单项</td><td>生命周期不一致时不要乱用</td></tr>
+          <tr><td>继承</td><td>是一种</td><td>教师/学生/管理员继承用户</td><td>箭头方向画反</td></tr>
+          <tr><td>依赖</td><td>临时使用</td><td>控制类调用通知服务</td><td>把依赖当成强关联</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="testing">
+      <h2>5. 测试题模板：软工不只画图，测试也容易拿分</h2>
+      <p>往年资料里等价类、边界值、白盒覆盖反复出现。测试题和画图题一样，也要先分流。老师给的样例里还出现了“故障、错误、失效”的简答题，这类题要背得准，但更要讲清关系。</p>
+      <h3>故障、错误、失效：简答题先写传播链</h3>
+      <div class="grid three">
+        <div class="box">
+          <strong>故障 Fault</strong>
+          藏在软件制品里的缺陷，可以在需求、设计、代码、测试用例中出现。它是“病根”，但不一定每次运行都会暴露。
+        </div>
+        <div class="box">
+          <strong>错误 Error</strong>
+          程序运行时产生了不正确的内部状态，例如变量值错、分支走错、数据结构被破坏。错误是故障被触发后的内部表现。
+        </div>
+        <div class="box">
+          <strong>失效 Failure</strong>
+          系统对外表现不符合需求，例如页面返回错误结果、服务崩溃、超时。失效是用户或外部环境能观察到的问题。
+        </div>
+      </div>
+      <div class="mark">
+        <strong>简答第一句话：</strong><span class="focus">故障 -> 错误 -> 失效，是从制品缺陷到运行内部状态，再到外部可观察失败的传播链。</span>后面再补一句：一个故障可能导致多个错误，一个错误可能导致失效，也可能被掩盖而不表现为失效。
+      </div>
+      <table>
+        <thead><tr><th>题眼</th><th>方法</th><th>答题模板</th></tr></thead>
+        <tbody>
+          <tr><td>输入范围、合法/非法、用户名长度</td><td>等价类划分</td><td>列输入条件 -> 有效等价类 -> 无效等价类 -> 编号 -> 测试用例覆盖编号。</td></tr>
+          <tr><td>最大/最小/刚好超过/刚好不足</td><td>边界值分析</td><td>取边界点和边界两侧，如 8-12 位取 7、8、9、11、12、13。</td></tr>
+          <tr><td>每条语句至少一次</td><td>语句覆盖</td><td>设计用例让所有语句执行。</td></tr>
+          <tr><td>每个判定真假都走到</td><td>判定/分支覆盖</td><td>每个 if/while 的真分支、假分支至少一次。</td></tr>
+          <tr><td>每个条件取真/假</td><td>条件覆盖</td><td>对复合条件中的每个小条件分别覆盖 T/F。</td></tr>
+          <tr><td>所有条件组合</td><td>条件组合覆盖</td><td>复合条件的所有 T/F 组合至少出现一次。</td></tr>
+          <tr><td>所有可能执行路径</td><td>路径覆盖</td><td>覆盖控制流图中每条可行路径。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>等价类题的写法：</strong>不要只写“有效/无效”。必须把输入条件拆成小条件，例如“用户名 8-12 位”和“由字母数字组成”是两个条件；有效类必须完全满足，无效类通常每次违反一个条件，方便定位错误。
+      </div>
+    </section>
+
+    <section class="card" id="drills">
+      <h2>6. 场景题卡：先写作答骨架，再看参考答案</h2>
+
+      <article class="drill">
+        <h3>题卡 0：综合题三层分流</h3>
+        <p><strong>题目：</strong>材料说“学院需要开发实验预约平台，学生预约机房，教师发布实验项目，管理员审核资源安排”。如果小问分别是“做需求分析与建模”“做系统概要设计”“做详细设计”，你各自应该优先输出什么？</p>
+        <textarea data-key="se3-q0" placeholder="先写：需求看外部功能和业务概念；概要看模块/组件；详细看类、消息、状态、数据。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p><strong>需求分析与建模：</strong>优先做用例图、系统顺序图、系统操作合约、概念类图。核心是学生、教师、管理员能做什么，系统操作前后业务对象怎么变化。</p>
+            <p><strong>系统概要设计：</strong>优先做包图、组件图或架构分层说明。可以拆成用户权限、实验项目、预约管理、资源审核、通知、数据持久化等组件，说明职责和接口。</p>
+            <p><strong>详细设计：</strong>优先做设计类图、实现顺序图、状态图、活动图或数据模型。核心是某个用例如何由界面、控制类、实体类协作完成，类有什么属性方法，对象状态如何变化。</p>
+          </div>
+          <div class="rubric"><span>迁移</span><span>以后看到综合题，不要先问“画什么漂亮”，先问“这道小问站在需求、概要还是详细设计层”。层次判断对了，图就不会跑偏。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 1：图类型分流</h3>
+        <p><strong>题目：</strong>题干说“学生提交预约后，系统检查时间冲突，若无冲突则保存预约并返回成功提示；若冲突则提示重新选择时间”。如果题目没有指定图类型，你会优先考虑哪两类图？为什么？</p>
+        <textarea data-key="se3-q1" placeholder="先写：它有时间顺序，也有分支流程。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>优先考虑顺序图或活动图。若题目关注对象间按时间传递消息，画顺序图：学生、预约界面、预约控制、机房安排/数据库等生命线；若题目关注业务流程和分支，画活动图：提交预约 -> 检查冲突 -> 分支 -> 保存或提示重选。</p>
+          </div>
+          <div class="rubric"><span>题眼</span><span>“提交后系统检查、若...则...”同时有时间顺序和判断分支。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 2：用例图第一笔</h3>
+        <p><strong>题目：</strong>实验上机安排系统中，教师可以提交课程实验项目、安排实验机房、查询安排结果、打印报表。学生可以查询实验项目和安排。管理员管理教师、学生、课程实验、新闻公告。请写出用例图起手清单。</p>
+        <textarea data-key="se3-q2" placeholder="先写参与者、系统边界、核心用例，不要画流程。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>参与者：教师、学生、管理员、未登录用户或普通用户。系统边界：实验上机安排系统。教师用例：提交课程实验项目、安排实验机房、查询安排结果、打印安排报表、修改密码、查看公告。学生用例：查询课程实验项目、查询课程实验安排、修改密码、查看公告。管理员用例：管理教师、管理学生、管理课程实验、管理新闻公告、查询机房时间安排、修改密码、查看公告。未登录用户：登录。</p>
+          </div>
+          <div class="rubric"><span>扣分点</span><span>不要把“课程实验项目、机房、新闻公告”画成参与者，它们是系统内对象或被管理资源。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 3：顺序图生命线</h3>
+        <p><strong>题目：</strong>画“学生查询课程实验安排”的顺序图，至少应该列哪些生命线？每条线大概负责什么？</p>
+        <textarea data-key="se3-q3" placeholder="先写：学生、界面、控制/服务、数据对象。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>可列：学生，查询界面，实验安排控制器/服务，课程实验安排数据或数据库。流程：学生发起查询 -> 界面提交查询条件 -> 控制器校验并请求安排数据 -> 数据对象返回安排列表 -> 控制器整理结果 -> 界面显示给学生。</p>
+          </div>
+          <div class="rubric"><span>关键</span><span>顺序图不是“学生 -> 系统”两条线糊过去。至少要体现边界对象、控制对象、实体/数据对象。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 4：类图候选类与关系</h3>
+        <p><strong>题目：</strong>从实验上机安排系统中抽类：教师、学生、管理员、课程实验项目、实验机房、实验安排、新闻公告、用户。请写出可能的继承和关联。</p>
+        <textarea data-key="se3-q4" placeholder="先写：用户父类；教师/学生/管理员子类；安排连接项目和机房。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>可设 User 为父类，Teacher、Student、Admin 继承 User。Teacher 提交多个 ExperimentProject；ExperimentSchedule 关联 ExperimentProject 和 LabRoom，表示某项目安排在哪个机房、什么时间；Admin 管理 User、ExperimentProject、NewsAnnouncement；Student 查询 ExperimentProject 和 ExperimentSchedule。多重性示例：一个教师可提交多个项目，一个项目通常属于一个教师；一个机房可对应多个安排，一个安排对应一个机房。</p>
+          </div>
+          <div class="rubric"><span>提醒</span><span>类图可以有合理差异，但必须解释关系和多重性。题目明确要求“必要属性和方法、类间关系和数量关系”。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 5：操作合约后置条件</h3>
+        <p><strong>题目：</strong>为 arrangeLab(projectId, labId, time) 写系统操作合约后置条件。题意：系统为某课程实验项目安排实验机房和时间。</p>
+        <textarea data-key="se3-q5" placeholder="按三类变化写：创建对象、属性变化、关联形成。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>后置条件可写：创建了一个新的 ExperimentSchedule 对象；该对象的 projectId、labId、time、status 等属性被设置；该安排对象与对应 ExperimentProject 形成关联；该安排对象与对应 LabRoom 形成关联；若系统需要结果通知，可生成或更新安排结果记录。</p>
+          </div>
+          <div class="rubric"><span>模板</span><span>操作合约后置条件不是“先点击按钮再保存”。它写的是操作完成后系统对象世界发生了什么变化。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 6：include / extend 判断</h3>
+        <p><strong>题目：</strong>“用户提交安排前必须登录；查询安排后可以选择打印报表。”分别用 include 还是 extend？箭头指向哪里？</p>
+        <textarea data-key="se3-q6" placeholder="先写：必须 -> include；可选后续 -> extend。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>提交安排 include 登录，因为登录是提交安排前必须执行的公共步骤，箭头指向“登录”。打印报表 extend 查询安排，因为打印是查询后的可选扩展行为，箭头从“打印报表”指向“查询安排”。</p>
+          </div>
+          <div class="rubric"><span>方向</span><span>include 指向被包含的公共用例；extend 指向被扩展的基础用例。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 7：等价类测试表</h3>
+        <p><strong>题目：</strong>用户名要求 8-12 位，且只能由英文字母和数字组成。请列有效/无效等价类和至少 4 个测试用例。</p>
+        <textarea data-key="se3-q7" placeholder="先拆两个输入条件：长度、组成。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>有效等价类：长度 8-12 位；由英文字母和数字组成。无效等价类：长度小于 8；长度大于 12；只含非法字符或包含非法字符；空输入。测试用例示例：Abc12345 有效；Abc1234 无效，长度不足；Abc1234567890 无效，长度超出；Abc123$% 无效，含非法字符。</p>
+          </div>
+          <div class="rubric"><span>写法</span><span>考试最好写成表：输入条件、有效类、编号、无效类、编号、测试用例、预期结果、覆盖编号。</span></div>
+        </details>
+      </article>
+
+      <article class="drill">
+        <h3>题卡 8：白盒覆盖辨析</h3>
+        <p><strong>题目：</strong>判定覆盖、条件覆盖、条件组合覆盖有什么区别？如果一个 if 条件是 A && B，三者分别关注什么？</p>
+        <textarea data-key="se3-q8" placeholder="先写：判定看整体真假；条件看每个小条件真假；条件组合看组合。"></textarea>
+        <details>
+          <summary>查看参考答案</summary>
+          <div class="answer-block">
+            <p>判定覆盖关注整个判定表达式的结果真假都至少出现一次。条件覆盖关注每个基本条件 A、B 都至少取到真和假。条件组合覆盖要求 A、B 的所有真假组合都至少出现一次，如 TT、TF、FT、FF。</p>
+          </div>
+          <div class="rubric"><span>坑</span><span>条件覆盖不一定满足判定覆盖，判定覆盖也不一定满足条件覆盖；条件组合覆盖最强但用例数更多。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>7. 过关闸门：软工 Day3 学到这里才算能开卷</h2>
+      <table>
+        <thead><tr><th>等级</th><th>表现</th><th>下一步</th></tr></thead>
+        <tbody>
+          <tr><td>C</td><td>知道图名，但题干一长就不知道画什么。</td><td>重看“图题分流”，做题卡 1-3。</td></tr>
+          <tr><td>B</td><td>能判断图类型，能列元素，但图旁说明和关系细节还不稳。</td><td>做题卡 4-6，补多重性、include/extend、操作合约。</td></tr>
+          <tr><td>A</td><td>能在 2020 风格题干中画出可交卷骨架，并能写测试题模板。</td><td>进入软工考前清单：开卷索引页码、常见图模板、测试表格模板。</td></tr>
+        </tbody>
+      </table>
+      <textarea data-key="se3-summary" placeholder="闭眼写：1. 五类图各回答什么问题；2. 你最容易画错的箭头/关系；3. 软工开卷考试你要先翻哪几类资料。"></textarea>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day1_se_diagram_zero.html">回软工 Day1</a> · <a href="./day2_se_2020_diagram_workshop.html">回软工 Day2</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-se-day3-openbook-diagram-index";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-key]").forEach(area => {
+      const id = area.dataset.key;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

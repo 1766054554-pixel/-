@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数据库 Day4 全卷闭环：SQL 关系代数 范式事务 ER</title>
+  <style>
+    :root {
+      --bg: #f4f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #d9e2e7;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf4f6 0, rgba(244,247,248,0) 310px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.72;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .drill, .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .drill { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .toc, .strip { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .formula, pre {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.58;
+      margin: 10px 0;
+    }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 760; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    button {
+      border: 1px solid #b8d5e6;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      padding: 7px 11px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    button:hover { background: #eef7fc; }
+    .timer {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    .clock {
+      min-width: 72px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 10px;
+      background: #fbfdfe;
+      color: var(--red);
+      text-align: center;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .rubric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .rubric span:first-child {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #eef7fc;
+      color: var(--blue);
+      font-weight: 800;
+      text-align: center;
+      padding: 8px;
+    }
+    .rubric span:last-child {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px;
+    }
+    .answer-block { border-left: 4px solid var(--green); padding-left: 12px; margin-top: 10px; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .flow div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px;
+      text-align: center;
+      font-weight: 760;
+      color: var(--blue);
+    }
+    @media (max-width: 900px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .flow, .rubric { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>数据库 Day4 全卷闭环：SQL 关系代数 范式事务 ER</h1>
+      <p class="muted">这页解决最后一个问题：不是每块单独会，而是卷子里题型一混，你还能迅速判断该用哪套工具。它适合在 Day1 SQL、Day2 连接嵌套、Day3 范式事务 ER 之后使用。</p>
+      <div class="strip">
+        <span class="pill hot">数据管理技术全卷</span>
+        <span class="pill good">SQL + 关系代数</span>
+        <span class="pill warn">范式 / 事务 / 恢复 / ER</span>
+        <span class="pill purple">混合限时训练</span>
+      </div>
+      <div class="toc">
+        <a href="#route">0. 使用路线</a>
+        <a href="#map">1. 全卷题型地图</a>
+        <a href="#sql">2. SQL 速记</a>
+        <a href="#ra">3. 关系代数速记</a>
+        <a href="#big">4. 后半大题速记</a>
+        <a href="#mixed">5. 混合题卡</a>
+        <a href="#gate">6. 考前闸门</a>
+      </div>
+    </section>
+
+    <section class="card" id="route">
+      <h2>0. 使用路线：这页不是第一口</h2>
+      <div class="grid three">
+        <div class="box">
+          <strong>SQL 或关系代数还没站稳</strong>
+          回到 <a href="./day1_database_sql.html">Day1 SQL + 关系代数</a> 和 <a href="./day2_database_sql_join_nested.html">Day2 连接嵌套</a>。先把 FROM/WHERE/GROUP/HAVING 以及 σ/Π/×/⋈/−/÷ 的画面建立起来。
+        </div>
+        <div class="box">
+          <strong>范式事务还虚</strong>
+          回到 <a href="./day3_database_fd_tx_er.html">Day3 深学讲义</a>。闭包、BCNF、2PL、Undo/Redo 必须先理解。
+        </div>
+        <div class="box">
+          <strong>已经学过一遍</strong>
+          用本页做混合训练。目标是看到中文题干后，10 秒内分流，5-10 分钟内写出得分骨架。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>今天只追一个能力：</strong>把题干翻译成动作。比如“所有”翻译成除法或 COUNT(DISTINCT)；“R 和 F”翻译成闭包；“r/w 调度”翻译成冲突图。
+      </div>
+    </section>
+
+    <section class="card" id="map">
+      <h2>1. 全卷题型地图：先分流，再动笔</h2>
+      <table>
+        <thead><tr><th>题干信号</th><th>所属板块</th><th>第一动作</th><th>最终交付</th></tr></thead>
+        <tbody>
+          <tr><td>查询姓名、工资、部门；SELECT</td><td>SQL</td><td>先写 FROM/JOIN 来源表。</td><td>完整 SQL。</td></tr>
+          <tr><td>用关系代数表示；符号查询</td><td>关系代数</td><td>先看输出列，最外层多半是投影。</td><td>σ、Π、×、⋈、−、÷ 组合式。</td></tr>
+          <tr><td>所有、全部、每一个</td><td>SQL 或关系代数</td><td>SQL 用计数或双重 NOT EXISTS；关系代数用除法。</td><td>“全称”查询表达式。</td></tr>
+          <tr><td>最高、最大、每组最高</td><td>SQL</td><td>先聚合出 max，再回表匹配。</td><td>子查询/CTE + JOIN。</td></tr>
+          <tr><td>R(A,B,C), F={...}</td><td>范式</td><td>求闭包和候选键。</td><td>候选键、最高范式、分解。</td></tr>
+          <tr><td>r1(A), w2(A), lock/unlock</td><td>事务并发</td><td>找冲突边或第一次 unlock。</td><td>可串行化/2PL 判断。</td></tr>
+          <tr><td>crash, log, commit</td><td>恢复</td><td>按提交状态分 Undo/Redo。</td><td>恢复集合与数据值。</td></tr>
+          <tr><td>业务系统描述</td><td>ER 设计</td><td>圈实体、属性、联系、基数。</td><td>ER 图或关系模式。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="sql">
+      <h2>2. SQL 速记：按数据库真正执行顺序想</h2>
+      <div class="flow">
+        <div>FROM</div>
+        <div>WHERE</div>
+        <div>GROUP BY</div>
+        <div>HAVING</div>
+        <div>SELECT</div>
+        <div>ORDER BY</div>
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>JOIN</strong>
+          题目跨表就找桥：学生-选课-课程，员工-部门，订单-商品。桥通常是主键/外键。
+        </div>
+        <div class="box">
+          <strong>LEFT JOIN</strong>
+          出现“没有”“即使没有也显示”“0 个也要统计”，优先想到左连接和 COALESCE。
+        </div>
+        <div class="box">
+          <strong>GROUP BY/HAVING</strong>
+          “每个部门”“平均工资”“人数超过 2”先分组。WHERE 筛单行，HAVING 筛分组。
+        </div>
+        <div class="box">
+          <strong>全部/所有</strong>
+          能计数就写 COUNT(DISTINCT x) = (SELECT COUNT(*) FROM 全集表)。不能计数时用双重 NOT EXISTS。
+        </div>
+      </div>
+      <pre>每组最高模板：
+WITH mx AS (
+  SELECT dept_id, MAX(salary) AS max_salary
+  FROM employee
+  GROUP BY dept_id
+)
+SELECT e.*
+FROM employee e
+JOIN mx ON e.dept_id = mx.dept_id AND e.salary = mx.max_salary;</pre>
+    </section>
+
+    <section class="card" id="ra">
+      <h2>3. 关系代数速记：中文查询翻译成符号</h2>
+      <table>
+        <thead><tr><th>符号</th><th>人话</th><th>题干信号</th><th>写法提醒</th></tr></thead>
+        <tbody>
+          <tr><td>σ</td><td>筛行</td><td>工资大于、姓名为、课程名是</td><td>条件写在下标。</td></tr>
+          <tr><td>Π</td><td>取列</td><td>查询姓名、输出学号</td><td>通常放最外层。</td></tr>
+          <tr><td>×</td><td>笛卡尔积</td><td>FROM R,S 的原始两两组合</td><td>常和 σ 搭配表达连接条件。</td></tr>
+          <tr><td>⋈</td><td>连接表</td><td>跨表查询</td><td>自然连接看同名属性；必要时先更名。</td></tr>
+          <tr><td>∪</td><td>并集</td><td>合并两个同类结果</td><td>两边属性结构要能对应。</td></tr>
+          <tr><td>−</td><td>差集</td><td>没有、不包含、不是</td><td>先写全集，再减去不合格集合。</td></tr>
+          <tr><td>ρ</td><td>更名</td><td>自己和自己比、两两比较</td><td>自连接/找两家以上时常用。</td></tr>
+          <tr><td>÷</td><td>除法</td><td>所有、全部、每一个</td><td>被除数保留“对象-全集项”二元关系。</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">常用结构：
+Π_输出列 ( σ_条件 ( 表1 ⋈ 表2 ⋈ 表3 ) )
+
+SQL 互转骨架：
+SELECT A,B,D FROM R,S WHERE R.C=S.C
+=> Π_A,B,D ( σ_R.C=S.C ( R × S ) )
+
+所有课程：
+Π_学号,课程号(选课) ÷ Π_课程号(课程)
+
+没有选课：
+Π_学号(学生) − Π_学号(选课)</div>
+    </section>
+
+    <section class="card" id="big">
+      <h2>4. 后半大题速记：Day3 内容压缩版</h2>
+      <div class="grid">
+        <div class="box"><strong>候选键</strong>找右部没出现的属性 -> 求闭包 -> 能推出全部是超码 -> 再查最小性。</div>
+        <div class="box"><strong>BCNF</strong>每条非平凡 X->Y，X 必须是超码；违反就按 X∪Y 和 R-(Y-X) 分解。</div>
+        <div class="box"><strong>冲突图</strong>不同事务、同一数据项、至少一个写；先发生的事务指向后发生的事务。</div>
+        <div class="box"><strong>2PL</strong>找第一次 unlock；之后若还有 lock 就违反。严格 2PL 看写锁是否持有到 commit/abort。</div>
+        <div class="box"><strong>恢复</strong>未提交 Undo，用旧值；已提交 Redo 或确认，用新值。</div>
+        <div class="box"><strong>ER</strong>实体、属性、联系、基数；M:N 或带属性的联系要转关系表。</div>
+      </div>
+    </section>
+
+    <section class="card" id="mixed">
+      <h2>5. 混合题卡：模拟卷面切换</h2>
+      <p class="muted">每题先写“题型 + 第一动作”，再写答案。你不是和难题硬碰硬，你是在训练识别速度。</p>
+
+      <article class="drill" data-minutes="6">
+        <h3>题 1：SQL 分组筛选</h3>
+        <div class="timer"><button type="button" class="start">开始 6 分钟</button><span class="clock">06:00</span></div>
+        <p>employee(emp_id, name, dept_id, salary)，department(dept_id, dept_name)。查询平均工资超过 8000 的部门名和平均工资。</p>
+        <textarea data-note="full-q1" placeholder="先写：来源表？连接条件？分组字段？HAVING 条件？"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>题型是 SQL 分组聚合。FROM employee JOIN department，连接条件是 dept_id。</span></div>
+          <div class="rubric"><span>2 分</span><span>按部门分组，SELECT 里普通列 dept_name 应放入 GROUP BY 或使用 dept_id, dept_name 一起分组。</span></div>
+          <div class="rubric"><span>2 分</span><span>平均工资超过 8000 是分组后的条件，必须写 HAVING AVG(salary) > 8000。</span></div>
+          <pre>SELECT d.dept_name, AVG(e.salary) AS avg_salary
+FROM employee e
+JOIN department d ON e.dept_id = d.dept_id
+GROUP BY d.dept_id, d.dept_name
+HAVING AVG(e.salary) > 8000;</pre>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 2：SQL 全部课程</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>student(sid, name)，course(cid, cname)，sc(sid, cid)。查询选修了所有课程的学生姓名。</p>
+        <textarea data-note="full-q2" placeholder="看到“所有课程”，你准备用计数法还是双重 NOT EXISTS？先写骨架。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>题眼是“所有”，SQL 可以用 COUNT(DISTINCT sc.cid) 与课程总数比较。</span></div>
+          <div class="rubric"><span>2 分</span><span>按学生分组，HAVING 中比较该学生已选课程数和 course 表课程总数。</span></div>
+          <div class="rubric"><span>2 分</span><span>用 DISTINCT 防止重复选课记录干扰计数。</span></div>
+          <pre>SELECT s.name
+FROM student s
+JOIN sc ON s.sid = sc.sid
+GROUP BY s.sid, s.name
+HAVING COUNT(DISTINCT sc.cid) = (SELECT COUNT(*) FROM course);</pre>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="6">
+        <h3>题 3：关系代数跨表查询</h3>
+        <div class="timer"><button type="button" class="start">开始 6 分钟</button><span class="clock">06:00</span></div>
+        <p>用关系代数表示：查询选修了“数据库”课程的学生姓名。关系：Student(sid, name)，SC(sid, cid)，Course(cid, cname)。</p>
+        <textarea data-note="full-q3" placeholder="先写最外层投影，再写连接，再写课程名选择。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>输出是学生姓名，最外层是 Π_name。</span></div>
+          <div class="rubric"><span>2 分</span><span>需要 Student、SC、Course 三表连接。</span></div>
+          <div class="rubric"><span>2 分</span><span>课程名条件用 σ_cname='数据库'。</span></div>
+          <div class="formula">Π_name ( σ_cname='数据库' ( Student ⋈ SC ⋈ Course ) )</div>
+          <p class="muted">如果属性重名或自然连接条件不清，考试可写带条件连接或先更名，表达清楚即可。</p>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="6">
+        <h3>题 4：关系代数“没有”</h3>
+        <div class="timer"><button type="button" class="start">开始 6 分钟</button><span class="clock">06:00</span></div>
+        <p>用关系代数表示：查询没有选修任何课程的学生学号。</p>
+        <textarea data-note="full-q4" placeholder="看到“没有”，先写全集减去已选课集合。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>全集是所有学生学号 Π_sid(Student)。</span></div>
+          <div class="rubric"><span>2 分</span><span>已选课学生是 Π_sid(SC)。</span></div>
+          <div class="rubric"><span>2 分</span><span>没有选课 = 全体学生 - 已选课学生。</span></div>
+          <div class="formula">Π_sid(Student) − Π_sid(SC)</div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 5：每组最高回表</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>employee(emp_id, name, dept_id, salary)。查询每个部门工资最高的员工姓名、部门号和工资，若并列最高都输出。</p>
+        <textarea data-note="full-q5" placeholder="先聚合 max，再回 employee 表匹配 dept_id 和 salary。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>题眼是“每个部门最高”，不能 SELECT name, MAX(salary) 硬凑。</span></div>
+          <div class="rubric"><span>3 分</span><span>先按 dept_id 求 MAX(salary)，再回原表匹配部门号和工资。</span></div>
+          <div class="rubric"><span>2 分</span><span>用 JOIN 回表可保留并列最高员工。</span></div>
+          <pre>WITH mx AS (
+  SELECT dept_id, MAX(salary) AS max_salary
+  FROM employee
+  GROUP BY dept_id
+)
+SELECT e.name, e.dept_id, e.salary
+FROM employee e
+JOIN mx ON e.dept_id = mx.dept_id AND e.salary = mx.max_salary;</pre>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 6：候选键与 BCNF</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>设 R(A,B,C,D)，F={A->B, B->C, C->D}。求候选键，并判断是否满足 BCNF。</p>
+        <textarea data-note="full-q6" placeholder="先求 A+，再逐条看左边是不是超码。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>3 分</span><span>A+：A->B，B->C，C->D，所以 A+=ABCD，A 是候选键。</span></div>
+          <div class="rubric"><span>3 分</span><span>B+ = BCD，不含 A，所以 B 不是超码；C+ = CD，不含 A/B，所以 C 不是超码。</span></div>
+          <div class="rubric"><span>2 分</span><span>B->C、C->D 左边不是超码，违反 BCNF，因此 R 不满足 BCNF。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="7">
+        <h3>题 7：事务调度与恢复</h3>
+        <div class="timer"><button type="button" class="start">开始 7 分钟</button><span class="clock">07:00</span></div>
+        <p>调度：r1(A), w2(A), w1(B), r2(B)。写冲突边并判断是否冲突可串行化。</p>
+        <textarea data-note="full-q7" placeholder="按 A、B 分别找冲突边。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>3 分</span><span>A 上 r1(A) 与 w2(A) 冲突，得到 T1->T2。</span></div>
+          <div class="rubric"><span>3 分</span><span>B 上 w1(B) 与 r2(B) 冲突，得到 T1->T2。</span></div>
+          <div class="rubric"><span>2 分</span><span>优先图只有 T1->T2，无环，所以冲突可串行化，等价串行顺序为 T1, T2。</span></div>
+        </details>
+      </article>
+
+      <article class="drill" data-minutes="8">
+        <h3>题 8：ER 图转关系模式</h3>
+        <div class="timer"><button type="button" class="start">开始 8 分钟</button><span class="clock">08:00</span></div>
+        <p>医院系统：医生可接诊多个患者，患者可被多个医生接诊；每次接诊有时间、诊断结果。请给出实体、联系、基数和关系模式。</p>
+        <textarea data-note="full-q8" placeholder="先判断医生-患者是不是 M:N，接诊是否有自己的属性。"></textarea>
+        <details>
+          <summary>评分点和解析</summary>
+          <div class="rubric"><span>2 分</span><span>实体：医生、患者。接诊因为有时间、诊断结果，应该实体化为接诊记录。</span></div>
+          <div class="rubric"><span>2 分</span><span>医生与患者通过接诊记录形成 M:N；一条接诊记录对应一个医生和一个患者。</span></div>
+          <div class="rubric"><span>3 分</span><span>关系模式：医生(医生号, 姓名, ...)，患者(患者号, 姓名, ...)，接诊(接诊号, 医生号, 患者号, 时间, 诊断结果)。若无接诊号，可用 医生号+患者号+时间 作为组合主键。</span></div>
+        </details>
+      </article>
+    </section>
+
+    <section class="card" id="gate">
+      <h2>6. 考前闸门</h2>
+      <div class="grid">
+        <div class="box">
+          <strong>B 级</strong>
+          能做 8 张题卡中的 5 张；能说明每题属于哪个板块；能写出 SQL/关系代数/BCNF/事务/ER 的第一步。
+        </div>
+        <div class="box">
+          <strong>A 级</strong>
+          8 张题卡能限时写出骨架，展开答案后只漏小细节；能把错题复述成“题眼 -> 模板 -> 下次动作”。
+        </div>
+      </div>
+      <textarea data-note="gate" placeholder="写下你现在最容易卡住的 3 个题型，以及下次看到它们时的第一动作。"></textarea>
+      <p><a href="./index.html">回期末陪跑学习舱</a> · <a href="./day3_database_exam_closure.html">回 Day3 范式事务 ER 闭环</a> · <a href="./day5_database_exam_sprint.html">接 Day5 考前速查小测</a> · <a href="./study_update_roadmap.html">回更新路线</a></p>
+    </section>
+  </main>
+
+  <script>
+    const KEY = "buaa-finals-db-day4-full-closure";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-note]").forEach(area => {
+      const id = area.dataset.note;
+      area.value = saved[id] || "";
+      area.addEventListener("input", () => {
+        saved[id] = area.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+
+    const timers = new Map();
+    document.querySelectorAll(".drill").forEach((card, index) => {
+      const button = card.querySelector(".start");
+      const clock = card.querySelector(".clock");
+      const minutes = Number(card.dataset.minutes || "6");
+      let total = minutes * 60;
+      const render = () => {
+        const m = String(Math.floor(total / 60)).padStart(2, "0");
+        const s = String(total % 60).padStart(2, "0");
+        clock.textContent = `${m}:${s}`;
+      };
+      button.addEventListener("click", () => {
+        if (timers.has(index)) {
+          clearInterval(timers.get(index));
+          timers.delete(index);
+          total = minutes * 60;
+          render();
+          button.textContent = `开始 ${minutes} 分钟`;
+          return;
+        }
+        button.textContent = "重置计时";
+        render();
+        const id = setInterval(() => {
+          total -= 1;
+          if (total <= 0) {
+            total = 0;
+            render();
+            clearInterval(id);
+            timers.delete(index);
+            button.textContent = `重新开始 ${minutes} 分钟`;
+            clock.textContent = "到点";
+            return;
+          }
+          render();
+        }, 1000);
+        timers.set(index, id);
+      });
+      render();
+    });
+  </script>
+</body>
+</html>

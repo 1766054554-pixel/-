@@ -1,0 +1,12 @@
+.DS_Store
+
+# Local/private ingestion traces. Keep these locally for audit, but do not publish
+# raw classroom/exam extraction logs or machine-generated scratch files by default.
+discrete_hiji_ingest/资料使用记录.md
+discrete_hiji_ingest/raw/
+discrete_hiji_ingest/build_interactive.js
+discrete_hiji_ingest/build_summary.json
+
+# Temporary local exports
+tmp/
+*.log

@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>离散希冀真题精练闸门：题型、第一步与证明骨架</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --ink: #172331;
+      --muted: #647386;
+      --line: #d8e3ec;
+      --blue: #1f6391;
+      --green: #15704f;
+      --orange: #ad5b15;
+      --red: #a73737;
+      --purple: #6548a7;
+      --soft-blue: #eef7ff;
+      --soft-green: #f1faf5;
+      --soft-orange: #fff8e8;
+      --soft-red: #fff4f2;
+      --shadow: 0 14px 32px rgba(23, 35, 49, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #eaf4fb 0, #f5f7fa 340px, #ffffff 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.8;
+      letter-spacing: 0;
+    }
+    .wrap { width: min(1160px, calc(100% - 28px)); margin: 0 auto; padding: 28px 0 72px; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.98);
+      box-shadow: var(--shadow);
+    }
+    header { padding: 30px; }
+    section { padding: 24px; margin-top: 18px; }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 25px; }
+    h3 { font-size: 18px; margin-top: 14px; }
+    p { margin: 8px 0 0; }
+    a { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .key {
+      color: var(--red);
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #ffe2d8 58%);
+      padding: 0 2px;
+    }
+    .mark {
+      color: var(--blue);
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #dff0ff 58%);
+      padding: 0 2px;
+    }
+    nav, .pillrow, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 14px;
+    }
+    nav a, .pill, .btn {
+      border: 1px solid #b9d6e8;
+      border-radius: 6px;
+      background: #fbfdff;
+      color: var(--blue);
+      padding: 6px 11px;
+      font-size: 14px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+    .pill { border-radius: 999px; }
+    .btn { cursor: pointer; font-family: inherit; font-size: 15px; }
+    .primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .good { color: var(--green); border-color: #9fceb6; background: var(--soft-green); }
+    .warn { color: var(--orange); border-color: #e0be84; background: var(--soft-orange); }
+    .hot { color: var(--red); border-color: #dfa59e; background: var(--soft-red); }
+    .purple { color: var(--purple); border-color: #c4b7e2; background: #f7f3ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      margin: 12px 0;
+    }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .note.warn { border-left-color: var(--orange); background: var(--soft-orange); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; text-align: left; }
+    th { background: var(--soft-blue); color: var(--blue); }
+    .table-scroll { overflow-x: auto; }
+    .math {
+      font-family: "Times New Roman", "STIX Two Text", "Cambria Math", "Songti SC", serif;
+      font-size: 17px;
+      line-height: 1.7;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      border: 1px solid #dce7ef;
+      border-left: 4px solid #8cb8d1;
+      border-radius: 8px;
+      background: #f8fbfd;
+      padding: 8px 10px;
+      margin: 8px 0;
+    }
+    .task {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 15px;
+      margin-top: 12px;
+      box-shadow: 0 8px 20px rgba(23,35,49,.04);
+    }
+    .task h3 { margin-top: 0; color: var(--blue); }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 900; }
+    textarea {
+      width: 100%;
+      min-height: 86px;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      margin-top: 8px;
+    }
+    .quiz-list { display: grid; gap: 12px; margin-top: 12px; }
+    .quiz-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdff;
+      padding: 14px;
+    }
+    .quiz-card.done { border-color: #9fceb6; background: var(--soft-green); }
+    .quiz-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .tag {
+      display: inline-block;
+      border: 1px solid #c8d9e8;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--blue);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .option:hover { border-color: var(--blue); background: var(--soft-blue); }
+    .option.correct { border-color: #64ad82; background: var(--soft-green); }
+    .option.wrong { border-color: #d38c84; background: var(--soft-red); }
+    .multi-option {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 8px;
+      align-items: start;
+      border: 1px solid #cbd8e4;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+    .multi-option input { width: 18px; height: 18px; margin-top: 5px; }
+    .explain {
+      display: none;
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    .explain.show { display: block; }
+    .trap-review {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .trap-review div {
+      border: 1px solid #dce7ef;
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px 10px;
+    }
+    .trap-review .bad { border-left: 4px solid var(--red); background: #fff8f6; }
+    .trap-review .good { border-left: 4px solid var(--green); background: #f5fbf7; }
+    .trap-review .miss { border-left: 4px solid var(--orange); background: #fffaf0; }
+    .progress {
+      border: 1px solid #cfe0ee;
+      border-radius: 8px;
+      background: #f7fbff;
+      padding: 10px 12px;
+      font-weight: 850;
+      color: var(--blue);
+    }
+    @media (max-width: 860px) {
+      .grid, .grid.three, .options { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      header, section { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>离散希冀真题精练闸门</h1>
+      <p class="muted">这页不是新的长讲义，而是刷近三年希冀整卷之前的 <span class="key">第一步训练</span>。目标很朴素：看到题，能先分盒子、写起手、知道下一步用哪个套路。</p>
+      <div class="pillrow">
+        <span class="pill hot">2024 主战</span>
+        <span class="pill good">2025 查漏</span>
+        <span class="pill warn">2023 补表达</span>
+        <span class="pill purple">证明题先写第一句</span>
+      </div>
+      <nav>
+        <a href="#use">怎么用</a>
+        <a href="#boxes">八个题型盒子</a>
+        <a href="#2024">2024主战</a>
+        <a href="#quiz">18题闸门</a>
+        <a href="#proof">证明第一句</a>
+        <a href="./discrete_hiji_pastpaper_hub.html">回三年真题首页</a>
+      </nav>
+    </header>
+
+    <section id="use">
+      <h2>怎么用：先闸门，再整卷</h2>
+      <div class="grid three">
+        <div class="card">
+          <strong>第1轮：只做识别</strong>
+          <p>每题先回答：这是定义题、真值表、辖域、翻译、前束、语义证明，还是公理证明？别急着完整做。</p>
+        </div>
+        <div class="card">
+          <strong>第2轮：写第一步</strong>
+          <p>证明题至少写第一句。比如语义推论先写“反设存在解释 I 和指派 s，使前提全真、结论假”。</p>
+        </div>
+        <div class="card">
+          <strong>第3轮：进整卷</strong>
+          <p>过完本页再进 <a href="./discrete_2024_hiji_interactive.html">2024交互卷</a>、<a href="./discrete_2025_hiji_interactive.html">2025交互卷</a>、<a href="./discrete_2023_hiji_interactive.html">2023交互卷</a>。</p>
+        </div>
+      </div>
+      <div class="note warn">
+        <strong>准确性说明：</strong>2024 和 2025 的大部分题干/答案来自希冀页面文本并做了可读整理；2024 有图片题，遇到图片型长题时仍建议点开 2024 整卷的“图片核对”。2023 部分客观题原网页公式缺失，本页只使用可靠的主观题信号，不把缺公式的题当主练。
+      </div>
+    </section>
+
+    <section id="boxes">
+      <h2>八个题型盒子：先分盒子，题就不吓人</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>盒子</th>
+              <th>题眼</th>
+              <th>第一步</th>
+              <th>常见坑</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>命题/联结词</td>
+              <td>命题、完全集、对偶、复杂度</td>
+              <td>能判真假的才是命题；联结词题先落到真值表。</td>
+              <td>把祈使句、疑问句、悖论当命题；复杂度不数最外层结构。</td>
+            </tr>
+            <tr>
+              <td>替换式</td>
+              <td>F[A/B]、完整子公式</td>
+              <td>先圈 <span class="key">完整出现</span> 的子公式，再替换。</td>
+              <td>看到长得像就替，导致替了不该替的位置。</td>
+            </tr>
+            <tr>
+              <td>辖域/自由变元</td>
+              <td>∃x、∀y、自由出现</td>
+              <td>给每个量词画括号；量词只管它的辖域。</td>
+              <td>把变元出现位置当成量词辖域。</td>
+            </tr>
+            <tr>
+              <td>自然语言翻译</td>
+              <td>任意、存在唯一、若则、最大/不动点</td>
+              <td>先拆前件/后件；唯一性写“存在 x 且任意 y 若也满足则 y=x”。</td>
+              <td>只写存在，不写唯一；把函数值相等和点相等混掉。</td>
+            </tr>
+            <tr>
+              <td>主范式</td>
+              <td>真值列、主析取、主合取</td>
+              <td>真行写小项，假行写大项。</td>
+              <td>主合取范式里 0/1 对应文字写反。</td>
+            </tr>
+            <tr>
+              <td>等值演算</td>
+              <td>证明等价于 1、化简</td>
+              <td>消去 → / ↔，否定内移，凑 A∨¬A 或 A∧¬A。</td>
+              <td>跳步太大，阅卷看不出你用了什么等值律。</td>
+            </tr>
+            <tr>
+              <td>前束/Skolem</td>
+              <td>前束范式、母式合取范式、Skolem函数</td>
+              <td>变量改名 -> 去箭头 -> 否定内移 -> 量词前移 -> 看存在量词依赖哪些全称量词。</td>
+              <td>忘记变量改名；Skolem 函数依赖漏写。</td>
+            </tr>
+            <tr>
+              <td>语义/公理证明</td>
+              <td>⊨、⊢、永真、反模型、Hilbert</td>
+              <td>⊨ 先写解释/指派；⊢ 先看允许定理、公理实例、MP、UG。</td>
+              <td>把语义解释写成代数变形；公理证明只写“显然”。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="2024">
+      <h2>2024 主战：10 个真题动作</h2>
+      <p>2024 参考价值最高，但不要一口吞整卷。先把下面 10 个动作练熟，再回整卷会顺很多。</p>
+
+      <article class="task">
+        <h3>1. 公理系统题：可靠性/完全性别反</h3>
+        <p><span class="mark">题眼：</span>Γ⊨Q、Γ⊢Q、可靠性、完全性、不协调。</p>
+        <p><span class="key">第一步：</span>可靠性是 <span class="math">Γ ⊢ Q ⇒ Γ ⊨ Q</span>，完全性是 <span class="math">Γ ⊨ Q ⇒ Γ ⊢ Q</span>。</p>
+        <details>
+          <summary>为什么 2024 第1题 D 错？</summary>
+          <p>不可靠意味着系统可能推出语义上不真的公式。单纯扩充公理集合只会让可证明公式更多，不能自动修复“不该证的也能证”这个问题。这个题是典型概念边界题。</p>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>2. 推演序列题：每一步只看三种来源</h3>
+        <p><span class="mark">题眼：</span>判断公式序列是不是推演。</p>
+        <p><span class="key">第一步：</span>每一步必须是前提、公理，或由前面公式按规则推出；“是不是永真式”本身不是判据。</p>
+      </article>
+
+      <article class="task">
+        <h3>3. 辖域题：量词后面到底管多远</h3>
+        <div class="math">∃x∀z∃w(R(w) → ∀yQ(y) ∨ P(x,z))</div>
+        <p><span class="key">第一步：</span>给量词补括号。<span class="math">∀y</span> 的辖域是 <span class="math">Q(y)</span>；最外层 <span class="math">∃x</span> 的辖域是后面整个公式。</p>
+        <details>
+          <summary>我该怎么写答案？</summary>
+          <p>y 的辖域：<span class="math">Q(y)</span>。x 的辖域：<span class="math">∀z∃w(R(w) → ∀yQ(y) ∨ P(x,z))</span>。考试如果让你填“自由出现”，先确认该变元有没有被某个量词管住。</p>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>4. 自然语言翻译：严格单调递减 + 唯一最大值点</h3>
+        <p><span class="mark">自然语言：</span>若函数 f(x) 严格单调递减，则 f(x) 有唯一最大值点。</p>
+        <p><span class="key">第一步：</span>拆成前件“严格单调递减”和后件“存在唯一最大值点”。唯一性一定要写出来。</p>
+        <details>
+          <summary>展开标准骨架</summary>
+          <div class="math">∀x∀y(P(x,y) → P(f(y),f(x))) → ∃x∀y(P(f(y),f(x)) ∨ E(x,y))</div>
+          <p>其中 <span class="math">x∈N,y∈N</span>；<span class="math">P(x,y)</span> 表示 x&lt;y，<span class="math">E(x,y)</span> 表示 x=y。前件表示 x&lt;y 时 f(y)&lt;f(x)。后件表示存在 <span class="math">x∈N</span>，使任意 <span class="math">y∈N</span> 的函数值都小于 f(x)，或者 y 就是 x。</p>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>5. 主范式题：真行小项，假行大项</h3>
+        <p><span class="mark">2024 真值列：</span>F1 = 1,0,0,1,0,1,0,0。</p>
+        <p><span class="key">第一步：</span>成真赋值是 000、011、101，所以主析取范式写三个小项。</p>
+        <details>
+          <summary>展开答案</summary>
+          <p>主析取范式：</p>
+          <div class="math">(¬p∧¬q∧¬r) ∨ (¬p∧q∧r) ∨ (p∧¬q∧r)</div>
+          <p>成假赋值是 001、010、100、110、111。主合取范式：</p>
+          <div class="math">(p∨q∨¬r) ∧ (p∨¬q∨r) ∧ (¬p∨q∨r) ∧ (¬p∨¬q∨r) ∧ (¬p∨¬q∨¬r)</div>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>6. 前束/Skolem：存在量词看左边全称</h3>
+        <p><span class="mark">2024 长题中间式：</span></p>
+        <div class="math">F3 = ∃z∀y∃x2∀x1( P(z) ∧ (Q(x1,y)∨¬R(z,y)) ∧ (¬Q(x2,y)∨R(z,y)) )</div>
+        <p><span class="key">第一步：</span><span class="math">∃z</span> 前面没有全称，所以变常元 a；<span class="math">∃x2</span> 前面有 <span class="math">∀y</span>，所以变函数 f(y)。</p>
+        <details>
+          <summary>展开 Skolem 后形式</summary>
+          <div class="math">∀y∀x( P(a) ∧ (Q(x,y)∨¬R(a,y)) ∧ (¬Q(f(y),y)∨R(a,y)) )</div>
+          <p>注意：Skolem 化不是等值变形，而是保持可满足性。考试如果问“Skolem 范式”，要把这个区别记住。</p>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>7. 语义反模型：让公式为假要反推失败条件</h3>
+        <p><span class="mark">题眼：</span>构造 <span class="math">S^I(x,y)</span>，使 <span class="math">∃x∃y∀w((A(x,y)∧S(x,y))∨¬S(x,w))</span> 为假。</p>
+        <p><span class="key">第一步：</span>存在式为假，意味着对所有 <span class="math">x∈D,y∈D</span>，都要找到某个 <span class="math">w∈D</span> 让括号内为假。</p>
+        <details>
+          <summary>展开构造思路</summary>
+          <p>让 <span class="math">A(x,y)∧S(x,y)</span> 永远不同时为真，同时保证对每个 <span class="math">x∈D</span>，总能找到 <span class="math">w∈D</span> 使 <span class="math">S(x,w)</span> 为真，这样 <span class="math">¬S(x,w)</span> 为假，两边都假，析取式为假。</p>
+          <p>这类题不要背表格，要背“失败条件反推”。</p>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>8. 语义推论：∃x∀y 能推出 ∀y∃x</h3>
+        <p><span class="mark">2025 同类题：</span><span class="math">∃x∀yQ(x,y) ⊨ ∀y∃xQ(x,y)</span></p>
+        <p><span class="key">第一步：</span>若前件真，存在一个固定 <span class="math">d∈D</span>，使任意 <span class="math">y∈D</span> 都有 Q(d,y)。于是对每个 <span class="math">y∈D</span>，都选同一个 <span class="math">d∈D</span> 作见证。</p>
+      </article>
+
+      <article class="task">
+        <h3>9. 反模型：不是永真，就造两元素论域</h3>
+        <p><span class="mark">2025 题：</span></p>
+        <div class="math">¬∃x(¬P(x)∧¬Q(x)) → ¬(∃x¬P(x)∧∃x¬Q(x))</div>
+        <p><span class="key">第一步：</span>先化成 <span class="math">∀x(P(x)∨Q(x)) → (∀xP(x)∨∀xQ(x))</span>，再找前件真、后件假的模型。</p>
+        <details>
+          <summary>展开反模型</summary>
+          <p>令论域 <span class="math">D={a,b}</span>，其中 <span class="math">a∈D, b∈D</span>。令 P(a)=真、Q(a)=假，P(b)=假、Q(b)=真。每个 <span class="math">x∈D</span> 都满足 P∨Q，但不是所有 <span class="math">x∈D</span> 都满足 P，也不是所有 <span class="math">x∈D</span> 都满足 Q，所以原式不永真。</p>
+        </details>
+      </article>
+
+      <article class="task">
+        <h3>10. 公理证明：先写可读骨架，再看形式链</h3>
+        <p><span class="mark">2024 题：</span></p>
+        <div class="math">⊢ ∀x∀y(Q(x)→R(y)) → (∀xQ(x)→∀yR(y))</div>
+        <p><span class="key">第一步：</span>假设 H 和 G，任取 <span class="math">y∈D</span>，目标推出 R(y)。任选 <span class="math">x∈D</span>，由 H 实例化出 Q(x)→R(y)，由 G 实例化出 Q(x)，MP 得 R(y)，再 UG 得 ∀yR(y)。</p>
+        <details>
+          <summary>卷面提醒</summary>
+          <p>如果题目要求 Hilbert 形式，不能只写“显然”。但你复习时先背这条骨架：全称实例化、MP、全称推广、演绎定理。形式链只是把这条骨架机械化。</p>
+        </details>
+      </article>
+    </section>
+
+    <section id="quiz">
+      <h2>18题闸门：判断题型和第一步</h2>
+      <p>这些题不是为了刷数量，而是为了训练“看到题就知道该干什么”。做错先看解析里的第一动作，再回 Day5/Day6/Day7。</p>
+      <div class="actions">
+        <button class="btn primary" id="resetQuiz">重置闸门题</button>
+        <span class="progress" id="quizProgress">已完成 0 / 18</span>
+      </div>
+      <div class="quiz-list" id="quizList"></div>
+    </section>
+
+    <section id="proof">
+      <h2>证明第一句训练：别空白，先落笔</h2>
+      <div class="grid">
+        <div class="card">
+          <strong>语义推论成立</strong>
+          <p>题目：证明 Γ ⊨ Q。</p>
+          <textarea placeholder="写第一句。"></textarea>
+          <details><summary>参考第一句</summary><p>反设存在解释 I 和指派 s，使 Γ 中所有公式在 I,s 下为真，而 Q 在 I,s 下为假。</p></details>
+        </div>
+        <div class="card">
+          <strong>语义推论不成立</strong>
+          <p>题目：证明 Γ ⊭ Q。</p>
+          <textarea placeholder="写第一句。"></textarea>
+          <details><summary>参考第一句</summary><p>构造一个解释 I 和指派 s，使 Γ 中所有前提为真，但 Q 为假。</p></details>
+        </div>
+        <div class="card">
+          <strong>全称结论</strong>
+          <p>题目：证明 ∀xP(x)。</p>
+          <textarea placeholder="写第一句。"></textarea>
+          <details><summary>参考第一句</summary><p>任取 a∈D，下面证明 P(a) 成立。由于 a 是任意的，所以可得 ∀xP(x)。</p></details>
+        </div>
+        <div class="card">
+          <strong>存在结论</strong>
+          <p>题目：证明 ∃xP(x)。</p>
+          <textarea placeholder="写第一句。"></textarea>
+          <details><summary>参考第一句</summary><p>构造一个见证 a∈D，并验证 P(a) 成立，因此 ∃xP(x) 成立。</p></details>
+        </div>
+        <div class="card">
+          <strong>不是永真式</strong>
+          <p>题目：判断某公式是否永真，并说明理由；实际答案是否。</p>
+          <textarea placeholder="写第一句。"></textarea>
+          <details><summary>参考第一句</summary><p>构造反模型：取论域 D=...，定义谓词解释为...，使前件为真而后件为假，因此该公式不是永真式。</p></details>
+        </div>
+        <div class="card">
+          <strong>公理证明</strong>
+          <p>题目：证明 ⊢ A。</p>
+          <textarea placeholder="写第一句。"></textarea>
+          <details><summary>参考第一句</summary><p>先确定可用的公理模式、已给定定理和推理规则；若目标是蕴含式 A→B，则临时假设 A，证明 B，再用演绎定理或题面给定蕴含定理收回假设。</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const quiz = [
+      {
+        type: "single",
+        tag: "公理系统",
+        q: "看到 Γ⊨Q 与 Γ⊢Q 同时出现，第一件事是什么？",
+        options: [
+          "先判断 ⊨ 是语义关系、⊢ 是证明关系，再决定用可靠性还是完全性",
+          "先把 Γ 和 Q 都列成真值表，若表格太长就只看变量个数和联结词",
+          "先把所有存在量词 Skolem 化，再看能不能得到一个反模型",
+          "先检查 Q 里出现几个变量，再用变量多少粗略决定证明方向"
+        ],
+        answer: [0],
+        exp: "这题不是让你立刻算，而是让你分清两个世界：⊨ 讲“所有解释下都保真”，⊢ 讲“能不能在形式系统里推出”。可靠性是从 ⊢ 到 ⊨，完全性是从 ⊨ 到 ⊢。"
+      },
+      {
+        type: "single",
+        tag: "推演",
+        q: "判断一个公式序列是否为推演，不能只依据哪一项？",
+        options: [
+          "某一步被标为前提，并且它确实属于题目给出的前提集",
+          "某一步是公理模式的实例，并能说明它套用了哪个公理",
+          "某一步由前面若干行按 MP、UG 等规则推出",
+          "某一步碰巧是永真式，所以不用说明它在序列中的来源"
+        ],
+        answer: [3],
+        exp: "推演序列每一行都要交代来源：前提、公理实例、或者由前面行按规则推出。永真式当然可能有用，但“它是永真式”不是推演序列中每一步的来源说明。"
+      },
+      {
+        type: "single",
+        tag: "辖域",
+        q: "∃x∀z∃w(R(w)->∀yQ(y)∨P(x,z)) 中，∀y 的辖域最稳妥写成？",
+        options: [
+          "紧跟量词后的完整公式 Q(y)，必要时先补括号确认",
+          "同一层析取号右边的 P(x,z)，因为它和 Q(y) 同在括号内",
+          "从 ∀z 到 ∃w 的整段前缀，因为它们出现在 ∀y 前面",
+          "从第一个量词到最后一个右括号的整个公式，因为外层都相关"
+        ],
+        answer: [0],
+        exp: "量词默认只管后面紧跟的公式。这里 ∀y 后面紧跟 Q(y)，所以辖域是 Q(y)。考场上先补括号，别让外层结构把你吓住。"
+      },
+      {
+        type: "single",
+        tag: "替换式",
+        q: "替换式题最重要的第一动作是？",
+        options: [
+          "圈出指定公式在大公式中完整出现的位置，再决定能不能替换",
+          "把所有长得像的片段都替换一遍，最后看结果是否更短更整齐",
+          "先求主析取范式或主合取范式，再回头判断替换是否成立",
+          "先构造一个反模型，因为替换式本质上都是语义有效性题"
+        ],
+        answer: [0],
+        exp: "替换式题最容易死在“长得像”。只有完整子公式才能替换，半截谓词、半截括号、被不同联结词切开的片段都不算。"
+      },
+      {
+        type: "single",
+        tag: "翻译",
+        q: "“存在唯一 x 使 P(x)”最完整的骨架是？",
+        options: [
+          "∃xP(x)，把“唯一”当作自然语言说明放到公式外面处理",
+          "∀xP(x)，把“唯一”误读成所有对象都必须满足同一性质 P",
+          "∃x(P(x)∧∀y(P(y)->y=x))",
+          "∀x∃yP(x,y)，把它当成“每个对象都有对应见证”的句子"
+        ],
+        answer: [2],
+        exp: "唯一存在 = 两件事合体：第一，有一个 x 满足 P；第二，任何 y 如果也满足 P，那 y 必须等于这个 x。只写 ∃xP(x) 会漏掉“唯一”。"
+      },
+      {
+        type: "single",
+        tag: "主范式",
+        q: "主析取范式根据什么行来写？",
+        options: [
+          "根据公式取真的赋值行写小项，再用 ∨ 把这些小项连起来",
+          "根据公式取假的赋值行写大项，再用 ∧ 把这些大项连起来",
+          "把真值表所有行都写进公式，避免漏掉任何变量组合",
+          "只看第一行赋值，因为主范式默认从 000... 开始"
+        ],
+        answer: [0],
+        exp: "主析取范式是“把所有能让公式为真的情况拼起来”。真行写小项、用 ∨ 连；主合取范式才看假行写大项、用 ∧ 连。"
+      },
+      {
+        type: "single",
+        tag: "Skolem",
+        q: "前束 ∀x∃y∀z F 中，Skolem 化时 y 应替换为？",
+        options: [
+          "常元 a，因为存在量词都可以用一个新常元替代",
+          "函数 f(x)，因为 y 只依赖它左边已经出现的全称变量 x",
+          "函数 f(z)，因为 z 离 y 最近，最容易成为 y 的参数",
+          "变量 z，因为消去 ∃y 后可以借用后面的全称变量"
+        ],
+        answer: [1],
+        exp: "Skolem 化看“存在量词左边有哪些全称变量”。∃y 左边只有 ∀x，所以 y 替换成 f(x)。后面的 ∀z 还没到场，不能反过来影响 y。"
+      },
+      {
+        type: "single",
+        tag: "语义证明",
+        q: "要证明 Γ⊨Q 成立，反证第一句应写什么？",
+        options: [
+          "反设存在解释 I 和指派 s，使 Γ 全真且 Q 为假",
+          "反设 Q 是永真式，然后说明它在所有解释下都为真而不管 Γ",
+          "直接引用 MP，因为语义后承和形式推演可以随时混用",
+          "直接写 Skolem 函数，把结论里的存在量词先消掉再检查"
+        ],
+        answer: [0],
+        exp: "Γ⊨Q 失败的唯一画面是：前提全真，结论却假。证明 Γ⊨Q，就是把这幅失败画面推出矛盾或排除掉。"
+      },
+      {
+        type: "single",
+        tag: "反模型",
+        q: "要证明某公式不是永真式，最直接的动作是？",
+        options: [
+          "构造一个解释和指派，使这个公式在该情形下取假",
+          "证明它在某个公理系统里可证，从而说明它不是永真",
+          "把所有公理模式列出来，再观察有没有完全一样的公式",
+          "直接写“该式不是永真式”，因为否定判断不需要例子"
+        ],
+        answer: [0],
+        exp: "不是永真式只需要一个反例。谓词逻辑里通常写：取论域 D=...，定义谓词/函数/常元解释，使目标公式为假。"
+      },
+      {
+        type: "single",
+        tag: "量词顺序",
+        q: "∃x∀yQ(x,y) 推出 ∀y∃xQ(x,y) 的关键理由是？",
+        options: [
+          "前者给出一个固定见证 d，这个 d 可以服务后者里的每个 y",
+          "存在量词天然比全称量词强，所以可以直接放到任何位置",
+          "∀ 和 ∃ 在谓词逻辑里都能交换，只要谓词符号和变量名没有改变",
+          "Q(x,y) 实际上没有自由变量，所以量词顺序不会产生影响"
+        ],
+        answer: [0],
+        exp: "前者说“有一个固定 d，对任意 y 都满足 Q(d,y)”。那么后者要求“每个 y 都能找到某个 x”，我们就每次都选同一个 d。"
+      },
+      {
+        type: "single",
+        tag: "等值演算",
+        q: "等值演算证明公式等价于 1，最常见的收束信号是？",
+        options: [
+          "凑出 A∨¬A 这样的排中式，说明该部分恒真",
+          "凑出 A∧A 这样的重复结构，说明该部分恒真",
+          "把公式里的量词全部删掉，让它退化成命题公式",
+          "把变量统一改成同一个字母，让公式看起来更整齐"
+        ],
+        answer: [0],
+        exp: "等价到 1 常靠排中式 A∨¬A；等价到 0 常靠矛盾式 A∧¬A。A∧A 只等价于 A，不会凭空变成 1。"
+      },
+      {
+        type: "single",
+        tag: "复杂度",
+        q: "公式复杂度题最容易漏掉的是？",
+        options: [
+          "最外层联结词或量词也属于公式生成结构，必须计入",
+          "变量名的字母顺序，因为 x、y、z 会改变复杂度",
+          "排版中的空格和换行，因为它们影响公式视觉长度",
+          "题号和标点，因为它们也出现在试卷公式附近"
+        ],
+        answer: [0],
+        exp: "复杂度看公式由多少层逻辑构造生成。¬、∧、∨、→、↔、∀、∃ 这些外层结构都要数，变量名和排版不算。"
+      },
+      {
+        type: "multi",
+        tag: "前束步骤",
+        q: "前束/Skolem 题中，哪些动作通常是必要的？",
+        options: [
+          "变量改名防碰撞，避免量词前移时误绑定别人的变量",
+          "去掉蕴含和等价，把 ->、<-> 改成 ¬、∨、∧ 的形式",
+          "把否定推进到原子公式前，形成更适合前移量词的结构",
+          "随便交换相邻量词，只要最后所有量词都放到最前面"
+        ],
+        answer: [0,1,2],
+        exp: "前束化的安全路线是：改名防冲突，去箭头，否定内移，再按规则前移量词。量词不能随便交换，尤其 ∀∃ 和 ∃∀ 往往不是一回事。"
+      },
+      {
+        type: "multi",
+        tag: "公理证明",
+        q: "Hilbert 风格证明中，哪些通常可以作为每一步的依据？",
+        options: [
+          "公理模式的实例，并在行尾标出它来自哪个公理模式",
+          "题面已经给定或前面已经证明过的定理，可以注明引用",
+          "MP、UG 等被系统允许的推理规则，且前件行号写清楚",
+          "“我觉得显然”或“由直觉可知”，因为老师会理解意思"
+        ],
+        answer: [0,1,2],
+        exp: "形式证明要让阅卷人逐行检查。公理实例、已知定理、合法推理规则都可以；“显然”可以在草稿里安慰自己，不能当卷面依据。"
+      },
+      {
+        type: "single",
+        tag: "命题",
+        q: "下列最可能是命题的是？",
+        options: [
+          "不要吸烟！这是祈使语气，表达命令而不是陈述真假",
+          "为什么近视的是眼睛？这是疑问句，不能直接判真假",
+          "人到了18岁算成年，或者人到了18岁也不算成年",
+          "将来，这句话是假话；这类自指表达不作普通命题处理"
+        ],
+        answer: [2],
+        exp: "命题的核心是能判真或假。祈使句、疑问句不行；自指悖论也不按普通命题处理。C 是一个陈述式，形式上接近 A∨¬A。"
+      },
+      {
+        type: "single",
+        tag: "公式可读",
+        q: "看到很长的谓词公式时，最稳的读法是？",
+        options: [
+          "先找最外层结构，再拆左右部分或量词辖域",
+          "从中间随机挑一个联结词开始读，读到哪里算哪里",
+          "只看最后一个谓词字母，因为结论通常藏在公式末尾",
+          "先跳过公式做下一题，等所有题做完再凭感觉回来猜"
+        ],
+        answer: [0],
+        exp: "长公式不是一团黑云。先问：最外层是量词、否定，还是二元联结词？找到外壳后，里面自然拆成小块。"
+      },
+      {
+        type: "single",
+        tag: "2023",
+        q: "2023 希冀抽取中部分客观题公式缺失，复习时应该怎么处理？",
+        options: [
+          "仍然把缺公式客观题当完整题硬刷，训练自己猜题能力",
+          "把缺公式客观题降级使用，只用可靠主观题补表达和证明链",
+          "把残缺题的答案背下来，考试遇到相似题直接套答案位置",
+          "删除所有 2023 内容，因为有残缺就完全没有参考价值"
+        ],
+        answer: [1],
+        exp: "资料不完整时要降级使用。缺公式客观题不能当主训练，但 2023 的主观表达、证明开头、题型分布仍然有价值。"
+      },
+      {
+        type: "single",
+        tag: "考场策略",
+        q: "证明题卡住超过90秒，最不亏的动作是？",
+        options: [
+          "写定义、写第一句、写失败情形或构造思路，先拿过程分",
+          "空着等灵感，因为证明题必须想到完整路线才能下笔才安全",
+          "只写“略”或“显然成立”，把时间留给选择填空更划算",
+          "换一支笔或重新抄题，让大脑休息后自然想出证明入口"
+        ],
+        answer: [0],
+        exp: "离散证明题有过程分。不会完整证明时，先把目标翻译、任取对象、构造见证、反设失败情形写出来，卷面就不是空白。"
+      }
+    ];
+
+    const trapNotes = [
+      [
+        "对：先分清 ⊨ 是语义后承、⊢ 是形式可证明，再谈可靠性/完全性方向。",
+        "真值表只能处理具体命题公式的真假，不能先替代 ⊨/⊢ 的层级判断。",
+        "Skolem 化处理前束谓词公式，不是所有出现 ⊨/⊢ 的题都要先 Skolem。",
+        "变量个数不决定语义/语法层级；这题的题眼是两个符号的含义。"
+      ],
+      [
+        "前提是合法来源，所以它不是“不能只依据”的项。",
+        "公理/公理实例是合法来源，所以它不是这一题要排除的项。",
+        "由前面公式按规则推出是合法来源，比如 MP、UG。",
+        "对：永真式本身不是推演序列每一步的来源说明；推演看语法来源。"
+      ],
+      [
+        "对：∀y 只管后面紧跟的 Q(y)，辖域题先补括号。",
+        "P(x,z) 不含 y，不能成为 ∀y 的辖域。",
+        "∀z∃w(...) 是外层结构，不是 ∀y 后面的最小公式。",
+        "把整个公式都吞进去是常见过度辖域错误；量词只管自己的范围。"
+      ],
+      [
+        "对：替换式考完整子公式，先圈出真正完整出现的位置。",
+        "这是字符串替换误区。长得像不等于语法结构上完整出现。",
+        "主范式是另一个盒子，不能决定替换位置。",
+        "反模型用于证明公式不永真或语义后承不成立，不是替换式第一步。"
+      ],
+      [
+        "只写 ∃xP(x) 漏掉唯一性，只证明了存在。",
+        "∀xP(x) 是所有对象都满足，比“存在唯一”完全不同。",
+        "对：存在一个 x 满足 P，并且所有满足 P 的 y 都等于 x。",
+        "∀x∃yP(x,y) 是每个 x 有见证 y，不是唯一存在。"
+      ],
+      [
+        "对：主析取范式看成真赋值行，写小项后用 ∨ 连接。",
+        "成假赋值行服务主合取范式，不是主析取。",
+        "所有行都写会混掉真/假两类，主范式不是照抄整张表。",
+        "只写第一行没有依据，必须看公式在哪些行取真。"
+      ],
+      [
+        "常元只在 ∃ 前面没有全称变量时使用；这里前面有 ∀x。",
+        "对：∃y 依赖它左边的 ∀x，所以替换为 f(x)。",
+        "z 在 ∃y 后面出现，不能反过来成为 y 的依赖。",
+        "Skolem 化要消去存在变量，不能把 y 直接换成后面的变量 z。"
+      ],
+      [
+        "对：证明 Γ⊨Q 常用反证，排除前提全真、结论假的失败情形。",
+        "Q 是否永真不是 Γ⊨Q 的一般证明起点；前提集 Γ 也要进入判断。",
+        "MP 是形式证明规则，不能替代语义解释/指派分析。",
+        "Skolem 函数不处理普通语义后承的第一句。"
+      ],
+      [
+        "对：不是永真式只要一个假解释/反模型就够。",
+        "证明它可证是相反方向，会支持它有效而不是反驳它。",
+        "列公理是形式系统动作，不是找反模型。",
+        "只写“不是”没有证据，卷面至少要给出使公式为假的赋值/解释。"
+      ],
+      [
+        "对：前件给出一个固定见证 x，所以后件每个 y 都可选同一个 x。",
+        "存在量词不天然比全称量词强；关键是这里存在量词在最外层，给出固定见证。",
+        "量词不能随便交换，∀∃ 与 ∃∀ 通常强弱不同。",
+        "Q(x,y) 明明含有 x 和 y；不能因为谓词名一样就忽略变量。"
+      ],
+      [
+        "对：等价到 1 常靠排中式 A∨¬A。",
+        "A∧A 只等价于 A，不会自动变成 1。",
+        "等值演算不能随便删量词；谓词公式还要管辖域和等值条件。",
+        "变量改名是前束题的安全步骤，不是化成 1 的收束信号。"
+      ],
+      [
+        "对：复杂度看生成结构，最外层联结词/量词也要数。",
+        "变量名不是逻辑构造层数，不能当复杂度核心。",
+        "空格不影响逻辑公式结构。",
+        "题号当然不是公式的一部分，别被版面信息带跑。"
+      ],
+      [
+        "变量改名是必要动作，防止量词捕获和同名冲突。",
+        "去掉蕴含/等价是前束化常规步骤。",
+        "否定内移是为了让量词前移和母式整理更安全。",
+        "这是假线索：量词不能随便交换，依赖关系会被改坏。"
+      ],
+      [
+        "公理实例可以作为形式证明中的行来源。",
+        "题面给定定理可以引用，但要说明来源。",
+        "MP 是 Hilbert 证明中最常见推理规则。",
+        "这是危险项：“显然”不是可检查的形式来源。"
+      ],
+      [
+        "祈使句不能判真/假，不是普通命题。",
+        "疑问句不是陈述事实，不能直接判真/假。",
+        "对：这是一个可判真假的陈述式，形式上接近排中表达。",
+        "这类自指悖论不当作普通命题处理。"
+      ],
+      [
+        "对：长公式先找最外层结构，再拆左右或量词辖域。",
+        "从中间随机读会破坏公式结构，最容易看错辖域。",
+        "只看最后一个字母会丢掉联结词和量词，几乎一定错。",
+        "考场可以降级写第一步，但不能直接放弃；先拆最外层。"
+      ],
+      [
+        "缺公式题不能当完整题硬刷，否则是在训练猜答案。",
+        "对：资料缺损要降级使用，用可靠主观题补表达和证明链条。",
+        "背缺损题答案没有迁移价值，还会制造错误熟悉感。",
+        "不需要删除全部 2023；可用部分仍然能补主观表达。"
+      ],
+      [
+        "对：卡住时写定义、第一句、失败情形或构造思路，能抢过程分。",
+        "空着等灵感最亏，过程分直接没了。",
+        "只写“略”不能展示推理链条，几乎不给有效分。",
+        "换笔不会改变证明结构，最多是缓解焦虑，不是答题动作。"
+      ]
+    ];
+
+    const list = document.getElementById("quizList");
+    const progress = document.getElementById("quizProgress");
+    const storeKey = "discrete_hiji_precision_done_v1";
+    const answerKey = "discrete_hiji_precision_answers_v1";
+    const done = new Set(JSON.parse(localStorage.getItem(storeKey) || "[]"));
+    const answerState = JSON.parse(localStorage.getItem(answerKey) || "{}");
+
+    function sameAnswer(a, b) {
+      return a.length === b.length && [...a].sort().every((v, i) => v === [...b].sort()[i]);
+    }
+    function saveDone() {
+      localStorage.setItem(storeKey, JSON.stringify([...done]));
+      progress.textContent = `已完成 ${done.size} / ${quiz.length}`;
+    }
+    function saveAnswer(idx, selected, correct) {
+      answerState[idx] = { checked: true, selected, correct };
+      localStorage.setItem(answerKey, JSON.stringify(answerState));
+    }
+    function displayChoices(options, idx) {
+      const items = options.map((text, original) => ({ text, original }));
+      const shift = (idx * 2 + 1) % items.length;
+      return items.slice(shift).concat(items.slice(0, shift));
+    }
+    function trapReview(item, idx, selected) {
+      const notes = trapNotes[idx] || [];
+      const selectedSet = new Set(selected);
+      const answerSet = new Set(item.answer);
+      const selectedHtml = selected.length
+        ? selected.map(i => `<div class="${answerSet.has(i) ? "good" : "bad"}"><strong>${answerSet.has(i) ? "真题眼" : "假线索"}：</strong>${notes[i] || "这个选项碰到了相邻概念，但不是本题主轴。"}</div>`).join("")
+        : `<div class="bad"><strong>还没选择：</strong>先选再核对，训练才有效。</div>`;
+      const missed = item.answer.filter(i => !selectedSet.has(i));
+      const missedHtml = missed.length
+        ? missed.map(i => `<div class="miss"><strong>漏掉的关键：</strong>${notes[i] || "这是正确动作的一部分。"}</div>`).join("")
+        : "";
+      return `<div class="trap-review">${selectedHtml}${missedHtml}</div>`;
+    }
+    function renderQuiz() {
+      list.innerHTML = "";
+      quiz.forEach((item, idx) => {
+        const card = document.createElement("article");
+        card.className = "quiz-card" + (done.has(idx) ? " done" : "");
+        card.innerHTML = `
+          <div class="quiz-head">
+            <h3>${idx + 1}. ${item.q}</h3>
+            <span class="tag">${item.tag}</span>
+          </div>
+          <div class="options"></div>
+          <div class="actions"></div>
+          <div class="explain"><strong>解析：</strong>${item.exp}</div>
+        `;
+        const opts = card.querySelector(".options");
+        const actions = card.querySelector(".actions");
+        const explain = card.querySelector(".explain");
+        if (item.type === "single") {
+          displayChoices(item.options, idx).forEach(({ text, original }, displayIdx) => {
+            const btn = document.createElement("button");
+            btn.className = "option";
+            btn.dataset.original = String(original);
+            btn.textContent = `${String.fromCharCode(65 + displayIdx)}. ${text}`;
+            btn.addEventListener("click", () => {
+              opts.querySelectorAll(".option").forEach((node) => {
+                const originalIndex = Number(node.dataset.original);
+                node.classList.remove("correct", "wrong");
+                if (item.answer.includes(originalIndex)) node.classList.add("correct");
+              });
+              if (!item.answer.includes(original)) btn.classList.add("wrong");
+              explain.innerHTML = `<strong>解析：</strong>${item.exp}${trapReview(item, idx, [original])}`;
+              explain.classList.add("show");
+              done.add(idx);
+              saveAnswer(idx, [original], item.answer.includes(original));
+              card.classList.add("done");
+              saveDone();
+            });
+            opts.appendChild(btn);
+          });
+        } else {
+          displayChoices(item.options, idx).forEach(({ text, original }, displayIdx) => {
+            const label = document.createElement("label");
+            label.className = "multi-option";
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.value = String(original);
+            const span = document.createElement("span");
+            span.textContent = `${String.fromCharCode(65 + displayIdx)}. ${text}`;
+            label.appendChild(input);
+            label.appendChild(span);
+            opts.appendChild(label);
+          });
+          const submit = document.createElement("button");
+          submit.className = "btn primary";
+          submit.textContent = "提交多选";
+          submit.addEventListener("click", () => {
+            const selected = [...opts.querySelectorAll("input:checked")].map(input => Number(input.value));
+            opts.querySelectorAll(".multi-option").forEach((node) => {
+              const originalIndex = Number(node.querySelector("input").value);
+              node.classList.remove("correct", "wrong");
+              if (item.answer.includes(originalIndex)) node.classList.add("correct");
+              if (selected.includes(originalIndex) && !item.answer.includes(originalIndex)) node.classList.add("wrong");
+            });
+            explain.innerHTML = `<strong>解析：</strong>${item.exp}${trapReview(item, idx, selected)}`;
+            explain.classList.add("show");
+            done.add(idx);
+            saveAnswer(idx, selected, sameAnswer(selected, item.answer));
+            card.classList.add("done");
+            saveDone();
+          });
+          actions.appendChild(submit);
+        }
+        list.appendChild(card);
+      });
+      saveDone();
+    }
+    document.getElementById("resetQuiz").addEventListener("click", () => {
+      done.clear();
+      localStorage.removeItem(storeKey);
+      Object.keys(answerState).forEach(key => delete answerState[key]);
+      localStorage.removeItem(answerKey);
+      renderQuiz();
+    });
+    renderQuiz();
+  </script>
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day 2 软工 2020 画图题手把手</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 270px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.74;
+    }
+    main { max-width: 1160px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .question { box-shadow: 0 8px 20px rgba(24, 33, 42, .05); }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid #cfe1ec;
+      border-radius: 6px;
+      background: #f4fbff;
+      padding: 1px 6px;
+    }
+    .muted { color: var(--muted); }
+    .strip, .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    textarea {
+      width: 100%;
+      min-height: 116px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      background: #fbfdfe;
+      margin-top: 8px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; font-weight: 750; color: var(--blue); }
+    .answer-block {
+      border-left: 4px solid var(--green);
+      padding-left: 12px;
+      margin-top: 10px;
+    }
+    .code {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #f4fbff;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      margin: 10px 0;
+      line-height: 1.62;
+    }
+    .diagram {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .diagram svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    .source-img {
+      border: 1px solid #cfe1ec;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .source-img img { display: block; width: 100%; height: auto; }
+    .caption {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+    }
+    .small { font-size: 13px; color: var(--muted); }
+    @media (max-width: 860px) {
+      .grid, .grid.three { grid-template-columns: 1fr; }
+      main { padding: 18px 12px 42px; }
+      .diagram svg { min-width: 700px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>Day 2 软工 2020 画图题手把手</h1>
+      <p class="muted">这一页专门吃透 2020 上机期末第一部分：实验上机安排系统，60 分画图，类图 20、用例图 20、顺序图 20。目标不是背一张标准图，而是学会同一段题干如何分别抽出三种图。</p>
+      <div class="strip">
+        <span class="pill hot">软工 6/25</span>
+        <span class="pill info">2020 上机题</span>
+        <span class="pill good">三图联动</span>
+        <span class="pill warn">先圈词再画</span>
+      </div>
+      <div class="toc">
+        <a href="#stem">0. 题干拆解</a>
+        <a href="#usecase">1. 用例图</a>
+        <a href="#class">2. 类图</a>
+        <a href="#sequence">3. 顺序图</a>
+        <a href="#checklist">4. 自查清单</a>
+        <a href="#source">5. 来源核对</a>
+      </div>
+      <div class="mark warnbox">
+        <strong>本页资料依据：</strong>2020 软件工程上机期末测试题、`期末（打印用）/画图题.pdf` 的用例描述/用例图/操作合约提示、`笔记/03-需求过程.pdf` 中用例模型和 include/extend 定义、`软工实验/lab5/类图-对象图-包图-顺序图-状态图-活动图.pdf` 中类图组成、类间关系、多重性、顺序图和状态图基础。这里不追求唯一标准图，而是训练你按题干稳定抽元素。
+      </div>
+    </section>
+
+    <section class="card" id="stem">
+      <h2>0. 先把题干拆成三张图各自要用的材料</h2>
+      <p>题干核心如下：BUAA 信息化办公室准备开发实验上机安排系统。教师可以提交课程实验项目、安排实验机房、查询实验安排结果、打印实验安排报表。学生可以查询课程实验项目、查询课程实验安排。管理员可以管理教师、学生、课程实验等基本信息，管理新闻公告，查询实验机房时间安排。所有用户可以修改密码、查看新闻公告。未登录用户通过登录账号密码成为对应类型用户。</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>用例图材料</strong>
+          参与者：教师、学生、管理员、未登录用户。动作：提交、安排、查询、打印、管理、修改密码、查看公告、登录。
+        </div>
+        <div class="box">
+          <strong>类图材料</strong>
+          名词：用户、教师、学生、管理员、课程实验项目、实验机房、实验安排、新闻公告、报表。
+        </div>
+        <div class="box">
+          <strong>顺序图材料</strong>
+          具体流程：学生查询课程实验安排；管理员管理新闻。每个顺序图只画一个场景，不要塞完整系统。
+        </div>
+      </div>
+      <div class="mark warnbox">
+        <strong>画图题第一分钟：</strong>不要打开画图工具就画。先在草稿纸上写三行：角色、名词对象、具体流程。这样三张图不会互相串味。
+      </div>
+      <table>
+        <thead><tr><th>同一个词</th><th>在用例图里</th><th>在类图里</th><th>在顺序图里</th></tr></thead>
+        <tbody>
+          <tr><td>学生</td><td>参与者 Actor</td><td>Student 类或 User 子类</td><td>生命线 actor 或对象</td></tr>
+          <tr><td>查询课程实验安排</td><td>用例椭圆</td><td>可能是 ScheduleService 的方法</td><td>一串消息调用</td></tr>
+          <tr><td>新闻公告</td><td>查看公告/管理公告用例</td><td>NewsAnnouncement 类</td><td>管理员管理新闻流程中的实体对象</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>三图粒度千万别混：</strong>用例图站在系统外看“谁要达成什么目标”；类图站在系统内部看“长期保存和协作的对象是什么”；顺序图站在一次操作里看“消息按什么时间顺序传”。同一个“查询安排”，在用例图是一个目标，在顺序图是一串消息，在类图通常不是类名。
+      </div>
+    </section>
+
+    <section class="card" id="usecase">
+      <h2>1. 用例图：先问“谁使用系统做什么”</h2>
+      <p>用例图不是流程图，也不是类图。它只回答系统边界和功能边界：哪些外部角色可以使用系统提供的哪些功能。</p>
+      <article class="question">
+        <h3>你先试：列参与者和用例</h3>
+        <p>在下面写出参与者、每个参与者对应的功能，以及你会不会使用泛化/include/extend。</p>
+        <textarea data-note="usecase-draft" placeholder="参与者：&#10;教师 -> &#10;学生 -> &#10;管理员 -> &#10;未登录用户 -> &#10;公共用例：&#10;可能关系："></textarea>
+        <details>
+          <summary>看参考图和拆解</summary>
+          <div class="answer-block">
+            <p><strong>参考画法：</strong>下面不是唯一标准图，但它满足考试核心：系统边界清楚、参与者清楚、主要功能覆盖、公共功能抽出来。</p>
+            <div class="diagram">
+              <svg viewBox="0 0 1120 660" role="img" aria-label="实验上机安排系统用例图参考">
+                <rect x="0" y="0" width="1120" height="660" fill="#fff"/>
+                <rect x="235" y="55" width="650" height="545" rx="10" fill="#fbfdfe" stroke="#1f5f8b" stroke-width="2"/>
+                <text x="458" y="90" fill="#1f5f8b" font-size="22" font-weight="700">实验上机安排系统</text>
+                <g stroke="#18212a" stroke-width="2" fill="none">
+                  <circle cx="100" cy="145" r="20"/><line x1="100" y1="165" x2="100" y2="225"/><line x1="62" y1="190" x2="138" y2="190"/><line x1="100" y1="225" x2="68" y2="265"/><line x1="100" y1="225" x2="132" y2="265"/>
+                  <circle cx="100" cy="365" r="20"/><line x1="100" y1="385" x2="100" y2="445"/><line x1="62" y1="410" x2="138" y2="410"/><line x1="100" y1="445" x2="68" y2="485"/><line x1="100" y1="445" x2="132" y2="485"/>
+                  <circle cx="1010" cy="175" r="20"/><line x1="1010" y1="195" x2="1010" y2="255"/><line x1="972" y1="220" x2="1048" y2="220"/><line x1="1010" y1="255" x2="978" y2="295"/><line x1="1010" y1="255" x2="1042" y2="295"/>
+                  <circle cx="1010" cy="420" r="20"/><line x1="1010" y1="440" x2="1010" y2="500"/><line x1="972" y1="465" x2="1048" y2="465"/><line x1="1010" y1="500" x2="978" y2="540"/><line x1="1010" y1="500" x2="1042" y2="540"/>
+                </g>
+                <text x="80" y="295" font-size="18" fill="#18212a">教师</text>
+                <text x="80" y="515" font-size="18" fill="#18212a">学生</text>
+                <text x="985" y="325" font-size="18" fill="#18212a">管理员</text>
+                <text x="972" y="570" font-size="18" fill="#18212a">未登录用户</text>
+                <g fill="#eef7fc" stroke="#1f5f8b" stroke-width="2">
+                  <ellipse cx="405" cy="145" rx="96" ry="30"/><ellipse cx="405" cy="215" rx="96" ry="30"/><ellipse cx="405" cy="285" rx="96" ry="30"/><ellipse cx="405" cy="355" rx="96" ry="30"/>
+                  <ellipse cx="690" cy="165" rx="106" ry="30"/><ellipse cx="690" cy="235" rx="106" ry="30"/><ellipse cx="690" cy="305" rx="106" ry="30"/>
+                  <ellipse cx="545" cy="445" rx="100" ry="30"/><ellipse cx="545" cy="515" rx="100" ry="30"/>
+                  <ellipse cx="690" cy="520" rx="95" ry="30"/>
+                </g>
+                <g font-size="15" fill="#18212a" text-anchor="middle">
+                  <text x="405" y="150">提交课程实验项目</text>
+                  <text x="405" y="220">安排实验机房</text>
+                  <text x="405" y="290">查询安排结果</text>
+                  <text x="405" y="360">打印安排报表</text>
+                  <text x="690" y="170">管理教师/学生信息</text>
+                  <text x="690" y="240">管理课程实验信息</text>
+                  <text x="690" y="310">管理新闻公告</text>
+                  <text x="545" y="450">修改密码</text>
+                  <text x="545" y="520">查看新闻公告</text>
+                  <text x="690" y="525">登录</text>
+                </g>
+                <g stroke="#687581" stroke-width="2" fill="none">
+                  <line x1="140" y1="185" x2="310" y2="145"/><line x1="140" y1="190" x2="310" y2="215"/><line x1="140" y1="195" x2="310" y2="285"/><line x1="140" y1="200" x2="310" y2="355"/>
+                  <line x1="140" y1="410" x2="445" y2="445"/><line x1="140" y1="410" x2="445" y2="520"/><line x1="140" y1="410" x2="310" y2="285"/>
+                  <line x1="970" y1="220" x2="796" y2="165"/><line x1="970" y1="225" x2="796" y2="235"/><line x1="970" y1="230" x2="796" y2="305"/><line x1="970" y1="235" x2="645" y2="445"/><line x1="970" y1="240" x2="645" y2="520"/>
+                  <line x1="970" y1="465" x2="785" y2="520"/><line x1="970" y1="465" x2="645" y2="520"/>
+                </g>
+              </svg>
+            </div>
+            <p><strong>参与者：</strong>教师、学生、管理员、未登录用户都在系统外，所以画成 Actor。不要把“实验机房”“新闻公告”画成参与者，它们是系统管理的对象。</p>
+            <p><strong>用例：</strong>动词短语通常变用例：提交、安排、查询、打印、管理、修改密码、查看公告、登录。</p>
+            <p><strong>公共用例：</strong>所有登录用户都能修改密码、查看公告，可以让教师/学生/管理员都关联它们。未登录用户至少可以查看公告和登录。</p>
+            <p><strong>关系取舍：</strong>这道题没有明确说某功能必然包含另一个功能，保守画关联即可。不要强行乱用 include/extend。</p>
+          </div>
+        </details>
+      </article>
+      <table>
+        <thead><tr><th>关系</th><th>从零解释</th><th>什么时候用</th><th>这道题的建议</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>普通关联</td>
+            <td>参与者可以使用某个用例。</td>
+            <td>题干只说“教师可以提交、查询、打印”。</td>
+            <td>优先使用，最稳。</td>
+          </tr>
+          <tr>
+            <td>include</td>
+            <td>A 必然包含 B，B 是 A 的公共子流程。</td>
+            <td>多个用例都必须执行“登录校验”“权限校验”这类共同步骤，且题目要求画用例关系。</td>
+            <td>题干没有明确“必含”，不强行画。</td>
+          </tr>
+          <tr>
+            <td>extend</td>
+            <td>B 只在某些条件下插入 A，是可选/异常扩展。</td>
+            <td>题干写“如果冲突则重新安排”“可选打印报表”等条件流程。</td>
+            <td>2020 题干没有足够清楚的扩展点，保守不画。</td>
+          </tr>
+          <tr>
+            <td>泛化</td>
+            <td>多个参与者或用例共享更一般的父类。</td>
+            <td>教师、学生、管理员都可以抽象为“登录用户”。</td>
+            <td>可画，也可用公共用例关联；不要因此漏掉具体参与者。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>用例图扣分点：</strong>漏系统边界；把业务对象画成参与者；把步骤流程画成一串椭圆；随便乱画 include/extend；未登录用户和公共功能漏掉。
+      </div>
+    </section>
+
+    <section class="card" id="class">
+      <h2>2. 类图：先问“系统里有哪些长期存在的业务对象”</h2>
+      <p>类图不是把所有动词都画成类。类通常来自稳定名词：用户、教师、学生、管理员、课程实验项目、机房、实验安排、新闻公告、报表。动词更可能变成方法或服务。</p>
+      <article class="question">
+        <h3>你先试：从题干抽候选类、属性、关系</h3>
+        <textarea data-note="class-draft" placeholder="候选类：&#10;每个类的属性：&#10;关系和多重性：&#10;哪些词不该单独成类："></textarea>
+        <details>
+          <summary>看参考类图和讲解</summary>
+          <div class="answer-block">
+            <p><strong>参考类图：</strong>考试要求“必要的属性和方法、关系标注、数量关系”，参数类型不考，所以重点是类和关系。</p>
+            <div class="diagram">
+              <svg viewBox="0 0 1160 720" role="img" aria-label="实验上机安排系统类图参考">
+                <rect x="0" y="0" width="1160" height="720" fill="#fff"/>
+                <defs>
+                  <marker id="tri" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#fff" stroke="#18212a"/></marker>
+                </defs>
+                <g font-size="14" fill="#18212a">
+                  <g transform="translate(470 35)">
+                    <rect width="220" height="118" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+                    <line x1="0" y1="34" x2="220" y2="34" stroke="#1f5f8b"/><line x1="0" y1="74" x2="220" y2="74" stroke="#1f5f8b"/>
+                    <text x="82" y="23" font-weight="700">User</text>
+                    <text x="12" y="55">- id</text><text x="12" y="70">- password</text>
+                    <text x="12" y="96">+ login()</text><text x="12" y="111">+ changePassword()</text>
+                  </g>
+                  <g transform="translate(120 210)">
+                    <rect width="190" height="96" fill="#fbfdfe" stroke="#dce3e8"/>
+                    <line x1="0" y1="32" x2="190" y2="32" stroke="#dce3e8"/><line x1="0" y1="62" x2="190" y2="62" stroke="#dce3e8"/>
+                    <text x="66" y="22" font-weight="700">Teacher</text><text x="10" y="52">- teacherNo</text><text x="10" y="82">+ submitProject()</text>
+                  </g>
+                  <g transform="translate(485 210)">
+                    <rect width="190" height="96" fill="#fbfdfe" stroke="#dce3e8"/>
+                    <line x1="0" y1="32" x2="190" y2="32" stroke="#dce3e8"/><line x1="0" y1="62" x2="190" y2="62" stroke="#dce3e8"/>
+                    <text x="68" y="22" font-weight="700">Student</text><text x="10" y="52">- studentNo</text><text x="10" y="82">+ querySchedule()</text>
+                  </g>
+                  <g transform="translate(850 210)">
+                    <rect width="190" height="96" fill="#fbfdfe" stroke="#dce3e8"/>
+                    <line x1="0" y1="32" x2="190" y2="32" stroke="#dce3e8"/><line x1="0" y1="62" x2="190" y2="62" stroke="#dce3e8"/>
+                    <text x="68" y="22" font-weight="700">Admin</text><text x="10" y="52">- adminNo</text><text x="10" y="82">+ manageInfo()</text>
+                  </g>
+                  <g transform="translate(80 425)">
+                    <rect width="225" height="118" fill="#fff9e6" stroke="#936b12" stroke-width="2"/>
+                    <line x1="0" y1="34" x2="225" y2="34" stroke="#936b12"/><line x1="0" y1="78" x2="225" y2="78" stroke="#936b12"/>
+                    <text x="44" y="23" font-weight="700">CourseExperiment</text>
+                    <text x="10" y="54">- name</text><text x="10" y="70">- courseName</text>
+                    <text x="10" y="100">+ submit()</text>
+                  </g>
+                  <g transform="translate(360 425)">
+                    <rect width="210" height="118" fill="#eef9f3" stroke="#24724f" stroke-width="2"/>
+                    <line x1="0" y1="34" x2="210" y2="34" stroke="#24724f"/><line x1="0" y1="78" x2="210" y2="78" stroke="#24724f"/>
+                    <text x="52" y="23" font-weight="700">LabRoom</text>
+                    <text x="10" y="54">- roomNo</text><text x="10" y="70">- capacity</text>
+                    <text x="10" y="100">+ isAvailable()</text>
+                  </g>
+                  <g transform="translate(640 425)">
+                    <rect width="235" height="132" fill="#eef7fc" stroke="#1f5f8b" stroke-width="2"/>
+                    <line x1="0" y1="34" x2="235" y2="34" stroke="#1f5f8b"/><line x1="0" y1="88" x2="235" y2="88" stroke="#1f5f8b"/>
+                    <text x="58" y="23" font-weight="700">ExperimentSchedule</text>
+                    <text x="10" y="54">- startTime</text><text x="10" y="70">- resultStatus</text><text x="10" y="86">- reportPath</text>
+                    <text x="10" y="110">+ arrange()</text><text x="10" y="126">+ printReport()</text>
+                  </g>
+                  <g transform="translate(925 425)">
+                    <rect width="190" height="118" fill="#fff2ef" stroke="#a23b32" stroke-width="2"/>
+                    <line x1="0" y1="34" x2="190" y2="34" stroke="#a23b32"/><line x1="0" y1="78" x2="190" y2="78" stroke="#a23b32"/>
+                    <text x="36" y="23" font-weight="700">NewsAnnouncement</text>
+                    <text x="10" y="54">- title</text><text x="10" y="70">- content</text>
+                    <text x="10" y="100">+ publish()</text>
+                  </g>
+                </g>
+                <g stroke="#18212a" stroke-width="2" fill="none">
+                  <line x1="215" y1="210" x2="520" y2="153" marker-end="url(#tri)"/>
+                  <line x1="580" y1="210" x2="580" y2="153" marker-end="url(#tri)"/>
+                  <line x1="945" y1="210" x2="640" y2="153" marker-end="url(#tri)"/>
+                  <line x1="310" y1="470" x2="640" y2="470"/>
+                  <line x1="570" y1="510" x2="640" y2="510"/>
+                  <line x1="215" y1="306" x2="170" y2="425"/>
+                  <line x1="945" y1="306" x2="1020" y2="425"/>
+                  <line x1="580" y1="306" x2="730" y2="425"/>
+                  <line x1="215" y1="306" x2="705" y2="425"/>
+                </g>
+                <g font-size="13" fill="#687581">
+                  <text x="323" y="460">1</text><text x="610" y="460">0..*</text>
+                  <text x="580" y="500">1</text><text x="613" y="500">0..*</text>
+                  <text x="185" y="360">1</text><text x="151" y="417">0..*</text>
+                  <text x="958" y="360">1</text><text x="1032" y="417">0..*</text>
+                  <text x="612" y="350">1</text><text x="734" y="417">0..*</text>
+                  <text x="355" y="405">提交/安排</text><text x="585" y="537">使用机房</text><text x="1010" y="391">管理</text>
+                </g>
+              </svg>
+            </div>
+            <p><strong>继承：</strong>教师、学生、管理员都是用户类型，可以继承 User。这样公共操作如登录、修改密码不必重复写。</p>
+            <p><strong>核心业务类：</strong>CourseExperiment、LabRoom、ExperimentSchedule、NewsAnnouncement。它们是系统长期保存和管理的对象。</p>
+            <p><strong>关系：</strong>一个教师可提交多个课程实验项目；一个课程实验项目可产生多个安排；一个安排使用一个机房；学生查询安排但不一定拥有安排；管理员管理公告和基础信息。</p>
+            <p><strong>多重性：</strong>类图大题常扣这里。关系两端写 1、0..*、*，至少要体现“一对多”和“多对一”。</p>
+          </div>
+        </details>
+      </article>
+      <table>
+        <thead><tr><th>类图关系</th><th>人话判断</th><th>本题怎么用</th><th>不要误用成</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>泛化/继承</td>
+            <td>“A 是一种 B”。子类继承父类公共属性/操作。</td>
+            <td>Teacher、Student、Admin 是 User 的不同用户类型。</td>
+            <td>不要把 CourseExperiment 继承 User，它不是用户。</td>
+          </tr>
+          <tr>
+            <td>关联</td>
+            <td>两个类长期知道彼此或有业务关系。</td>
+            <td>Teacher 提交 CourseExperiment；Schedule 使用 LabRoom。</td>
+            <td>不要所有关系都画继承。</td>
+          </tr>
+          <tr>
+            <td>聚合/组合</td>
+            <td>整体-部分。组合更强，部分生命周期依赖整体。</td>
+            <td>若你把 ExperimentSchedule 看成由若干安排明细组成，可用组合；本题不强求。</td>
+            <td>不要为了图复杂强行聚合所有类。</td>
+          </tr>
+          <tr>
+            <td>依赖</td>
+            <td>短暂使用，不一定长期持有。</td>
+            <td>报表生成服务依赖安排数据可以用依赖；2020 题类图可省略服务类。</td>
+            <td>不要把核心业务对象只画成依赖。</td>
+          </tr>
+          <tr>
+            <td>多重性</td>
+            <td>一端对应另一端几个对象。</td>
+            <td>一个教师 0..* 个实验项目；一个机房 0..* 个安排；一个安排通常对应 1 个机房。</td>
+            <td>不要漏写，漏了会显得关系没说明清楚。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="mark danger">
+        <strong>类图扣分点：</strong>把“查询结果”“打印报表”全都单独画类；不标多重性；类里只有名字没有属性/方法；把所有关系都画成继承；没有说明为什么抽这些类。
+      </div>
+    </section>
+
+    <section class="card" id="sequence">
+      <h2>3. 顺序图：一张图只画一个具体场景</h2>
+      <p>题目要求两个顺序图：学生查询课程实验安排、管理员管理新闻。顺序图回答“消息按时间怎么发生”。从上到下是时间，不是功能菜单。</p>
+      <table>
+        <thead><tr><th>生命线类型</th><th>从零解释</th><th>本题例子</th><th>为什么有用</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Actor</td>
+            <td>系统外部发起交互的人或角色。</td>
+            <td>学生、管理员。</td>
+            <td>告诉阅卷人这个场景由谁触发。</td>
+          </tr>
+          <tr>
+            <td>边界对象</td>
+            <td>界面、页面、API 入口，负责接收用户动作。</td>
+            <td>查询界面、新闻管理界面。</td>
+            <td>避免只有“用户 -> 系统”过粗。</td>
+          </tr>
+          <tr>
+            <td>控制对象</td>
+            <td>处理业务规则和流程的服务/控制器。</td>
+            <td>ScheduleService、NewsService。</td>
+            <td>体现“谁负责校验、组织查询、创建对象”。</td>
+          </tr>
+          <tr>
+            <td>实体/数据对象</td>
+            <td>长期保存的业务数据或仓储。</td>
+            <td>ScheduleRepository、NewsAnnouncement。</td>
+            <td>和类图相连，说明顺序图不是乱发消息。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <article class="question">
+        <h3>顺序图 A：学生查询课程实验安排</h3>
+        <textarea data-note="seq-student-draft" placeholder="先写生命线：学生、界面、控制/服务、数据对象。再写消息顺序：发起查询 -> 校验/请求 -> 查询安排 -> 返回结果 -> 显示。"></textarea>
+        <details>
+          <summary>看参考顺序图和解析</summary>
+          <div class="answer-block">
+            <div class="diagram">
+              <svg viewBox="0 0 1120 620" role="img" aria-label="学生查询课程实验安排顺序图">
+                <rect x="0" y="0" width="1120" height="620" fill="#fff"/>
+                <defs>
+                  <marker id="arrow-seq-a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#18212a"/></marker>
+                </defs>
+                <g font-size="15" fill="#18212a" text-anchor="middle">
+                  <rect x="70" y="45" width="130" height="42" rx="6" fill="#eef7fc" stroke="#1f5f8b"/><text x="135" y="71">学生</text>
+                  <rect x="300" y="45" width="150" height="42" rx="6" fill="#fbfdfe" stroke="#dce3e8"/><text x="375" y="71">查询界面</text>
+                  <rect x="560" y="45" width="175" height="42" rx="6" fill="#fbfdfe" stroke="#dce3e8"/><text x="647" y="71">ScheduleService</text>
+                  <rect x="850" y="45" width="170" height="42" rx="6" fill="#fbfdfe" stroke="#dce3e8"/><text x="935" y="71">ScheduleRepository</text>
+                </g>
+                <g stroke="#dce3e8" stroke-width="2" stroke-dasharray="8 8">
+                  <line x1="135" y1="87" x2="135" y2="570"/><line x1="375" y1="87" x2="375" y2="570"/><line x1="647" y1="87" x2="647" y2="570"/><line x1="935" y1="87" x2="935" y2="570"/>
+                </g>
+                <g stroke="#18212a" stroke-width="2" fill="none" marker-end="url(#arrow-seq-a)">
+                  <line x1="135" y1="135" x2="375" y2="135"/><line x1="375" y1="195" x2="647" y2="195"/><line x1="647" y1="255" x2="935" y2="255"/><line x1="935" y1="315" x2="647" y2="315"/><line x1="647" y1="375" x2="375" y2="375"/><line x1="375" y1="435" x2="135" y2="435"/>
+                </g>
+                <g font-size="14" fill="#18212a">
+                  <text x="200" y="125">1. querySchedule(studentId, courseId)</text>
+                  <text x="455" y="185">2. requestSchedule(studentId, courseId)</text>
+                  <text x="715" y="245">3. findByStudentAndCourse(...)</text>
+                  <text x="760" y="305">4. scheduleList</text>
+                  <text x="505" y="365">5. scheduleDTO</text>
+                  <text x="205" y="425">6. showSchedule(result)</text>
+                </g>
+              </svg>
+            </div>
+            <p><strong>生命线：</strong>学生、查询界面、ScheduleService、ScheduleRepository。界面是边界对象，服务是控制对象，Repository/数据对象负责取数据。</p>
+            <p><strong>消息顺序：</strong>学生发起查询，界面把请求交给服务，服务查数据，数据返回，服务组织结果，界面显示给学生。</p>
+            <p><strong>为什么不只画“学生 -> 系统”：</strong>上机题通常允许一定设计展开。只有学生和系统两个生命线太粗，难体现顺序图能力。可以用边界/控制/实体三层。</p>
+          </div>
+        </details>
+      </article>
+
+      <article class="question">
+        <h3>顺序图 B：管理员管理新闻</h3>
+        <textarea data-note="seq-admin-draft" placeholder="先写一个管理动作，比如新增新闻。生命线：管理员、新闻管理界面、NewsService、NewsRepository、NewsAnnouncement。"></textarea>
+        <details>
+          <summary>看参考顺序图和解析</summary>
+          <div class="answer-block">
+            <div class="diagram">
+              <svg viewBox="0 0 1160 650" role="img" aria-label="管理员管理新闻顺序图">
+                <rect x="0" y="0" width="1160" height="650" fill="#fff"/>
+                <defs>
+                  <marker id="arrow-seq-b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#18212a"/></marker>
+                </defs>
+                <g font-size="15" fill="#18212a" text-anchor="middle">
+                  <rect x="50" y="45" width="130" height="42" rx="6" fill="#eef7fc" stroke="#1f5f8b"/><text x="115" y="71">管理员</text>
+                  <rect x="250" y="45" width="160" height="42" rx="6" fill="#fbfdfe" stroke="#dce3e8"/><text x="330" y="71">新闻管理界面</text>
+                  <rect x="500" y="45" width="145" height="42" rx="6" fill="#fbfdfe" stroke="#dce3e8"/><text x="572" y="71">NewsService</text>
+                  <rect x="720" y="45" width="155" height="42" rx="6" fill="#fbfdfe" stroke="#dce3e8"/><text x="797" y="71">NewsRepository</text>
+                  <rect x="945" y="45" width="170" height="42" rx="6" fill="#fff2ef" stroke="#a23b32"/><text x="1030" y="71">NewsAnnouncement</text>
+                </g>
+                <g stroke="#dce3e8" stroke-width="2" stroke-dasharray="8 8">
+                  <line x1="115" y1="87" x2="115" y2="595"/><line x1="330" y1="87" x2="330" y2="595"/><line x1="572" y1="87" x2="572" y2="595"/><line x1="797" y1="87" x2="797" y2="595"/><line x1="1030" y1="87" x2="1030" y2="595"/>
+                </g>
+                <g stroke="#18212a" stroke-width="2" fill="none" marker-end="url(#arrow-seq-b)">
+                  <line x1="115" y1="130" x2="330" y2="130"/><line x1="330" y1="190" x2="572" y2="190"/><line x1="572" y1="250" x2="1030" y2="250"/><line x1="1030" y1="310" x2="572" y2="310"/><line x1="572" y1="370" x2="797" y2="370"/><line x1="797" y1="430" x2="572" y2="430"/><line x1="572" y1="490" x2="330" y2="490"/><line x1="330" y1="550" x2="115" y2="550"/>
+                </g>
+                <g font-size="14" fill="#18212a">
+                  <text x="165" y="120">1. submitNews(title, content)</text>
+                  <text x="380" y="180">2. createNews(title, content)</text>
+                  <text x="700" y="240">3. new NewsAnnouncement(...)</text>
+                  <text x="765" y="300">4. news</text>
+                  <text x="615" y="360">5. save(news)</text>
+                  <text x="705" y="420">6. saveResult</text>
+                  <text x="410" y="480">7. success</text>
+                  <text x="165" y="540">8. showSuccess()</text>
+                </g>
+              </svg>
+            </div>
+            <p><strong>场景选择：</strong>“管理新闻”太大，顺序图要选一个具体动作。这里选择“新增新闻”。删除、修改也可以，但要在图旁说明。</p>
+            <p><strong>生命线：</strong>管理员、新闻管理界面、NewsService、NewsRepository、NewsAnnouncement。注意 NewsAnnouncement 是实体对象，不是参与者。</p>
+            <p><strong>消息：</strong>管理员提交新闻，界面调用服务，服务创建公告对象并保存，最后返回成功。</p>
+          </div>
+        </details>
+      </article>
+      <div class="mark danger">
+        <strong>顺序图扣分点：</strong>一张顺序图塞所有功能；消息没有时间顺序；生命线只有参与者没有系统对象；返回箭头乱画；把类图关系画进顺序图。
+      </div>
+    </section>
+
+    <section class="card" id="checklist">
+      <h2>4. 考场自查清单：画完必须看这几项</h2>
+      <div class="grid">
+        <div class="box"><strong>用例图</strong>有系统边界吗？参与者都在边界外吗？主要功能覆盖了吗？有没有乱用 include/extend？</div>
+        <div class="box"><strong>类图</strong>候选类来自稳定名词吗？属性/方法是否必要？关系两端有多重性吗？继承/关联/聚合有没有乱用？</div>
+        <div class="box"><strong>顺序图</strong>是否只描述一个场景？生命线是否有边界/控制/实体层次？消息是否从上到下？返回是否合理？</div>
+        <div class="box"><strong>文字说明</strong>2020 题明确要求必要说明。每张图旁至少写一句“我为什么这样抽参与者/类/生命线”。</div>
+      </div>
+      <table>
+        <thead><tr><th>阅卷视角</th><th>你要显式表现出来</th><th>低分信号</th></tr></thead>
+        <tbody>
+          <tr><td>是否读懂题干</td><td>教师、学生、管理员、未登录用户和公共功能不漏。</td><td>只画教师/学生，漏管理员或未登录用户。</td></tr>
+          <tr><td>是否懂图的语义</td><td>用例图画功能边界，类图画静态结构，顺序图画一次交互。</td><td>把“查询安排”同时当用例、类、状态乱放。</td></tr>
+          <tr><td>是否有 UML 基本规范</td><td>类图有类名/属性/方法/关系/多重性；顺序图有生命线和消息顺序。</td><td>只有几个框和线，没有角色、箭头、数量、说明。</td></tr>
+          <tr><td>是否能解释设计</td><td>图旁写 1-2 句抽取理由和取舍。</td><td>画得很满但无法说明为什么。</td></tr>
+        </tbody>
+      </table>
+      <article class="question">
+        <h3>闭眼复述训练</h3>
+        <p>不看上面的答案，用自己的话写：同一段实验上机安排系统题干，三张图分别怎么起步？</p>
+        <textarea data-note="recall" placeholder="用例图第一步：&#10;类图第一步：&#10;顺序图第一步：&#10;我最容易漏的扣分点："></textarea>
+      </article>
+    </section>
+
+    <section class="card" id="source">
+      <h2>5. 来源核对：真题和画图资料</h2>
+      <p>下面只用于核对资料来源。学习时优先看上面的手把手拆解。</p>
+      <details>
+        <summary>2020 上机题文字来源</summary>
+        <div class="code">第一部分 用EA画图（60分）
+BUAA信息化办公室，准备开发一套实验上机安排系统，可以帮助教师安排上机。
+教师可以提交课程实验项目，安排实验机房，查询实验安排结果，打印实验安排报表等。
+学生可以查询课程实验项目，查询课程实验安排等。
+管理员可以管理教师、学生、课程实验等基本信息，还可以管理新闻公告，查询实验机房时间安排等。
+所有用户均有修改密码，查看新闻公告的功能。
+未登录用户通过登录自己账号密码，成为对应类型用户。
+1. 画类图（20分）
+2. 画用例图（20分）
+3. 画学生查询课程实验安排和管理员管理新闻的顺序图（20分）</div>
+      </details>
+      <details>
+        <summary>展开画图题 PDF：用例图说明页</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/se-drawing-p34.png" alt="画图题 PDF 用例图页">
+          <div class="caption">画图题 PDF 第 34 页：用例描述和用例图基本说明。</div>
+        </div>
+      </details>
+      <details>
+        <summary>展开画图题 PDF：顺序图/类图示例页</summary>
+        <div class="source-img">
+          <img src="./assets/pdf-pages/se-drawing-p4.png" alt="画图题 PDF 顺序图和类图页">
+          <div class="caption">画图题 PDF 第 4 页：顺序图、概念类图、概要设计提示。</div>
+        </div>
+      </details>
+      <p><a href="./day1_se_diagram_zero.html">回软工 Day1 画图从零讲义</a> · <a href="./day3_se_openbook_diagram_index.html">接软工 Day3 开卷索引与模板</a> · <a href="./index.html">回学习舱</a></p>
+    </section>
+  </main>
+  <script>
+    const noteKey = "buaa-finals-se-2020-diagram-notes-v1";
+    let savedNotes = {};
+    try {
+      savedNotes = JSON.parse(localStorage.getItem(noteKey)) || {};
+    } catch {
+      savedNotes = {};
+    }
+    document.querySelectorAll("[data-note]").forEach(area => {
+      area.value = savedNotes[area.dataset.note] || "";
+      area.addEventListener("input", () => {
+        savedNotes[area.dataset.note] = area.value;
+        localStorage.setItem(noteKey, JSON.stringify(savedNotes));
+      });
+    });
+  </script>
+</body>
+</html>

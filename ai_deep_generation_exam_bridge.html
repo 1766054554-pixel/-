@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI 深度学习与生成模型考点桥接</title>
+  <link rel="stylesheet" href="./math_rendering_upgrade.css" />
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #18212a;
+      --muted: #687581;
+      --panel: #ffffff;
+      --line: #dce3e8;
+      --blue: #1f5f8b;
+      --green: #24724f;
+      --yellow: #936b12;
+      --red: #a23b32;
+      --purple: #66519a;
+      --shadow: 0 14px 34px rgba(24, 33, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef5f7 0, rgba(245,247,248,0) 280px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.76;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 18px 56px; }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; letter-spacing: 0; }
+    h1 { font-size: 31px; }
+    h2 { font-size: 23px; }
+    h3 { font-size: 17px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); }
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin: 5px 0; }
+    textarea {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid #cdddeb;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      line-height: 1.65;
+      background: #fbfdfe;
+      color: var(--ink);
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 800; }
+    .muted { color: var(--muted); }
+    .hero, .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .strip, .toc, .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pill, .toc a, .links a {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f9fbfc;
+      color: var(--blue);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .hot { color: var(--red); border-color: #e5b3ad; background: #fff2ef; }
+    .info { color: var(--blue); border-color: #b3d2e7; background: #eef7fc; }
+    .good { color: var(--green); border-color: #a7d8bf; background: #eef9f3; }
+    .warn { color: var(--yellow); border-color: #dcc682; background: #fff9e6; }
+    .purple { color: var(--purple); border-color: #c9bee8; background: #f6f2ff; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .box, .question {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+    }
+    .box strong, .question strong { display: block; color: var(--blue); margin-bottom: 5px; }
+    .guard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .term-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 13px;
+      min-width: 0;
+    }
+    .term-card h3 { color: var(--blue); margin-top: 0; }
+    .term-card .why {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .term-card dl {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 6px 10px;
+      margin: 0;
+    }
+    .term-card dt { color: var(--yellow); font-weight: 850; }
+    .term-card dd { margin: 0; }
+    .micro-check {
+      border-left: 4px solid var(--blue);
+      border-radius: 6px;
+      background: #eef7fc;
+      padding: 9px 11px;
+      margin-top: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin: 10px 0 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef7fc; color: var(--blue); }
+    .mark {
+      border-left: 4px solid var(--green);
+      background: #f3faf6;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+    .warnbox { border-left-color: var(--yellow); background: #fff9e6; }
+    .danger { border-left-color: var(--red); background: #fff7f5; }
+    .key {
+      display: inline;
+      border-radius: 5px;
+      background: linear-gradient(180deg, rgba(255,249,230,0) 48%, #fff1a8 48%);
+      color: #10202d;
+      font-weight: 760;
+      padding: 0 2px;
+    }
+    .story {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+      margin: 10px 0;
+    }
+    .story > div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfe;
+      padding: 12px;
+    }
+    .story .label { background: #eef7fc; color: var(--blue); font-weight: 800; }
+    .diagram, .source-shot {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 10px;
+      margin: 12px 0;
+      overflow: auto;
+    }
+    svg { width: 100%; height: auto; display: block; }
+    .source-shot img {
+      display: block;
+      width: 100%;
+      max-height: 460px;
+      object-fit: contain;
+      background: #fff;
+    }
+    .caption { color: var(--muted); font-size: 13px; margin-top: 7px; }
+    .questions { display: grid; gap: 12px; }
+    .source-tag {
+      display: inline-flex;
+      border-radius: 999px;
+      border: 1px solid #cdddeb;
+      background: #f7fbff;
+      color: var(--blue);
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    @media (max-width: 920px) {
+      main { padding: 18px 12px 42px; }
+      .grid, .grid.three, .story, .guard-grid { grid-template-columns: 1fr; }
+      .toc a, .links a, .pill { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>AI 深度学习与生成模型考点桥接</h1>
+      <p class="muted">这页不占 Day 编号，也不是 Day2 标准包。它用来补 AI 后半最容易“名词很多、联系很弱”的缺口：CNN/ResNet/ViT/Transformer/BERT/GPT/AE/VAE/GAN/Diffusion。目标不是研究生深度学习，而是期末能看懂题、说清原理、写出简答和公式含义。</p>
+      <div class="strip">
+        <span class="pill hot">使用时机：AI Day3 后或考前补洞</span>
+        <span class="pill info">来源：lab md + PPT 第7-11讲 + 参考习题</span>
+        <span class="pill good">重点：故事线、图、题眼、作答模板</span>
+        <span class="pill warn">不抢 Day2 标准包</span>
+      </div>
+      <div class="toc">
+        <a href="./index.html">回学习舱</a>
+        <a href="./exam_coverage_control_board.html#ai">AI 覆盖雷达</a>
+        <a href="#map">0. 总故事线</a>
+        <a href="#guard">0.5 新词护栏</a>
+        <a href="#training">1. 训练四件套</a>
+        <a href="#vision">2. CNN/ResNet/ViT</a>
+        <a href="#transformer">3. Transformer/BERT/GPT</a>
+        <a href="#generation">4. 生成模型</a>
+        <a href="#exam">5. 考试题眼</a>
+        <a href="#cards">6. 题卡</a>
+        <a href="#source">7. 来源核对</a>
+      </div>
+      <div class="mark warnbox">
+        <strong>学习顺序：</strong>如果你现在只在 Day2，先看 <a href="./day2_ai_model_storyline.html">AI 模型故事线</a> 和 <a href="./day2_ai_reference_ml_cards.html">机器学习题卡</a>。本页等你碰到 CNN/Transformer/生成模型名词时再打开，它负责把后半内容讲成一条线。
+      </div>
+    </section>
+
+    <section class="card" id="map">
+      <h2>0. 总故事线：先看数据形状，再选模型</h2>
+      <p>AI 后半不是一堆互不相干的英文缩写。你可以先问一个很朴素的问题：<span class="key">我的输入长什么样，输出要什么东西？</span> 输入是图片，就要处理局部空间结构；输入是长序列，就要处理远距离依赖；输出要“凭空造样本”，就进入生成模型。</p>
+      <div class="diagram" aria-label="AI 深度与生成模型选择地图">
+        <svg viewBox="0 0 1040 430" role="img">
+          <rect width="1040" height="430" fill="#fbfdfe"/>
+          <defs>
+            <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/></marker>
+          </defs>
+          <g font-family="sans-serif" fill="#18212a">
+            <text x="44" y="42" font-size="22" font-weight="800" fill="#1f5f8b">先问：数据形状和输出目标是什么？</text>
+            <rect x="46" y="86" width="150" height="70" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="86" y="117" font-size="18" font-weight="700">图片</text>
+            <text x="66" y="142" font-size="14" fill="#687581">局部像素结构</text>
+            <rect x="320" y="58" width="190" height="70" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="378" y="88" font-size="18" font-weight="700">CNN</text>
+            <text x="344" y="114" font-size="14" fill="#687581">卷积核、池化、ReLU</text>
+            <rect x="320" y="146" width="190" height="70" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="370" y="176" font-size="18" font-weight="700">ResNet</text>
+            <text x="342" y="202" font-size="14" fill="#687581">跳跃连接，训练深层网络</text>
+            <rect x="320" y="234" width="190" height="70" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="390" y="264" font-size="18" font-weight="700">ViT</text>
+            <text x="340" y="290" font-size="14" fill="#687581">切 patch，当作 token</text>
+            <rect x="46" y="208" width="150" height="70" rx="8" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="82" y="239" font-size="18" font-weight="700">序列/文本</text>
+            <text x="62" y="264" font-size="14" fill="#687581">顺序、长距离依赖</text>
+            <rect x="620" y="108" width="190" height="70" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="666" y="139" font-size="18" font-weight="700">Transformer</text>
+            <text x="646" y="164" font-size="14" fill="#687581">Q/K/V，自注意力，全局关系</text>
+            <rect x="620" y="196" width="190" height="70" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="672" y="227" font-size="18" font-weight="700">BERT / GPT</text>
+            <text x="644" y="252" font-size="14" fill="#687581">理解 vs 自回归生成</text>
+            <rect x="46" y="330" width="150" height="70" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="78" y="361" font-size="18" font-weight="700">生成样本</text>
+            <text x="62" y="386" font-size="14" fill="#687581">造图片/文本/数据</text>
+            <rect x="620" y="314" width="300" height="70" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="680" y="345" font-size="18" font-weight="700">AE / VAE / GAN / Diffusion</text>
+            <text x="650" y="370" font-size="14" fill="#687581">压缩重构、概率采样、对抗、逐步去噪</text>
+            <path d="M196 121 H320" stroke="#1f5f8b" stroke-width="2.6" marker-end="url(#arrow-blue)"/>
+            <path d="M196 121 C270 145 270 181 320 181" stroke="#1f5f8b" stroke-width="2.6" fill="none" marker-end="url(#arrow-blue)"/>
+            <path d="M196 121 C270 210 270 269 320 269" stroke="#1f5f8b" stroke-width="2.6" fill="none" marker-end="url(#arrow-blue)"/>
+            <path d="M196 243 C420 225 500 178 620 143" stroke="#1f5f8b" stroke-width="2.6" fill="none" marker-end="url(#arrow-blue)"/>
+            <path d="M510 269 C575 250 590 232 620 231" stroke="#1f5f8b" stroke-width="2.6" fill="none" marker-end="url(#arrow-blue)"/>
+            <path d="M196 365 H620" stroke="#1f5f8b" stroke-width="2.6" marker-end="url(#arrow-blue)"/>
+          </g>
+        </svg>
+      </div>
+      <div class="story">
+        <div class="label">图像线</div>
+        <div>图片有局部空间结构，所以先学 CNN；网络太深不好训，就引入 ResNet 的跳跃连接；如果想用注意力看全局关系，就把图片切成 patch，变成 ViT。</div>
+        <div class="label">文本线</div>
+        <div>文本有顺序和长距离依赖。RNN/LSTM 是按时间步读；Transformer 改成所有 token 直接互看。BERT 偏理解，GPT 偏生成。</div>
+        <div class="label">生成线</div>
+        <div>生成模型的共同目标是学会数据分布，然后造新样本。AE 学重构，VAE 学连续潜空间，GAN 学对抗，Diffusion 学逐步去噪。</div>
+      </div>
+    </section>
+
+    <section class="card" id="guard">
+      <h2>0.5 新词护栏：先知道它解决什么，再记名字</h2>
+      <p>AI 后半最大的痛苦不是难算，而是新词太密。下面这组不是词典抄定义，而是<span class="key">考场分流护栏</span>：每个词先回答“它为什么存在”，再给题眼、相邻易混项和第一句话。读后面正式内容前，先把这组卡扫一遍。</p>
+      <div class="guard-grid">
+        <div class="term-card">
+          <h3>CNN</h3>
+          <p class="why">图片不是普通表格，附近像素会组成边缘、纹理、形状。CNN 就是让小窗口在图片上滑动，专门抓局部模式。</p>
+          <dl>
+            <dt>题眼</dt><dd>卷积核、局部窗口、特征图、池化、图像分类。</dd>
+            <dt>别混</dt><dd>ViT 是 patch/token/attention；CNN 是卷积核滑动。</dd>
+            <dt>第一句</dt><dd>CNN 利用局部感受野和参数共享提取图像局部特征。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>题干说“3x3 filter 扫过图片”，先写 CNN，不要写 Transformer。</div>
+        </div>
+        <div class="term-card">
+          <h3>ResNet</h3>
+          <p class="why">网络越深，训练越容易卡住。ResNet 用跳跃连接让输入直接绕过若干层，再和输出相加。</p>
+          <dl>
+            <dt>题眼</dt><dd>skip connection、F(x)+x、深层网络、梯度消失。</dd>
+            <dt>别混</dt><dd>它不是池化，也不是注意力；它主要解决深层网络训练问题。</dd>
+            <dt>第一句</dt><dd>ResNet 通过残差连接帮助信息和梯度跨层传播。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>看到 F(x)+x，先解释“残差”和“跳跃连接”。</div>
+        </div>
+        <div class="term-card">
+          <h3>ViT</h3>
+          <p class="why">Transformer 原本处理 token 序列。ViT 把图片切成 patch，让每个 patch 变成视觉 token，再用注意力看全局关系。</p>
+          <dl>
+            <dt>题眼</dt><dd>patch embedding、视觉 token、Transformer encoder。</dd>
+            <dt>别混</dt><dd>CNN 先局部卷积；ViT 先切 patch，再全局 attention。</dd>
+            <dt>第一句</dt><dd>ViT 将图像切成 patch 并转为 token，用 self-attention 建模全局关系。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>题干写“图片切块后输入 Transformer”，模型名先写 ViT。</div>
+        </div>
+        <div class="term-card">
+          <h3>Transformer / Attention</h3>
+          <p class="why">RNN 要一步步传信息，长距离关系容易丢。Attention 让任意位置直接互相看，Transformer 把它做成主结构。</p>
+          <dl>
+            <dt>题眼</dt><dd>Q/K/V、self-attention、长距离依赖、并行。</dd>
+            <dt>别混</dt><dd>Q/K/V 不是 Q-learning；这里 Q 是 Query，K 是 Key，V 是 Value。</dd>
+            <dt>第一句</dt><dd>Attention 用 Q 和 K 计算相关性权重，再按权重汇总 V。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>问 √d_k 时，答“防止点积过大导致 softmax 过尖”。</div>
+        </div>
+        <div class="term-card">
+          <h3>BERT / GPT</h3>
+          <p class="why">二者都来自 Transformer，但考试要你区分任务倾向：BERT 偏理解，GPT 偏生成。</p>
+          <dl>
+            <dt>题眼</dt><dd>encoder-only、decoder-only、双向上下文、自回归。</dd>
+            <dt>别混</dt><dd>BERT 是双向理解；GPT 是按前文预测下一个 token。</dd>
+            <dt>第一句</dt><dd>BERT 偏语言理解，GPT 偏自回归文本生成。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>看到“根据前文生成下一个词”，先写 GPT。</div>
+        </div>
+        <div class="term-card">
+          <h3>AE / VAE</h3>
+          <p class="why">AE 学压缩和重构，VAE 进一步让隐空间变成可采样分布，所以更像生成模型。</p>
+          <dl>
+            <dt>题眼</dt><dd>编码器、解码器、重构误差、μ/logσ²、KL、重参数化。</dd>
+            <dt>别混</dt><dd>普通 AE 不一定有连续可采样隐空间；VAE 有分布约束。</dd>
+            <dt>第一句</dt><dd>VAE 用 μ 和 σ 表示潜变量分布，并通过 KL 让隐空间可采样。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>题干出现 μ/logσ² 和 KL，先写 VAE，不写普通 AE。</div>
+        </div>
+        <div class="term-card">
+          <h3>GAN</h3>
+          <p class="why">GAN 用两个网络互相较劲：生成器造样本，判别器辨真假。它追求逼真，但训练可能不稳。</p>
+          <dl>
+            <dt>题眼</dt><dd>generator、discriminator、adversarial、mode collapse。</dd>
+            <dt>别混</dt><dd>VAE 是潜变量分布和 KL；Diffusion 是加噪/去噪。</dd>
+            <dt>第一句</dt><dd>GAN 通过生成器和判别器对抗训练，使生成样本逼近真实分布。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>问“模式崩塌”，要说生成器只覆盖少数样本模式。</div>
+        </div>
+        <div class="term-card">
+          <h3>Diffusion / DDPM</h3>
+          <p class="why">扩散模型把生成拆成许多小步：前向逐步加噪，反向学会预测噪声并去掉噪声。</p>
+          <dl>
+            <dt>题眼</dt><dd>加噪、去噪、x_t、时间步 t、预测噪声 ε。</dd>
+            <dt>别混</dt><dd>它不是 GAN 对抗，也不是 VAE 的 KL 采样。</dd>
+            <dt>第一句</dt><dd>扩散模型训练网络根据 x_t 和 t 预测噪声，再逐步去噪生成样本。</dd>
+          </dl>
+          <div class="micro-check"><strong>小测：</strong>问“网络输出目标”，优先答预测噪声 ε。</div>
+        </div>
+      </div>
+      <div class="mark">
+        <strong>记忆法：</strong>图像线看“局部到全局”：CNN -> ResNet -> ViT；文本线看“顺序到注意力”：RNN/LSTM -> Transformer -> BERT/GPT；生成线看“训练信号”：重构 AE、分布 VAE、对抗 GAN、去噪 Diffusion。
+      </div>
+    </section>
+
+    <section class="card" id="training">
+      <h2>1. 深度学习训练四件套：数据、模型、损失、优化器</h2>
+      <p>看到任何深度学习题，先别被模型名吓到。考试最爱问的是：数据怎么分、模型怎么前向算、损失衡量什么、参数怎么更新。</p>
+      <table>
+        <thead><tr><th>词</th><th>从零解释</th><th>考试题眼</th><th>易错点</th></tr></thead>
+        <tbody>
+          <tr><td>训练集</td><td>模型真正用来学习、更新参数的数据。</td><td>train、fit、backprop、update。</td><td>数据增强通常只放训练集。</td></tr>
+          <tr><td>验证集</td><td>训练过程中用于调超参数、选模型。</td><td>validation、调学习率/epoch。</td><td>不能拿它反复当最终成绩。</td></tr>
+          <tr><td>测试集</td><td>模型训练完成后，评估泛化能力。</td><td>test、unseen、generalization。</td><td>不能参与训练和调参。</td></tr>
+          <tr><td>前向传播</td><td>输入一路算到输出，得到预测和 loss。</td><td>forward、logits、prediction。</td><td>不是更新参数的阶段。</td></tr>
+          <tr><td>反向传播</td><td>从 loss 反向求梯度，告诉每个参数该怎么改。</td><td>backward、链式法则、gradient。</td><td>只要网络中间不可导，就会卡训练。</td></tr>
+          <tr><td>学习率</td><td>每次参数更新迈多大步。</td><td>learning rate、震荡、收敛慢。</td><td>太大可能震荡，太小可能太慢。</td></tr>
+        </tbody>
+      </table>
+      <div class="diagram" aria-label="训练四件套流程图">
+        <svg viewBox="0 0 980 300" role="img">
+          <rect width="980" height="300" fill="#fbfdfe"/>
+          <defs>
+            <marker id="arrow-train" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/></marker>
+            <marker id="arrow-red2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#a23b32"/></marker>
+          </defs>
+          <g font-family="sans-serif" fill="#18212a">
+            <rect x="50" y="95" width="130" height="66" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="89" y="126" font-size="18" font-weight="700">数据</text>
+            <text x="70" y="150" font-size="13" fill="#687581">train / val / test</text>
+            <rect x="255" y="95" width="130" height="66" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="294" y="126" font-size="18" font-weight="700">模型</text>
+            <text x="280" y="150" font-size="13" fill="#687581">CNN / Transformer</text>
+            <rect x="460" y="95" width="130" height="66" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="490" y="126" font-size="18" font-weight="700">预测</text>
+            <text x="490" y="150" font-size="13" fill="#687581">logits / prob</text>
+            <rect x="665" y="95" width="130" height="66" rx="8" fill="#fff2ef" stroke="#a23b32"/>
+            <text x="699" y="126" font-size="18" font-weight="700">损失</text>
+            <text x="690" y="150" font-size="13" fill="#687581">CE / MSE</text>
+            <rect x="395" y="210" width="190" height="54" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="428" y="243" font-size="17" font-weight="700">优化器更新参数</text>
+            <path d="M180 128 H255" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-train)"/>
+            <path d="M385 128 H460" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-train)"/>
+            <path d="M590 128 H665" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-train)"/>
+            <path d="M665 165 C640 205 600 224 585 237" stroke="#a23b32" stroke-width="3" fill="none" marker-end="url(#arrow-red2)"/>
+            <path d="M395 237 C295 238 260 195 260 162" stroke="#a23b32" stroke-width="3" fill="none" marker-end="url(#arrow-red2)"/>
+            <text x="50" y="48" font-size="20" font-weight="800" fill="#1f5f8b">前向：数据到预测到损失；反向：损失到梯度到参数更新</text>
+          </g>
+        </svg>
+      </div>
+      <div class="grid">
+        <div class="box">
+          <strong>数据增强为什么只给训练集</strong>
+          增强是为了让模型见更多变化、学会泛化。验证集和测试集是“模拟考/期末卷”，如果你也随机翻转、旋转，就相当于改考题，评估不客观。
+        </div>
+        <div class="box">
+          <strong>交叉熵为什么常用于分类</strong>
+          分类关心正确类别概率。真实类别概率越低，交叉熵惩罚越大；真实类别概率越高，惩罚越小。
+        </div>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">ReLU</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="func">max</span><span class="op">(</span><span class="mn">0</span><span class="op">,</span><span class="mi">x</span><span class="op">)</span>
+          <span class="op">,</span>
+          <span class="mi">L</span>
+          <span class="op">=</span>
+          <span class="op">−</span>
+          <span class="sum"><span class="top">C</span><span class="sym">∑</span><span class="bot">c=1</span></span>
+          <span class="mi">y</span><sub>c</sub><span class="func">log</span><span class="op">(</span><span class="mi">p</span><sub>c</sub><span class="op">)</span>
+        </div>
+        <div class="math-note">读法：ReLU 引入非线性；交叉熵惩罚“真实类别的预测概率太低”。</div>
+      </div>
+    </section>
+
+    <section class="card" id="vision">
+      <h2>2. CNN、ResNet、ViT：图像题从局部到全局</h2>
+      <p>图像模型的主线是：<span class="key">局部特征</span>先由 CNN 抓，深层网络用 ResNet 稳住训练，全局关系可以交给 ViT/Attention。</p>
+      <div class="grid three">
+        <div class="box">
+          <strong>CNN 解决什么问题</strong>
+          图片相邻像素组成边缘、纹理、形状。卷积核像一个会学习的小窗口，在图片上滑动找同一种局部模式。
+        </div>
+        <div class="box">
+          <strong>ResNet 解决什么问题</strong>
+          网络太深时，梯度传到前面会变弱。跳跃连接让输入直接绕过若干层，与输出相加，帮助深层网络训练。
+        </div>
+        <div class="box">
+          <strong>ViT 解决什么问题</strong>
+          它把图像切成 patch，每个 patch 当成 token，用 Transformer 建模 patch 之间的全局关系。
+        </div>
+      </div>
+      <div class="diagram" aria-label="CNN 卷积池化与 ResNet 跳跃连接图">
+        <svg viewBox="0 0 980 430" role="img">
+          <rect width="980" height="430" fill="#fbfdfe"/>
+          <defs>
+            <marker id="arrow-v" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/></marker>
+            <marker id="arrow-g" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#24724f"/></marker>
+          </defs>
+          <g font-family="sans-serif" fill="#18212a">
+            <text x="46" y="42" font-size="20" font-weight="800" fill="#1f5f8b">CNN：小窗口提局部特征；ResNet：让输入直接跨层相加</text>
+            <rect x="55" y="82" width="150" height="150" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="92" y="260" font-size="15" font-weight="700">输入图片</text>
+            <g stroke="#b3d2e7">
+              <line x1="85" y1="82" x2="85" y2="232"/><line x1="115" y1="82" x2="115" y2="232"/><line x1="145" y1="82" x2="145" y2="232"/><line x1="175" y1="82" x2="175" y2="232"/>
+              <line x1="55" y1="112" x2="205" y2="112"/><line x1="55" y1="142" x2="205" y2="142"/><line x1="55" y1="172" x2="205" y2="172"/><line x1="55" y1="202" x2="205" y2="202"/>
+            </g>
+            <rect x="85" y="112" width="60" height="60" fill="rgba(255,249,230,.8)" stroke="#936b12" stroke-width="2"/>
+            <rect x="300" y="116" width="90" height="90" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="318" y="156" font-size="16" font-weight="700">卷积核</text>
+            <text x="310" y="180" font-size="13" fill="#687581">找边缘/纹理</text>
+            <rect x="485" y="92" width="150" height="140" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="520" y="142" font-size="17" font-weight="700">特征图</text>
+            <text x="505" y="170" font-size="13" fill="#687581">哪里响应强</text>
+            <text x="505" y="194" font-size="13" fill="#687581">哪里像这个特征</text>
+            <rect x="720" y="92" width="150" height="140" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="750" y="142" font-size="17" font-weight="700">池化 + ReLU</text>
+            <text x="742" y="170" font-size="13" fill="#687581">保留强响应</text>
+            <text x="742" y="194" font-size="13" fill="#687581">引入非线性</text>
+            <path d="M205 157 H300" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-v)"/>
+            <path d="M390 157 H485" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-v)"/>
+            <path d="M635 157 H720" stroke="#1f5f8b" stroke-width="3" marker-end="url(#arrow-v)"/>
+            <rect x="205" y="318" width="120" height="54" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="254" y="351" font-size="17" font-weight="700">x</text>
+            <rect x="425" y="318" width="150" height="54" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="454" y="351" font-size="17" font-weight="700">F(x)</text>
+            <rect x="690" y="318" width="150" height="54" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="726" y="351" font-size="17" font-weight="700">F(x) + x</text>
+            <path d="M325 345 H425" stroke="#24724f" stroke-width="3" marker-end="url(#arrow-g)"/>
+            <path d="M575 345 H690" stroke="#24724f" stroke-width="3" marker-end="url(#arrow-g)"/>
+            <path d="M265 318 C315 275 640 275 765 318" stroke="#24724f" stroke-width="3" fill="none" marker-end="url(#arrow-g)"/>
+            <text x="386" y="292" font-size="15" fill="#24724f" font-weight="700">跳跃连接：重要信息和梯度可以绕过去</text>
+          </g>
+        </svg>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">y</span>
+          <span class="op">=</span>
+          <span class="mi">F</span><span class="op">(</span><span class="mi">x</span><span class="op">)</span>
+          <span class="op">+</span>
+          <span class="mi">x</span>
+        </div>
+        <div class="math-note">读法：ResNet 不要求某几层完全重新学出 y，而是学习残差 F(x)，再把输入 x 加回来，缓解深层网络训练困难。</div>
+      </div>
+      <div class="diagram" aria-label="ViT patch embedding 图">
+        <svg viewBox="0 0 980 360" role="img">
+          <rect width="980" height="360" fill="#fbfdfe"/>
+          <defs><marker id="arrow-p" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#66519a"/></marker></defs>
+          <g font-family="sans-serif" fill="#18212a">
+            <text x="46" y="42" font-size="20" font-weight="800" fill="#66519a">ViT：把图片切成 patch，再当成 token 序列</text>
+            <rect x="70" y="85" width="180" height="180" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <g stroke="#c9bee8">
+              <line x1="115" y1="85" x2="115" y2="265"/><line x1="160" y1="85" x2="160" y2="265"/><line x1="205" y1="85" x2="205" y2="265"/>
+              <line x1="70" y1="130" x2="250" y2="130"/><line x1="70" y1="175" x2="250" y2="175"/><line x1="70" y1="220" x2="250" y2="220"/>
+            </g>
+            <text x="107" y="296" font-size="15" font-weight="700">图片切 patch</text>
+            <rect x="380" y="102" width="90" height="44" rx="8" fill="#eef7fc" stroke="#1f5f8b"/><text x="407" y="130" font-size="14">p1</text>
+            <rect x="485" y="102" width="90" height="44" rx="8" fill="#eef7fc" stroke="#1f5f8b"/><text x="512" y="130" font-size="14">p2</text>
+            <rect x="590" y="102" width="90" height="44" rx="8" fill="#eef7fc" stroke="#1f5f8b"/><text x="617" y="130" font-size="14">p3</text>
+            <rect x="695" y="102" width="90" height="44" rx="8" fill="#eef7fc" stroke="#1f5f8b"/><text x="722" y="130" font-size="14">...</text>
+            <text x="487" y="178" font-size="15" fill="#687581">每个 patch 展平并映射成向量</text>
+            <rect x="390" y="225" width="360" height="66" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="492" y="255" font-size="17" font-weight="700">Transformer Encoder</text>
+            <text x="462" y="278" font-size="13" fill="#687581">让视觉 token 彼此计算注意力</text>
+            <path d="M250 175 H380" stroke="#66519a" stroke-width="3" marker-end="url(#arrow-p)"/>
+            <path d="M570 146 V225" stroke="#66519a" stroke-width="3" marker-end="url(#arrow-p)"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section class="card" id="transformer">
+      <h2>3. Transformer、BERT、GPT：Q/K/V 是考试入口</h2>
+      <p>Transformer 的核心不是“很大很高级”，而是把序列中的每个位置都变成可以互相查询的信息点。Q、K、V 是公式题和简答题最常见入口。</p>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="func">Attention</span><span class="op">(</span><span class="mb">Q</span><span class="op">,</span><span class="mb">K</span><span class="op">,</span><span class="mb">V</span><span class="op">)</span>
+          <span class="op">=</span>
+          <span class="func">softmax</span><span class="op">(</span>
+          <span class="frac"><span><span class="mb">Q</span><span class="mb">K</span><sup>T</sup></span><span><span class="sqrt">√<span class="radicand"><span class="mi">d</span><sub>k</sub></span></span></span></span>
+          <span class="op">)</span>
+          <span class="mb">V</span>
+        </div>
+        <div class="math-note">读法：Q 和 K 算相关性，softmax 变成注意力权重，再用权重汇总 V。除以 √d_k 是为了数值稳定。</div>
+      </div>
+      <div class="grid three">
+        <div class="box">
+          <strong>Q：我想查什么</strong>
+          当前 token 发出查询。简答时可以写“Query 表示当前位置需要寻找的信息线索”。
+        </div>
+        <div class="box">
+          <strong>K：我有什么索引</strong>
+          每个 token 提供 key，用来和 Q 算匹配程度。QK 越大，说明越相关。
+        </div>
+        <div class="box">
+          <strong>V：真正拿来汇总的内容</strong>
+          softmax 后的权重不是直接输出，而是去加权求和 V，得到当前位置的新表示。
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>概念</th><th>核心架构</th><th>核心任务/能力</th><th>考试一句话</th></tr></thead>
+        <tbody>
+          <tr><td>Transformer</td><td>Encoder-Decoder</td><td>序列建模</td><td>并行计算、全局依赖，是现代大模型基础。</td></tr>
+          <tr><td>BERT</td><td>Encoder-only</td><td>语言理解</td><td>双向上下文，常见理解类任务。</td></tr>
+          <tr><td>GPT</td><td>Decoder-only</td><td>文本生成</td><td>自回归生成，按前文预测下一个 token。</td></tr>
+          <tr><td>Agent</td><td>LLM + 工具 + 规划</td><td>自主任务执行</td><td>大模型调用工具、规划步骤、闭环行动。</td></tr>
+        </tbody>
+      </table>
+      <div class="mark">
+        <strong>答题模板：</strong>先写 Transformer 的核心是 self-attention，再解释 Q/K/V 和 √d_k，最后按任务区分 BERT/GPT：BERT 偏双向理解，GPT 偏自回归生成。
+      </div>
+    </section>
+
+    <section class="card" id="generation">
+      <h2>4. 生成模型：从“还原”到“造新样本”</h2>
+      <p>生成模型的共同问题是：模型怎么学会数据长什么样，然后从某种隐变量或噪声出发造出新样本。不要把 AE、VAE、GAN、Diffusion 混成一团，它们的训练信号完全不同。</p>
+      <div class="diagram" aria-label="生成模型四条路线图">
+        <svg viewBox="0 0 1040 500" role="img">
+          <rect width="1040" height="500" fill="#fbfdfe"/>
+          <defs>
+            <marker id="arrow-gen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1f5f8b"/></marker>
+            <marker id="arrow-red3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#a23b32"/></marker>
+          </defs>
+          <g font-family="sans-serif" fill="#18212a">
+            <text x="44" y="42" font-size="20" font-weight="800" fill="#1f5f8b">四种生成相关模型：看训练目标，不只背名字</text>
+            <rect x="48" y="78" width="190" height="82" rx="8" fill="#eef7fc" stroke="#1f5f8b"/>
+            <text x="92" y="112" font-size="18" font-weight="700">AE</text>
+            <text x="68" y="138" font-size="13" fill="#687581">编码压缩 -> 解码重构</text>
+            <rect x="300" y="78" width="190" height="82" rx="8" fill="#eef9f3" stroke="#24724f"/>
+            <text x="342" y="112" font-size="18" font-weight="700">VAE</text>
+            <text x="318" y="138" font-size="13" fill="#687581">学 μ、σ，连续潜空间</text>
+            <rect x="552" y="78" width="190" height="82" rx="8" fill="#fff9e6" stroke="#936b12"/>
+            <text x="594" y="112" font-size="18" font-weight="700">GAN</text>
+            <text x="570" y="138" font-size="13" fill="#687581">生成器 vs 判别器</text>
+            <rect x="804" y="78" width="190" height="82" rx="8" fill="#f6f2ff" stroke="#66519a"/>
+            <text x="836" y="112" font-size="18" font-weight="700">Diffusion</text>
+            <text x="822" y="138" font-size="13" fill="#687581">先加噪，再逐步去噪</text>
+            <text x="60" y="215" font-size="15" font-weight="700">目标：重构原图</text>
+            <text x="312" y="215" font-size="15" font-weight="700">目标：可采样生成</text>
+            <text x="564" y="215" font-size="15" font-weight="700">目标：骗过判别器</text>
+            <text x="816" y="215" font-size="15" font-weight="700">目标：预测噪声</text>
+            <rect x="70" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#1f5f8b"/><text x="86" y="286" font-size="14">x</text>
+            <rect x="155" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#1f5f8b"/><text x="169" y="286" font-size="14">x'</text>
+            <path d="M130 280 H155" stroke="#1f5f8b" stroke-width="2.5" marker-end="url(#arrow-gen)"/>
+            <text x="57" y="340" font-size="13" fill="#687581">像压缩包：还原能力强，随机生成弱</text>
+            <rect x="310" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#24724f"/><text x="323" y="286" font-size="14">μ,σ</text>
+            <rect x="395" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#24724f"/><text x="411" y="286" font-size="14">z</text>
+            <path d="M370 280 H395" stroke="#24724f" stroke-width="2.5" marker-end="url(#arrow-gen)"/>
+            <text x="300" y="340" font-size="13" fill="#687581">把离散点变成连续分布，可从 z 采样</text>
+            <rect x="565" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#936b12"/><text x="585" y="286" font-size="14">G</text>
+            <rect x="655" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#936b12"/><text x="675" y="286" font-size="14">D</text>
+            <path d="M625 280 H655" stroke="#936b12" stroke-width="2.5" marker-end="url(#arrow-gen)"/>
+            <path d="M655 308 C622 350 570 345 570 308" stroke="#a23b32" stroke-width="2.5" fill="none" marker-end="url(#arrow-red3)"/>
+            <text x="552" y="365" font-size="13" fill="#687581">G 造假，D 辨真假，互相拉扯</text>
+            <rect x="820" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#66519a"/><text x="836" y="286" font-size="14">x</text>
+            <rect x="895" y="255" width="60" height="50" rx="8" fill="#fff" stroke="#66519a"/><text x="910" y="286" font-size="14">x_t</text>
+            <path d="M880 280 H895" stroke="#66519a" stroke-width="2.5" marker-end="url(#arrow-gen)"/>
+            <path d="M895 308 C860 350 815 340 820 308" stroke="#a23b32" stroke-width="2.5" fill="none" marker-end="url(#arrow-red3)"/>
+            <text x="805" y="365" font-size="13" fill="#687581">训练网络预测噪声；生成时从噪声逐步去掉</text>
+          </g>
+        </svg>
+      </div>
+      <table>
+        <thead><tr><th>模型</th><th>先解决的问题</th><th>训练信号</th><th>期末高频问法</th></tr></thead>
+        <tbody>
+          <tr><td>AE</td><td>把输入压缩成隐表示再重构。</td><td>重构误差，如 MSE/L1。</td><td>为什么 AE 不适合作为真正生成模型？隐空间可能不连续，随机采样容易落到没学过区域。</td></tr>
+          <tr><td>VAE</td><td>让隐空间可采样、连续。</td><td>重构损失 + KL 散度。</td><td>重参数化为什么存在？为了让采样过程可导，能反向传播。</td></tr>
+          <tr><td>GAN</td><td>生成逼真样本。</td><td>生成器和判别器对抗。</td><td>为什么训练不稳定？可能判别器过强、梯度不稳、模式崩塌。</td></tr>
+          <tr><td>Diffusion</td><td>通过逐步去噪生成高质量样本。</td><td>预测噪声的误差。</td><td>它预测的是噪声，不是一步直接预测清晰图；优点稳定，缺点采样慢。</td></tr>
+        </tbody>
+      </table>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">z</span>
+          <span class="op">=</span>
+          <span class="mi">μ</span>
+          <span class="op">+</span>
+          <span class="mi">σ</span>
+          <span class="op">⊙</span>
+          <span class="mi">ε</span>
+          <span class="op">,</span>
+          <span class="mi">ε</span>
+          <span class="op">∼</span>
+          <span class="mi">N</span><span class="op">(</span><span class="mn">0</span><span class="op">,</span><span class="mn">1</span><span class="op">)</span>
+        </div>
+        <div class="math-note">VAE 重参数化读法：随机性放到 ε 里，μ 和 σ 仍然可由网络输出并参与反向传播。</div>
+      </div>
+      <div class="math-card">
+        <div class="display-eq">
+          <span class="mi">L</span><sub>diffusion</sub>
+          <span class="op">=</span>
+          <span class="mi">E</span>
+          <span class="op">[</span>
+          <span class="op">||</span>
+          <span class="mi">ε</span>
+          <span class="op">−</span>
+          <span class="mi">ε</span><sub>θ</sub><span class="op">(</span><span class="mi">x</span><sub>t</sub><span class="op">,</span><span class="mi">t</span><span class="op">)</span>
+          <span class="op">||</span><sup>2</sup>
+          <span class="op">]</span>
+        </div>
+        <div class="math-note">扩散模型读法：给带噪图 x_t 和时间步 t，网络学习预测这一步噪声 ε。</div>
+      </div>
+    </section>
+
+    <section class="card" id="exam">
+      <h2>5. 考试题眼：看到这些词，第一句这样写</h2>
+      <table>
+        <thead><tr><th>题干信号</th><th>先想到</th><th>第一句</th><th>扣分点</th></tr></thead>
+        <tbody>
+          <tr><td>卷积核、特征图、池化、图像分类</td><td>CNN</td><td>图像具有局部空间结构，CNN 用卷积核提取局部特征，并通过参数共享减少参数。</td><td>只写“CNN 适合图像”不够。</td></tr>
+          <tr><td>网络很深、梯度消失、skip connection</td><td>ResNet</td><td>ResNet 通过跳跃连接把输入 x 直接加到 F(x) 上，帮助信息和梯度跨层传播。</td><td>不能把 skip connection 说成池化。</td></tr>
+          <tr><td>patch embedding、视觉 token</td><td>ViT</td><td>ViT 把图像切成 patch，每个 patch 映射成 token，再用 Transformer 建模全局关系。</td><td>不要说 ViT 仍靠卷积核滑动。</td></tr>
+          <tr><td>Q/K/V、self-attention、√d_k</td><td>Transformer</td><td>Q 查 K 得到相关性，softmax 成权重后汇总 V；除以 √d_k 防止点积过大。</td><td>只翻译 Q/K/V 英文不给作用。</td></tr>
+          <tr><td>BERT、GPT、encoder-only、decoder-only</td><td>模型比较</td><td>BERT 偏双向理解，GPT 偏自回归生成。</td><td>把二者结构说反。</td></tr>
+          <tr><td>μ、σ、KL、reparameterization</td><td>VAE</td><td>VAE 用 μ 和 σ 表示潜变量分布，重参数化让采样可导，KL 约束潜空间接近标准正态。</td><td>只说“VAE 可以生成”没有机制。</td></tr>
+          <tr><td>generator、discriminator、mode collapse</td><td>GAN</td><td>GAN 由生成器和判别器对抗训练，目标是让生成样本逼近真实分布。</td><td>说训练一定收敛全局最优。</td></tr>
+          <tr><td>加噪、去噪、DDPM、预测噪声</td><td>Diffusion</td><td>扩散模型前向逐步加噪，反向训练网络预测噪声并逐步去噪生成样本。</td><td>说它一步直接预测清晰图。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="cards">
+      <h2>6. 题卡：先写题眼，再看解析</h2>
+      <div class="questions">
+        <div class="question">
+          <span class="source-tag">lab md / 图像分类</span>
+          <strong>题 1：CNN 为什么比全连接更适合图像？</strong>
+          <p>题干：某模型用于动物图片分类，结构中包含 Conv2D、MaxPool、ReLU 和 Linear。请解释 CNN 适合图像的原因，并说明 Conv2D、MaxPool、ReLU 的作用。</p>
+          <textarea data-key="ai-bridge-q1" placeholder="先写：图像局部结构 -> 卷积核 -> 参数共享 -> 池化 -> ReLU 非线性。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>题眼：</strong>图片分类、Conv2D、MaxPool、ReLU。</p>
+            <p><strong>标准答案：</strong>图像有局部空间结构，相邻像素会形成边缘、纹理、角点等局部特征。Conv2D 使用可学习卷积核在局部窗口滑动，提取局部特征；同一个卷积核在整张图上共享参数，因此比全连接参数更少，也保留空间邻近关系。MaxPool 保留局部强响应并降低特征图尺寸，减少计算量并提高一定平移鲁棒性。ReLU 引入非线性，否则多层线性变换叠加仍等价于线性模型。</p>
+            <p><strong>迁移：</strong>换成“为什么 CNN 能提取边缘纹理”，仍然按局部结构、卷积核、参数共享作答。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">PPT 第7-9讲 / ViT</span>
+          <strong>题 2：ViT 和 CNN 的直觉差异是什么？</strong>
+          <p>题干：某模型先把图片切成固定大小的小块，再把每个小块映射成向量输入 Transformer。请说明这是哪类模型，并比较它和 CNN 的建模直觉。</p>
+          <textarea data-key="ai-bridge-q2" placeholder="先写：ViT；patch/token；Transformer 全局关系；CNN 局部卷积。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>题眼：</strong>图片切块、patch、Transformer。</p>
+            <p><strong>标准答案：</strong>这是 Vision Transformer。ViT 把图片切成 patch，把每个 patch 展平并映射成视觉 token，然后用 Transformer 的 self-attention 建模 patch 之间的全局关系。CNN 的直觉是局部卷积：先用卷积核提取边缘、纹理等局部特征，再逐层组合；ViT 的直觉是把图像转成 token 序列，直接通过 attention 学全局依赖。</p>
+            <p><strong>排除：</strong>如果题干强调卷积核滑动、池化、特征图，优先是 CNN；强调 patch/token/attention，优先是 ViT。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">Transformer PPT / 公式解释</span>
+          <strong>题 3：解释 Attention 公式</strong>
+          <p>题干：解释 Attention(Q,K,V)=softmax(QK^T/√d_k)V 中 Q、K、V 和 √d_k 的含义，并说明 Transformer 为什么适合长距离依赖。</p>
+          <textarea data-key="ai-bridge-q3" placeholder="先写：Q 查什么，K 索引，V 内容；QK 相关性；sqrt 稳定；直接全局关注。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>题眼：</strong>Attention、Q/K/V、√d_k、长距离依赖。</p>
+            <p><strong>标准答案：</strong>Q 是查询，表示当前位置想寻找什么信息；K 是键或索引，用来和 Q 计算相关性；V 是真正被加权汇总的内容。QK^T 得到相关性分数，softmax 将分数归一化成注意力权重，再用权重汇总 V。除以 √d_k 是为了防止向量维度较大时点积过大，使 softmax 过尖、梯度不稳定。Transformer 中任意两个位置可以直接通过 self-attention 建立联系，不需要像 RNN 那样逐步传递隐藏状态，因此更适合长距离依赖，也更易并行。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">课程总结 / 大模型</span>
+          <strong>题 4：BERT、GPT、Agent 怎么区分？</strong>
+          <p>题干：表格给出 Transformer、BERT、GPT、Agent，要求填写核心架构、任务能力和特点。请写出最稳的比较答案。</p>
+          <textarea data-key="ai-bridge-q4" placeholder="先写：Transformer encoder-decoder；BERT encoder-only 理解；GPT decoder-only 自回归生成；Agent 工具和规划。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>标准答案：</strong>Transformer 是序列建模基础架构，典型是 Encoder-Decoder，特点是并行计算和全局依赖。BERT 是 Encoder-only，偏语言理解任务，强调双向上下文。GPT 是 Decoder-only，偏文本生成，强调自回归，即根据前文预测下一个 token。Agent 可以理解为 LLM 加工具调用和规划能力，用于自主任务执行、闭环行动。</p>
+            <p><strong>常见坑：</strong>不要把 BERT/GPT 的 encoder-only、decoder-only 说反；不要只写“都是大模型”，这没有区分度。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">生成模型 lab / VAE</span>
+          <strong>题 5：VAE 为什么要重参数化？</strong>
+          <p>题干：VAE 编码器输出 μ 和 logvar，需要从潜变量分布中采样 z。为什么要使用 z=μ+σ⊙ε 的重参数化技巧？KL 散度在 VAE 中有什么作用？</p>
+          <textarea data-key="ai-bridge-q5" placeholder="先写：采样不可导 -> 随机性给 epsilon -> μ/σ 可反传；KL 让潜空间接近标准正态且连续。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>题眼：</strong>μ、logvar、采样、reparameterization、KL。</p>
+            <p><strong>标准答案：</strong>VAE 希望从潜变量分布中采样 z 再送入解码器，但直接随机采样会阻断梯度，网络无法通过反向传播学习 μ 和 σ。重参数化写成 z=μ+σ⊙ε，其中 ε 从标准正态分布采样，随机性被移到 ε，μ 和 σ 仍由网络计算并可求导。KL 散度用于约束编码器输出的潜变量分布接近标准正态分布，使潜空间更连续、更可采样，从而更适合生成。</p>
+            <p><strong>迁移：</strong>如果题目问“VAE 为什么比 AE 更适合生成”，就写 AE 隐空间可能离散不连续，VAE 通过分布建模和 KL 约束让潜空间可采样。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">参考习题 / GAN</span>
+          <strong>题 6：GAN 损失小但生成质量差，可能为什么？</strong>
+          <p>题干：训练 GAN 时，发现损失函数值很小，但生成器产生的数据质量并不高。请解释一个可能原因，并说明 GAN 训练为什么不能保证稳定收敛。</p>
+          <textarea data-key="ai-bridge-q6" placeholder="先写：判别器过强/过拟合，生成器反馈差；对抗非凸优化，模式崩塌。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>题眼：</strong>GAN、损失小但质量差、训练不稳定。</p>
+            <p><strong>标准答案：</strong>GAN 的生成器和判别器需要保持相对平衡。如果判别器过强或过拟合，它可能在训练集上损失很小，但给生成器的梯度信号不再能有效指导生成器改进，导致生成质量差。GAN 是生成器和判别器的对抗优化，目标非凸且双方互相影响，可能出现梯度不稳定、模式崩塌等问题，因此不能保证训练足够久就全局最优。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">PPT 第10-11讲 / Diffusion</span>
+          <strong>题 7：扩散模型到底预测什么？</strong>
+          <p>题干：DDPM 前向过程逐步向图像加高斯噪声，反向过程用神经网络生成图像。请说明训练时网络的输入、输出目标和扩散模型相对 GAN 的一个优缺点。</p>
+          <textarea data-key="ai-bridge-q7" placeholder="先写：输入带噪图 x_t 和 t；目标预测噪声 epsilon；优点稳定/质量高，缺点采样慢。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>题眼：</strong>加噪、去噪、DDPM、预测噪声。</p>
+            <p><strong>标准答案：</strong>扩散模型前向过程是固定的逐步加噪，将真实图像变成不同噪声程度的 x_t。训练反向网络时，输入通常是带噪图 x_t 和时间步 t，目标是预测这一步加入的噪声 ε，而不是一步直接预测清晰原图。生成时从纯噪声开始，反复预测并去掉噪声，逐步得到清晰样本。相对 GAN，扩散模型训练更稳定、生成质量高，但需要多步去噪，采样速度较慢。</p>
+          </details>
+        </div>
+
+        <div class="question">
+          <span class="source-tag">综合比较 / 考前简答</span>
+          <strong>题 8：一句题眼分流</strong>
+          <p>题干：请把下面 4 个描述分别对应到 AE、VAE、GAN、Diffusion，并说明理由：A. 学会压缩和重构输入；B. 生成器和判别器对抗；C. 通过重参数化从连续潜空间采样；D. 训练网络预测噪声逐步去噪。</p>
+          <textarea data-key="ai-bridge-q8" placeholder="先写：A-AE；B-GAN；C-VAE；D-Diffusion，并各给一句理由。"></textarea>
+          <details>
+            <summary>展开参考答案</summary>
+            <p><strong>标准答案：</strong>A 对应 AE，因为 AE 的核心是编码压缩和解码重构；B 对应 GAN，因为 GAN 的核心是生成器和判别器对抗训练；C 对应 VAE，因为 VAE 用 μ、σ 和重参数化从连续潜变量分布中采样；D 对应 Diffusion，因为扩散模型训练网络预测噪声，并在生成时逐步去噪。</p>
+            <p><strong>迁移：</strong>这类题不是背全称，而是抓“训练目标”。重构是 AE，对抗是 GAN，分布采样是 VAE，预测噪声是 Diffusion。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="source">
+      <h2>7. 来源核对：PPT 和参考习题信号</h2>
+      <p class="muted">这里放本地已渲染的来源图，用于确认“不是凭空编”。学习时先看上面的教学图和题卡，源码图只做核对。</p>
+      <div class="grid">
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai14-dl-goals-056.png" alt="第14讲课程总结深度学习课程目标" />
+          <div class="caption">第14讲课程总结：深度学习目标页。明确覆盖 CNN、自注意力、训练策略、Transformer、BERT、GPT、Agent。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai14-gen-goals-090.png" alt="第14讲课程总结生成式 AI 课程目标" />
+          <div class="caption">第14讲课程总结：生成式 AI 目标页。明确覆盖 PCA、AE、VAE、Diffusion、GAN，且偏概念和核心思想。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai-transformer-p4.png" alt="课程 PPT 中 Transformer、BERT、GPT、Agent 对比表" />
+          <div class="caption">课程 PPT 渲染页：Transformer/BERT/GPT/Agent 架构、任务和特点对比。</div>
+        </div>
+        <div class="source-shot">
+          <img src="./assets/pdf-pages/ai-ref-p7.png" alt="AI 参考习题第 7 页：神经网络、LSTM、GAN 题目" />
+          <div class="caption">AI 参考习题第 7 页：前馈神经网络、LSTM、GAN、XOR、编码器-解码器相关题。</div>
+        </div>
+      </div>
+      <div class="mark">
+        <strong>读完本页的闸门：</strong>你能用自己的话解释 CNN、ResNet、ViT、Transformer、BERT、GPT、AE、VAE、GAN、Diffusion 各自解决什么问题；并能做上面 8 张题卡里至少 6 张的第一反应。
+      </div>
+    </section>
+  </main>
+  <script>
+    const KEY = "ai_deep_generation_exam_bridge_notes_v1";
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    document.querySelectorAll("textarea[data-key]").forEach((box) => {
+      const k = box.dataset.key;
+      box.value = saved[k] || "";
+      box.addEventListener("input", () => {
+        saved[k] = box.value;
+        localStorage.setItem(KEY, JSON.stringify(saved));
+      });
+    });
+  </script>
+</body>
+</html>

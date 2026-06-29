@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a broken page, wrong link, layout issue, or interaction bug.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page or resource
+      description: Which page has the problem?
+      placeholder: "resources.html, course.html?id=ai, ..."
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open ...\n2. Click ...\n3. See ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Student homepage
+        - Course island
+        - Resource library
+        - Practice lab
+        - Dashboard
+        - Game
+        - Content page
+        - Maintainer tool
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshot or details
+      description: Add screenshots, browser details, or console messages if available.

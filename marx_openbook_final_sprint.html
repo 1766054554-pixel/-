@@ -1,0 +1,1403 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>马原纸质开卷最后冲刺：资料索引、题眼分流、材料题训练</title>
+  <style>
+    :root {
+      --bg: #f7f6f2;
+      --panel: #ffffff;
+      --ink: #20201d;
+      --muted: #6f6b61;
+      --line: #ded8ca;
+      --red: #a33c35;
+      --green: #26704d;
+      --blue: #255f87;
+      --amber: #876414;
+      --violet: #65529a;
+      --soft-red: #fff2ef;
+      --soft-green: #eef8f1;
+      --soft-blue: #eef6fc;
+      --soft-amber: #fff8e4;
+      --soft-violet: #f4f1ff;
+      --shadow: 0 14px 34px rgba(32, 31, 29, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f0ece2 0, rgba(247,246,242,0) 340px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.78;
+      letter-spacing: 0;
+    }
+    main { width: min(1180px, calc(100% - 30px)); margin: 0 auto; padding: 28px 0 72px; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.25; letter-spacing: 0; }
+    h1 { font-size: 33px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; }
+    p { margin: 0 0 10px; }
+    a { color: var(--blue); font-weight: 780; }
+    header, section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.98);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .muted { color: var(--muted); }
+    .key {
+      color: #141f29;
+      font-weight: 900;
+      background: linear-gradient(transparent 58%, #ffe59a 58%);
+      padding: 0 2px;
+    }
+    .source {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d4c39a;
+      border-radius: 999px;
+      background: #fffdf7;
+      color: var(--amber);
+      padding: 5px 10px;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .pillrow, .actions, .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #bdd4e5;
+      border-radius: 8px;
+      background: #f7fbff;
+      color: var(--blue);
+      padding: 7px 11px;
+      font-size: 14px;
+      font-weight: 850;
+      text-decoration: none;
+    }
+    .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .source.hot { color: var(--red); border-color: #dca8a0; background: var(--soft-red); }
+    .source.good { color: var(--green); border-color: #a5ccb5; background: var(--soft-green); }
+    .source.violet { color: var(--violet); border-color: #c5bde7; background: var(--soft-violet); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 14px;
+      min-width: 0;
+    }
+    .card h3 b { color: var(--blue); }
+    .progress-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(255,253,248,.98), rgba(255,255,255,.98));
+      padding: 14px;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--blue);
+    }
+    .progress-card.good::before { background: var(--green); }
+    .progress-card.warn::before { background: var(--amber); }
+    .progress-card.hot::before { background: var(--red); }
+    .progress-card strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--blue);
+    }
+    .progress-card.good strong { color: var(--green); }
+    .progress-card.warn strong { color: var(--amber); }
+    .progress-card.hot strong { color: var(--red); }
+    .progress-card .num {
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 950;
+      color: var(--red);
+      margin: 5px 0;
+    }
+    .progress-card.good .num { color: var(--green); }
+    .progress-card.warn .num { color: var(--amber); }
+    .progress-card.hot .num { color: var(--red); }
+    .progress-card p { color: var(--muted); margin: 0; font-size: 13px; }
+    .next-action {
+      border: 1px solid #d7c694;
+      border-left: 5px solid var(--amber);
+      border-radius: 8px;
+      background: var(--soft-amber);
+      padding: 13px 15px;
+      margin-top: 12px;
+    }
+    .next-action b { color: var(--red); }
+    .walk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .walk-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(255,253,248,.98), rgba(255,255,255,.98));
+      padding: 15px;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .walk-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--blue), var(--green), #d7a12a);
+    }
+    .walk-card h3 { margin-top: 4px; }
+    .walk-step {
+      border: 1px solid #e3d9c3;
+      border-radius: 8px;
+      background: #fffaf0;
+      padding: 9px 10px;
+      margin-top: 8px;
+    }
+    .walk-step b { color: var(--red); }
+    .draft {
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: var(--soft-green);
+      padding: 10px 12px;
+      margin-top: 9px;
+    }
+    .trap {
+      border-left: 5px solid var(--red);
+      border-radius: 8px;
+      background: var(--soft-red);
+      padding: 10px 12px;
+      margin-top: 9px;
+    }
+    .gate-lab {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .gate-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(255,253,248,.98), rgba(255,255,255,.98));
+      padding: 15px;
+      min-width: 0;
+    }
+    .gate-card h3 { color: var(--blue); }
+    .gate-stem {
+      border: 1px solid #e3d9c3;
+      border-radius: 8px;
+      background: #fffaf0;
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+    .rubric-mini {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .rubric-mini span {
+      border: 1px solid #d4c39a;
+      border-radius: 8px;
+      background: #fffdf7;
+      color: var(--amber);
+      padding: 7px 9px;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .note {
+      border-left: 5px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 13px 15px;
+      margin-top: 12px;
+    }
+    .note.good { border-left-color: var(--green); background: var(--soft-green); }
+    .note.warn { border-left-color: var(--amber); background: var(--soft-amber); }
+    .note.hot { border-left-color: var(--red); background: var(--soft-red); }
+    .note.violet { border-left-color: var(--violet); background: var(--soft-violet); }
+    .figure-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+    .figure {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 10px;
+    }
+    .figure img { display: block; width: 100%; border-radius: 6px; border: 1px solid #e5ddc9; }
+    .figure p { margin-top: 8px; font-size: 13px; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid var(--line); padding: 10px 11px; vertical-align: top; text-align: left; }
+    th { background: var(--soft-amber); color: #69490b; }
+    .compact td, .compact th { padding: 8px 9px; }
+    .radar {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .radar b { color: var(--red); }
+    .quiz { display: grid; gap: 12px; margin-top: 12px; }
+    .q {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 14px;
+    }
+    .q-title { font-weight: 900; margin-bottom: 8px; }
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+    .option {
+      border: 1px solid #d6cdb8;
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px 11px;
+      text-align: left;
+      color: var(--ink);
+      font: inherit;
+      cursor: pointer;
+    }
+    .option:hover { border-color: #94bdd8; background: #f7fbff; }
+    .option.selected { border-color: var(--blue); background: var(--soft-blue); color: var(--blue); font-weight: 850; }
+    .option.correct { border-color: #8fc5a2; background: var(--soft-green); color: #125333; }
+    .option.wrong { border-color: #dca8a0; background: var(--soft-red); color: #832c25; }
+    .feedback {
+      display: none;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: var(--soft-blue);
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+    .feedback.show { display: block; }
+    .check { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    button {
+      border: 1px solid #bdd4e5;
+      border-radius: 8px;
+      background: #f7fbff;
+      color: var(--blue);
+      padding: 8px 11px;
+      font: inherit;
+      font-weight: 850;
+      cursor: pointer;
+    }
+    button.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+    summary { cursor: pointer; color: var(--blue); font-weight: 900; }
+    textarea {
+      width: 100%;
+      min-height: 126px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 10px 11px;
+      font: inherit;
+      resize: vertical;
+    }
+    .todo label {
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf8;
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+    .todo label.done { border-color: #9fcaad; background: var(--soft-green); }
+    .mini { color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      main { width: min(100% - 22px, 1180px); padding-top: 18px; }
+      .grid, .grid.three, .grid.four, .options, .radar, .figure-grid, .walk-grid, .rubric-mini { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>马原 6/30 纸质开卷最后冲刺</h1>
+      <p class="muted">这页现在只服务剩下的马原：把纸质资料变成 <span class="key">能定位的索引</span>，把材料题变成 <span class="key">能展开的四段答案</span>。离散考前只用它做 20 分钟低成本预热，6/28 考完离散后再完整刷。</p>
+      <div class="pillrow">
+        <span class="source hot">依据：2008-2018 往年卷</span>
+        <span class="source good">依据：两篇期末必备文章</span>
+        <span class="source violet">依据：2024 PPT OCR</span>
+        <span class="source hot">新增：最后一节课课件与录音重点</span>
+        <span class="source">目标：开卷不乱翻</span>
+      </div>
+      <div class="actions">
+        <a class="btn primary" href="#teacher">先看老师重点</a>
+        <a class="btn primary" href="#progress">看自动进度</a>
+        <a class="btn primary" href="#index">先建纸质索引</a>
+        <a class="btn" href="#surplus">补剩余价值难点</a>
+        <a class="btn" href="#case-walkthrough">看材料题拆题</a>
+        <a class="btn" href="#radar">看往年题雷达</a>
+        <a class="btn" href="#locator">练30秒定位</a>
+        <a class="btn" href="#quiz">做原理分流题</a>
+        <a class="btn" href="#writing-gate">材料题闸门</a>
+        <a class="btn" href="#writing">练材料题第一段</a>
+        <a class="btn" href="./final_two_subject_command_center.html">回最后两科作战台</a>
+      </div>
+    </header>
+
+    <section id="progress">
+      <h2>0. 自动进度：现在该翻资料、做定位，还是写第一段？</h2>
+      <p class="muted">这里会读取你在本页留下的本机记录：纸质索引勾选、30 秒定位、原理分流题、材料题第一段。它不评价你努力没努力，只提醒下一步最能提分的动作。</p>
+      <div class="grid four" id="marxProgress"></div>
+      <div class="next-action" id="marxAdvice">
+        <b>加载中：</b>正在读取你的本机进度。
+      </div>
+      <div class="note good">
+        马原纸质开卷的最小闭环：<span class="key">页边钉子能找到 -> 题干信号能分流 -> 第一段能写出来</span>。三件事都做过，考场就不容易乱翻。
+      </div>
+    </section>
+
+    <section>
+      <h2>0.5 先定策略：马原不是从头背书，是把题眼接到原理</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>第一步：找题眼</h3>
+          <p>看到材料先问：它在讲 <span class="key">认识、矛盾、社会发展、资本、劳动、生态、就业</span> 哪一类？不要一上来翻书。</p>
+        </div>
+        <div class="card">
+          <h3>第二步：写原理</h3>
+          <p>每类原理准备 2-3 句“可直接上卷面”的句子。开卷的价值是帮你补细节，不是帮你临场想主线。</p>
+        </div>
+        <div class="card">
+          <h3>第三步：贴材料</h3>
+          <p>材料题最容易丢分的是只背原理。必须把题干关键词拉回来：材料中的“创新、就业、生态、危机、实践”分别说明什么。</p>
+        </div>
+      </div>
+      <div class="note hot">
+        你考场最该记住的一句话：<span class="key">先定原理，再摘材料，再分析连接</span>。只抄 PPT 或教材，阅卷老师会觉得你没有“用原理解释材料”。
+      </div>
+    </section>
+
+    <section id="teacher">
+      <h2>1. 老师最后一课重点雷达：这些最值得贴标签</h2>
+      <p class="muted">根据你给的最后一节课录音和《马原期末复习.pdf》整理。录音有识别噪声，所以这里按“老师反复强调 + 课件原页能印证 + 开卷能定位”三条线合并，不把听不清的字硬编成结论。</p>
+      <table>
+        <thead><tr><th>板块</th><th>老师强调的重点</th><th>开卷页边怎么写</th><th>可能怎么考</th></tr></thead>
+        <tbody>
+          <tr><td>导论</td><td>马克思主义的 <span class="key">人民性与实践性</span>，不要只背抽象定义。</td><td>人民性 -> 为人民认识世界和改造世界；实践性 -> 在实践中形成、检验、发展。</td><td>简答或论述：为什么马克思主义不是书斋学问，而是人民改造世界的理论。</td></tr>
+          <tr><td>第一章</td><td><span class="key">世界物质统一性</span>、实践问题、联系和发展、三大规律，规律常结合现实例子考。</td><td>物质统一性；实践与人的本质；对立统一/质量互变/否定之否定。</td><td>用对立统一分析国企与私企、发展与安全、生态与增长等关系。</td></tr>
+          <tr><td>第二章</td><td>实践是认识的基础；认识从感性到理性再回到实践；真理绝对性与相对性；实践检验真理；真理原则与价值原则统一。</td><td>实践 -> 来源/动力/目的/标准；两次飞跃；真理与价值。</td><td>材料给调查研究、试点修改、政策评估、科技认识发展，要求用认识论分析。</td></tr>
+          <tr><td>第三章</td><td>社会存在与社会意识；意识形态作用；生产力/生产关系、经济基础/上层建筑；人民群众与杰出人物；社会形态；历史规律性与主体选择性。</td><td>社会存在决定社会意识；人民群众创造历史；规律性 + 主体选择。</td><td>用历史唯物主义分析政策、改革、群众实践、英雄人物与历史条件。</td></tr>
+          <tr><td>第四章</td><td>最后课件集中讲 <span class="key">剩余价值理论难点</span>：货币为什么能转化为资本、劳动力商品的价值和使用价值、剩余价值从哪里来。</td><td>劳动力成为商品是前提；价值在流通中等价交换，剩余价值产生于生产中使用劳动力。</td><td>选择/论述：货币转化为资本的前提，剩余价值是否来自流通中的以小博大。</td></tr>
+          <tr><td>第五章</td><td>录音里明确说不用作为主线重点。</td><td>降级：只保留资本主义基本矛盾和新变化接口。</td><td>如果碰到，就接“新变化不消除基本矛盾”。</td></tr>
+          <tr><td>第六章</td><td>社会主义基本原则与中国特色社会主义；社会主义建设长期性、曲折中前进；科技竞争、信息化/新体制相关问题。</td><td>基本原则 + 中国特色；长期性曲折性；科技竞争与制度优势。</td><td>现实材料题：科技竞争、新质生产力、中国式现代化、制度优势。</td></tr>
+          <tr><td>共产主义</td><td>《共产党宣言》导读；共产主义不是只作为未来理想，还要理解为 <span class="key">过程、运动、实践</span>。</td><td>共产主义 -> 理想目标 + 现实运动 + 实践过程。</td><td>论述：如何理解共产主义是过程和实践，而不只是远处结果。</td></tr>
+        </tbody>
+      </table>
+      <div class="note hot">
+        老师给的考试信号很明确：<span class="key">考题在教材有原理，但没有标准答案，必须联系实际自主论证</span>。所以你开卷时不要罗列多个原理让老师选，先判断题眼，只用最贴的 1-2 个原理。
+      </div>
+    </section>
+
+    <section id="surplus">
+      <h2>2. 剩余价值专项：最后课件最密的一块</h2>
+      <p>这份 PDF 前半部分基本都在补 <span class="key">剩余价值理论难点</span>。这块最容易考选择、多选或论述里的概念辨析：不是背“资本家剥削工人”一句话，而是说清 <span class="key">为什么等价交换中还会产生剩余价值</span>。</p>
+      <div class="grid three">
+        <div class="card">
+          <h3>1. 前提：劳动力成为商品</h3>
+          <p>劳动力是人的劳动能力，不等于劳动者本人。成为商品有两个条件：劳动者有人身自由；劳动者失去生产资料和生活来源，只能出卖劳动力。</p>
+        </div>
+        <div class="card">
+          <h3>2. 关键：价值 vs 使用价值</h3>
+          <p>劳动力的价值由再生产劳动力所需的生活、繁衍、教育训练等费用决定；劳动力的使用价值就是劳动，能创造比自身价值更大的价值。</p>
+        </div>
+        <div class="card">
+          <h3>3. 结论：剩余价值来自生产过程</h3>
+          <p>购买劳动力时仍是等价交换；资本家获得更多价值，不是在流通中以小博大，而是在生产中使用劳动力，发生价值增殖。</p>
+        </div>
+      </div>
+      <table class="compact">
+        <thead><tr><th>题干说法</th><th>你该怎么判</th><th>卷面短句</th></tr></thead>
+        <tbody>
+          <tr><td>剩余价值产生于商品交换领域的等价交换原则。</td><td>不准确。等价交换是表面前提，不是剩余价值来源。</td><td>剩余价值产生于劳动力的使用过程，即资本主义生产过程。</td></tr>
+          <tr><td>货币转化为资本的内在逻辑与劳动力商品使用价值特殊性有关。</td><td>正确，这是老师课件多选题的核心。</td><td>劳动力的使用价值能创造大于自身价值的价值，货币因此能转化为资本。</td></tr>
+          <tr><td>资本家在购买劳动力时就直接买到了剩余价值。</td><td>错误。购买阶段是流通，仍按劳动力价值支付工资。</td><td>资本家不是在购买劳动力时获得增量，而是在使用劳动力时获得价值增殖。</td></tr>
+          <tr><td>资本积累就是把剩余价值转化为资本。</td><td>正确，PDF 中用简单再生产/扩大再生产说明。</td><td>把剩余价值的一部分追加为资本，用于扩大再生产，就是资本积累。</td></tr>
+        </tbody>
+      </table>
+      <div class="figure-grid">
+        <div class="figure">
+          <img src="./assets/marx_final_review/page01_surplus_choice.png" alt="剩余价值选择题原页">
+          <p>老师课件原页：货币转化为资本的多选题，关键不是“等价交换原则”，而是劳动力商品使用价值特殊性。</p>
+        </div>
+        <div class="figure">
+          <img src="./assets/marx_final_review/page07_capital_flow.png" alt="货币转化为资本流程原页">
+          <p>老师课件原页：G-W...P...W'-G'，剩余价值产生在对劳动力的使用过程，不是购买过程。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="radar">
+      <h2>3. 往年题雷达：北航马原爱怎么考</h2>
+      <p class="muted">我重新抽取了 2008-2018 往年卷，能看出一个很实用的趋势：早年有大量客观题，后面更偏论述和材料。你今年纸质开卷，最该训练的是“材料题原理分流”。</p>
+      <div class="radar">
+        <b>2008-2010</b>
+        <div>客观题覆盖很广，材料题常落在 <span class="key">价值规律、粮食/能源、金融危机、资本主义基本矛盾、社会形态发展</span>。这些题提醒我们：马原选择判断会考概念边界，大题会考现实材料。</div>
+      </div>
+      <div class="radar">
+        <b>2011-2014</b>
+        <div>论述题明显增多，高频是 <span class="key">实践观点、真理尺度与价值尺度、人与自然、认识论、矛盾普遍性和特殊性、劳动价值论、资本主义基本矛盾</span>。这和你现在需要的材料题训练高度一致。</div>
+      </div>
+      <div class="radar">
+        <b>2017-2018</b>
+        <div>开卷说明明确，题目要求结合讲话、历史创造、劳动价值论、生态、实践与认识、贸易战等现实议题。这说明马原不是“背概念就完”，而是 <span class="key">用基本原理解释现实问题</span>。</div>
+      </div>
+      <div class="note good">
+        今年两篇必备文章给出很强信号：<span class="key">新质生产力</span> 可以接生产力、生产关系、科技创新、绿色发展；<span class="key">高质量充分就业</span> 可以接人民群众、以人民为中心、发展与民生、劳动者权益和社会发展。
+      </div>
+    </section>
+
+    <section id="index">
+      <h2>4. 纸质开卷索引：13 个页边钉子</h2>
+      <p>你打印材料以后，不要只贴标签“第一章、第二章”。要在页边写成 <span class="key">题眼 -> 原理 -> 开头句</span>。下面这 13 个是考前优先级最高的钉子，其中“剩余价值”来自最后一节课课件。</p>
+      <table class="compact">
+        <thead><tr><th>页边题眼</th><th>贴到哪类资料</th><th>第一句话</th><th>最容易错哪儿</th></tr></thead>
+        <tbody>
+          <tr><td>实践与认识</td><td>PPT 第二章；2012、2017 往年题</td><td>实践是认识的来源、动力、目的和检验真理的根本标准。</td><td>别只写“实践重要”，要写清认识从实践来、回到实践去。</td></tr>
+          <tr><td>两次飞跃</td><td>PPT 第二章；2008-2010 客观题</td><td>认识过程包括从感性认识到理性认识、从理性认识到实践的两次飞跃。</td><td>第二次飞跃不是“获得理性认识”，而是回到实践、改造世界。</td></tr>
+          <tr><td>真理与价值</td><td>PPT 第二章；2011 论述题</td><td>真理原则要求符合客观规律，价值原则要求符合主体需要，二者应在实践中统一。</td><td>别把“有用就是真理”；价值不能替代真理。</td></tr>
+          <tr><td>矛盾同一性斗争性</td><td>PPT 第一章；2013、2017 往年题</td><td>矛盾双方既相互依存、相互贯通，又相互排斥、相互斗争，共同推动事物发展。</td><td>不要只写两面性，要说它如何推动发展、转化或解决问题。</td></tr>
+          <tr><td>矛盾普遍性特殊性</td><td>PPT 第一章；2011、2012 往年题</td><td>矛盾普遍存在，但不同事物、不同阶段、不同方面的矛盾各有特殊性。</td><td>别只喊“具体问题具体分析”，要点出材料里的特殊条件。</td></tr>
+          <tr><td>人与自然</td><td>PPT 第一章；2012、2013、2017 往年题</td><td>人通过实践改造自然，但必须尊重自然规律，实现人与自然和谐共生。</td><td>不能写成“自然决定一切”，人有能动性，但受规律约束。</td></tr>
+          <tr><td>生产力与生产关系</td><td>PPT 第三六七章；新质生产力文章</td><td>生产力决定生产关系，生产关系对生产力具有反作用，适合则促进，不适合则阻碍。</td><td>新质生产力题必须写“形成与先进生产力相适应的新型生产关系”。</td></tr>
+          <tr><td>经济基础与上层建筑</td><td>PPT 第三六七章；政治经济关系题</td><td>经济基础决定上层建筑，上层建筑反作用于经济基础。</td><td>不要把政策制度写成凭空出现，要说明它由经济发展要求推动。</td></tr>
+          <tr><td>人民群众与历史创造</td><td>PPT 第三六七章；2017 历史创造题；就业文章</td><td>人民群众是历史的创造者，是社会物质财富、精神财富的创造者和社会变革的决定力量。</td><td>别把历史写成少数英雄单独创造；个人作用要放进社会条件中。</td></tr>
+          <tr><td>劳动价值论</td><td>PPT 第四五章；2008、2013、2017 往年题</td><td>价值是凝结在商品中的一般人类劳动，活劳动是价值创造的唯一源泉。</td><td>机器、AI、技术能提高效率和财富，不等于独立创造价值。</td></tr>
+          <tr><td>剩余价值</td><td>最后一节课 PDF；第四章政治经济学</td><td>劳动力成为商品是货币转化为资本的前提；剩余价值产生于劳动力的使用过程。</td><td>不要写成剩余价值来自流通中的不等价交换；购买劳动力时仍是等价交换。</td></tr>
+          <tr><td>资本主义基本矛盾</td><td>PPT 第四五章；金融危机、贸易战、资本主义新变化题</td><td>资本主义基本矛盾是生产社会化和资本主义私人占有之间的矛盾。</td><td>福利、科技、国家调节只能改变表现形式，不能根本消除矛盾。</td></tr>
+          <tr><td>新质生产力与就业</td><td>两篇必备文章；PPT 第三六七章</td><td>新质生产力以创新为主导，高质量充分就业体现以人民为中心的发展思想。</td><td>不要背文章流水账，要接马克思主义原理：生产力、人民群众、发展成果共享。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. 材料题四段式：每段写什么</h2>
+      <div class="grid four">
+        <div class="card">
+          <h3>1. 定原理</h3>
+          <p>开头别绕。第一句直接点出原理，比如“实践是认识的基础”“生产力决定生产关系”。</p>
+        </div>
+        <div class="card">
+          <h3>2. 抓材料</h3>
+          <p>从题干抓 2-3 个关键词，不要大段抄。比如“科技创新、产业升级、绿色转型”。</p>
+        </div>
+        <div class="card">
+          <h3>3. 解释连接</h3>
+          <p>这段是高分关键：说明为什么这些材料体现该原理。要写“因为、所以、体现、说明”。</p>
+        </div>
+        <div class="card">
+          <h3>4. 收方法论</h3>
+          <p>最后落到实践要求：坚持客观规律、深化改革、以人民为中心、促进高质量发展。</p>
+        </div>
+      </div>
+      <div class="note warn">
+        一道 25 分论述题，不要写成“原理百科”。你应该写成 <span class="key">原理 30% + 材料分析 50% + 方法论 20%</span>。开卷资料负责帮你补原理表述，材料分析必须你自己组织。
+      </div>
+    </section>
+
+    <section id="case-walkthrough">
+      <h2>5.5 材料题手把手拆解：从题干到第一段</h2>
+      <p class="muted">这一节专门补“我知道原理名，但不知道怎么写”的断层。考试材料不会直接喊“我考实践认识论”，它会伪装成调查研究、科技创新、生态治理、资本增殖、理想信念等现实语言。你的任务是先把材料翻译回原理，再把原理翻译成卷面答案。</p>
+      <div class="note good">
+        <strong>开卷拆题顺序：</strong>圈 2-3 个材料词 -> 判断主原理 -> 翻纸质资料确认原理句 -> 第一段写“原理 + 材料 + 连接”。不要一上来翻书，不要把整页 PPT 搬上卷面。
+      </div>
+      <div class="walk-grid">
+        <div class="walk-card">
+          <h3>例 1：新质生产力/科技创新题</h3>
+          <p><span class="key">材料味道：</span>科技创新、产业升级、数字经济、绿色转型、人才机制、体制机制改革。</p>
+          <div class="walk-step"><b>先定位：</b>第 4 节页边钉子“生产力与生产关系”“新质生产力与就业”，再翻两篇必备文章首页关键词。</div>
+          <div class="walk-step"><b>为什么不是只写科技：</b>题干同时出现“体制机制、人才、要素配置”，说明它不只问技术，而是在问先进生产力需要相适应的生产关系。</div>
+          <div class="draft"><b>30 秒开头：</b>生产力是社会发展的根本动力，生产力的发展要求生产关系作出相应调整。新质生产力以创新为主导，体现高科技、高效能、高质量的先进生产力质态。材料中的科技创新、产业升级和体制机制改革，说明推动高质量发展既要形成新的生产力，也要完善与之相适应的制度、人才和要素配置。</div>
+          <div class="trap"><b>避坑：</b>不要只写“新质生产力很重要、要科技创新”。没有接到生产力/生产关系，就容易像时政口号，不像马原答案。</div>
+        </div>
+
+        <div class="walk-card">
+          <h3>例 2：剩余价值/资本增殖题</h3>
+          <p><span class="key">材料味道：</span>工资、雇佣劳动、等价交换、劳动过程、G-W...P...W'-G'、价值增殖。</p>
+          <div class="walk-step"><b>先定位：</b>老师最后一节课 PDF：劳动力商品的价值和使用价值，剩余价值产生在生产过程中。</div>
+          <div class="walk-step"><b>为什么不是“买卖差价”：</b>购买劳动力时仍可表现为等价交换；真正特殊的是劳动力的使用价值能创造大于自身价值的价值。</div>
+          <div class="draft"><b>30 秒开头：</b>劳动力成为商品是货币转化为资本的前提。资本家在流通领域购买劳动力时支付的是劳动力的价值，但劳动力的使用价值即劳动，能够在生产过程中创造出大于自身价值的价值。材料中的工资、劳动过程和价值增殖说明，剩余价值不是来自流通中的低买高卖，而是来自资本主义生产过程中对劳动力的使用。</div>
+          <div class="trap"><b>避坑：</b>不要写“资本家买到剩余价值”。资本家买到的是劳动力，剩余价值是在使用劳动力的生产过程中产生的。</div>
+        </div>
+
+        <div class="walk-card">
+          <h3>例 3：实践与认识/政策试点题</h3>
+          <p><span class="key">材料味道：</span>调查研究、试点、反馈、修订方案、从经验到理论、再推广应用。</p>
+          <div class="walk-step"><b>先定位：</b>第二章“实践是认识的基础”“认识的两次飞跃”“实践检验真理”。</div>
+          <div class="walk-step"><b>怎么展开：</b>不要只写“实践重要”。材料里每一步都能对应一个认识过程：调查给材料，形成方案是认识上升，试点反馈是实践检验，再推广是认识回到实践。</div>
+          <div class="draft"><b>30 秒开头：</b>实践是认识的来源、动力、目的和检验真理的根本标准。人的认识不是凭空产生的，而是在实践中形成、发展并接受检验。材料中先调研现实问题，再形成方案、试点检验并修改完善，体现了认识来源于实践、在实践中深化，并最终回到实践中指导行动的过程。</div>
+          <div class="trap"><b>避坑：</b>看到“调研”不要只写群众路线；如果题干重点是“形成方案、试点检验、修改”，主线更像认识论。</div>
+        </div>
+
+        <div class="walk-card">
+          <h3>例 4：矛盾分析/关系协调题</h3>
+          <p><span class="key">材料味道：</span>既要 A 又要 B、冲突与协调、发展与安全、国有企业与民营企业、效率与公平。</p>
+          <div class="walk-step"><b>先定位：</b>第一章“对立统一规律”“矛盾同一性与斗争性”“具体问题具体分析”。</div>
+          <div class="walk-step"><b>怎么写得像分析：</b>先承认两方有区别和张力，再写二者在一定条件下相互依存、相互促进，最后落到在具体条件下统筹处理。</div>
+          <div class="draft"><b>30 秒开头：</b>矛盾双方既相互区别、相互排斥，又在一定条件下相互依存、相互贯通，共同推动事物发展。材料中的两方面要求并不是简单二选一，而是在现实发展中相互制约、相互促进。运用矛盾分析法，应坚持具体问题具体分析，在把握主要矛盾和矛盾主要方面的基础上统筹推进。</div>
+          <div class="trap"><b>避坑：</b>不要只写“两者都有好处”。马原要写“对立统一”这层逻辑：有差异、有张力、有依存、有转化条件。</div>
+        </div>
+
+        <div class="walk-card">
+          <h3>例 5：人与自然/生态文明题</h3>
+          <p><span class="key">材料味道：</span>污染、资源约束、生态治理、绿色发展、尊重自然规律、人与自然和谐共生。</p>
+          <div class="walk-step"><b>先定位：</b>第一章“物质世界与客观规律”“实践改造自然必须尊重规律”，再接绿色发展现实要求。</div>
+          <div class="walk-step"><b>怎么避免空话：</b>材料要说明“人有能动性，但能动性不是任性”。实践能改造自然，也会因违背规律受到自然反作用。</div>
+          <div class="draft"><b>30 秒开头：</b>自然界是人类社会存在和发展的前提，人通过实践改造自然，但实践活动必须尊重自然界的客观规律。材料中的污染、资源约束和生态治理说明，如果只追求短期利益而违背自然规律，最终会反过来制约人的发展。坚持绿色发展和生态优先，是正确处理人与自然关系的现实要求。</div>
+          <div class="trap"><b>避坑：</b>不要写成“人什么都不能改变”。马克思主义不是消极顺从自然，而是在尊重规律基础上发挥实践能动性。</div>
+        </div>
+
+        <div class="walk-card">
+          <h3>例 6：共产主义实践运动题</h3>
+          <p><span class="key">材料味道：</span>远大理想、现实运动、人的自由全面发展、国家发展、个人奋斗、实践过程。</p>
+          <div class="walk-step"><b>先定位：</b>老师最后一课“共产主义不是只作为未来理想，而是过程、运动、实践”，再接《共产党宣言》导读。</div>
+          <div class="walk-step"><b>怎么写得不虚：</b>先说它是理想目标，再说它通过现实历史实践逐步展开；如果题干问个人，就落到把理想落实到现实实践。</div>
+          <div class="draft"><b>30 秒开头：</b>共产主义既是马克思主义追求的远大社会理想，也是现实社会发展中不断推进的历史运动和实践过程。不能把它只理解为遥远未来的静止结果，而应把它放在人民群众改造世界、推动社会进步和实现人的自由全面发展的实践中理解。材料若从国家发展或个人选择切入，就要说明理想目标必须通过现实实践逐步展开。</div>
+          <div class="trap"><b>避坑：</b>不要只写“共产主义很美好”。老师强调的是过程性和实践性，答案必须出现“现实运动/实践过程”。</div>
+        </div>
+      </div>
+      <div class="note hot">
+        <strong>临场提醒：</strong>如果一道材料题看起来能接很多原理，先选“最能解释材料动作”的那条。比如“试点修改”优先认识论，“资本增殖”优先剩余价值，“既要又要”优先矛盾分析，“科技创新 + 体制机制”优先生产力和生产关系。
+      </div>
+    </section>
+
+    <section id="map">
+      <h2>6. 题干信号分流表</h2>
+      <table>
+        <thead><tr><th>题干出现这些词</th><th>先想到</th><th>答题展开</th></tr></thead>
+        <tbody>
+          <tr><td>调查、实验、检验、从经验到理论、大学生社会实践</td><td>实践与认识</td><td>实践是基础；认识从感性到理性再回到实践；实践检验和发展认识。</td></tr>
+          <tr><td>既要又要、冲突与统一、转化、底线思维、危机中有机遇</td><td>矛盾分析法</td><td>写同一性、斗争性、主要矛盾和矛盾主要方面；最后落到具体问题具体分析。</td></tr>
+          <tr><td>绿水青山、污染、资源约束、生态治理</td><td>人与自然、客观规律</td><td>人有能动性，但实践必须尊重自然规律；绿色发展是处理人与自然关系的现实路径。</td></tr>
+          <tr><td>科技创新、产业升级、数字经济、全要素生产率</td><td>新质生产力、生产力决定生产关系</td><td>写创新主导、高科技高效能高质量；再接制度改革、人才和生产关系适应。</td></tr>
+          <tr><td>就业、青年、劳动者权益、民生、共同富裕</td><td>人民群众、以人民为中心</td><td>写人民群众创造历史，发展为了人民；就业是民生之本，发展要扩大就业质量和容量。</td></tr>
+          <tr><td>机器、自动化、AI、无人车间、价值源泉</td><td>劳动价值论</td><td>区分使用价值/财富增长和价值创造；活劳动仍是价值创造源泉。</td></tr>
+          <tr><td>金融危机、贸易战、贫富分化、资本主义新变化</td><td>资本主义基本矛盾</td><td>写生产社会化和私人占有矛盾，承认调节和新变化，但指出根源未消除。</td></tr>
+          <tr><td>英雄人物、群众、历史条件、个人意志相互作用</td><td>人民群众和历史规律</td><td>写人民群众是创造者，历史由合力形成，个人作用受社会条件和规律制约。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="locator">
+      <h2>7. 30 秒开卷定位训练：题干来了先翻哪一块</h2>
+      <p class="muted">这块专门模拟考场：材料很长，但你不能从第一页慢慢翻。每题先判断 <span class="key">页边钉子</span>，再看“第一段怎么开”。做错不丢人，错题会告诉你该回第 4 节哪一个索引。</p>
+      <div class="note good">
+        玩法：先遮住答案，读题干后在心里倒数 30 秒，选一个最贴的页边钉子。核对时重点看 <span class="key">为什么不是其他原理</span>，这就是开卷论述题的分水岭。
+      </div>
+      <div class="quiz" id="locatorBox"></div>
+      <p class="mini" id="locatorStats"></p>
+    </section>
+
+    <section id="quiz">
+      <h2>8. 原理分流互动小测</h2>
+      <p class="muted">这 16 题不是让你背答案，而是训练考场第一反应。选择后点“核对”，解析会告诉你为什么选这个原理，以及怎么展开成材料题。</p>
+      <div class="quiz" id="quizBox"></div>
+      <p class="mini" id="quizStats"></p>
+    </section>
+
+    <section id="writing-gate">
+      <h2>8.5 材料题第一段闸门：像考试一样先判题眼，再写开头</h2>
+      <p class="muted">前面的选择题负责“认原理”，这里负责“写得出来”。每题只写第一段，不写整篇。合格标准不是字数多，而是四件事都出现：<span class="key">原理句、材料词、连接词、避开误区</span>。</p>
+      <div class="note good">
+        玩法：先遮住参考答案，给自己 3 分钟写 80-140 字。写完看评分点，只改第一句和连接句，不用追求作文式漂亮。
+      </div>
+      <div class="gate-lab">
+        <div class="gate-card">
+          <h3>闸门 1｜调查研究与政策试点</h3>
+          <div class="gate-stem">材料：某地围绕基层治理难题，先深入社区、企业和群众中开展调研，形成初步方案；随后选择部分街区试点，根据反馈调整流程，最后推广到全市。请用马克思主义认识论分析。</div>
+          <div class="rubric-mini"><span>原理：实践与认识</span><span>材料词：调研/试点/反馈</span><span>连接：来源与检验</span><span>避坑：别只写群众路线</span></div>
+          <textarea data-gate-save="marx-gate-practice" placeholder="先写原理句，再接材料：实践是认识的来源、动力、目的和检验标准..."></textarea>
+          <details>
+            <summary>展开评分点和参考第一段</summary>
+            <div class="draft">实践是认识的来源、动力、目的和检验真理的根本标准。人的认识不是凭空产生的，而是在实践中形成、发展并接受检验。材料中先深入基层调研，说明认识来源于现实实践；形成方案后开展试点并根据反馈调整，说明认识必须回到实践中接受检验并不断发展。因而，这一过程体现了实践与认识的辩证统一。</div>
+            <div class="trap"><b>扣分点：</b>只写“要重视实践”太空；必须把“调研、试点、反馈、修改”分别接到认识过程。</div>
+          </details>
+        </div>
+
+        <div class="gate-card">
+          <h3>闸门 2｜科技创新与体制机制改革</h3>
+          <div class="gate-stem">材料：某产业通过人工智能、绿色制造和数字化平台形成新优势，但同时暴露出人才培养、数据要素流动和制度协同不足。请从社会基本矛盾运动角度分析。</div>
+          <div class="rubric-mini"><span>原理：生产力/生产关系</span><span>材料词：科技/人才/制度</span><span>连接：适应先进生产力</span><span>避坑：别只写科技口号</span></div>
+          <textarea data-gate-save="marx-gate-productivity" placeholder="先写：生产力决定生产关系，生产关系反作用于生产力..."></textarea>
+          <details>
+            <summary>展开评分点和参考第一段</summary>
+            <div class="draft">生产力是社会发展的根本动力，生产力决定生产关系，生产关系又会反作用于生产力。新质生产力以创新为主导，体现高科技、高效能、高质量的先进生产力质态。材料中的人工智能、绿色制造和数字平台说明生产力正在发生新跃升，而人才培养、数据要素流动和制度协同不足，则说明必须完善与先进生产力相适应的生产关系和体制机制，才能释放发展动能。</div>
+            <div class="trap"><b>扣分点：</b>只背“新质生产力高科技高效能高质量”不够，要解释为什么还要改革体制机制。</div>
+          </details>
+        </div>
+
+        <div class="gate-card">
+          <h3>闸门 3｜工资、等价交换与价值增殖</h3>
+          <div class="gate-stem">材料：有人认为，资本家给工人支付工资后还能获得利润，说明剩余价值来自流通中的低买高卖；也有人认为，关键在于劳动力商品的特殊性。请说明你的理解。</div>
+          <div class="rubric-mini"><span>原理：剩余价值</span><span>材料词：工资/利润/劳动力</span><span>连接：生产过程增殖</span><span>避坑：别说买到剩余价值</span></div>
+          <textarea data-gate-save="marx-gate-surplus" placeholder="先写：劳动力成为商品是货币转化为资本的前提..."></textarea>
+          <details>
+            <summary>展开评分点和参考第一段</summary>
+            <div class="draft">劳动力成为商品是货币转化为资本的前提，劳动力商品具有特殊的使用价值。资本家在流通领域购买劳动力时支付的是劳动力的价值，交换仍可表现为等价交换；但劳动力的使用价值即劳动，能够在生产过程中创造出大于自身价值的价值。材料中工资、利润和价值增殖的关系说明，剩余价值不是来自流通中的低买高卖，而是来自资本主义生产过程中对劳动力的使用。</div>
+            <div class="trap"><b>扣分点：</b>不要写“资本家购买了剩余价值”。购买的是劳动力，剩余价值产生于使用劳动力的生产过程。</div>
+          </details>
+        </div>
+
+        <div class="gate-card">
+          <h3>闸门 4｜发展与安全、效率与公平</h3>
+          <div class="gate-stem">材料：推进现代化建设，既要保持发展活力，又要守住安全底线；既要提高效率，又要促进公平。请运用唯物辩证法分析这些关系。</div>
+          <div class="rubric-mini"><span>原理：对立统一</span><span>材料词：既要又要</span><span>连接：对立中统一</span><span>避坑：别只写两者都重要</span></div>
+          <textarea data-gate-save="marx-gate-contradiction" placeholder="先写：矛盾双方既相互区别、相互斗争，又相互依存、相互贯通..."></textarea>
+          <details>
+            <summary>展开评分点和参考第一段</summary>
+            <div class="draft">矛盾双方既相互区别、相互斗争，又在一定条件下相互依存、相互贯通，共同推动事物发展。材料中的发展与安全、效率与公平不是简单二选一，而是在现代化建设中相互制约、相互促进的关系。运用对立统一规律，应在具体条件下把握二者的差异和联系，既防止片面追求速度和效率，也避免脱离发展基础空谈安全和公平。</div>
+            <div class="trap"><b>扣分点：</b>“两者都重要”不是马原分析。要写出“区别、张力、依存、统筹”的逻辑。</div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="writing">
+      <h2>9. 材料题第一段训练</h2>
+      <p class="muted">你不用现在写整篇，先练最关键的第一段：定原理 + 接材料。文本会自动保存在本机，考完离散后回来继续写。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>练习 A：新质生产力</h3>
+          <p>题干给“科技创新、产业升级、绿色转型、人才机制”，让你谈如何理解新质生产力。</p>
+          <textarea data-save="marx-write-new-quality" placeholder="先写：生产力是社会发展的根本动力，新质生产力..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>生产力是社会发展的根本动力，生产力的发展要求生产关系作出相应调整。新质生产力以创新为主导，体现高科技、高效能、高质量的先进生产力质态。材料中的科技创新、产业升级、绿色转型和人才机制，说明推动高质量发展不能沿用粗放增长方式，而要通过技术突破、产业更新和制度改革形成新的发展动能。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 B：高质量充分就业</h3>
+          <p>题干给“高校毕业生、职业教育、权益保障、就业优先”，让你用马原分析。</p>
+          <textarea data-save="marx-write-employment" placeholder="先写：人民群众是历史的创造者，就业是民生之本..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>人民群众是历史的创造者，社会发展必须坚持以人民为中心。就业关系劳动者切身利益，也关系经济社会发展和国家长治久安。材料强调青年就业、技能培训、公共服务和权益保障，体现了发展为了人民、发展依靠人民、发展成果由人民共享的价值取向，也说明高质量发展必须增强对就业的带动能力。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 C：实践与认识</h3>
+          <p>题干给“调查研究、形成方案、实践检验、再修改”，让你谈认识论。</p>
+          <textarea data-save="marx-write-practice" placeholder="先写：实践是认识的来源、动力、目的和检验标准..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>实践是认识的来源、动力、目的和检验真理的根本标准。人的认识不是停留在头脑中的抽象想法，而是在实践中形成、发展并接受检验。材料中从调查研究到形成方案，再到实践检验和修改完善，正体现了认识由实践产生、在实践中深化并回到实践中发挥作用的过程。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 D：资本主义新变化</h3>
+          <p>题干给“科技发达、福利改善、国家调节、危机反复”，问基本矛盾是否消除。</p>
+          <textarea data-save="marx-write-capitalism" placeholder="先写：资本主义基本矛盾是生产社会化和私人占有之间的矛盾..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>资本主义基本矛盾是生产社会化和资本主义私人占有之间的矛盾。当代资本主义在科技、管理、福利和国家调节方面出现新变化，但这些变化只是改变了矛盾的表现形式，并没有改变资本主义私有制和资本增殖逻辑。材料中的繁荣和调节应当被承认，但反复出现的危机和不平等说明基本矛盾并未根本消除。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 E：人与自然</h3>
+          <p>题干给“污染、资源约束、绿色发展、生态优先”，让你谈人与自然关系。</p>
+          <textarea data-save="marx-write-nature" placeholder="先写：人通过实践改造自然，但必须尊重自然规律..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>自然界是人类社会存在和发展的前提，人通过实践改造自然，但这种实践必须尊重自然规律。材料中的污染和资源约束说明，如果只追求短期利益而违背自然规律，最终会反过来制约人的发展。坚持绿色发展、生态优先，是在实践中正确处理人与自然关系的现实要求。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 F：历史创造</h3>
+          <p>题干给“个人意志、社会条件、群众实践、历史合力”，让你谈历史如何创造。</p>
+          <textarea data-save="marx-write-history" placeholder="先写：人民群众是历史的创造者，历史发展有其客观规律..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>人民群众是历史的创造者，社会历史发展又受客观条件和规律制约。个人可以在历史中发挥作用，但这种作用不能脱离既定社会条件、群众实践和各种力量的相互作用。材料强调人们创造历史却不是随心所欲，说明历史结果是在无数个人活动相互交错中形成的社会合力。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 G：剩余价值</h3>
+          <p>题干给“工资、等价交换、劳动过程、价值增殖”，问剩余价值从哪里来。</p>
+          <textarea data-save="marx-write-surplus" placeholder="先写：劳动力成为商品是货币转化为资本的前提..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>劳动力成为商品是货币转化为资本的前提。资本家在流通领域购买劳动力时支付的是劳动力的价值，交换仍可表现为等价交换；但劳动力的使用价值即劳动，能够在生产过程中创造出大于自身价值的价值。材料中的工资、劳动过程和价值增殖，说明剩余价值不是来自流通中的低买高卖，而是来自资本主义生产过程中对劳动力的使用。</p>
+          </details>
+        </div>
+        <div class="card">
+          <h3>练习 H：共产主义实践运动</h3>
+          <p>题干问“为什么共产主义不是只作为未来理想，而是过程、运动和实践”。</p>
+          <textarea data-save="marx-write-communism" placeholder="先写：共产主义既是远大理想，也是现实运动和实践过程..."></textarea>
+          <details>
+            <summary>展开参考第一段</summary>
+            <p>共产主义既是马克思主义追求的远大社会理想，也是现实社会发展中不断推进的运动和实践过程。不能把它只理解为遥远未来的静止结果，而应把它放在人民群众改造世界、推动社会进步和实现人的自由全面发展的历史实践中理解。材料若从国家发展或个人选择切入，就要说明理想目标必须通过现实实践逐步展开。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>10. 选择判断速记：最容易混的 12 组</h2>
+      <table class="compact">
+        <thead><tr><th>容易混</th><th>正确区分</th></tr></thead>
+        <tbody>
+          <tr><td>使用价值 vs 价值</td><td>使用价值满足需要，价值是凝结的一般人类劳动。有使用价值不一定有价值，有价值一定有使用价值。</td></tr>
+          <tr><td>具体劳动 vs 抽象劳动</td><td>具体劳动创造使用价值，抽象劳动形成价值。它们是同一劳动的两个方面。</td></tr>
+          <tr><td>个别劳动时间 vs 社会必要劳动时间</td><td>商品价值量由社会必要劳动时间决定，不由某个企业自己的耗时决定。</td></tr>
+          <tr><td>机器提高财富 vs 机器创造价值</td><td>机器和技术能提高生产率和使用价值量，但不能独立创造新价值。</td></tr>
+          <tr><td>劳动力 vs 劳动者</td><td>劳动力是人的劳动能力，不是劳动者本人。资本家购买的是劳动力商品，不是把劳动者当物买下。</td></tr>
+          <tr><td>劳动力价值 vs 劳动力使用价值</td><td>劳动力价值由再生产劳动力所需费用决定；使用价值是劳动，能创造大于自身价值的价值。</td></tr>
+          <tr><td>第一次飞跃 vs 第二次飞跃</td><td>第一次从感性到理性，第二次从理性到实践。</td></tr>
+          <tr><td>真理原则 vs 价值原则</td><td>真理看是否符合客观规律，价值看是否满足主体需要，二者要在实践中统一。</td></tr>
+          <tr><td>主要矛盾 vs 矛盾主要方面</td><td>主要矛盾是在多个矛盾中抓关键；矛盾主要方面是在同一矛盾双方中看哪边占支配。</td></tr>
+          <tr><td>生产力决定生产关系 vs 上层建筑反作用</td><td>生产力和经济基础有决定作用，但生产关系、上层建筑不是被动的，会促进或阻碍发展。</td></tr>
+          <tr><td>人民群众 vs 杰出人物</td><td>人民群众是决定力量，杰出人物能推动历史，但受社会条件和群众实践制约。</td></tr>
+          <tr><td>资本主义新变化 vs 基本矛盾消除</td><td>新变化可以缓和矛盾、调整表现形式，但不能根本消除资本主义基本矛盾。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="exam-rules">
+      <h2>11. 考试规则与答题禁区：别因为形式丢分</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>题型结构</h3>
+          <p>老师课件给出样卷：<span class="key">共四道论述题，每题 25 分</span>。第一、二、三题必答；第四题按校区/任课老师要求选择。</p>
+        </div>
+        <div class="card">
+          <h3>资料规则</h3>
+          <p>纸质开卷，可以看教材、课件、相关原著、文件讲话原文；<span class="key">不能看电子资料</span>。考研资料可能反而拖后腿。</p>
+        </div>
+        <div class="card">
+          <h3>作答规则</h3>
+          <p>黑色签字笔作答，写清题号，无需抄题。答题纸空间有限，<span class="key">不要堆砌文字，不要卷字数</span>。</p>
+        </div>
+      </div>
+      <div class="note hot">
+        最重要的禁区：<span class="key">不要把多个原理都罗列出来让老师选择</span>。老师明确说这种做法可能得分很低，甚至按没有针对性处理。你要做的是：题眼分流 -> 选最贴的原理 -> 联系实际论证。
+      </div>
+      <div class="figure-grid">
+        <div class="figure">
+          <img src="./assets/marx_final_review/page13_exam_rules.png" alt="马原考试规则原页">
+          <p>老师课件原页：考试时间、纸质资料、黑色签字笔等硬规则。</p>
+        </div>
+        <div class="figure">
+          <img src="./assets/marx_final_review/page17_review_advice.png" alt="马原复习建议原页">
+          <p>老师课件原页：复习教材课件重点原理、结合原著和热点、注重问题意识与政治引领。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>12. 考前 30 分钟纸质资料清单</h2>
+      <p class="muted">离散考完后，你给马原的第一件事不是读完所有材料，而是把纸质资料变成检索工具。下面每打一个勾，你考场就少慌一点。</p>
+      <div class="todo" id="todo">
+        <label><input type="checkbox" data-todo="m1"> 在 PPT 第二章边上标：实践、认识、真理、价值、两次飞跃。</label>
+        <label><input type="checkbox" data-todo="m2"> 在 PPT 第一章边上标：矛盾同一性/斗争性、普遍性/特殊性、人与自然。</label>
+        <label><input type="checkbox" data-todo="m3"> 在 PPT 第三六七章边上标：生产力/生产关系、经济基础/上层建筑、人民群众。</label>
+        <label><input type="checkbox" data-todo="m4"> 在 PPT 第四五章边上标：商品二因素、劳动二重性、价值规律、劳动力商品、剩余价值、资本积累、资本主义基本矛盾。</label>
+        <label><input type="checkbox" data-todo="m5"> 在“新质生产力”文章首页写：创新主导、先进生产力、科技创新、产业创新、绿色发展、体制机制、人才。</label>
+        <label><input type="checkbox" data-todo="m6"> 在“就业”文章首页写：以人民为中心、就业优先、发展带动就业、重点群体、权益保障。</label>
+        <label><input type="checkbox" data-todo="m7"> 把本页第 4 节 13 个页边题眼抄到你的纸质资料首页或便签。</label>
+        <label><input type="checkbox" data-todo="m9"> 在最后一节课 PDF 打印页旁写：剩余价值不是流通中以小博大，而是生产中使用劳动力发生价值增殖。</label>
+        <label><input type="checkbox" data-todo="m8"> 至少写完本页 8 个材料题第一段中的 3 个。</label>
+      </div>
+      <p class="mini" id="todoStats"></p>
+    </section>
+  </main>
+
+  <script>
+    const locatorData = [
+      {
+        stem: "材料：某地先调研企业和群众需求，再试点政策，发现问题后修改方案并推广。",
+        options: ["实践与认识", "剩余价值", "人民群众与历史创造", "资本主义基本矛盾"],
+        answer: 0,
+        pin: "实践与认识",
+        why: "题干的动作链是“调研 -> 形成方案 -> 试点检验 -> 修改推广”，这正是认识从实践中来、回到实践中接受检验并发展的过程。",
+        first: "实践是认识的来源、动力、目的和检验真理的根本标准。材料中从调查研究到试点修改，体现了认识在实践基础上形成、检验和发展的过程。",
+        avoid: "不要只写“政策要实践”，要把来源、检验、发展这三步写出来。"
+      },
+      {
+        stem: "材料：推进高质量发展既要速度，也要安全；既要改革活力，也要守住底线。",
+        options: ["矛盾分析法", "商品二因素", "真理绝对性", "劳动力商品"],
+        answer: 0,
+        pin: "矛盾同一性/斗争性，必要时接主要矛盾",
+        why: "题干出现“既要又要、底线、关系处理”，优先用矛盾分析法，而不是泛泛写发展观。",
+        first: "矛盾双方既相互区别、相互斗争，又在一定条件下相互依存、相互统一。材料中的发展与安全、改革与底线，要求在具体条件下把握矛盾关系。",
+        avoid: "不要只说“两者都重要”，要写清二者怎样对立又统一。"
+      },
+      {
+        stem: "材料：面对污染、资源约束和生态退化，必须推进绿色转型，实现人与自然和谐共生。",
+        options: ["人与自然、尊重客观规律", "价值规律", "经济基础与上层建筑", "共产主义实践运动"],
+        answer: 0,
+        pin: "人与自然",
+        why: "污染、资源、生态、绿色转型都是人与自然关系题眼。核心是人的实践能动性必须受客观自然规律制约。",
+        first: "人通过实践改造自然，但实践活动必须尊重自然规律。材料中的生态约束说明，违背自然规律的发展会反过来制约人的发展。",
+        avoid: "不要写成“自然决定一切”，也不要写成“人可以任意改造自然”。"
+      },
+      {
+        stem: "材料：以科技创新推动产业升级，同时完善体制机制、培养人才、优化要素配置。",
+        options: ["生产力与生产关系", "真理与价值", "剩余价值", "商品交换"],
+        answer: 0,
+        pin: "生产力与生产关系，新质生产力",
+        why: "科技创新、产业升级、新质生产力是生产力题眼；体制机制、人才、要素配置说明生产关系要适应先进生产力。",
+        first: "生产力是社会发展的根本动力，生产力的发展要求生产关系作出相应调整。新质生产力以创新为主导，要求通过制度机制和人才体系释放先进生产力。",
+        avoid: "不要只背新质生产力文章关键词，要接回马克思主义的生产力/生产关系原理。"
+      },
+      {
+        stem: "材料：促进高校毕业生就业，完善职业教育和劳动权益保障，让发展成果更多惠及劳动者。",
+        options: ["人民群众、以人民为中心", "价值规律", "货币转化为资本", "否定之否定"],
+        answer: 0,
+        pin: "人民群众与历史创造，就业",
+        why: "就业、劳动者、民生、发展成果，优先接人民群众和以人民为中心，再联系就业文章。",
+        first: "人民群众是历史的创造者，社会发展必须坚持以人民为中心。材料中的就业、职业教育和权益保障，体现发展为了人民、依靠人民、成果由人民共享。",
+        avoid: "不要把就业题写成普通政策建议，要写出人民群众和社会发展的理论根据。"
+      },
+      {
+        stem: "材料：自动化设备大幅提升产量，于是有人认为机器和 AI 已经成为价值创造的唯一源泉。",
+        options: ["劳动价值论", "实践标准", "资本主义基本矛盾", "社会意识"],
+        answer: 0,
+        pin: "劳动价值论",
+        why: "机器、AI、价值源泉是劳动价值论陷阱。要区分财富/使用价值增长和价值创造。",
+        first: "机器和技术能够提高劳动生产率、增加使用价值量，并转移自身价值，但不能独立创造新价值。价值是凝结在商品中的一般人类劳动。",
+        avoid: "不要把“效率提高”和“价值源泉改变”混成一件事。"
+      },
+      {
+        stem: "材料：资本家支付工资后获得更多价值，有人说剩余价值来自流通中低买高卖。",
+        options: ["剩余价值", "矛盾特殊性", "人民群众", "真理相对性"],
+        answer: 0,
+        pin: "剩余价值",
+        why: "工资、等价交换、劳动过程、价值增殖，就是最后一课 PDF 的核心钉子。",
+        first: "劳动力成为商品是货币转化为资本的前提。剩余价值不是来自流通中的低买高卖，而是来自生产过程中对劳动力的使用。",
+        avoid: "不要说资本家购买劳动力时直接买到剩余价值；购买阶段仍可表现为等价交换。"
+      },
+      {
+        stem: "材料：资本主义国家通过福利制度和国家调节缓和矛盾，但危机、贫富分化和竞争仍反复出现。",
+        options: ["资本主义基本矛盾", "实践与认识", "社会形态三分法", "商品二因素"],
+        answer: 0,
+        pin: "资本主义基本矛盾",
+        why: "福利、国家调节、危机反复和贫富分化，说明新变化没有根本消除基本矛盾。",
+        first: "资本主义基本矛盾是生产社会化和资本主义私人占有之间的矛盾。当代资本主义新变化可以缓和矛盾、改变表现形式，但不能根本消除这一矛盾。",
+        avoid: "不要写成资本主义没有任何变化；高分答案要先承认变化，再指出根本矛盾仍在。"
+      },
+      {
+        stem: "材料：某历史人物发挥重要作用，但其选择受到时代条件、社会矛盾和群众实践制约。",
+        options: ["人民群众与杰出人物", "价值规律", "劳动力商品", "真理原则"],
+        answer: 0,
+        pin: "人民群众与杰出人物",
+        why: "历史人物、时代条件、群众实践是历史唯物主义题眼。要避免个人崇拜，也不能否认人物作用。",
+        first: "人民群众是历史的创造者，杰出人物能够在一定历史条件下发挥重要作用，但其作用不能脱离社会条件、历史规律和人民群众实践。",
+        avoid: "不要把历史写成少数人物单独创造，也不要说个人完全没有作用。"
+      },
+      {
+        stem: "材料：题目问为什么共产主义不能只理解为未来静止目标，而要理解为过程、运动和实践。",
+        options: ["共产主义实践运动", "剩余价值率", "商品拜物教", "主要矛盾"],
+        answer: 0,
+        pin: "共产主义作为过程、运动、实践",
+        why: "这是老师最后一课收尾点。关键词就是“不只是未来理想、过程、运动、实践”。",
+        first: "共产主义既是远大理想，也是现实中不断推进的历史运动和实践过程。应把它放在人民群众改造世界、推进社会发展和实现人的自由全面发展的实践中理解。",
+        avoid: "不要只写未来社会图景，要写现实实践和人的发展。"
+      }
+    ];
+
+    const locatorBox = document.getElementById("locatorBox");
+    const locatorStats = document.getElementById("locatorStats");
+    const locatorState = JSON.parse(localStorage.getItem("marxLocatorStateV1") || "{}");
+
+    function saveLocator() {
+      localStorage.setItem("marxLocatorStateV1", JSON.stringify(locatorState));
+      updateLocatorStats();
+      renderMarxProgress();
+    }
+
+    function renderLocator() {
+      locatorBox.innerHTML = "";
+      locatorData.forEach((q, index) => {
+        const saved = locatorState[index] || { selected: null, checked: false };
+        locatorState[index] = saved;
+        const el = document.createElement("div");
+        el.className = "q";
+        el.innerHTML = `
+          <div class="q-title">${index + 1}. ${q.stem}</div>
+          <div class="options"></div>
+          <div class="check">
+            <button class="primary" type="button">核对定位</button>
+            <button type="button">清空</button>
+          </div>
+          <div class="feedback"></div>
+        `;
+        const options = el.querySelector(".options");
+        q.options.forEach((text, optIndex) => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.type = "button";
+          btn.textContent = text;
+          btn.addEventListener("click", () => {
+            saved.selected = optIndex;
+            saved.checked = false;
+            refreshLocator(el, q, saved);
+            saveLocator();
+          });
+          options.appendChild(btn);
+        });
+        const [checkBtn, clearBtn] = el.querySelectorAll(".check button");
+        checkBtn.addEventListener("click", () => {
+          saved.checked = true;
+          refreshLocator(el, q, saved);
+          saveLocator();
+        });
+        clearBtn.addEventListener("click", () => {
+          saved.selected = null;
+          saved.checked = false;
+          refreshLocator(el, q, saved);
+          saveLocator();
+        });
+        locatorBox.appendChild(el);
+        refreshLocator(el, q, saved);
+      });
+      updateLocatorStats();
+    }
+
+    function refreshLocator(el, q, saved) {
+      [...el.querySelectorAll(".option")].forEach((btn, i) => {
+        btn.className = "option";
+        if (saved.selected === i) btn.classList.add("selected");
+        if (saved.checked) {
+          if (i === q.answer) btn.classList.add("correct");
+          else if (saved.selected === i) btn.classList.add("wrong");
+        }
+      });
+      const feedback = el.querySelector(".feedback");
+      feedback.classList.toggle("show", !!saved.checked);
+      feedback.innerHTML = `
+        <strong>页边钉子：</strong>${q.pin}<br>
+        <strong>为什么：</strong>${q.why}<br>
+        <strong>第一段开头：</strong>${q.first}<br>
+        <strong>避坑：</strong>${q.avoid}
+      `;
+    }
+
+    function updateLocatorStats() {
+      const done = Object.values(locatorState).filter(s => s && s.checked).length;
+      const correct = Object.entries(locatorState).filter(([i, s]) => s && s.checked && s.selected === locatorData[Number(i)].answer).length;
+      locatorStats.textContent = `30秒定位已核对 ${done} / ${locatorData.length} 题，正确 ${correct} 题。错题直接回第 4 节纸质索引，把对应页边钉子补粗。`;
+    }
+
+    const quizData = [
+      {
+        type: "single",
+        stem: "题干说：某政策先经过基层调研，再形成方案，试点后发现问题并修改。优先用哪个原理？",
+        options: ["实践与认识的辩证关系", "资本主义基本矛盾", "劳动价值论", "商品二因素"],
+        answer: [0],
+        explain: "这是典型认识论。调研对应实践提供材料，形成方案对应认识上升，试点和修改对应实践检验并发展认识。材料题可按“实践是认识来源、动力、目的和检验标准”展开。"
+      },
+      {
+        type: "single",
+        stem: "题干说：新技术让无人车间产量大增，因此机器成为价值创造的唯一源泉。这个说法应如何判断？",
+        options: ["正确，机器替代劳动后创造价值", "错误，机器提高效率但不能独立创造新价值", "正确，价值由使用价值决定", "错误，因为机器不能创造使用价值"],
+        answer: [1],
+        explain: "这是劳动价值论陷阱。机器、技术、AI 能提高劳动生产率和使用价值量，也能转移自身价值，但新价值和剩余价值仍与活劳动相关。"
+      },
+      {
+        type: "single",
+        stem: "题干说：既要绿水青山，也要金山银山。最适合先接哪组原理？",
+        options: ["人与自然关系和尊重客观规律", "价值规律和等价交换", "资本周转", "真理的绝对性"],
+        answer: [0],
+        explain: "生态类材料优先接人与自然。要写人通过实践改造自然，但必须尊重自然规律，绿色发展不是不要发展，而是以符合规律的方式发展。"
+      },
+      {
+        type: "single",
+        stem: "材料说：科技创新催生新产业，但还要改革体制机制、优化人才培养。应重点接哪条社会发展原理？",
+        options: ["生产力决定生产关系，生产关系反作用于生产力", "社会意识完全同步于社会存在", "货币是唯一一般等价物", "真理没有相对性"],
+        answer: [0],
+        explain: "新质生产力题的核心不是只夸科技，而是先进生产力需要相适应的生产关系和制度机制。文章中体制机制、人才、要素配置都在说明这一点。"
+      },
+      {
+        type: "single",
+        stem: "材料说：某国福利制度完善、科技发达，所以资本主义基本矛盾已经消除。应如何回应？",
+        options: ["同意，新变化说明私有制矛盾消失", "不同意，新变化改变表现形式但不消除基本矛盾", "同意，经济危机只是偶然事件", "不同意，因为资本主义没有任何变化"],
+        answer: [1],
+        explain: "高分写法是先承认新变化，再指出根本矛盾未消除。资本主义基本矛盾是生产社会化和资本主义私人占有之间的矛盾，国家调节和福利只能缓和或改变表现形式。"
+      },
+      {
+        type: "single",
+        stem: "题干问：为什么说实践的观点是马克思主义认识论首要的基本观点？哪组要点最完整？",
+        options: ["实践是认识来源、动力、目的、检验标准", "实践只负责提供经验，理论独立发展", "实践就是日常行动，不涉及真理", "实践只在改造自然中出现"],
+        answer: [0],
+        explain: "这是老卷高频简答。要写实践贯穿认识全过程，既提供对象和问题，也推动认识发展，最终还要回到实践并接受实践检验。"
+      },
+      {
+        type: "single",
+        stem: "题干说：历史是人们自己创造的，但不是随心所欲创造的。最适合的主线是？",
+        options: ["人民群众创造历史，同时受客观条件和社会规律制约", "英雄人物单独创造历史", "自然地理环境决定全部历史", "社会意识决定社会存在"],
+        answer: [0],
+        explain: "2017 题很接近这个主题。答题要兼顾主体能动性和客观制约：人民群众是决定力量，个人意志会形成历史合力，但任何行动都在既定社会条件下发生。"
+      },
+      {
+        type: "single",
+        stem: "题干给：高校毕业生就业、职业教育、劳动权益保障。最适合接哪条主线？",
+        options: ["人民群众是历史创造者和以人民为中心", "货币价值形式发展", "资本有机构成", "不可知论"],
+        answer: [0],
+        explain: "就业文章的马原接口是人民群众、民生、发展为了人民。可以再接发展带动就业、教育培训提升劳动者素质、权益保障体现人的发展。"
+      },
+      {
+        type: "multi",
+        stem: "多选：关于商品二因素和劳动二重性，哪些说法正确？",
+        options: ["商品具有使用价值和价值", "具体劳动创造使用价值", "抽象劳动形成价值", "有使用价值的东西一定有价值"],
+        answer: [0, 1, 2],
+        explain: "前三项正确。第四项错，因为空气、自然水源等可以有使用价值但不一定是商品价值。马原客观题很喜欢用这种边界题卡人。"
+      },
+      {
+        type: "multi",
+        stem: "多选：关于矛盾分析法，哪些说法更稳？",
+        options: ["矛盾具有普遍性，事事有矛盾", "矛盾具有特殊性，要具体问题具体分析", "主要矛盾和矛盾主要方面是同一个概念", "矛盾双方只有斗争，没有同一"],
+        answer: [0, 1],
+        explain: "A、B 正确。C 错在把多个矛盾中的关键和同一矛盾双方中的支配方面混为一谈。D 错在否认同一性，矛盾双方既对立又统一。"
+      },
+      {
+        type: "single",
+        stem: "题干说：从改革政策到产业发展，制度既受经济发展要求影响，又反过来促进经济发展。优先用哪个原理？",
+        options: ["经济基础与上层建筑的辩证关系", "商品拜物教", "实践标准的不确定性", "货币流通规律"],
+        answer: [0],
+        explain: "制度、法律、政策、治理体系通常接经济基础与上层建筑。写法是经济基础决定上层建筑，上层建筑服务并反作用于经济基础。"
+      },
+      {
+        type: "single",
+        stem: "题干问：为什么粮食、能源等商品价格不能说完全由市场情绪随意决定？",
+        options: ["价值规律仍起基础作用，价格受供求影响围绕价值波动", "价格和价值完全无关", "供求关系决定商品是否有使用价值", "商品价值由个别劳动时间决定"],
+        answer: [0],
+        explain: "这是 2008 材料题一类题眼。价值量由社会必要劳动时间决定，供求影响价格偏离，但不是取消价值规律。答题可再联系国家调控、自然条件和国际市场。"
+      },
+      {
+        type: "multi",
+        stem: "多选：根据最后一节课课件，货币转化为资本的内在逻辑与哪些因素直接相关？",
+        options: ["劳动力商品的使用价值特殊性", "剩余价值的产生", "商品交换领域的等价交换原则本身直接产生剩余价值", "生产资料价格越高越必然产生剩余价值"],
+        answer: [0, 1],
+        explain: "这题对应老师课件第一页。关键不是说流通中不等价交换，而是劳动力成为特殊商品：它的使用价值即劳动，能够创造大于自身价值的价值，所以才有剩余价值，货币才转化为资本。等价交换是表面条件，不能说剩余价值直接从等价交换原则中产生。"
+      },
+      {
+        type: "single",
+        stem: "题干说：资本家付给工人工资，所以资本家获得的剩余价值来自流通中低买高卖。这个说法应如何判断？",
+        options: ["正确，剩余价值就是买卖差价", "错误，剩余价值产生于生产中对劳动力的使用过程", "正确，工资越高剩余价值越多", "错误，因为资本主义没有等价交换"],
+        answer: [1],
+        explain: "最后一节课反复强调这里。购买劳动力时，资本家支付的是劳动力价值，交换领域仍可表现为等价交换；真正发生价值增殖的是生产过程，因为劳动力的使用价值能够创造比自身价值更大的价值。卷面要写“生产过程/劳动过程与价值增殖过程的统一”。"
+      },
+      {
+        type: "single",
+        stem: "题干问：为什么不能把共产主义只理解成未来某个静止结果？优先接哪条表述？",
+        options: ["共产主义既是远大理想，也是在现实中不断推进的运动和实践过程", "共产主义只是一种经济计算方法", "共产主义与现实实践无关", "共产主义只要求背《共产党宣言》标题"],
+        answer: [0],
+        explain: "这是录音里老师点出的收尾重点。《共产党宣言》和共产主义部分不要只背未来社会图景，要写成“理想目标 + 现实运动 + 实践过程”。如果题干问个人或国家如何理解共产主义，就落到现实实践、社会发展和人的自由全面发展。"
+      },
+      {
+        type: "single",
+        stem: "考试论述题看到材料很复杂时，下列哪种开卷做法最危险？",
+        options: ["先判断题眼，只选最贴的 1-2 个原理", "把多个原理都罗列出来，让老师自己挑合适的", "用材料关键词解释为什么接这个原理", "最后落到方法论和现实要求"],
+        answer: [1],
+        explain: "老师课件明确提醒：考题在教材上有相关原理，但没有标准答案，必须联系实际自主论证；如果把多个原理罗列出来让老师选择，说明你没有判断题眼，得分会很低。开卷不是堆资料，而是精准调用。"
+      }
+    ];
+
+    const quizBox = document.getElementById("quizBox");
+    const quizStats = document.getElementById("quizStats");
+    const quizState = JSON.parse(localStorage.getItem("marxQuizStateV2") || "{}");
+
+    function saveQuiz() {
+      localStorage.setItem("marxQuizStateV2", JSON.stringify(quizState));
+      updateStats();
+      renderMarxProgress();
+    }
+
+    function sameSet(a, b) {
+      return a.length === b.length && a.every(x => b.includes(x));
+    }
+
+    function updateStats() {
+      const done = Object.keys(quizState).filter(k => quizState[k] && quizState[k].checked).length;
+      const correct = Object.values(quizState).filter(s => s && s.checked && sameSet(s.selected || [], s.answer || [])).length;
+      quizStats.textContent = `已核对 ${done} / ${quizData.length} 题，正确 ${correct} 题。错题别急，去看解析里的“为什么接这个原理”。`;
+    }
+
+    function renderQuiz() {
+      quizBox.innerHTML = "";
+      quizData.forEach((q, index) => {
+        const saved = quizState[index] || { selected: [], checked: false, answer: q.answer };
+        quizState[index] = saved;
+        const el = document.createElement("div");
+        el.className = "q";
+        el.innerHTML = `
+          <div class="q-title">${index + 1}. ${q.type === "multi" ? "多选" : "单选"}：${q.stem}</div>
+          <div class="options"></div>
+          <div class="check">
+            <button class="primary" type="button">核对这题</button>
+            <button type="button">清空选择</button>
+          </div>
+          <div class="feedback">${q.explain}</div>
+        `;
+        const options = el.querySelector(".options");
+        const feedback = el.querySelector(".feedback");
+        q.options.forEach((text, optIndex) => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.type = "button";
+          btn.textContent = text;
+          btn.addEventListener("click", () => {
+            if (q.type === "single") {
+              saved.selected = [optIndex];
+            } else if (saved.selected.includes(optIndex)) {
+              saved.selected = saved.selected.filter(x => x !== optIndex);
+            } else {
+              saved.selected.push(optIndex);
+            }
+            saved.checked = false;
+            refreshQuestion(el, q, saved);
+            saveQuiz();
+          });
+          options.appendChild(btn);
+        });
+        const [checkBtn, clearBtn] = el.querySelectorAll(".check button");
+        checkBtn.addEventListener("click", () => {
+          saved.checked = true;
+          saved.answer = q.answer;
+          refreshQuestion(el, q, saved);
+          saveQuiz();
+        });
+        clearBtn.addEventListener("click", () => {
+          saved.selected = [];
+          saved.checked = false;
+          refreshQuestion(el, q, saved);
+          saveQuiz();
+        });
+        quizBox.appendChild(el);
+        refreshQuestion(el, q, saved);
+      });
+      updateStats();
+    }
+
+    function refreshQuestion(el, q, saved) {
+      const buttons = [...el.querySelectorAll(".option")];
+      buttons.forEach((btn, i) => {
+        btn.className = "option";
+        if ((saved.selected || []).includes(i)) btn.classList.add("selected");
+        if (saved.checked) {
+          if (q.answer.includes(i)) btn.classList.add("correct");
+          else if ((saved.selected || []).includes(i)) btn.classList.add("wrong");
+        }
+      });
+      el.querySelector(".feedback").classList.toggle("show", !!saved.checked);
+    }
+
+    document.querySelectorAll("textarea[data-save]").forEach(area => {
+      const key = area.dataset.save;
+      area.value = localStorage.getItem(key) || "";
+      area.addEventListener("input", () => {
+        localStorage.setItem(key, area.value);
+        renderMarxProgress();
+      });
+    });
+
+    document.querySelectorAll("textarea[data-gate-save]").forEach(area => {
+      const key = area.dataset.gateSave;
+      area.value = localStorage.getItem(key) || "";
+      area.addEventListener("input", () => {
+        localStorage.setItem(key, area.value);
+        renderMarxProgress();
+      });
+    });
+
+    const todoStats = document.getElementById("todoStats");
+    const todoChecks = [...document.querySelectorAll("#todo input[type='checkbox']")];
+    function updateTodo() {
+      let done = 0;
+      todoChecks.forEach(input => {
+        const checked = localStorage.getItem("marxTodoV2:" + input.dataset.todo) === "1";
+        input.checked = checked;
+        input.closest("label").classList.toggle("done", checked);
+        if (checked) done += 1;
+      });
+      todoStats.textContent = `纸质索引完成 ${done} / ${todoChecks.length} 项。先不用追求完美，能快速定位就已经赢一半。`;
+      renderMarxProgress();
+    }
+    todoChecks.forEach(input => {
+      input.addEventListener("change", () => {
+        localStorage.setItem("marxTodoV2:" + input.dataset.todo, input.checked ? "1" : "0");
+        updateTodo();
+      });
+    });
+
+    const writingTargets = [
+      ["marx-write-new-quality", "新质生产力"],
+      ["marx-write-employment", "就业/人民"],
+      ["marx-write-practice", "实践认识"],
+      ["marx-write-capitalism", "资本主义矛盾"],
+      ["marx-write-nature", "人与自然"],
+      ["marx-write-history", "历史创造"],
+      ["marx-write-surplus", "剩余价值"],
+      ["marx-write-communism", "共产主义实践"]
+    ];
+    const writingGateTargets = [
+      ["marx-gate-practice", "实践认识闸门"],
+      ["marx-gate-productivity", "新质生产力闸门"],
+      ["marx-gate-surplus", "剩余价值闸门"],
+      ["marx-gate-contradiction", "矛盾分析闸门"]
+    ];
+
+    function countTodoDone() {
+      return todoChecks.filter(input => localStorage.getItem("marxTodoV2:" + input.dataset.todo) === "1").length;
+    }
+
+    function countLocatorProgress() {
+      const done = Object.values(locatorState).filter(s => s && s.checked).length;
+      const correct = Object.entries(locatorState).filter(([i, s]) => s && s.checked && s.selected === locatorData[Number(i)].answer).length;
+      return { done, correct, wrong: Math.max(0, done - correct), total: locatorData.length };
+    }
+
+    function countQuizProgress() {
+      const done = Object.keys(quizState).filter(k => quizState[k] && quizState[k].checked).length;
+      const correct = Object.entries(quizState).filter(([i, s]) => {
+        const answer = quizData[Number(i)] ? quizData[Number(i)].answer : [];
+        return s && s.checked && sameSet(s.selected || [], answer);
+      }).length;
+      return { done, correct, wrong: Math.max(0, done - correct), total: quizData.length };
+    }
+
+    function countWritingProgress() {
+      const written = [];
+      const missing = [];
+      writingTargets.forEach(([key, name]) => {
+        const text = (localStorage.getItem(key) || "").replace(/\s+/g, "");
+        if (text.length >= 22) written.push(name);
+        else missing.push(name);
+      });
+      return { done: written.length, total: writingTargets.length, written, missing };
+    }
+
+    function countWritingGateProgress() {
+      const written = [];
+      const missing = [];
+      writingGateTargets.forEach(([key, name]) => {
+        const text = (localStorage.getItem(key) || "").replace(/\s+/g, "");
+        if (text.length >= 45) written.push(name);
+        else missing.push(name);
+      });
+      return { done: written.length, total: writingGateTargets.length, written, missing };
+    }
+
+    function progressClass(done, total, wrong = 0, target = total) {
+      if (wrong >= 4) return "hot";
+      if (done >= target) return "good";
+      if (done > 0) return "warn";
+      return "hot";
+    }
+
+    function progressCard(title, num, text, cls) {
+      return `
+        <div class="progress-card ${cls}">
+          <strong>${title}</strong>
+          <div class="num">${num}</div>
+          <p>${text}</p>
+        </div>
+      `;
+    }
+
+    function renderMarxProgress() {
+      const box = document.getElementById("marxProgress");
+      const advice = document.getElementById("marxAdvice");
+      if (!box || !advice || !todoChecks.length) return;
+      const todoDone = countTodoDone();
+      const locator = countLocatorProgress();
+      const quiz = countQuizProgress();
+      const writing = countWritingProgress();
+      const gate = countWritingGateProgress();
+
+      box.innerHTML = [
+        progressCard(
+          "纸质索引",
+          `${todoDone}/${todoChecks.length}`,
+          "最低先完成 5 项：实践、矛盾、历史唯物、劳动价值、剩余价值。",
+          progressClass(todoDone, todoChecks.length, 0, 5)
+        ),
+        progressCard(
+          "30秒定位",
+          `${locator.done}/${locator.total}`,
+          `错 ${locator.wrong} 题。目标是先能在长材料里快速找到页边钉子。`,
+          progressClass(locator.done, locator.total, locator.wrong, 10)
+        ),
+        progressCard(
+          "原理分流",
+          `${quiz.done}/${quiz.total}`,
+          `错 ${quiz.wrong} 题。这里练的是“材料词 -> 马原原理”。`,
+          progressClass(quiz.done, quiz.total, quiz.wrong, 12)
+        ),
+        progressCard(
+          "第一段训练",
+          `${writing.done}/${writing.total}`,
+          `闸门 ${gate.done}/${gate.total}；${writing.missing.length ? `自由练习还缺：${writing.missing.slice(0, 2).join("、")}。` : "8 类开头都写过。"}`,
+          progressClass(writing.done, writing.total, 0, 3)
+        )
+      ].join("");
+
+      let html = "";
+      if (todoDone < 5) {
+        html = `<b>下一步：先做纸质索引，不急着写大题。</b> 去第 4 节把 13 个页边钉子里最核心的 5 个标到纸质资料上：实践、矛盾、生产力/生产关系、劳动价值论、剩余价值。开卷考试最怕“知道有资料但翻不到”。 <a href="#index">去建索引</a>`;
+      } else if (locator.done < 10) {
+        html = `<b>下一步：做 30 秒定位。</b> 你已经有基本页边钉子了，现在要训练题干来了先翻哪里。做完 10 题后再进原理分流，不然容易“原理都懂，但材料一长就乱”。 <a href="#locator">去做定位</a>`;
+      } else if (locator.wrong >= 3) {
+        html = `<b>下一步：回第 4 节补粗错题对应页边钉子。</b> 定位错 ${locator.wrong} 题，说明不是不会马原，而是材料词和资料页还没绑牢。先把错题对应的页边关键词写粗，再继续。 <a href="#index">回索引</a>`;
+      } else if (quiz.done < 12) {
+        html = `<b>下一步：做原理分流题。</b> 定位已经能跑起来了，现在练“为什么不是别的原理”。先做满 12 题，错题重点看解析里的相邻误区。 <a href="#quiz">去做分流题</a>`;
+      } else if (quiz.wrong >= 4) {
+        html = `<b>下一步：只回炉错的原理，不整页重读。</b> 原理分流错 ${quiz.wrong} 题，说明相邻概念还会串。把错题解析里的“为什么不是其他原理”抄成 1 句话。 <a href="#quiz">回看解析</a>`;
+      } else if (gate.done < 2) {
+        html = `<b>下一步：做材料题第一段闸门。</b> 选择题已经能分流，但还要证明自己能写出来。先写 2 个闸门：实践认识 + 剩余价值或新质生产力。每段只追“原理句、材料词、连接词”。 <a href="#writing-gate">去材料题闸门</a>`;
+      } else if (gate.done < 4) {
+        html = `<b>下一步：补齐材料题闸门。</b> 你已经写了 ${gate.done}/4 个闸门，再补 ${gate.missing.slice(0, 2).join("、")}。这比继续看表格更接近考试卷面。 <a href="#writing-gate">去补闸门</a>`;
+      } else if (writing.done < 3) {
+        html = `<b>下一步：写 3 个材料题第一段。</b> 先不要写整篇。优先写“实践认识、剩余价值、新质生产力/就业”任意 3 个开头，训练卷面第一段不空转。 <a href="#writing">去写第一段</a>`;
+      } else {
+        html = `<b>下一步：进入考前收口。</b> 你已经跑过马原开卷最小闭环。接下来按最后两科作战台安排：离散优先时只保留马原低成本回炉；离散考完后用本页做一轮定位 + 第一段 + 纸质资料清单。 <a href="./final_two_subject_command_center.html">回作战台</a>`;
+      }
+      advice.innerHTML = html;
+    }
+
+    renderLocator();
+    renderQuiz();
+    updateTodo();
+    renderMarxProgress();
+  </script>
+</body>
+</html>
